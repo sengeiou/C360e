@@ -252,13 +252,14 @@ public class App extends BaseApplication {
      * 每次刷新KitchenOrder，从数据库取出数据
      */
     public List<Kot> getRefreshKots() {
-        List<Kot> kotList = new ArrayList<Kot>();
-        Kot kot = null;
+        List<Kot> kotList = new ArrayList<>();
+        Kot kot;
         boolean flag = false;
-        List<KotSummary> kotSummaries = new ArrayList<KotSummary>();
-        List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+        List<KotSummary> kotSummaries;
+        List<KotItemDetail> kotItemDetails;
         kotSummaries = KotSummarySQL.getUndoneKotSummary();
-        List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+        List<KotItemModifier> kotItemModifiers = new ArrayList<>();
+
         for (int i = 0; i < kotSummaries.size(); i++) {
             kot = new Kot();
             kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(kotSummaries.get(i).getId(),

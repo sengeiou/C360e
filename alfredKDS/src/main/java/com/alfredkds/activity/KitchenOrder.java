@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -29,11 +28,9 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
-import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.DialogFactory;
@@ -128,14 +125,14 @@ public class KitchenOrder extends BaseActivity {
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
-                        adapter.setIsTemporer(false);
+                        adapter.setIsPlaceOrder(false);
                         madapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kotItems.size() + "");
                     } else {
                         adapter.setKots(kots);
                         adapter.setAddFirstItem(true);
-                        adapter.setIsTemporer(false);
+                        adapter.setIsPlaceOrder(false);
                         adapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kots.size() + "");
@@ -151,14 +148,14 @@ public class KitchenOrder extends BaseActivity {
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
-                        adapter.setIsTemporer(false);
+                        adapter.setIsPlaceOrder(true);
                         madapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kotItems.size() + "");
                     } else {
                         adapter.setKots(kots);
                         adapter.setAddFirstItem(true);
-                        adapter.setIsTemporer(false);
+                        adapter.setIsPlaceOrder(true);
                         adapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kots.size() + "");
@@ -171,17 +168,29 @@ public class KitchenOrder extends BaseActivity {
                     break;
                 case App.HANDLER_TMP_KOT:
                     kots = App.instance.getRefreshKots();
+                    boolean isPlaceOrder = false;
+
+                    KotSummary kts = (KotSummary) msg.obj;
+                    List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kts.getId());
+
+                    for (KotItemDetail kid : kotItemDetails) {
+                        if (kid.getKotStatus() > ParamConst.KOT_STATUS_UNSEND) {
+                            isPlaceOrder = true;
+                            break;
+                        }
+                    }
+
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
-                        adapter.setIsTemporer(true);
+                        adapter.setIsPlaceOrder(isPlaceOrder);
                         madapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kotItems.size() + "");
                     } else {
                         adapter.setKots(kots);
                         adapter.setAddFirstItem(true);
-                        adapter.setIsTemporer(true);
+                        adapter.setIsPlaceOrder(isPlaceOrder);
                         adapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kots.size() + "");
@@ -399,10 +408,10 @@ public class KitchenOrder extends BaseActivity {
                     String kotStr = bundle2.getString("kot");
 
                     final Kot kot = new Gson().fromJson(kotStr, Kot.class);
-                    if (kot != null) return;
+                    if (kot == null) return;
 
                     String titleNext = getResources().getString(R.string.warning);
-                    String contentNext = "Are you sure get to next step?";
+                    String contentNext = "Are you sure bring to next kds?";
                     String leftNext = getResources().getString(R.string.no);
                     String rightNext = getResources().getString(R.string.yes);
                     DialogFactory.commonTwoBtnDialog(KitchenOrder.this, titleNext, contentNext,
@@ -424,6 +433,27 @@ public class KitchenOrder extends BaseActivity {
                     break;
                 case App.HANDLER_KOT_NEXT_SUCCESS:
                     loadingDialog.dismiss();
+                    kots = App.instance.getRefreshKots();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.setAddFirstItem(true);
+                        adapter.setIsPlaceOrder(true);
+                        madapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kotItems.size() + "");
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.setAddFirstItem(true);
+                        adapter.setIsPlaceOrder(true);
+                        adapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kots.size() + "");
+                    }
+
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        kadapter.setKot(App.instance.getKot(KitchenOrder.this.kotSummary));
+                        kadapter.notifyDataSetChanged();
+                    }
                     break;
                 case App.HANDLER_KOT_NEXT_FAILED:
                     loadingDialog.dismiss();
@@ -481,7 +511,7 @@ public class KitchenOrder extends BaseActivity {
 
     @Override
     public void httpRequestAction(int action, Object obj) {
-        handler.sendMessage(handler.obtainMessage(action, null));
+        handler.sendMessage(handler.obtainMessage(action, obj));
     }
 
 //	private BroadcastReceiver receiver = new BroadcastReceiver() {

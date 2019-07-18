@@ -80,7 +80,7 @@ public class KdsHttpServer extends AlfredHttpServer {
     }
 
     private Response handlerNextKot(String params) {
-        Response resp = null;
+        Response resp;
         Map<String, Object> result = new HashMap<>();
         int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
 
@@ -126,7 +126,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                         KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                     }
 
-                    App.getTopActivity().httpRequestAction(App.HANDLER_TMP_KOT, null);
+                    App.getTopActivity().httpRequestAction(App.HANDLER_NEXT_KOT, null);
                 }
             }).start();
 
@@ -145,7 +145,7 @@ public class KdsHttpServer extends AlfredHttpServer {
     }
 
     private Response handlerTmpKot(String params) {
-        Response resp = null;
+        Response resp;
         Map<String, Object> result = new HashMap<>();
         int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
 
@@ -174,34 +174,34 @@ public class KdsHttpServer extends AlfredHttpServer {
             }
             //endregion
 
-            if (method.equals(ParamConst.JOB_TMP_KOT)) {
-                final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
-                }.getType());
-                final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>() {
-                }.getType());
+            final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
+            }.getType());
+            final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>() {
+            }.getType());
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
 
-                        KotSummarySQL.update(kotSummary);
-                        if (kotItemDetails != null) {
-                            KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
-                        }
-                        if (kotItemModifiers != null) {
-                            KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
-                        }
-
-                        App.getTopActivity().httpRequestAction(App.HANDLER_TMP_KOT, null);
+                    //region update to db
+                    KotSummarySQL.update(kotSummary);
+                    if (kotItemDetails != null) {
+                        KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
                     }
-                }).start();
+                    if (kotItemModifiers != null) {
+                        KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
+                    }
+                    //endregion
 
-                result.put("resultCode", ResultCode.SUCCESS);
-                result.put("method", method);
-                result.put("kotSummary", kotSummary);
-                result.put("orderId", kotSummary.getOrderId());
-                resp = getJsonResponse(new Gson().toJson(result));
-            }
+                    App.getTopActivity().httpRequestAction(App.HANDLER_TMP_KOT, kotSummary);
+                }
+            }).start();
+
+            result.put("resultCode", ResultCode.SUCCESS);
+            result.put("method", method);
+            result.put("kotSummary", kotSummary);
+            result.put("orderId", kotSummary.getOrderId());
+            resp = getJsonResponse(new Gson().toJson(result));
 
         } catch (JSONException e) {
             e.printStackTrace();

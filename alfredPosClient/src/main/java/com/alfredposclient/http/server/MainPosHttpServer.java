@@ -132,7 +132,6 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
-import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.moonearly.utils.service.TcpUdpFactory;
@@ -2605,16 +2604,32 @@ public class MainPosHttpServer extends AlfredHttpServer {
         return resp;
     }
 
-
     private Response handlerNextKDSKOT(String params) {
         Map<String, Object> result = new HashMap<>();
-        Response resp = null;
+        sendToNextKDS(params);
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final KotSummary kotSummary = new Gson().fromJson(
+                    jsonObject.getString("kotSummary"), KotSummary.class);
+
+            result.put("kotSummary", kotSummary);
+            result.put("resultCode", ResultCode.SUCCESS);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return this.getJsonResponse(new Gson().toJson(result));
+    }
+
+    private void sendToNextKDS(String params) {
+
         Gson gson = new Gson();
 
         try {
             JSONObject jsonObject = new JSONObject(params);
 
-            final int type = jsonObject.getInt("type");
+            int type = jsonObject.getInt("type");
             final int kdsId = jsonObject.getInt("kdsId");
             final KotSummary kotSummary = gson.fromJson(
                     jsonObject.getString("kotSummary"), KotSummary.class);
@@ -2627,43 +2642,33 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<ArrayList<KotItemModifier>>() {
                     }.getType());
 
-            sendToNextKDS(kotSummary, kotItemDetails, kotModifiers, kdsId, type);
+            final Order order = OrderSQL.getOrder(kotSummary.getOrderId());
+            if (order == null) return;
 
-            result.put("resultCode", ResultCode.SUCCESS);
-            resp = this.getJsonResponse(new Gson().toJson(result));
+            final List<Integer> orderDetailIds = new ArrayList<>();
+            List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
+
+            for (OrderDetail orderDetail : orderDetails) {
+                orderDetailIds.add(orderDetail.getId());
+            }
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Map<String, Object> orderMap = new HashMap<>();
+                    orderMap.put("orderId", order.getId());
+                    orderMap.put("orderDetailIds", orderDetailIds);
+                    App.instance.getKdsJobManager().sendKOTToNextKDS(
+                            kotSummary, kotItemDetails,
+                            kotModifiers, ParamConst.JOB_TMP_KOT,
+                            orderMap, kdsId);
+                }
+            }).start();
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-        return resp;
-    }
-
-    private void sendToNextKDS(final KotSummary kotSummary, final ArrayList<KotItemDetail> kotItemDetails,
-                               final ArrayList<KotItemModifier> kotItemModifiers, final int kdsId, final int type) {
-
-        final Order order = OrderSQL.getOrder(kotSummary.getOrderId());
-        if (order == null) return;
-
-        final List<Integer> orderDetailIds = new ArrayList<>();
-        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
-
-        for (OrderDetail orderDetail : orderDetails) {
-            orderDetailIds.add(orderDetail.getId());
-        }
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                Map<String, Object> orderMap = new HashMap<>();
-                orderMap.put("orderId", order.getId());
-                orderMap.put("orderDetailIds", orderDetailIds);
-                App.instance.getKdsJobManager().sendKOTToNextKDS(
-                        kotSummary, kotItemDetails,
-                        kotItemModifiers, ParamConst.JOB_TMP_KOT,
-                        orderMap, kdsId);
-            }
-        }).start();
     }
 
     private Response handlerKOTItemComplete(String params) {

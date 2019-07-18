@@ -254,8 +254,7 @@ public class MainPageOrderView extends LinearLayout {
 										.getItemNum());
 								if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
 									kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
-									kotItemDetail
-											.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+									kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
 								}
 								KotItemDetailSQL.update(kotItemDetail);
 								kotItemDetails.add(kotItemDetail);

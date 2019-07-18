@@ -243,6 +243,7 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.deleteKot(statusCode, headers, responseBody, handler);
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_SUCCESS, null));
                             } else {
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_FAILED, null));

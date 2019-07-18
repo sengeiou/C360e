@@ -230,7 +230,6 @@ public class ParamConst {
     public static final int KOT_STATUS_DONE = 3;
     public static final int KOT_STATUS_VOID = 4;
     public static final int KOT_STATUS_DELETE = -1;
-    public static final int KOT_STATUS_TEMPORER = -2;
 
     // KotSummary的status(0-未完成，1-已完成)
     public static final int KOTS_STATUS_UNDONE = 0;

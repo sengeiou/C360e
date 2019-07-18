@@ -84,8 +84,8 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
                     for (Printer printer : printers) {//为cashier时不显示
                         if (!(printer.getIsCashdrawer().intValue() == 1)) {
 
-                            //region hardcode for data testing
-                            if ("Kitchen Display".equalsIgnoreCase(printer.getPrinterName())) {
+                            //region hardcode for printer testing
+                            if ("EX Kitchen".equalsIgnoreCase(printer.getPrinterName())) {
                                 printer.setPrinterType("1");
                             } else {
                                 printer.setPrinterType("0");

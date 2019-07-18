@@ -86,8 +86,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
     private int hour;
     private MainPosInfo mainPosInfo;
     private TextView tvNext;
-    private boolean isTemp;
+    private boolean isPlaceOrder;
     private RelativeLayout ll_progress;
+    private LinearLayout linear_progress;
 
     public KOTView(Context context) {
         super(context);
@@ -137,17 +138,23 @@ public class KOTView extends LinearLayout implements AnimationListener,
         complete_all_tv = (TextView) kotView.findViewById(R.id.complete_all_tv);
         tvNext = (TextView) kotView.findViewById(R.id.tvNext);
         ll_progress = (RelativeLayout) kotView.findViewById(R.id.ll_progress);
+        linear_progress = (LinearLayout) kotView.findViewById(R.id.linear_progress);
 
-        if (isTemp) {
+        isPlaceOrder = true;
+        if (!isPlaceOrder) {
             tvNext.setVisibility(GONE);
             complete_all_tv.setVisibility(GONE);
             call_num_tv.setVisibility(GONE);
-            ll_progress.setVisibility(GONE);
+            linear_progress.setVisibility(GONE);
         } else {
             if ("0".equals(App.instance.getKdsDevice().getKdsType())) {
                 call_num_tv.setVisibility(GONE);
                 complete_all_tv.setVisibility(GONE);
                 tvNext.setVisibility(VISIBLE);
+            } else {
+                call_num_tv.setVisibility(VISIBLE);
+                complete_all_tv.setVisibility(VISIBLE);
+                tvNext.setVisibility(GONE);
             }
         }
 
@@ -192,6 +199,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 holder.tv_order_num = (TextView) convertView.findViewById(R.id.tv_order_num);
                 holder.tv_text = (TextView) convertView.findViewById(R.id.tv_text);
                 holder.tv_dish_introduce = (TextView) convertView.findViewById(R.id.tv_dish_introduce);
+                holder.cmItem = (Chronometer) convertView.findViewById(R.id.cmItem);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -205,7 +213,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
             } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
                 convertView.setBackgroundResource(R.color.possible_result_points);
                 holder.tv_text.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-            } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TEMPORER) {//temporary item
+            } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNSEND) {//temporary item
                 convertView.setBackgroundResource(R.color.gray);
             } else {
                 if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
@@ -231,6 +239,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
             holder.tv_order_num.setText(kotItemDetail.getUnFinishQty() + "");
             holder.tv_text.setText(kotItemDetail.getItemName());
             holder.tv_dish_introduce.setText(sBuffer);
+
+            long createTime = kot.getKotSummary().getUpdateTime();
+            holder.cmItem.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
+            holder.cmItem.start();
 //			textTypeFace.setTrajanProBlod(holder.tv_text);
 //			textTypeFace.setTrajanProRegular(holder.tv_order_num);
 //			textTypeFace.setTrajanProRegular(holder.tv_dish_introduce);
@@ -242,16 +254,35 @@ public class KOTView extends LinearLayout implements AnimationListener,
         private TextView tv_order_num;
         private TextView tv_text;
         private TextView tv_dish_introduce;
+        private Chronometer cmItem;
     }
 
 
-    public void setData(Kot originKot, boolean isHold) {
+    public void setData(Kot originKot, boolean isPlaceOrder) {
         this.kot = originKot;
         this.kotItemDetails.clear();
         this.kotItemDetails.addAll(kot.getKotItemDetails());
         this.kotItemModifiers.clear();
         this.kotItemModifiers.addAll(kot.getKotItemModifiers());
-        this.isTemp = isHold;
+        this.isPlaceOrder = isPlaceOrder;
+
+        isPlaceOrder = true;
+
+        if (!isPlaceOrder) {
+            linear_progress.setVisibility(GONE);
+        } else {
+            linear_progress.setVisibility(VISIBLE);
+            if ("0".equals(App.instance.getKdsDevice().getKdsType())) {
+                call_num_tv.setVisibility(GONE);
+                complete_all_tv.setVisibility(GONE);
+                tvNext.setVisibility(VISIBLE);
+            } else {
+                call_num_tv.setVisibility(VISIBLE);
+                complete_all_tv.setVisibility(VISIBLE);
+                tvNext.setVisibility(GONE);
+            }
+        }
+
         kotId.setText(kot.getKotSummary().getId() + "");
         String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo();
 

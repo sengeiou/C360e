@@ -55,7 +55,9 @@ public class KotJobManager {
     }
 
     private ArrayList<Printer> getPrinters(int printerGroupId, int kdsId, boolean isAssemblyMode) {
-        ArrayList<Printer> printers = new ArrayList<>();
+        ArrayList<Printer> printerResult = new ArrayList<>();
+        ArrayList<Printer> printersData = CoreData.getInstance()
+                .getPrintersInGroup(printerGroupId);
 
         if (isAssemblyMode) {
             Printer printer = null;
@@ -63,7 +65,7 @@ public class KotJobManager {
             if (kdsId > 0) {
                 boolean isPrinterFound = false;
 
-                for (Printer mPrinter : printers) {
+                for (Printer mPrinter : printersData) {
                     if (mPrinter.getId().equals(kdsId)) {
                         isPrinterFound = true;
                     } else {
@@ -74,23 +76,24 @@ public class KotJobManager {
                     }
                 }
             } else {
-                if (printers.size() > 0)
-                    printer = printers.get(0);
+                if (printersData.size() > 0) {
+                    printer = printersData.get(0);
+                }
             }
 
-            printers.add(printer);
+            if (printer != null)
+                printerResult.add(printer);
 
         } else {
-            printers = CoreData.getInstance()
-                    .getPrintersInGroup(printerGroupId);
+            printerResult.addAll(printersData);
         }
 
-        return printers;
+        return printerResult;
     }
 
     public void sendKOTTmpToKDS(KotSummary kotSummary,
                                 ArrayList<KotItemDetail> kotItemDetails, ArrayList<KotItemModifier> modifiers,
-                                String method, Map<String, Object> orderMap, int kdsId) {
+                                String method, Map<String, Object> orderMap) {
 
         ArrayList<Integer> printerGroupIds = new ArrayList<>();
         Map<Integer, ArrayList<KotItemDetail>> mapKOT = new HashMap<>();
@@ -139,11 +142,6 @@ public class KotJobManager {
         }
         //endregion
 
-        if (printerGroupIds.size() > 0 && kotSummary != null) {
-            kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
-            KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId());
-        }
-
         //region add job to send it to KDS
         for (Integer prgid : printerGroupIds) {
             PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
@@ -154,7 +152,7 @@ public class KotJobManager {
                 isAssemblyLine = true;//testing
             }
 
-            ArrayList<Printer> printers = getPrinters(prgid, kdsId, isAssemblyLine);//if isAssemblyLine = true, will return 1 printer
+            ArrayList<Printer> printers = getPrinters(prgid, 0, isAssemblyLine);//if isAssemblyLine = true, will return 1 printer
 
             for (Printer printer : printers) {
                 if (printer == null) continue;
@@ -230,11 +228,6 @@ public class KotJobManager {
             }
         }
         //endregion
-
-        if (printerGroupIds.size() > 0 && kotSummary != null) {
-            kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
-            KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_UNDONE, kotSummary.getId());
-        }
 
         //region add job to send it to KDS
         for (Integer prgid : printerGroupIds) {
