@@ -369,7 +369,7 @@
     <string name="text">teks</string>
     <string name="big">Besar</string>
     <string name="reference_number">Nomor referensi</string>
-    <string name="are_sure_get_right_order">Anda yakin mendapat pesanan yang benar?</string>
+    <string name="are_sure_get_right_order">Anda yakin mendapat pesanan yang sesuai?</string>
     <string name="print_qrcode">Cetak Kode QR</string>
     <string name="save_qrcode">Simpan Kode QR</string>
     <string name="total_open_item">Total / Buka / Item:</string>
