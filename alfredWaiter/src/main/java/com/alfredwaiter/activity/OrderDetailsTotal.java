@@ -675,15 +675,22 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             PrinterDevice printerDevice = App.instance.getLocalPrinterDevice();
             ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotsummary.getOrderId());
             ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
+            ArrayList<KotItemDetail> kotItemDetailsNonVoid = new ArrayList<>();
             ArrayList<KotItemDetail> printKOTItemDetails = new ArrayList<>();
 
+            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                if (kotItemDetail.getKotStatus() != ParamConst.KOT_STATUS_VOID) {
+                    kotItemDetailsNonVoid.add(kotItemDetail);
+                }
+            }
+
             if (isRePrintKOT) {
-                printKOTItemDetails.addAll(kotItemDetails);
+                printKOTItemDetails.addAll(kotItemDetailsNonVoid);
             } else {
                 if (App.instance.getNewOrderDetail() != null) {
 
                     for (OrderDetail orderDetail : App.instance.getNewOrderDetail()) {
-                        for (KotItemDetail kotItemDetail : kotItemDetails) {
+                        for (KotItemDetail kotItemDetail : kotItemDetailsNonVoid) {
                             int orderDetailId = kotItemDetail.getOrderDetailId();
 
                             if (orderDetailId == orderDetail.getId()) {
@@ -693,7 +700,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                         }
                     }
                 } else {
-                    printKOTItemDetails.addAll(kotItemDetails);
+                    printKOTItemDetails.addAll(kotItemDetailsNonVoid);
                 }
             }
 

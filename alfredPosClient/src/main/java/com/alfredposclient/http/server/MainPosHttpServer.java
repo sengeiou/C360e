@@ -2987,6 +2987,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return this.getJsonResponse(new Gson().toJson(result));
             }
 
+            if (items.getKotStatus() == ParamConst.KOT_STATUS_VOID) continue;
+
             int kotItemDetailId = items.getId().intValue();
 
             // Get all Group ids that KOT blongs to
