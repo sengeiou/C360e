@@ -125,14 +125,12 @@ public class KitchenOrder extends BaseActivity {
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
-                        adapter.setIsPlaceOrder(false);
                         madapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kotItems.size() + "");
                     } else {
                         adapter.setKots(kots);
                         adapter.setAddFirstItem(true);
-                        adapter.setIsPlaceOrder(false);
                         adapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kots.size() + "");
@@ -148,14 +146,12 @@ public class KitchenOrder extends BaseActivity {
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
-                        adapter.setIsPlaceOrder(true);
                         madapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kotItems.size() + "");
                     } else {
                         adapter.setKots(kots);
                         adapter.setAddFirstItem(true);
-                        adapter.setIsPlaceOrder(true);
                         adapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kots.size() + "");
@@ -168,29 +164,16 @@ public class KitchenOrder extends BaseActivity {
                     break;
                 case App.HANDLER_TMP_KOT:
                     kots = App.instance.getRefreshKots();
-                    boolean isPlaceOrder = false;
-
-                    KotSummary kts = (KotSummary) msg.obj;
-                    List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kts.getId());
-
-                    for (KotItemDetail kid : kotItemDetails) {
-                        if (kid.getKotStatus() > ParamConst.KOT_STATUS_UNSEND) {
-                            isPlaceOrder = true;
-                            break;
-                        }
-                    }
 
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
-                        adapter.setIsPlaceOrder(isPlaceOrder);
                         madapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kotItems.size() + "");
                     } else {
                         adapter.setKots(kots);
                         adapter.setAddFirstItem(true);
-                        adapter.setIsPlaceOrder(isPlaceOrder);
                         adapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kots.size() + "");
@@ -437,14 +420,12 @@ public class KitchenOrder extends BaseActivity {
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
-                        adapter.setIsPlaceOrder(true);
                         madapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kotItems.size() + "");
                     } else {
                         adapter.setKots(kots);
                         adapter.setAddFirstItem(true);
-                        adapter.setIsPlaceOrder(true);
                         adapter.notifyDataSetChanged();
 
                         tv_order_qyt.setText(kots.size() + "");
@@ -564,12 +545,17 @@ public class KitchenOrder extends BaseActivity {
         for (int i = 0; i < kotlist.size(); i++) {
             Kot kot = kotlist.get(i);
             List<KotItemDetail> detailList = kot.getKotItemDetails();
+
             if (detailList != null && detailList.size() > 0) {
                 for (int j = 0; j < detailList.size(); j++) {
                     KotItemDetail kotItemDetail = detailList.get(j);
                     if (kotItemDetail.getKotStatus() < ParamConst.KOT_STATUS_DONE) {
                         int unFinishQty = kotItemDetail.getUnFinishQty();
                         KotItem item = new KotItem();
+
+                        if (kotItemDetail.getKotStatus() != ParamConst.KOT_STATUS_TMP) {
+                            item.setPlaceOrder(true);
+                        }
 
                         KotSummary kotSummary = kot.getKotSummary();
                         item.setOrderNo(kotSummary.getOrderNo());

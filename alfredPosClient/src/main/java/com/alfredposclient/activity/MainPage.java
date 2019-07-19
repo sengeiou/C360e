@@ -2403,6 +2403,7 @@ public class MainPage extends BaseActivity {
                                 App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
 
                 kotItemDetail.setItemNum(orderDetail.getItemNum());
+                kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_TMP);
 
                 KotItemDetailSQL.update(kotItemDetail);
                 kotItemDetails.add(kotItemDetail);

@@ -255,12 +255,19 @@ public class MainPageOrderView extends LinearLayout {
                                                                             .getItemId()),
                                                     kotSummary,
                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
-                                    kotItemDetail.setItemNum(orderDetail
-                                            .getItemNum());
+                                    kotItemDetail.setItemNum(orderDetail.getItemNum());
+
+                                    //region change status TMP when place order
+                                    if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TMP) {
+                                        kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNSEND);
+                                    }
+                                    //endregion
+
                                     if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
                                         kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
                                         kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
                                     }
+
                                     KotItemDetailSQL.update(kotItemDetail);
                                     kotItemDetails.add(kotItemDetail);
                                     orderDetailIds.add(orderDetail.getId());

@@ -10,6 +10,7 @@ public class Kot {
     private List<KotItemDetail> kotItemDetails;
     private List<KotItemModifier> kotItemModifiers;
     private KotSummary kotSummary;
+    private boolean isPlaceOrder;
 
     public Kot() {
 
@@ -63,6 +64,14 @@ public class Kot {
      */
     public void setKotSummary(KotSummary kotSummary) {
         this.kotSummary = kotSummary;
+    }
+
+    public boolean isPlaceOrder() {
+        return isPlaceOrder;
+    }
+
+    public void setPlaceOrder(boolean placeOrder) {
+        isPlaceOrder = placeOrder;
     }
 
     /*

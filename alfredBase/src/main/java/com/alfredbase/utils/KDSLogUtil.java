@@ -20,11 +20,11 @@ public class KDSLogUtil {
         Gson gson = new Gson();
         List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(ksl);
         KotSummaryLog kotSummaryLog = getKotSummaryLog(kdsDevice.getDevice_id(), kotSummaryLogs);
-
-        if (kotSummaryLogs.size() > 0)
-            kotSummaryLog = getKotSummaryLog(kotSummaryLogs);
-
-        kotSummaryLog.expectedTime = time;
+//
+//        if (kotSummaryLogs.size() > 0)
+//            kotSummaryLog = getKotSummaryLog(kotSummaryLogs);
+//
+//        kotSummaryLog.expectedTime = time;
         return new Gson().toJson(kotSummaryLog);
     }
 

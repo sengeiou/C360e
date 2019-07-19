@@ -145,7 +145,7 @@ public class KotJob extends Job {
         BaseActivity context = App.getTopActivity();
         try {
             if (APIName.SUBMIT_NEW_KOT.equals(apiName)) {
-
+                //region submit new KOT
                 /*check the latest KOT summary status*/
                 KotSummary kotsmy = (KotSummary) data.get("kotSummary");
                 KotSummary updatedkot = KotSummarySQL.getKotSummaryById(kotsmy.getId());
@@ -200,7 +200,9 @@ public class KotJob extends Job {
                         context.kotPrintStatus(MainPage.KOT_PRINT_SUCCEED, kotMap.get("orderId"));
                     }
                 }
+                //endregion
             } else if (APIName.TRANSFER_KOT.equals(apiName)) {
+                //region transfer KOT
                 SyncCentre.getInstance().syncTransferTable(kds, context, data, null);
 
                 String action = (String) kotMap.get("action");
@@ -229,6 +231,7 @@ public class KotJob extends Job {
                 }
 
                 SyncCentre.getInstance().transferTable(context, kotMap);
+                //endregion
             } else if (APIName.TRANSFER_ITEM_KOT.equals(apiName)) {
                 SyncCentre.getInstance().syncTransferItem(kds, context, data, null);
             } else if (APIName.SUBMIT_TMP_KOT.equals(apiName)) {

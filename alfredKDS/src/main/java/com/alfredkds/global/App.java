@@ -255,6 +255,7 @@ public class App extends BaseApplication {
         List<Kot> kotList = new ArrayList<>();
         Kot kot;
         boolean flag = false;
+        boolean isPlaceOrder = false;
         List<KotSummary> kotSummaries;
         List<KotItemDetail> kotItemDetails;
         kotSummaries = KotSummarySQL.getUndoneKotSummary();
@@ -264,16 +265,24 @@ public class App extends BaseApplication {
             kot = new Kot();
             kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(kotSummaries.get(i).getId(),
                     kotSummaries.get(i).getOrderId());
+
             for (int j = 0; j < kotItemDetails.size(); j++) {
                 if (kotSummaries.get(i).getStatus() == ParamConst.KOTS_STATUS_UNDONE) {
                     flag = true;
                 }
+
+                if (kotItemDetails.get(j).getKotStatus() != ParamConst.KOT_STATUS_TMP) {
+                    isPlaceOrder = true;
+                }
+
                 kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
             }
+
             if (flag) {
                 kot.setKotItemDetails(kotItemDetails);
                 kot.setKotItemModifiers(kotItemModifiers);
                 kot.setKotSummary(kotSummaries.get(i));
+                kot.setPlaceOrder(isPlaceOrder);
                 kotList.add(kot);
                 flag = false;
             }

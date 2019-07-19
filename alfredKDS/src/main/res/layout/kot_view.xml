@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="340dp"
-    android:layout_height="fill_parent"
+    android:layout_height="match_parent"
     android:background="@color/white">
 
-    <LinearLayout
+    <View
         android:id="@+id/ll_blank_left"
         android:layout_width="15dp"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="@color/white"
-        android:orientation="vertical"></LinearLayout>
+        android:background="@color/white" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -300,7 +299,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/linear_progress"
-            android:layout_below="@+id/ll_kot_info"/>
+            android:layout_below="@+id/ll_kot_info" />
 
         <View
             android:layout_width="match_parent"
@@ -315,13 +314,12 @@
             android:background="@color/black" />
     </RelativeLayout>
 
-    <LinearLayout
+    <View
         android:id="@+id/ll_blank_right"
         android:layout_width="15dp"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:background="@color/white"
-        android:orientation="vertical"></LinearLayout>
+        android:background="@color/white" />
 
 </RelativeLayout>

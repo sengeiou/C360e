@@ -1645,9 +1645,6 @@ public class DataHelper {
                     + " ADD COLUMN  printerType INTEGER default 0");
             db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
-                    + " ADD COLUMN  currentKDSId INTEGER default 0");
-            db.execSQL("ALTER TABLE "
-                    + TableNames.KotItemDetail
                     + " ADD COLUMN  kotItemStatus INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN kotSummaryLog TEXT");

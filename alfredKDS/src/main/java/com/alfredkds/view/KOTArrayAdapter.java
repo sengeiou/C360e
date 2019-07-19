@@ -17,7 +17,6 @@ public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHo
     private Context mContext;
     private List<Kot> kots = new ArrayList<Kot>();
     private boolean addFirstItem = false;
-    private boolean isPlaceOrder;
     private Handler handler;
 //	private Map<Integer, Long> times = new HashMap<Integer, Long>();
 
@@ -31,11 +30,6 @@ public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHo
     public void setAddFirstItem(boolean addFirstItem) {
         this.addFirstItem = addFirstItem;
     }
-
-    public void setIsPlaceOrder(boolean isPlaceOrder) {
-        this.isPlaceOrder = isPlaceOrder;
-    }
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -51,11 +45,7 @@ public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         Kot originKot = kots.get(position);
-        holder.kotView.setData(originKot, isPlaceOrder);
-//		if (addFirstItem && position == 0) {
-//			holder.kotView.showNewKOT();
-//			addFirstItem = false;
-//		}
+        holder.kotView.setData(originKot);
     }
 
 

@@ -18,6 +18,15 @@ public class KotItem implements Serializable {
     private Integer itemDetailId;
     private String numTag;
     private Integer revenueCenterIndex;
+    private boolean isPlaceOrder;
+
+    public boolean isPlaceOrder() {
+        return isPlaceOrder;
+    }
+
+    public void setPlaceOrder(boolean placeOrder) {
+        isPlaceOrder = placeOrder;
+    }
 
     public Integer getRevenueCenterIndex() {
         return revenueCenterIndex;
