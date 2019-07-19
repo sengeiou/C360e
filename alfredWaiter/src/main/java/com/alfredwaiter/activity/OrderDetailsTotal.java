@@ -65,6 +65,7 @@ import com.alfredwaiter.view.MoneyKeyboard.KeyBoardClickListener;
 
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -101,7 +102,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private TextView tv_item_count;
     private TextView tv_sub_total;
     private TextView tv_discount;
-    private TextView tv_taxes;
+    private TextView tv_taxes,tv_promotion;
     private TextView tv_grand_total;
     private ImageView iv_add;
     private List<OrderDetail> newOrderDetails = new ArrayList<OrderDetail>();
@@ -138,6 +139,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         tv_sub_total = (TextView) findViewById(R.id.tv_sub_total);
         tv_discount = (TextView) findViewById(R.id.tv_discount);
         tv_taxes = (TextView) findViewById(R.id.tv_taxes);
+        tv_promotion=(TextView) findViewById(R.id.tv_promotion) ;
         tv_grand_total = (TextView) findViewById(R.id.tv_grand_total);
         iv_add = (ImageView) findViewById(R.id.iv_add);
         iv_add.setOnClickListener(this);
@@ -397,7 +399,10 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         tv_discount.setText(context.getResources().getString(R.string.discount_) + App.instance.getCurrencySymbol()
                 + BH.formatMoney(currentOrder.getDiscountAmount()));
         tv_taxes.setText(context.getResources().getString(R.string.taxes) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTaxAmount()));
-        tv_grand_total.setText(context.getString(R.string.grand_total) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTotal()));
+        tv_promotion.setText(context.getResources().getString(R.string.promotion) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getPromotion()));
+
+        BigDecimal  gTotal= BH.sub(BH.getBD(currentOrder.getTotal()),BH.getBD(currentOrder.getPromotion()),false);
+        tv_grand_total.setText(context.getString(R.string.grand_total) + App.instance.getCurrencySymbol() + BH.formatMoney(gTotal.toString()));
     }
 
     private void getIntentData() {

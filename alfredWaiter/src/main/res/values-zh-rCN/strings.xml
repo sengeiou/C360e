@@ -59,6 +59,8 @@
     <string name="print_bill">打印</string>
     <string name="notification">通知</string>
     <string name="grand_total">总计</string>
+    <string name="promotion">促销活动:</string>
+    <string name="bill">订单</string>
 
     <!-- Setting -->
     <string name="system_reset">系统重置</string>

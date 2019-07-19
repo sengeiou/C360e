@@ -1630,7 +1630,13 @@ public class DataHelper {
 
 
 
-        private void onUpgradeForOldVersion30(SQLiteDatabase db){
+        private void onUpgradeForOldVersion30(SQLiteDatabase db) {
+            db.execSQL("CREATE TABLE "
+                    + TableNames.PromotionData
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
+                    "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
+                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG,basePrice TEXT)");
+
 
             db.execSQL("CREATE TABLE "
                     + TableNames.Promotion

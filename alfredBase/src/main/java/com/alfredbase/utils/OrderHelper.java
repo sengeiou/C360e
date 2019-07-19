@@ -65,10 +65,11 @@ public class OrderHelper {
 		if (taxCategories.size() > 0) {
 			for (TaxCategory taxCategory : taxCategories) {
 				Tax tax = CoreData.getInstance().getTax(taxCategory.getTaxId());
-              if(tax.getBeforeDiscount()==0){
 				if (tax == null) {
 					continue;
 				}
+              if(tax.getBeforeDiscount()==0){
+
 				OrderDetailTax orderDetailTax = ObjectFactory.getInstance()
 						.getOrderDetailTax(order, orderDetail, tax, taxCategory.getIndex().intValue());
 				if (taxCategory.getTaxOn().intValue() == ParamConst.TAX_ON_TAX_1
@@ -174,11 +175,12 @@ public class OrderHelper {
 		if (taxCategories.size() > 0) {
 			for (TaxCategory taxCategory : taxCategories) {
 				Tax tax = CoreData.getInstance().getTax(taxCategory.getTaxId());
+				if (tax == null) {
+					continue;
+				}
 
 				if(tax.getBeforeDiscount()==1) {
-					if (tax == null) {
-						continue;
-					}
+
 					OrderDetailTax orderDetailTax = ObjectFactory.getInstance()
 							.getOrderDetailTax(order, orderDetail, tax, taxCategory.getIndex().intValue());
 					if ((taxCategory.getTaxOn().intValue() == ParamConst.TAX_ON_TAX_1
@@ -1344,7 +1346,11 @@ public class OrderHelper {
 //			}
 //		}
          String  promotionTotal= PromotionDataSQL.getPromotionDataSum(order);
+	if(BH.getBD(promotionTotal).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0){
+		order.setPromotion(order.getPromotion());
+	}else {
 		order.setPromotion(promotionTotal);
+	}
 
 		order.setTotal(total.toString());
 
