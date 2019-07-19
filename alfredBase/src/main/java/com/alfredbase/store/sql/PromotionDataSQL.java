@@ -11,6 +11,8 @@ import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PromotionDataSQL {
 
@@ -176,14 +178,14 @@ public class PromotionDataSQL {
     public static String  getPromotionDataXSum(long businessDate,SessionStatus sessionStatus, long nowTime)
     {
 
-        String sql = "select sum(promotionAmount) from " + TableNames.OrderPromotion
-                + " where businessDate=? and createTime > ? and updateTime < ?";
+        String sql = "select sum(promotionAmount)  from " + TableNames.OrderPromotion
+                + " where businessDate=? and createTime > ? and updateTime < ? and sessionStatus = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         String promotionTotal= null;
         try {
             cursor = db.rawQuery(sql,
-                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime)});
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime),String.valueOf(sessionStatus.getTime())});
             int count = cursor.getCount();
 //            if (count < 1) {
 //                return result;
@@ -203,26 +205,33 @@ public class PromotionDataSQL {
         return promotionTotal;
     }
 
-    public static String  getPromotionDataZSum(long businessDate)
+    public static Map<String, String> getPromotionTotalAndQty(long businessDate,SessionStatus sessionStatus, long nowTime)
     {
-
-        String sql = "select sum(promotionAmount) from " + TableNames.OrderPromotion
-                + " where businessDate=? " ;
+        Map<String, String> map = new HashMap<String, String>();
+        String sql = "select sum(promotionAmount) , COUNT (*) from " + TableNames.OrderPromotion
+                + " where businessDate=?  and createTime > ? and updateTime < ? and sessionStatus = ?" ;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
-        String promotionTotal= null;
+
         try {
             cursor = db.rawQuery(sql,
-                    new String[]{});
+                    new String[]{String.valueOf(businessDate), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime),String.valueOf(sessionStatus.getSession_status())});
             int count = cursor.getCount();
 //            if (count < 1) {
 //                return result;
 //            }
 
-            if (cursor.moveToFirst()) {
-                promotionTotal=cursor.getString(0);
-
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                map.put("promotionTotal", cursor.getString(0));
+                map.put("qty", String.valueOf(cursor.getInt(1)));
             }
+
+
+//            if (cursor.moveToFirst()) {
+//                promotionTotal=cursor.getString(0);
+//
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -230,7 +239,7 @@ public class PromotionDataSQL {
                 cursor.close();
             }
         }
-        return promotionTotal;
+        return map;
     }
 
 

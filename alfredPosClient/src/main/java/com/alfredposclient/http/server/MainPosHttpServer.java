@@ -1734,6 +1734,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         result.put("session", sessionStatus);
                         result.put("businessDate", App.instance.getBusinessDate());
                         result.put("trainType",trainType);
+                        result.put("formatType",App.instance.getLocalRestaurantConfig().getFormatType());
                         resp = this.getJsonResponse(new Gson().toJson(result));
 
                     } else if (type == ParamConst.USER_TYPE_WAITER &&
@@ -1760,6 +1761,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         result.put("businessDate", App.instance.getBusinessDate());
                         result.put("currencySymbol", App.instance.getLocalRestaurantConfig().getCurrencySymbol());
                         result.put("isDouble", App.instance.getLocalRestaurantConfig().getCurrencySymbolType() >= 0);
+                        result.put("formatType",App.instance.getLocalRestaurantConfig().getFormatType());
+
+
 //							} else {
 //								result.put("resultCode", ResultCode.USER_LOGIN_EXIST);
 //							}

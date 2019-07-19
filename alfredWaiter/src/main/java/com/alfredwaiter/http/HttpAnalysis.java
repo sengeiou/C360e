@@ -113,6 +113,9 @@ public class HttpAnalysis {
 			SessionStatus sessionStatus = gson.fromJson(
 					object.optString("session"), SessionStatus.class);
 			MainPosInfo mainPosInfo = gson.fromJson(object.optString("mainPosInfo"), MainPosInfo.class);
+			String formatType = object.optString("formatType");
+
+
 
 			SessionStatus localSessionStatus = App.instance.getSessionStatus();
 			if (localSessionStatus == null
@@ -127,6 +130,7 @@ public class HttpAnalysis {
 			App.instance.setMainPosInfo(mainPosInfo);
 			App.instance.setSessionStatus(sessionStatus);
 			App.instance.setCurrencySymbol(currencySymbol, isDouble);
+			App.instance.setFormatType(formatType);
 			CoreData.getInstance().setUserKey(userKey);
 			return userKey;
 		} catch (JSONException e) {

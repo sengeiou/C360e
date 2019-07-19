@@ -1032,7 +1032,7 @@ public class ReportDaySalesSQL {
 				reportDaySales.setPayHalalQty(cursor.getInt(92));
                 reportDaySales.setPromotionTotal(cursor.getString(93));
 				reportDaySales.setDaySalesRound(cursor.getString(94));
-				reportDaySales.setPromotionQty(cursor.getInt(96));
+				reportDaySales.setPromotionQty(cursor.getInt(95));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

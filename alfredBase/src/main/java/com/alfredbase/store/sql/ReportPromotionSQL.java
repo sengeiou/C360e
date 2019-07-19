@@ -25,24 +25,23 @@ public class ReportPromotionSQL {
 			
 			String sql = "replace into " 
 					+ TableNames.ReportDayPromotion
-					+ "(id, restaurantId, revenueId, revenueName, businessDate, amountQty,amountPromotion, " +
-					"promotionName,promotionId, daySalesId,createTime,updateTime,sysCreateTime,sysUpdateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id, restaurantId, revenueId, revenueName, businessDate, promotionQty,promotionAmount, " +
+					"promotionName,promotionId, daySalesId,createTime,updateTime)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(sql, new Object[]{
 					reportDayPromotion.getId(),
 					reportDayPromotion.getRestaurantId(),
 					reportDayPromotion.getRevenueId(),
 					reportDayPromotion.getRevenueName(),
 					reportDayPromotion.getBusinessDate(),
-					reportDayPromotion.getAmountQty(),
-					reportDayPromotion.getAmountPromotion(),
+					reportDayPromotion.getPromotionQty(),
+					reportDayPromotion.getPromotionAmount(),
 					reportDayPromotion.getPromotionName(),
 					reportDayPromotion.getPromotionId(),
 					reportDayPromotion.getDaySalesId(),
 					reportDayPromotion.getCreateTime(),
-					reportDayPromotion.getUpdateTime(),
-					reportDayPromotion.getSysCreateTime(),
-					reportDayPromotion.getSysUpdateTime()
+					reportDayPromotion.getUpdateTime()
+
 			});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,24 +58,23 @@ public class ReportPromotionSQL {
 			db.beginTransaction();
             String sql = "replace into "
                     + TableNames.ReportDayPromotion
-                    + "( restaurantId, revenueId, revenueName, businessDate, amountQty,amountPromotion," +
-					" promotionName,promotionId, daySalesId,createTime,updateTime,sysCreateTime,sysUpdateTime)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "( restaurantId, revenueId, revenueName, businessDate, promotionQty,promotionAmount," +
+					" promotionName,promotionId, daySalesId,createTime,updateTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportDayPromotion reportDayPromotion : reportDayPromotions) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportDayPromotion.getRestaurantId());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 2, reportDayPromotion.getRevenueId());
 				SQLiteStatementHelper.bindString(sqLiteStatement, 3, reportDayPromotion.getRevenueName());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 4, reportDayPromotion.getBusinessDate());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 5, reportDayPromotion.getAmountQty());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 6, reportDayPromotion.getAmountPromotion());
+				SQLiteStatementHelper.bindLong(sqLiteStatement, 5, reportDayPromotion.getPromotionQty());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 6, reportDayPromotion.getPromotionAmount());
 				SQLiteStatementHelper.bindString(sqLiteStatement, 7, reportDayPromotion.getPromotionName());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 8, reportDayPromotion.getPromotionId());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 9, reportDayPromotion.getDaySalesId());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 10, reportDayPromotion.getCreateTime());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 11, reportDayPromotion.getUpdateTime());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 12, reportDayPromotion.getSysCreateTime());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 13, reportDayPromotion.getSysUpdateTime());
+
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -96,24 +94,23 @@ public class ReportPromotionSQL {
             db.beginTransaction();
             String sql = "replace into "
                     + TableNames.ReportDayPromotion
-                    + "( restaurantId, revenueId, revenueName, businessDate, amountQty," +
-					"amountPromotion, promotionName,promotionId, daySalesId,createTime,updateTime,sysCreateTime,sysUpdateTime)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "( restaurantId, revenueId, revenueName, businessDate, promotionQty," +
+					"promotionAmount, promotionName,promotionId, daySalesId,createTime,updateTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(sql);
             for (ReportDayPromotion reportDayPromotion : reportDayPromotions) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportDayPromotion.getRestaurantId());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 2, reportDayPromotion.getRevenueId());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 3, reportDayPromotion.getRevenueName());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 4, reportDayPromotion.getBusinessDate());
-                SQLiteStatementHelper.bindLong(sqLiteStatement, 5, reportDayPromotion.getAmountQty());
-                SQLiteStatementHelper.bindString(sqLiteStatement, 6, reportDayPromotion.getAmountPromotion());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 5, reportDayPromotion.getPromotionQty());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 6, reportDayPromotion.getPromotionAmount());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 7, reportDayPromotion.getPromotionName());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 8, reportDayPromotion.getPromotionId());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 9, reportDayPromotion.getDaySalesId());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 10, reportDayPromotion.getCreateTime());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 11, reportDayPromotion.getUpdateTime());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 12, reportDayPromotion.getSysCreateTime());
-				SQLiteStatementHelper.bindLong(sqLiteStatement, 13, reportDayPromotion.getSysUpdateTime());
+
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -143,15 +140,14 @@ public class ReportPromotionSQL {
 				reportDayPromotion.setRevenueId(cursor.getInt(2));
 				reportDayPromotion.setRevenueName(cursor.getString(3));
 				reportDayPromotion.setBusinessDate(cursor.getLong(4));
-				reportDayPromotion.setAmountQty(cursor.getInt(5));
-				reportDayPromotion.setAmountPromotion(cursor.getString(6));
+				reportDayPromotion.setPromotionQty(cursor.getInt(5));
+				reportDayPromotion.setPromotionAmount(cursor.getString(6));
 				reportDayPromotion.setPromotionName(cursor.getString(7));
 				reportDayPromotion.setPromotionId(cursor.getInt(8));
                 reportDayPromotion.setDaySalesId(cursor.getInt(9));
                 reportDayPromotion.setCreateTime(cursor.getLong(10));
                 reportDayPromotion.setUpdateTime(cursor.getLong(11));
-                reportDayPromotion.setSysCreateTime(cursor.getLong(12));
-                reportDayPromotion.setSysUpdateTime(cursor.getLong(13));
+
                 reportDayPromotions.add(reportDayPromotion);
 			}
 		} catch (Exception e) {
@@ -165,10 +161,10 @@ public class ReportPromotionSQL {
 	}
 
 
-	public static ArrayList<ReportDayPromotion> getReportHourlysByTime(long businessDate){
+	public static ArrayList<ReportDayPromotion> getReportPromotionByTime(long businessDate){
 		ArrayList<ReportDayPromotion> reportDayPromotions = new ArrayList<ReportDayPromotion>();
 
-        String sql = "select id, restaurantId, revenueId, revenueName, businessDate,sum(amountQty), sum(amountPromotion),promotionName,promotionId, daySalesId from "
+        String sql = "select id, restaurantId, revenueId, revenueName, businessDate,sum(promotionQty), sum(promotionAmount),promotionName,promotionId, daySalesId ,createTime,updateTime from "
                 + TableNames.ReportDayPromotion
                 + " where businessDate = ? ";
 		Cursor cursor = null;
@@ -187,15 +183,14 @@ public class ReportPromotionSQL {
                 reportDayPromotion.setRevenueId(cursor.getInt(2));
                 reportDayPromotion.setRevenueName(cursor.getString(3));
                 reportDayPromotion.setBusinessDate(cursor.getLong(4));
-                reportDayPromotion.setAmountQty(cursor.getInt(5));
-                reportDayPromotion.setAmountPromotion(cursor.getString(6));
+                reportDayPromotion.setPromotionQty(cursor.getInt(5));
+                reportDayPromotion.setPromotionAmount(cursor.getString(6));
                 reportDayPromotion.setPromotionName(cursor.getString(7));
                 reportDayPromotion.setPromotionId(cursor.getInt(8));
                 reportDayPromotion.setDaySalesId(cursor.getInt(9));
 				reportDayPromotion.setCreateTime(cursor.getLong(10));
 				reportDayPromotion.setUpdateTime(cursor.getLong(11));
-				reportDayPromotion.setSysCreateTime(cursor.getLong(12));
-				reportDayPromotion.setSysUpdateTime(cursor.getLong(13));
+
                 reportDayPromotions.add(reportDayPromotion);
 			}
 		} catch (Exception e) {
@@ -208,14 +203,14 @@ public class ReportPromotionSQL {
 		return reportDayPromotions;
 	}
 	
-	public static void deleteReportHourlyByBusinessDate(long businessDate) {
-		String sql = "delete from " + TableNames.ReportDayPromotion
-				+ " where businessDate = ?";
-		try {
-			SQLExe.getDB().execSQL(sql,
-					new Object[] { businessDate + "" });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void deleteReportHourlyByBusinessDate(long businessDate) {
+//		String sql = "delete from " + TableNames.ReportDayPromotion
+//				+ " where businessDate = ?";
+//		try {
+//			SQLExe.getDB().execSQL(sql,
+//					new Object[] { businessDate + "" });
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }

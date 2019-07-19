@@ -35,6 +35,7 @@ import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.PromotionOrderSQL;
 import com.alfredbase.store.sql.PromotionSQL;
 import com.alfredbase.store.sql.PromotionWeekSQL;
+import com.bugsee.library.serverapi.data.Environment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -1241,6 +1242,8 @@ public class OrderHelper {
 							promotionData.setFreeNum(promotion.getFreeNum());
 							promotionData.setDiscountPrice(promotion.getDiscountPrice());
 							promotionData.setDiscountPercentage(promotion.getDiscountPercentage());
+							promotionData.setSessionStatus(order.getSessionStatus());
+                            promotionData.setUpdateTime(nowTime);
 							//promotionData.setPromotionAmount(promotion.getDiscountPrice());
 							PromotionDataSQL.addPromotionData(promotionData);
 						} else {
@@ -1250,6 +1253,7 @@ public class OrderHelper {
 							if(!TextUtils.isEmpty(price)){
 								promotionData.setPromotionAmount(price);
 							}
+
 
 							//	promotionData.setPromotionAmount(promotionPrice.toString());
 							promotionData.setUpdateTime(nowTime);
@@ -1389,7 +1393,7 @@ public class OrderHelper {
 				}
 			}
 		}
-		tax= BH.add(tax,BH.getBD(order.getTaxAmount()),false);
+		//tax= BH.add(tax,BH.getBD(order.getTaxAmount()),false);
 		order.setOrderRound(BH.add(BH.getBD(order.getOrderRound()),BH.formatRound(BH.getBD(tax)),false).toString());
 		order.setTaxAmount(BH.getBD(tax).toString());
 	}

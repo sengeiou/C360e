@@ -14,8 +14,8 @@ public class ReportDayPromotion implements Serializable{
 	private String revenueName;
 	private Long businessDate;
 
-	private Integer amountQty;
-	private String amountPromotion;
+	private Integer promotionQty;
+	private String promotionAmount;
 	private String promotionName;
 	private Integer promotionId;
 	private int daySalesId;
@@ -64,20 +64,20 @@ public class ReportDayPromotion implements Serializable{
 		this.businessDate = businessDate;
 	}
 
-	public Integer getAmountQty() {
-		return amountQty;
+	public Integer getPromotionQty() {
+		return promotionQty;
 	}
 
-	public void setAmountQty(Integer amountQty) {
-		this.amountQty = amountQty;
+	public void setPromotionQty(Integer promotionQty) {
+		this.promotionQty = promotionQty;
 	}
 
-	public String getAmountPromotion() {
-		return amountPromotion;
+	public String getPromotionAmount() {
+		return promotionAmount;
 	}
 
-	public void setAmountPromotion(String amountPromotion) {
-		this.amountPromotion = amountPromotion;
+	public void setPromotionAmount(String promotionAmount) {
+		this.promotionAmount = promotionAmount;
 	}
 
 	public String getPromotionName() {
@@ -144,8 +144,8 @@ public class ReportDayPromotion implements Serializable{
 				", revenueId=" + revenueId +
 				", revenueName='" + revenueName + '\'' +
 				", businessDate=" + businessDate +
-				", amountQty=" + amountQty +
-				", amountPromotion='" + amountPromotion + '\'' +
+				", promotionQty=" + promotionQty +
+				", promotionAmount='" + promotionAmount + '\'' +
 				", promotionName='" + promotionName + '\'' +
 				", promotionId=" + promotionId +
 				", daySalesId=" + daySalesId +

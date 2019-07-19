@@ -478,8 +478,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                 if(reportDayPromotions !=null&& reportDayPromotions.size()>0){
                     for (int i = 0; i < reportDayPromotions.size(); i++) {
-                        ReportDayPromotion reportDayPromotion1 = reportDayPromotions.get(i);
-                        proPrint.print(reportDayPromotion1.getPromotionName(), reportDayPromotion1.getAmountQty(), reportDayPromotion1.getAmountPromotion());
+                        ReportDayPromotion reportDayPromotion = reportDayPromotions.get(i);
+                        proPrint.print(reportDayPromotion.getPromotionName(), reportDayPromotion.getPromotionQty(), reportDayPromotion.getPromotionAmount());
 
                     }
 

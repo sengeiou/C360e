@@ -347,7 +347,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 				ReportPluDayItem rr = new ReportPluDayItem();
 				rr.setItemMainCategoryId(reportPluDayItem.getItemMainCategoryId());
 				rr.setItemMainCategoryName(reportPluDayItem.getItemMainCategoryName());
-				rr.setItemAmount(reportPluDayItem.getItemAmount().toString());
+				rr.setItemAmount(BH.formatMoney(reportPluDayItem.getItemAmount()));
 				map.put(reportPluDayItem.getItemMainCategoryId().intValue(), rr);
 			}
 //				if(mainCategoryId == 0 || mainCategoryId == reportPluDayItem.getItemMainCategoryId().intValue()){
@@ -427,8 +427,8 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 
 					} else {
 
-						this.AddItem(" "+reportPluDayItem.getItemName(), reportPluDayItem.getItemPrice(),
-								reportPluDayItem.getItemCount().toString(), "" +  BH.formatThree(reportPluDayItem.getItemAmount()), 1);
+						this.AddItem(" "+reportPluDayItem.getItemName(), BH.formatMoney(reportPluDayItem.getItemPrice()),
+								reportPluDayItem.getItemCount().toString(), "" +  BH.formatMoney(reportPluDayItem.getItemAmount()), 1);
 						lastLinePrinted = false;
 					}
 					//END Comb modifier print
@@ -506,7 +506,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 //			}
 		if (allQty != 0) {
 			this.addHortionalLine(this.charSize);
-			this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "",  BH.formatMoney(allAmount.toString()).toString(), 1);
+			this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "",  BH.formatMoney(allAmount.toString()), 1);
 		}
 
 

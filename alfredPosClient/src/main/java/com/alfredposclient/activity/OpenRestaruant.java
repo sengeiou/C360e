@@ -1282,7 +1282,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
 		
 		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
-        ArrayList<ReportDayPromotion> reportReportDayPromotions = ReportObjectFactory.getInstance()
+        ArrayList<ReportDayPromotion> reportDayPromotions = ReportObjectFactory.getInstance()
                 .loadReportPromotions(businessDate);
 
      //   ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
@@ -1315,9 +1315,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 				title, reportDaySales, reportDayTaxs, reportDayPayments,
 				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
 				reportSessionSalesList);
-		if(reportReportDayPromotions !=null&& reportReportDayPromotions.size()>0){
+		if(reportDayPromotions !=null&& reportDayPromotions.size()>0){
             App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-                    reportReportDayPromotions);
+                    reportDayPromotions);
         }
 
 //		try {

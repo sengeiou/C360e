@@ -389,6 +389,15 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",##0.00");//
 		return new BigDecimal(format.format(new BigDecimal(integer)));
 	}
 
+	/**
+	 * 格式后金额 转为数额
+	 *
+	 * @param 1,000
+	 * @param 1000
+	 * @param ，
+	 * @return
+	 */
+
 	public static BigDecimal getReplace(String string) {
 		if (CommonUtil.isNull(string))
 			return new BigDecimal(ParamConst.DOUBLE_ZERO);

@@ -69,6 +69,7 @@ public class App extends BaseApplication {
 
     private String currencySymbol = "$";
     public static boolean isleftMoved;
+    private String formatType;
 
     @Override
     public void onCreate() {
@@ -309,5 +310,13 @@ public class App extends BaseApplication {
 		this.currencySymbol = currencySymbol;
 		//BH.initFormart(isDouble);
 	}
-	
+
+    public String getFormatType() {
+        return formatType;
+    }
+
+    public void setFormatType(String formatType) {
+        this.formatType = formatType;
+        BH.initFormart(formatType);
+    }
 }

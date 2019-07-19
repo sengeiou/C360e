@@ -133,7 +133,7 @@
     <!-- Hourly Sales -->
     <string name="hourly_sales">Hourly Sales</string>
     <string name="promotion_sales">Promotion Sales</string>
-    <string name="promotion_name">Promotion</string>
+    <string name="promotion_name">Promo</string>
     <string name="hour">Hour</string>
     <string name="tran">Tran</string>
     <!-- Void PLU -->

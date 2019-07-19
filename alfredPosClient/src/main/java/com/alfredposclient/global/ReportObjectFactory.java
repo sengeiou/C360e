@@ -1702,7 +1702,7 @@ public class ReportObjectFactory {
 
 	public ArrayList<ReportDayPromotion> loadReportPromotions(long businessDate) {
 		ArrayList<ReportDayPromotion> reportDayPromotions = new ArrayList<ReportDayPromotion>();
-		reportDayPromotions = ReportPromotionSQL.getReportHourlysByTime(businessDate);
+		reportDayPromotions = ReportPromotionSQL.getReportPromotionByTime(businessDate);
 
 		return reportDayPromotions;
 
@@ -1722,13 +1722,14 @@ public class ReportObjectFactory {
 		ArrayList<UserTimeSheet> userTimeSheets = new ArrayList<UserTimeSheet>();
 		ArrayList<ReportPluDayComboModifier>reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>();
 		ArrayList<CashInOut> cashInOuts = CashInOutSQL.getAllCashInOut(businessDate);
-		// reportDaySales = loadReportDaySales(businessDate);
+		//		// reportDaySales = loadReportDaySales(businessDate);
 		// reportDayTaxs = loadReportDayTax(reportDaySales, businessDate);
 		// reportPluDayItems = loadReportPluDayItem(businessDate);
 		// reportPluDayModifiers = loadReportPluDayModifier(businessDate);
 		// reportHourlys = loadReportHourlys(businessDate);
 		userTimeSheets = UserTimeSheetSQL
 				.getUserTimeSheetsByBusinessDate(businessDate);
+		ArrayList<ReportDayPromotion> reportDayPromotions = ReportPromotionSQL.getReportPromotionByTime(businessDate);
 //		reportPluDayComboModifiers = ReportObjectFactory
 //				.getInstance().loadReportPluDayComboModifier(businessDate);
 		map.put("reportDaySales", reportDaySales);
@@ -1739,6 +1740,7 @@ public class ReportObjectFactory {
 		map.put("userTimeSheets", userTimeSheets);
 		map.put("cashInOuts", cashInOuts);
 		map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
+		map.put("reportDayPromotions", reportDayPromotions);
 		return map;
 	}
 
@@ -2386,7 +2388,10 @@ public class ReportObjectFactory {
 
 		BigDecimal difference = BH.sub(BH.getBD(actualAmount), expected, false);
 		String reportNoStr = ReportDaySalesSQL.getReportNoStrByBusiness(businessDate);
-		String promotionTotal= PromotionDataSQL.getPromotionDataXSum(businessDate,sessionStatus,nowTime);
+		//String promotionTotal= PromotionDataSQL.getPromotionDataXSum(businessDate,sessionStatus,nowTime);
+		Map<String, String> promotionMap = PromotionDataSQL.getPromotionTotalAndQty(businessDate,sessionStatus,nowTime);
+		String promotionTotal = BH.getBD(promotionMap.get("promotionTotal")).toString();
+		String proQty = promotionMap.get("qty");
 
 		reportDaySales.setRestaurantId(restaurant.getId());
 		reportDaySales.setRestaurantName(restaurant.getRestaurantName());
@@ -2491,6 +2496,7 @@ public class ReportObjectFactory {
 		}
 		reportDaySales.setReportNoStr(reportNoStr);
 		reportDaySales.setPromotionTotal(promotionTotal);
+		reportDaySales.setPromotionQty(Integer.parseInt(proQty));
         reportDaySales.setPayHalal(BH.getBD(halalPay).toString());
         reportDaySales.setPayHalalQty(Integer.parseInt(halalPayQty));
 		reportDaySales.setDaySalesRound(daySalesRound.toString());
@@ -3195,10 +3201,12 @@ public class ReportObjectFactory {
 				reportDayPromotion.setRevenueId(revenueCenter.getId());
 				reportDayPromotion.setRevenueName(revenueCenter.getRevName());
 				reportDayPromotion.setBusinessDate(businessDate);
-				reportDayPromotion.setAmountPromotion(amount.toString());
+				reportDayPromotion.setPromotionAmount(amount.toString());
 				reportDayPromotion.setPromotionName(promotionName);
-				reportDayPromotion.setAmountQty(qty);
+				reportDayPromotion.setPromotionQty(qty);
 				reportDayPromotion.setPromotionId(id);
+				reportDayPromotion.setCreateTime(nowTime);
+				reportDayPromotion.setUpdateTime(nowTime);
 				reportDayPromotions.add(reportDayPromotion);
 
 			}

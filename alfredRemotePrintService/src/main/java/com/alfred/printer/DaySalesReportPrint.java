@@ -269,8 +269,10 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 BH.formatThree(reportDaySales.getDiscountPer()), 1);
         this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
                 BH.formatThree(reportDaySales.getDiscount()), PrintData.LANG_EN, 1);
+        this.addItem("Promotions", reportDaySales.getPromotionQty().toString(),  BH.formatThree(reportDaySales.getPromotionTotal()), 1);
 
-        double nSales = Double.parseDouble(reportDaySales.getItemSales()) + Double.parseDouble(reportDaySales.getTopUps()) - Double.parseDouble(reportDaySales.getFocItem()) - Double.parseDouble(reportDaySales.getFocBill()) - Double.parseDouble(reportDaySales.getItemVoid()) - Double.parseDouble(reportDaySales.getBillVoid()) - Double.parseDouble(reportDaySales.getBillRefund()) - Double.parseDouble(reportDaySales.getDiscount()) - Double.parseDouble(reportDaySales.getDiscountPer());
+
+        double nSales = Double.parseDouble(reportDaySales.getItemSales()) + Double.parseDouble(reportDaySales.getTopUps()) - Double.parseDouble(reportDaySales.getFocItem()) - Double.parseDouble(reportDaySales.getFocBill()) - Double.parseDouble(reportDaySales.getItemVoid()) - Double.parseDouble(reportDaySales.getBillVoid()) - Double.parseDouble(reportDaySales.getBillRefund()) - Double.parseDouble(reportDaySales.getDiscount()) - Double.parseDouble(reportDaySales.getDiscountPer()) -Double.parseDouble(reportDaySales.getPromotionTotal());
         //this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.sub( BH.getBD(reportDaySales.getTotalSales()), BH.getBD(reportDaySales.getTotalTax()), true).toString(), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.nett_sales), " ", BH.formatMoney(BH.getBD(nSales).toString()).toString(), 1);
 //reportDay
@@ -313,11 +315,10 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 this.addItem("Custom Payment Change", " ",  BH.formatThree(overPaymentAmount.toString()), 1);
             }
         }
-        this.addItem("Promotion", " ",  BH.formatThree(reportDaySales.getPromotionTotal()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.rounding), " ", reportDaySales.getTotalBalancePrice(), 1);
         double grossTotal;
         if(reportDaySales.getPromotionTotal()!=null) {
-            grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() - Double.parseDouble(reportDaySales.getPromotionTotal());
+            grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() ;
         }else {
             grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() ;
         }
