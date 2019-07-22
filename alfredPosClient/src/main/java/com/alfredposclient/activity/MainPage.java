@@ -41,6 +41,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
@@ -70,6 +71,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
@@ -816,8 +818,11 @@ public class MainPage extends BaseActivity {
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
                                             .getId()));
+
+                            List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+
                             App.instance. remoteBillPrint(printer, title, currentOrder,
-                                    orderItems, orderModifiers, taxMap, null, null);
+                                    orderItems, orderModifiers, taxMap, null, null,orderPromotions);
 //						handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                         }
                     } else {
@@ -893,11 +898,13 @@ public class MainPage extends BaseActivity {
                             paidOrder, App.instance.getRevenueCenter());
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
                     if (orderItems.size() > 0 && printer != null) {
+                        List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+
 
                         //  if (App.instance.getSystemSettings().isCashClosePrint()) {
 
                         App.instance.remoteBillPrint(printer, title, paidOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,orderPromotions);
 //                        } else {
 //                            App.instance.kickOutCashDrawer(printer);
 //                        }
@@ -1013,8 +1020,10 @@ public class MainPage extends BaseActivity {
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+                      //  List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,null);
                     }
                     // remove get bill notification
                     removeNotificationTables();
@@ -2046,8 +2055,10 @@ public class MainPage extends BaseActivity {
                     temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+                       // List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,null);
                     }
                     // remove get bill notification
                     removeNotificationTables();

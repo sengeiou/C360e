@@ -2051,9 +2051,9 @@ public class App extends BaseApplication {
                                 Order order, ArrayList<PrintOrderItem> orderItems,
                                 ArrayList<PrintOrderModifier> orderModifiers,
                                 List<Map<String, String>> taxes,
-                                List<PaymentSettlement> settlement, RoundAmount roundAmount) {
+                                List<PaymentSettlement> settlement, RoundAmount roundAmount,List<OrderPromotion> orderPromotions) {
 
-        remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
+        remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint(),orderPromotions);
     }
 
     public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
@@ -2061,7 +2061,7 @@ public class App extends BaseApplication {
                                 ArrayList<PrintOrderModifier> orderModifiers,
                                 List<Map<String, String>> taxes,
                                 List<PaymentSettlement> settlement, RoundAmount roundAmount,
-                                boolean openDrawer) {
+                                boolean openDrawer,List<OrderPromotion> orderPromotions) {
 
         boolean isCashSettlement = false;
         List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
@@ -2136,7 +2136,6 @@ public class App extends BaseApplication {
 //                            BH.getBD(order.getPromotion()), true)
 //                            .toString();
 //                }
-                List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
               //  List<OrderPromotion>  promotionData=null;
                 roundingMap.put("Total", total);
@@ -2151,7 +2150,7 @@ public class App extends BaseApplication {
                 String payment = gson.toJson(printReceiptInfos);
                 String roundStr = gson.toJson(roundingMap);
                 String apporders = "";
-                String proStr=gson.toJson(promotionData);
+                String proStr=gson.toJson(orderPromotions);
                 // gson.toJson(roundingMap);
                 if (isRevenueKiosk()) {
                     if (countryCode == ParamConst.CHINA)

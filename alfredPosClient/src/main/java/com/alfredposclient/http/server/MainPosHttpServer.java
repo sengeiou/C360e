@@ -321,7 +321,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                     .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
                             PrinterDevice printer = App.instance.getCahierPrinter();
                             App.instance.remoteBillPrint(printer, title, order,
-                                    orderItems, orderModifiers, taxMap, null, null);
+                                    orderItems, orderModifiers, taxMap, null, null,null);
                             OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
                         }
                         result.put("resultCode", ResultCode.SUCCESS);
@@ -3025,7 +3025,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
                         temporaryOrder.setOrderNo(order.getOrderNo());
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, null, null);
+                                orderItems, orderModifiers, taxMap, null, null,null);
                     }
                 } else {
                     OrderBill orderBill = OrderBillSQL
@@ -3057,7 +3057,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         printer = App.instance.getPrinterDeviceById(deviceId);
                     }
                     App.instance.remoteBillPrint(printer, title, order,
-                            orderItems, orderModifiers, taxMap, null, null);
+                            orderItems, orderModifiers, taxMap, null, null,null);
                     OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_UNPAY, orderId);
                 }
             }

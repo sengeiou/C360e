@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class BugseeHelper {
     public static void init(Application application, String token) {
         HashMap<String, Object> options = new HashMap<>();
-        options.put(Bugsee.Option.VideoEnabled, true);//set true to recode video
+        options.put(Bugsee.Option.VideoEnabled, false);//set true to recode video
         options.put(Bugsee.Option.MaxRecordingTime, 2 * 60 * 60);
         options.put(Bugsee.Option.ShakeToTrigger, false);
 
