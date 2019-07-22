@@ -4,7 +4,7 @@
     <!-- com.alfredselfhelp.global -->
     <string name="app_name">AlfredKDS</string>
     <string name="version">Phiên bản:</string>
-    <string name="exit_program">Vui lòng nhấn BACK lần nữa để thoát</string>
+    <string name="exit_program">Vui lòng nhấp lại lần nữa để thoát</string>
     <string name="revenue_center">Trung tâm doanh thu</string>
     <string name="loading">Tải</string>
 

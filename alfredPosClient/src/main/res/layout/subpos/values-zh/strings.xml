@@ -60,8 +60,8 @@
     <string name="kot_print">KOT打印</string>
     <string name="kot_print_together">KOT打印在一起</string>
     <string name="double_kot_print">双KOT打印</string>
-    <string name="double_bill_prints">Double Bill Prints</string>
-    <string name="double_close_bill_prints">Double Close Bill Prints</string>
+    <string name="double_bill_prints">双票据打印</string>
+    <string name="double_close_bill_prints">双关票据打印</string>
     <string name="print_order_summary">打印订单汇总</string>
     <string name="print_direction_up">打印标签方向向上</string>
     <string name="credit_card_rounding">信用卡四舍五入</string>
@@ -93,7 +93,7 @@
     <string name="warning">警告</string>
     <string name="server">服务器</string>
     <string name="loading">载入中</string>
-    <string name="exit_program">请再次单击BACK退出</string>
+    <string name="exit_program">请再次点击返回退出</string>
     <string name="drop_session_open">删除会话\n开始</string>
     <string name="drop_session_close">退回\n关闭</string>
     <string name="manually_update">没有收到数据更新消息。\n您是否需要从后台手动更新数据？</string>

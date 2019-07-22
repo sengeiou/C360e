@@ -4,7 +4,7 @@
     <!-- com.alfredselfhelp.global -->
     <string name="app_name">AlfredKDS</string>
     <string name="version">เวอร์ชัน:</string>
-    <string name="exit_program">โปรดคลิก BACK อีกครั้งเพื่อออก</string>
+    <string name="exit_program">โปรดคลิกกลับอีกครั้งเพื่อออก</string>
     <string name="revenue_center">ศูนย์สรรพากร</string>
     <string name="loading">กำลังโหลด</string>
 

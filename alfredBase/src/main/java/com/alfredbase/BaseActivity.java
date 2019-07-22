@@ -1,13 +1,16 @@
 package com.alfredbase;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -257,7 +260,13 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
             PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity,
                     PendingIntent.FLAG_CANCEL_CURRENT);
             AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 300, mPendingIntent);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                this.finishAffinity();
+            }else{
+                ActivityCompat.finishAffinity(this);
+            }
             System.exit(0);
         }
     }

@@ -93,7 +93,7 @@
     <string name="warning">Cảnh báo</string>
     <string name="server">Máy chủ</string>
     <string name="loading">Tải</string>
-    <string name="exit_program">Vui lòng nhấn BACK lần nữa để thoát</string>
+    <string name="exit_program">Vui lòng nhấp lại lần nữa để thoát</string>
     <string name="drop_session_open">Thả phiên \nto bắt đầu</string>
     <string name="drop_session_close">Thả lại \nto đóng</string>
     <string name="manually_update">Không nhận được thông báo cập nhật dữ liệu. \nBạn có cần cập nhật dữ liệu thủ công từ backoffice không?</string>

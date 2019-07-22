@@ -3,7 +3,7 @@
     <!-- com.alfredselfhelp.global -->
     <string name="app_name">Tinatawag na Num</string>
     <string name="version">Bersyon:</string>
-    <string name="exit_program">Paki-click muli ang BACK upang lumabas</string>
+    <string name="exit_program">Mangyaring mag-click muli upang lumabas</string>
     <string name="revenue_center">Revenue Centre</string>
     <string name="warn">BALAAN</string>
     <string name="loading">Naglo-load</string>

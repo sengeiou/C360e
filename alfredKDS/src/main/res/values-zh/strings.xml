@@ -4,7 +4,7 @@
     <!-- com.alfredselfhelp.global -->
     <string name="app_name">AlfredKDS</string>
     <string name="version">版：</string>
-    <string name="exit_program">请再次单击BACK退出</string>
+    <string name="exit_program">请再次点击返回退出</string>
     <string name="revenue_center">收入中心</string>
     <string name="loading">载入中</string>
 

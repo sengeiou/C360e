@@ -450,7 +450,11 @@ public class ObjectFactory {
 
         Order order = null;
         synchronized (lock_order) {
-            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate, sessionStatus);
+            try {
+                order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate, sessionStatus);
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
             if (order == null) {
 
                 order = new Order();
@@ -544,8 +548,12 @@ public class ObjectFactory {
         Order order = null;
         if (appOrder != null) {
             synchronized (lock_order) {
-                order = OrderSQL.getOrderByAppOrderId(appOrder
-                        .getId().intValue());
+                try {
+                    order = OrderSQL.getOrderByAppOrderId(appOrder
+                            .getId().intValue());
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
                 if (order == null) {
                     order = new Order();
                     order.setId(CommonSQL.getNextSeq(TableNames.Order));

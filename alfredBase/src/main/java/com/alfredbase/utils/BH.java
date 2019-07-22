@@ -1,5 +1,6 @@
 package com.alfredbase.utils;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alfredbase.BaseApplication;
@@ -210,10 +211,7 @@ public class BH {
         return new BigDecimal(string);
     }
 
-    public static BigDecimal getBDThirdFormat(String string) {
-        if (string.contains(",")) {
-            string = string.replace(",", ".");
-        }
+    public static BigDecimal getBDThirdFormat(String string){
         if (CommonUtil.isNull(string))
             return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
         return new BigDecimal(threeFormat.format(new BigDecimal(string)));

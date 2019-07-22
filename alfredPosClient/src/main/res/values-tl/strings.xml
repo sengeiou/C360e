@@ -59,12 +59,12 @@
     <string name="please_enter_user_phone_number">Mangyaring ipasok ang numero ng telepono ng gumagamit</string>
     <string name="please_scan_card_or_phone">Mangyaring i-scan ang Stored-Card o punan ang numero ng telepono ng gumagamit</string>
     <string name="kot_print">KOT Print</string>
-    <string name="kot_print_together">KOT Print Together</string>
+    <string name="kot_print_together">KOT print magkasama</string>
     <string name="double_kot_print">Double KOT Print</string>
     <string name="double_bill_prints">Double Bill Prints</string>
     <string name="double_close_bill_prints">Double Close Bill Prints</string>
     <string name="print_order_summary">I-print ang Buod ng Order</string>
-    <string name="print_direction_up">Print Label Direction UP</string>
+    <string name="print_direction_up">Print label direksyon up</string>
     <string name="credit_card_rounding">Pag-ikot ng Credit Card</string>
     <string name="auto_go_to_table">Auto pumunta sa Table</string>
     <string name="sync_data">I-sync ang Data</string>
@@ -94,7 +94,7 @@
     <string name="warning">Babala</string>
     <string name="server">Server</string>
     <string name="loading">Naglo-load</string>
-    <string name="exit_program">Paki-click muli ang BACK upang lumabas</string>
+    <string name="exit_program">Mangyaring mag-click muli upang lumabas</string>
     <string name="drop_session_open">I-drop session \nupang magsimula</string>
     <string name="drop_session_close">Ibalik pabalik \nupang isara</string>
     <string name="manually_update">Hindi makatanggap ng data update message. \nDo kailangan mo nang mano-manong i-update ang data mula sa backoffice?</string>

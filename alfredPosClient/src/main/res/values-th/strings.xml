@@ -59,8 +59,8 @@
     <string name="please_scan_card_or_phone">กรุณาสแกนบัตรที่เก็บไว้หรือกรอกหมายเลขโทรศัพท์ของผู้ใช้</string>
     <string name="kot_print">พิมพ์ KOT</string>
     <string name="kot_print_together">KOT พิมพ์ด้วยกัน</string>
-    <string name="double_kot_print">Double KOT Print</string>
-    <string name="double_bill_prints">Double Bill Prints</string>
+    <string name="double_kot_print">พิมพ์คู่ KOT</string>
+    <string name="double_bill_prints">พิมพ์ใบเรียกเก็บเงินสองครั้ง</string>
     <string name="double_close_bill_prints">ปิดบิลคู่</string>
     <string name="print_order_summary">พิมพ์สรุปการสั่งซื้อ</string>
     <string name="print_direction_up">พิมพ์ป้ายกำกับทิศทางขึ้น</string>
@@ -93,7 +93,7 @@
     <string name="warning">การเตือน</string>
     <string name="server">เซิร์ฟเวอร์</string>
     <string name="loading">กำลังโหลด</string>
-    <string name="exit_program">โปรดคลิก BACK อีกครั้งเพื่อออก</string>
+    <string name="exit_program">โปรดคลิกกลับอีกครั้งเพื่อออก</string>
     <string name="drop_session_open">วางเซสชัน \nเพื่อเริ่ม</string>
     <string name="drop_session_close">วางกลับ \nเพื่อปิด</string>
     <string name="manually_update">ไม่ได้รับข้อความอัปเดตข้อมูล \nคุณต้องการอัปเดตข้อมูลจาก BackOffice ด้วยตนเองหรือไม่</string>
