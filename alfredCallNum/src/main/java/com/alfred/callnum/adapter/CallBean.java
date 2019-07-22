@@ -4,15 +4,19 @@ import java.io.Serializable;
 
 public class CallBean implements Serializable {
 
-    private  String  callNumber;
-    private  int  callType;
-    private  int  callTag;
-    private  boolean isUpdate = false;
+    private String callNumber;
+    private int callType;
+    private int callTag;
+    private int printerGroupId;
+    private String printerGroupName;
+    private boolean isUpdate = false;
 
-    public CallBean(String callNumber, int callType, int callTag) {
+    public CallBean(String callNumber, int callType, int callTag, String printerGroupName, int printerGroupId) {
         this.callNumber = callNumber;
         this.callType = callType;
         this.callTag = callTag;
+        this.printerGroupId = printerGroupId;
+        this.printerGroupName = printerGroupName;
     }
 
     public CallBean() {
@@ -48,6 +52,22 @@ public class CallBean implements Serializable {
 
     public void setUpdate(boolean update) {
         isUpdate = update;
+    }
+
+    public int getPrinterGroupId() {
+        return printerGroupId;
+    }
+
+    public void setPrinterGroupId(int printerGroupId) {
+        this.printerGroupId = printerGroupId;
+    }
+
+    public String getPrinterGroupName() {
+        return printerGroupName;
+    }
+
+    public void setPrinterGroupName(String printerGroupName) {
+        this.printerGroupName = printerGroupName;
     }
 
     @Override

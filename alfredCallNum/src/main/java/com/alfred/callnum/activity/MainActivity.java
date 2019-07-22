@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity {
     int viewId;
     Timer timer11;
     Timer timer = new Timer();
-    MyQueue queue = new MyQueue();
+    MyQueue<CallBean> queue = new MyQueue<>();
     private int callNumber = 3;
     private int callTime = 2800;
     private ImageView bg;
@@ -128,16 +128,16 @@ public class MainActivity extends BaseActivity {
                         try {
                             if (queue.QueueLength() > 0) {
 
-                                CallBean callBean = (CallBean) queue.deQueue();
-                                String name = callBean.getCallNumber().toString();
+                                CallBean callBean = queue.deQueue();
+                                if (callBean == null) return;
+
+                                String name = callBean.getCallNumber();
                                 if (oneFragment != null) {
                                     oneFragment.addData(0, callBean);
                                 }
 
-                                //      for (int j = 0; j < 2; j++) {
 
                                 LogUtil.e("time----", "tttttttt");
-//
                                 CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
 
                                 CallNumUtil.call(num1);
@@ -173,8 +173,6 @@ public class MainActivity extends BaseActivity {
 
     }
 
-
-//
 
     protected void initView() {
         super.initView();

@@ -3155,21 +3155,22 @@ public class MainPosHttpServer extends AlfredHttpServer {
         return resp;
     }
 
-    private Response handlerCallSpecifyNumber(String params) {
+    private Response handlerCallSpecifyNumber(final String params) {
         Map<String, Object> result = new HashMap<String, Object>();
         Response resp;
-        Gson gson = new Gson();
+//        Gson gson = new Gson();
         try {
-            JSONObject jsonObject = new JSONObject(params);
-            final String str = jsonObject.getString("callnumber");
-            final String tag = jsonObject.getString("numTag");
+//            JSONObject jsonObject = new JSONObject(params);
+//            final String str = jsonObject.getString("callNumber");
+//            final String tag = jsonObject.getString("numTag");
 
-            String ip = App.instance.getCallAppIp();
+//            String ip = App.instance.getCallAppIp();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-                        SyncCentre.getInstance().callAppNo(App.getTopActivity(), tag, str);
+//                        SyncCentre.getInstance().callAppNo(App.getTopActivity(), tag, str);
+                        SyncCentre.getInstance().callAppNo(App.getTopActivity(), params);
                     }
                 }
             }).start();

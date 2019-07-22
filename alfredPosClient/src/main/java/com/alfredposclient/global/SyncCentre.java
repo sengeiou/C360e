@@ -551,7 +551,7 @@ public class SyncCentre {
     }
 
     public void syncSubmitKotToNextKDS(KDSDevice kdsDevice, BaseActivity context,
-                                      Map<String, Object> parameters, Handler handler) throws Throwable {
+                                       Map<String, Object> parameters, Handler handler) throws Throwable {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEXT_KOT);
         HTTPKDSRequest.syncSubmitTmpKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
@@ -579,7 +579,11 @@ public class SyncCentre {
     public void callAppNo(final Context context, String tag, String num) {
         String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.CALL_POS_NUM;
         HttpAPI.callAppNo(context, url, syncHttpClient, tag, num);
+    }
 
+    public void callAppNo(final Context context, String params) {
+        String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.CALL_POS_NUM;
+        HttpAPI.callAppNo(context, url, syncHttpClient, params);
     }
 
     public void posCloseSession(final Context context) {

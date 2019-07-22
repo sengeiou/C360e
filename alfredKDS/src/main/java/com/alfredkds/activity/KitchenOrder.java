@@ -292,7 +292,7 @@ public class KitchenOrder extends BaseActivity {
                     if (!TextUtils.isEmpty(str)) {
                         loadingDialog.show();
                         Map<String, Object> parameters = new HashMap<String, Object>();
-                        parameters.put("callnumber", str);
+                        parameters.put("callNumber", str);
                         parameters.put("numTag", numTag);
                         SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
                     } else {
@@ -309,7 +309,7 @@ public class KitchenOrder extends BaseActivity {
                     if (!TextUtils.isEmpty(str)) {
                         loadingDialog.show();
                         Map<String, Object> parameters = new HashMap<String, Object>();
-                        parameters.put("callnumber", str);
+                        parameters.put("callNumber", str);
                         parameters.put("numTag", numTag);
                         SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
                     } else {
