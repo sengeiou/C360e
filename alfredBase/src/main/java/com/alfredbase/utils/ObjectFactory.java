@@ -460,7 +460,11 @@ public class ObjectFactory {
                 order.setPersons(tables.getPacks());
                 order.setOrderStatus(orderStatus);
                 order.setDiscountRate(ParamConst.DOUBLE_ZERO);
-                order.setSessionStatus(sessionStatus.getSession_status());
+                try {
+                    order.setSessionStatus(sessionStatus.getSession_status());
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
                 order.setPlaceId(tables.getPlacesId());
@@ -502,7 +506,11 @@ public class ObjectFactory {
                 order.setPersons(tables.getPacks());
                 order.setOrderStatus(ParamConst.ORDER_STATUS_KIOSK);
                 order.setDiscountRate(ParamConst.DOUBLE_ZERO);
-                order.setSessionStatus(sessionStatus.getSession_status());
+                try {
+                    order.setSessionStatus(sessionStatus.getSession_status());
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
                 order.setPlaceId(tables.getPlacesId());
@@ -550,7 +558,11 @@ public class ObjectFactory {
                         order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
                     order.setDiscountRate(ParamConst.DOUBLE_ZERO);
                     order.setTaxAmount(appOrder.getTaxAmount());
-                    order.setSessionStatus(sessionStatus.getSession_status());
+                    try {
+                        order.setSessionStatus(sessionStatus.getSession_status());
+                    }catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
                     order.setRestId(restaurant.getId());
                     order.setRevenueId(revenueCenter.getId());
                     order.setPlaceId(tables.getPlacesId());
