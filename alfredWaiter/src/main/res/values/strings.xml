@@ -45,7 +45,7 @@
     <string name="print_bill_failed">Failed to print bill</string>
     <string name="network_errors">Cannot get bill print at this moment: Network errors</string>
     <string name="order_closed">Order is closed, please select table and replace order again.</string>
-    <string name="order_not_edited">Order cannot be edited when under process. Please contact cashier to try again.</string>
+    <string name="order_not_edited">Table currently Billing. Cannot be edited.</string>
     <string name="order_split_settled">The order split is settled</string>
     <string name="order_split">The order split </string>
     <string name="settled"> is settled</string>

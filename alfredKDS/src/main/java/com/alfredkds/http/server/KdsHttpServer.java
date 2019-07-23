@@ -126,6 +126,10 @@ public class KdsHttpServer extends AlfredHttpServer {
 		try {
 			JSONObject jsonObject = new JSONObject(params);
 			Gson gson = new Gson();
+			KotSummary kotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
+			if(kotSummary != null){
+				KotSummarySQL.update(kotSummary);
+			}
 			KotItemDetail kotItemDetail = gson.fromJson(jsonObject.optString("tansferKotItem"), KotItemDetail.class);
 			KotItemDetailSQL.update(kotItemDetail);
 			App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
