@@ -1169,7 +1169,7 @@ public class MainPage extends BaseActivity {
                             }).start();
                             setPAXWindow.show(SetPAXWindow.APP_ORDER, context.getResources().getString(R.string.no_of_pax));
                         } else {
-                            DialogFactory.showOneButtonCompelDialog(context, "警告", "请选择空桌", null);
+                            DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.please_select_empty_table), null);
                         }
                     }
                 }
@@ -1486,7 +1486,7 @@ public class MainPage extends BaseActivity {
                             if (transfItemOrderDetail != null
                                     && transfItemOrderDetail.getItemNum() != null) {
                                 if (transfItemOrderDetail.getItemNum().intValue() > 1) {
-                                    DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning), "Transfer all ?", "Split", "All", new OnClickListener() {
+                                    DialogFactory.commonTwoBtnDialog(context, context.getString(R.string.warning), getString(R.string.transfer), getString(R.string.split_pay), getString(R.string.all_pay), new OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             if (transfItemOrderDetail.getItemNum().intValue() == 2) {
@@ -1497,7 +1497,7 @@ public class MainPage extends BaseActivity {
                                                 showTables();
                                             } else {
                                                 int maxNum = transfItemOrderDetail.getItemNum().intValue();
-                                                setPAXWindow.show(SetPAXWindow.TRANSFER_ITEM_SPLIT, "1", "The number must be less than " + maxNum, maxNum);
+                                                setPAXWindow.show(SetPAXWindow.TRANSFER_ITEM_SPLIT, "1", getString(R.string.amount_less_than) +" "+ maxNum, maxNum);
                                             }
                                         }
                                     }, new OnClickListener() {

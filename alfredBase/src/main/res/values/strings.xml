@@ -17,7 +17,6 @@
     <string name="enter_amount_of_cash_in_drawer">Enter amount of cash in drawer</string>
     <string name="settings">Settings</string>
     <string name="setting">Setting</string>
-    <string name="amount_less_than">Amount less than $100,000</string>
     <string name="done">Done</string>
     <string name="edit">Edit</string>
     <string name="stored_card">Stored-Card</string>
@@ -422,4 +421,18 @@
 
     <string name="change_to_all_device">change to all connected devices</string>
     <string name="pos_only">POS only</string>
+
+    <string name="hour">Hour</string>
+    <string name="minute">Minute</string>
+    <string name="second">Second</string>
+    <string name="please_add_place">Please add places first!</string>
+    <string name="want_to_save">Want to save ?</string>
+    <string name="secondary_screen_connection_failed">Secondary screen connection failed</string>
+    <string name="secondary_screen_connection_success_with_status">The secondary screen is connected successfully, and the secondary screen status : </string>
+    <string name="prepare_to_send_data">Prepare to send data</string>
+    <string name="send_data_success">Send data: successful</string>
+    <string name="send_data_failed">Send data: failed</string>
+    <string name="send_data_process">Send data: process</string>
+    <string name="amount_less_than">Amount less than</string>
+
 </resources>

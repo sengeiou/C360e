@@ -191,7 +191,6 @@
     <string name="online_order">Pemesanan Online</string>
     <string name="the_most_selections">% d pilihan paling banyak</string>
     <string name="table_dining">Meja telah ditempati</string>
-    <string name="At_least">pilih LEAST</string>
     <string name="items"> pengubah</string>
     <string name="at_only">pilih HANYA</string>
     <!-- html -->
@@ -320,5 +319,17 @@
 
     <string name="welcome_to">Selamat Datang di</string>
     <string name="please_clock_in">Mohon Masukan waktu</string>
+    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="ask_delete_place">Anda yakin akan menghapus tempat ini?</string>
+
+    <string name="days">Hari</string>
+    <string name="day">Hari</string>
+    <string name="split_pay">Membagi</string>
+    <string name="all_pay">Semua</string>
+    <string name="at_least">pilih paling tidak</string>
+    <string name="please_input_amount">Silakan masukkan jumlah!</string>
+    <string name="operation_irreversible">Operasi ini tidak dapat dibatalkan, Anda yakin?</string>
+    <string name="table_name_used">Nama Tabel sudah digunakan. Silakan gunakan nama lain.</string>
+    <string name="please_select_empty_table">Silakan pilih tabel kosong</string>
 
 </resources>

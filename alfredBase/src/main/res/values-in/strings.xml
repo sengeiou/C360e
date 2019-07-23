@@ -17,7 +17,6 @@
     <string name="enter_amount_of_cash_in_drawer">Masukkan jumlah uang tunai di laci</string>
     <string name="settings">Pengaturan</string>
     <string name="setting">Pengaturan</string>
-    <string name="amount_less_than">Jumlahnya kurang dari $ 100.000</string>
     <string name="done">Selesai</string>
     <string name="edit">Edit</string>
     <string name="stored_card">Kartu Tersimpan</string>
@@ -417,4 +416,18 @@
     <string name="choose_language">Pilih bahasa</string>
     <string name="change_to_all_device">ubah ke semua perangkat yang terhubung</string>
     <string name="pos_only">Hanya POS</string>
+
+    <string name="hour">Jam</string>
+    <string name="minute">Menit</string>
+    <string name="second">Kedua</string>
+    <string name="please_add_place">Silakan tambahkan tempat dulu!</string>
+    <string name="want_to_save">Ingin menabung?</string>
+    <string name="secondary_screen_connection_failed">Koneksi layar sekunder gagal</string>
+    <string name="secondary_screen_connection_success_with_status">Layar sekunder terhubung dengan sukses, dan status layar sekunder:</string>
+    <string name="prepare_to_send_data">Bersiaplah untuk mengirim data</string>
+    <string name="send_data_success">Kirim data: berhasil</string>
+    <string name="send_data_failed">Kirim data: gagal</string>
+    <string name="send_data_process">Kirim data: proses</string>
+    <string name="amount_less_than">Jumlahnya kurang dari</string>
+
 </resources>

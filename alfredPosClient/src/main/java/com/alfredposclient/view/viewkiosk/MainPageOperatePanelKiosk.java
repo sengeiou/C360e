@@ -302,12 +302,12 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                             }
                                             if (modifierCheck.getNum() > 0 && needCheck) {
                                                 if (checkMap.containsKey(modifierCheck.getItemName())) {
-                                                    categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.At_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
+                                                    categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.at_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
                                                     checkMap.put(modifierCheck.getItemName(), categorMap);
 
                                                 } else {
                                                     categorMap = new HashMap<Integer, String>();
-                                                    categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.At_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
+                                                    categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.at_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
                                                     checkMap.put(modifierCheck.getItemName(), categorMap);
                                                 }
                                             }
@@ -521,12 +521,12 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                             //  checkMap.put(modifierCheck.getItemName() + "," + modifierCheck.getModifierCategoryName(), modifierCheck.getNum() + "");
                             if (checkMap.containsKey(modifierCheck.getItemName())) {
 //
-                                categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.At_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
+                                categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.at_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
                                 checkMap.put(modifierCheck.getItemName(), categorMap);
 
                             } else {
                                 categorMap = new HashMap<Integer, String>();
-                                categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.At_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
+                                categorMap.put(modifierCheck.getModifierCategoryId(), modifierCheck.getModifierCategoryName() + " " + parent.getResources().getString(R.string.at_least) + " " + modifierCheck.getMinNum() + " " + parent.getResources().getString(R.string.items));
                                 checkMap.put(modifierCheck.getItemName(), categorMap);
                             }
                         }

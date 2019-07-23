@@ -180,7 +180,7 @@ public class BOHSettlementActivity extends BaseActivity {
             case R.id.btn_save:
                 String amount = et_amount.getText().toString();
                 if(TextUtils.isEmpty(amount.trim())){
-                    UIHelp.showShortToast(context, "Please input amount!");
+                    UIHelp.showShortToast(context, context.getString(R.string.please_input_amount));
                     return;
                 }
                 Map<String, Object> map = new HashMap<String, Object>();
@@ -279,7 +279,7 @@ public class BOHSettlementActivity extends BaseActivity {
             }
             viewHolder.tv_amount_auth_by.setText(userName);
             int day = (int) ((System.currentTimeMillis()-bohHoldSettlement.getDaysDue())/(24*60*60*1000));
-            viewHolder.tv_due_days.setText(day > 2 ? day + "days" : day + "day");
+            viewHolder.tv_due_days.setText(day > 2 ? day + getString(R.string.days) : day + getString(R.string.day));
             viewHolder.tv_bill_date.setText(TimeUtil.getTime(bohHoldSettlement.getDaysDue()));
             if(selectPosition == position){
                 convertView.setBackgroundColor(getResources().getColor(R.color.white));

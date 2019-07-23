@@ -17,7 +17,6 @@
     <string name="enter_amount_of_cash_in_drawer">أدخل مبلغ النقد في الدرج</string>
     <string name="settings">الإعدادات</string>
     <string name="setting">ضبط</string>
-    <string name="amount_less_than">المبلغ أقل من 100،000 دولار</string>
     <string name="done">فعله</string>
     <string name="edit">تصحيح</string>
     <string name="stored_card">تخزين بطاقة</string>
@@ -417,4 +416,18 @@
     <string name="choose_language">اختر اللغة</string>
     <string name="change_to_all_device">التغيير إلى جميع الأجهزة المتصلة</string>
     <string name="pos_only">نقاط البيع فقط</string>
+
+    <string name="hour">ساعة</string>
+    <string name="minute">اللحظة</string>
+    <string name="second">ثانيا</string>
+    <string name="please_add_place">الرجاء إضافة الأماكن أولاً!</string>
+    <string name="want_to_save">تريد حفظ ؟</string>
+    <string name="secondary_screen_connection_failed">فشل اتصال الشاشة الثانوية</string>
+    <string name="secondary_screen_connection_success_with_status">الشاشة الثانوية متصلة بنجاح ، وحالة الشاشة الثانوية:</string>
+    <string name="prepare_to_send_data">الاستعداد لإرسال البيانات</string>
+    <string name="send_data_success">إرسال البيانات: ناجحة</string>
+    <string name="send_data_failed">إرسال البيانات: فشل</string>
+    <string name="send_data_process">إرسال البيانات: العملية</string>
+    <string name="amount_less_than">كمية أقل من</string>
+
 </resources>

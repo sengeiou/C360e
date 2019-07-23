@@ -999,9 +999,9 @@ public class HttpAPI {
                 if (resultCode == ResultCode.USER_NO_PERMIT) {
 
                     DialogFactory.commonTwoBtnDialog(App.getTopActivity(),
-                            "Warning",
+                            App.instance.getResources().getString(R.string.warning),
                             App.instance.getResources().getString(com.alfredbase.R.string.user_no_permission) + "\nRelogin?",
-                            "OK", App.instance.getResources().getString(com.alfredbase.R.string.no).toUpperCase(), new View.OnClickListener() {
+                            App.instance.getResources().getString(com.alfredbase.R.string.ok).toUpperCase(), App.instance.getResources().getString(com.alfredbase.R.string.no).toUpperCase(), new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     OrderDetailSQL.deleteAllOrderDetail();

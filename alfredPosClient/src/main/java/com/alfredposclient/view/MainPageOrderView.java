@@ -166,12 +166,12 @@ public class MainPageOrderView extends LinearLayout {
 					}
 					if(modifierCheck.getNum()>0 && needCheck) {
 						if(checkMap.containsKey(modifierCheck.getItemName())){
-							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
+							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.at_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
 							checkMap.put(modifierCheck.getItemName(),categorMap);
 
 						}else {
 							categorMap=new HashMap<Integer,String>();
-							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.At_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
+							categorMap.put(modifierCheck.getModifierCategoryId(),modifierCheck.getModifierCategoryName()+" "+context.getResources().getString(R.string.at_least)+" "+modifierCheck.getMinNum()+" "+context.getResources().getString(R.string.items));
 							checkMap.put(modifierCheck.getItemName(),categorMap);
 						}
 					}

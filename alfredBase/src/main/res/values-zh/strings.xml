@@ -17,7 +17,6 @@
     <string name="enter_amount_of_cash_in_drawer">输入抽屉中的现金金额</string>
     <string name="settings">设置</string>
     <string name="setting">设置</string>
-    <string name="amount_less_than">金额低于100,000美元</string>
     <string name="done">完成</string>
     <string name="edit">编辑</string>
     <string name="stored_card">存储卡</string>
@@ -416,4 +415,16 @@
     <string name="change_to_all_device">更改为所有连接的设备</string>
     <string name="pos_only">仅限POS</string>
 
+    <string name="hour">小时</string>
+    <string name="minute">分钟</string>
+    <string name="second">第二</string>
+    <string name="please_add_place">请先添加地方！</string>
+    <string name="want_to_save">想要保存？</string>
+    <string name="secondary_screen_connection_failed">辅助屏幕连接失败</string>
+    <string name="secondary_screen_connection_success_with_status">辅助屏幕已成功连接，并且辅助屏幕状态：</string>
+    <string name="prepare_to_send_data">准备发送数据</string>
+    <string name="send_data_success">发送数据：成功</string>
+    <string name="send_data_failed">发送数据：失败</string>
+    <string name="send_data_process">发送数据：进程</string>
+    <string name="amount_less_than">金额少于</string>
 </resources>

@@ -1522,7 +1522,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
     }
 
     public void voidItem(final OrderDetail orderDetail) {
-        DialogFactory.commonTwoBtnDialog(parent, "Warring", "This operation is irreversible,\nAre you sure ?", parent.getString(R.string.yes).toUpperCase(), parent.getString(R.string.no).toUpperCase(), new OnClickListener() {
+        DialogFactory.commonTwoBtnDialog(parent, parent.getString(R.string.warning), parent.getString(R.string.operation_irreversible), parent.getString(R.string.yes).toUpperCase(), parent.getString(R.string.no).toUpperCase(), new OnClickListener() {
             @Override
             public void onClick(View v) {
                 OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail, oldTotal);

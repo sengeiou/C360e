@@ -17,7 +17,6 @@
     <string name="enter_amount_of_cash_in_drawer">Ipasok ang halaga ng cash sa drawer</string>
     <string name="settings">Mga Setting</string>
     <string name="setting">Pagtatakda</string>
-    <string name="amount_less_than">Halaga na mas mababa sa $ 100,000</string>
     <string name="done">Tapos na</string>
     <string name="edit">I-edit</string>
     <string name="stored_card">Naka-imbak-Card</string>
@@ -416,5 +415,18 @@
     <string name="choose_language">Piliin ang Wika</string>
     <string name="change_to_all_device">baguhin sa lahat ng mga nakakonektang device</string>
     <string name="pos_only">POS lamang</string>
+
+    <string name="hour">Oras</string>
+    <string name="minute">Minuto</string>
+    <string name="second">Pangalawa</string>
+    <string name="please_add_place">Mangyaring magdagdag ng mga lugar muna!</string>
+    <string name="want_to_save">Gusto mong i-save?</string>
+    <string name="secondary_screen_connection_failed">Nabigo ang koneksyon sa sekundaryong screen</string>
+    <string name="secondary_screen_connection_success_with_status">Ang ikalawang screen ay matagumpay na nakakonekta, at ang katayuan ng sekundaryong screen:</string>
+    <string name="prepare_to_send_data">Maghanda upang magpadala ng data</string>
+    <string name="send_data_success">Magpadala ng data: matagumpay</string>
+    <string name="send_data_failed">Magpadala ng data: nabigo</string>
+    <string name="send_data_process">Magpadala ng data: proseso</string>
+    <string name="amount_less_than">Mas mababa sa halaga</string>
 
 </resources>

@@ -17,7 +17,6 @@
     <string name="enter_amount_of_cash_in_drawer">Nhập số lượng tiền mặt trong ngăn kéo</string>
     <string name="settings">Cài đặt</string>
     <string name="setting">Cài đặt</string>
-    <string name="amount_less_than">Số tiền ít hơn 100.000 đô la</string>
     <string name="done">Làm xong</string>
     <string name="edit">Chỉnh sửa</string>
     <string name="stored_card">Thẻ lưu trữ</string>
@@ -417,4 +416,16 @@
     <string name="change_to_all_device">thay đổi tất cả các thiết bị được kết nối</string>
     <string name="pos_only">Chỉ POS</string>
 
+    <string name="hour">Giờ</string>
+    <string name="minute">Phút</string>
+    <string name="second">Thứ hai</string>
+    <string name="please_add_place">Vui lòng thêm địa điểm đầu tiên!</string>
+    <string name="want_to_save">Bạn muốn tiết kiệm?</string>
+    <string name="secondary_screen_connection_failed">Kết nối màn hình phụ không thành công</string>
+    <string name="secondary_screen_connection_success_with_status">Màn hình phụ được kết nối thành công và trạng thái màn hình phụ:</string>
+    <string name="prepare_to_send_data">Chuẩn bị gửi dữ liệu</string>
+    <string name="send_data_success">Gửi dữ liệu: thành công</string>
+    <string name="send_data_failed">Gửi dữ liệu: thất bại</string>
+    <string name="send_data_process">Gửi dữ liệu: quá trình</string>
+    <string name="amount_less_than">Số tiền ít hơn</string>
 </resources>

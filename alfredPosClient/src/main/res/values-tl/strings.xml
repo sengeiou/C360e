@@ -192,7 +192,6 @@
     <string name="online_order">Online Order</string>
     <string name="the_most_selections">% d na mga seleksyon sa karamihan</string>
     <string name="table_dining">Ang talahanayan ay inookupahan</string>
-    <string name="At_least">piliin ang MAHALAGA</string>
     <string name="items"> modifier</string>
     <string name="at_only">piliin LAMANG</string>
     <!-- html -->
@@ -321,5 +320,16 @@
 
     <string name="welcome_to">Maligayang pagdating sa</string>
     <string name="please_clock_in">Mangyaring Clock In</string>
+    <string name="ask_delete_place">Sigurado ka bang tanggalin ang lugar na ito?</string>
+
+    <string name="days">Araw</string>
+    <string name="day">Araw</string>
+    <string name="split_pay">Hatiin</string>
+    <string name="all_pay">Lahat</string>
+    <string name="at_least">pumili ng hindi bababa sa</string>
+    <string name="please_input_amount">Mangyaring input halaga!</string>
+    <string name="operation_irreversible">Ang operasyon na ito ay hindi maibabalik, Sigurado ka ba?</string>
+    <string name="table_name_used">Pangalan ng Table na ginagamit na. Mangyaring gamitin ang ibang pangalan.</string>
+    <string name="please_select_empty_table">Mangyaring pumili ng isang walang laman na talahanayan</string>
 
 </resources>

@@ -390,7 +390,7 @@ public class App extends BaseApplication {
                     hasSecondScreen = false;
                     LogUtil.d(TAG, "副屏连接失败");
                     if (isOpenLog)
-                        UIHelp.showToast(getTopActivity(), "副屏连接失败");
+                        UIHelp.showToast(getTopActivity(), getTopActivity().getString(R.string.secondary_screen_connection_failed));
                 }
 
                 @Override
@@ -400,7 +400,7 @@ public class App extends BaseApplication {
                     LogUtil.d(TAG, "副屏连接成功,副屏状态:" + state);
                     if (getTopActivity() != null) {
                         if (isOpenLog)
-                            UIHelp.showToast(getTopActivity(), "副屏连接成功,副屏状态:" + state);
+                            UIHelp.showToast(getTopActivity(), getString(R.string.secondary_screen_connection_success_with_status) + state);
                     }
                 }
             });
@@ -805,7 +805,7 @@ public class App extends BaseApplication {
         } else {
             if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
                 if (isDebug)
-                    UIHelp.showToast(App.getTopActivity(), "准备发送数据:" + App.instance.getConnState());
+                    UIHelp.showToast(App.getTopActivity(), getString(R.string.prepare_to_send_data) + App.instance.getConnState());
                 showWelcomeToSecondScreen();
             } else {
                 sendImageToSecondScreenByMoonearly();
@@ -966,19 +966,19 @@ public class App extends BaseApplication {
             @Override
             public void onSendSuccess(long taskId) {
                 if (isOpenLog)
-                    UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
+                    UIHelp.showToast(App.getTopActivity(), getString(R.string.send_data_success));
             }
 
             @Override
             public void onSendFail(int errorId, String errorInfo) {
                 if (isOpenLog)
-                    UIHelp.showToast(App.getTopActivity(), "发送数据:失败,\n失败信息" + errorInfo);
+                    UIHelp.showToast(App.getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
             }
 
             @Override
             public void onSendProcess(long totle, long sended) {
                 if (isOpenLog)
-                    UIHelp.showToast(App.getTopActivity(), "发送数据:中" + jsonStr);
+                    UIHelp.showToast(App.getTopActivity(), getString(R.string.send_data_process) + jsonStr);
             }
         });
         App.instance.getmDSKernel().sendData(dsPacket);
@@ -1040,7 +1040,7 @@ public class App extends BaseApplication {
                 @Override
                 public void onSendFail(int errorId, String errorInfo) {
                     if (isOpenLog) {
-                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                     }
                 }
 
@@ -1069,14 +1069,14 @@ public class App extends BaseApplication {
                 @Override
                 public void onSendFaile(int errorId, String errorInfo) {
                     if (isOpenLog) {
-                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                     }
                 }
 
                 @Override
                 public void onSendFileFaile(String path, int errorId, String errorInfo) {
                     if (isOpenLog) {
-                        UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                        UIHelp.showShortToast(getTopActivity(), path + getString(R.string.send_data_failed) + errorInfo);
                     }
                 }
 
@@ -1109,7 +1109,7 @@ public class App extends BaseApplication {
                         @Override
                         public void onSendFail(int errorId, String errorInfo) {
                             if (isOpenLog) {
-                                UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                                UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                             }
                         }
 
@@ -1147,7 +1147,7 @@ public class App extends BaseApplication {
                     @Override
                     public void onSendFail(int errorId, String errorInfo) {
                         if (isOpenLog) {
-                            UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                            UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                         }
                     }
 
@@ -1170,14 +1170,14 @@ public class App extends BaseApplication {
                     @Override
                     public void onSendFaile(int errorId, String errorInfo) {
                         if (isOpenLog) {
-                            UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                            UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                         }
                     }
 
                     @Override
                     public void onSendFileFaile(String path, int errorId, String errorInfo) {
                         if (isOpenLog) {
-                            UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                            UIHelp.showShortToast(getTopActivity(), path +getString(R.string.send_data_failed) + errorInfo);
                         }
                     }
 

@@ -191,7 +191,6 @@
     <string name="online_order">สั่งซื้อออนไลน์</string>
     <string name="the_most_selections">% d รายการที่เลือกมากที่สุด</string>
     <string name="table_dining">ตารางถูกครอบครอง</string>
-    <string name="At_least">เลือก LEAST</string>
     <string name="items"> ส่วนขยาย</string>
     <string name="at_only">เลือกเท่านั้น</string>
     <!-- html -->
@@ -320,5 +319,17 @@
 
     <string name="welcome_to">ยินดีต้อนรับสู่</string>
     <string name="please_clock_in">กรุณานาฬิกาใน</string>
+    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="ask_delete_place">คุณแน่ใจที่จะลบสถานที่นี้?</string>
+
+    <string name="days">วัน</string>
+    <string name="day">วัน</string>
+    <string name="split_pay">แยก</string>
+    <string name="all_pay">ทั้งหมด</string>
+    <string name="at_least">เลือกอย่างน้อย</string>
+    <string name="please_input_amount">กรุณาใส่จำนวนเงิน!</string>
+    <string name="operation_irreversible">การดำเนินการนี้กลับไม่ได้คุณแน่ใจหรือ</string>
+    <string name="table_name_used">ชื่อตารางถูกใช้งานแล้ว กรุณาใช้ชื่ออื่น</string>
+    <string name="please_select_empty_table">โปรดเลือกตารางที่ว่างเปล่า</string>
 
 </resources>

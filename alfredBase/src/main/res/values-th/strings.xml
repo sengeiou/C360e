@@ -17,7 +17,6 @@
     <string name="enter_amount_of_cash_in_drawer">ใส่จำนวนเงินสดในลิ้นชัก</string>
     <string name="settings">การตั้งค่า</string>
     <string name="setting">การตั้งค่า</string>
-    <string name="amount_less_than">จำนวนเงินน้อยกว่า $ 100,000</string>
     <string name="done">เสร็จสิ้น</string>
     <string name="edit">แก้ไข</string>
     <string name="stored_card">เก็บไว้-Card</string>
@@ -415,5 +414,18 @@
     <string name="choose_language">เลือกภาษา</string>
     <string name="change_to_all_device">เปลี่ยนเป็นอุปกรณ์ที่เชื่อมต่อทั้งหมด</string>
     <string name="pos_only">POS เท่านั้น</string>
+
+    <string name="hour">ชั่วโมง</string>
+    <string name="minute">นาที</string>
+    <string name="second">ที่สอง</string>
+    <string name="please_add_place">กรุณาเพิ่มสถานที่ก่อน!</string>
+    <string name="want_to_save">ต้องการบันทึกหรือไม่</string>
+    <string name="secondary_screen_connection_failed">การเชื่อมต่อหน้าจอรองล้มเหลว</string>
+    <string name="secondary_screen_connection_success_with_status">เชื่อมต่อหน้าจอรองสำเร็จแล้วและหน้าจอรองแสดงสถานะ:</string>
+    <string name="prepare_to_send_data">เตรียมส่งข้อมูล</string>
+    <string name="send_data_success">ส่งข้อมูล: สำเร็จ</string>
+    <string name="send_data_failed">ส่งข้อมูล: ล้มเหลว</string>
+    <string name="send_data_process">ส่งข้อมูล: กระบวนการ</string>
+    <string name="amount_less_than">จำนวนเงินน้อยกว่า</string>
 
 </resources>

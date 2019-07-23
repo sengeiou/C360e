@@ -387,7 +387,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 TableInfo sqlTable = TableInfoSQL.getTableByName(name);
                 if (sqlTable != null) {
                     if (sqlTable.getPosId().intValue() != newTable.getPosId().intValue()) {
-                        UIHelp.showShortToast(mainPage, "Table Name already in use. Please use another name.");
+                        UIHelp.showShortToast(mainPage, getString(R.string.table_name_used));
                         return;
                     }
                 }
@@ -577,13 +577,13 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             case R.id.tv_table_edit: {
                 BugseeHelper.buttonClicked("Table Edit");
                 if (places == null || places.size() == 0) {
-                    UIHelp.showShortToast(mainPage, "Please add places first!");
+                    UIHelp.showShortToast(mainPage, getString(R.string.please_add_place));
                     ll_table_left.setVisibility(View.VISIBLE);
                     return;
                 } else if (places.size() == 1) {
                     try {
                         if (places.get(0).getIsKiosk() == ParamConst.REVENUECENTER_ISNOT_KIOSK) {
-                            UIHelp.showShortToast(mainPage, "Please add places first!");
+                            UIHelp.showShortToast(mainPage, getString(R.string.please_add_place));
                             ll_table_left.setVisibility(View.VISIBLE);
                             return;
                         }
@@ -601,7 +601,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                             List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
                                     .getOrderDetails(order.getId());
                             if (!orderDetailsUnIncludeVoid.isEmpty()) {
-                                UIHelp.showShortToast(mainPage, "There are some bills not closed yet.");
+                                UIHelp.showShortToast(mainPage, getString(R.string.bill_not_closed));
                                 return;
                             } else {
                                 OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
@@ -668,7 +668,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 case UPDATE_PLACE_TABLE_SUCCEED:
                     TableInfoSQL.addTablesList(newTables);
                     dismissDialog();
-                    UIHelp.showShortToast(mainPage, "Save success");
+                    UIHelp.showShortToast(mainPage, getString(R.string.save_success));
                     canEdit = false;
                     changeLayoutStatus();
                     break;
@@ -772,7 +772,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     if (canEdit) {
                         DialogFactory.commonTwoBtnDialog(mainPage,
                                 mainPage.getResources().getString(R.string.warning),
-                                "Want to save the edited content?",
+                                getString(R.string.want_to_save),
                                 mainPage.getResources().getString(R.string.cancel),
                                 mainPage.getResources().getString(R.string.ok),
                                 null,
@@ -844,7 +844,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                             }
                             DialogFactory.commonTwoBtnDialog(mainPage,
                                     mainPage.getResources().getString(R.string.warning),
-                                    "Are you sure to delete this place?",
+                                    mainPage.getResources().getString(R.string.ask_delete_place),
                                     mainPage.getResources().getString(R.string.cancel),
                                     mainPage.getResources().getString(R.string.ok),
                                     null,

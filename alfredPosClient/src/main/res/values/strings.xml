@@ -191,7 +191,6 @@
     <string name="online_order">Online Order</string>
     <string name="the_most_selections">%d selections at most</string>
     <string name="table_dining">The table has been occupied</string>
-    <string name="At_least">choose LEAST  </string>
     <string name="items"> modifier</string>
     <string name="at_only">choose ONLY  </string>
     <!-- html -->
@@ -320,5 +319,16 @@
 
     <string name="welcome_to">Welcome to </string>
     <string name="please_clock_in">Please Clock In</string>
+    <string name="ask_delete_place">Are you sure to delete this place ?</string>
+    <string name="printer_app_name">AlfredRemotePrintService</string>
 
+    <string name="days">Days</string>
+    <string name="day">Day</string>
+    <string name="split_pay">Split</string>
+    <string name="all_pay">All</string>
+    <string name="at_least">choose least</string>
+    <string name="please_input_amount">Please input amount!</string>
+    <string name="operation_irreversible">This operation is irreversible, Are you sure ?</string>
+    <string name="table_name_used">Table Name already in use. Please use another name.</string>
+    <string name="please_select_empty_table">Please select an empty table</string>
 </resources>

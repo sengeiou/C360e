@@ -542,7 +542,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                         .setCancelText(getResources().getString(R.string.cancel))
                         .setLineSpacingMultiplier(1.5f)
                         .setTextColorCenter(Color.TRANSPARENT)
-                        .setLabels("hour", "minute", "second")
+                        .setLabels(getString(R.string.hour), getString(R.string.minute), getString(R.string.second))
                         .isRestoreItem(true)//切换时是否还原，设置默认选中第一项。
                         .isCenterLabel(true) //是否只显示中间选中项的label文字，false则每项item全部都带有label。
                         .setBackgroundId(getResources().getColor(R.color.white)) //设置外部遮罩颜色

@@ -208,7 +208,7 @@ public class StoredCardActivity extends BaseActivity implements SurfaceHolder.Ca
                     useUSBScanner = true;
 //                    UIHelp.showShortToast(context, "Please Scan the QR Coder");
                 } else {
-                    UIHelp.showShortToast(context, "Please input Scanner");
+                    UIHelp.showShortToast(context, getString(R.string.scan_qrcode));
                 }
             } else {
                 findViewById(R.id.rl_camera_scanner).setVisibility(View.VISIBLE);

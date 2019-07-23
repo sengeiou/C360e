@@ -103,7 +103,7 @@ public class PamentMethodAdapter extends BaseAdapter {
         }
 
         if (p.getIsPart() == 1) {
-            holder.pay.setText("Part-pay");
+            holder.pay.setText(context.getString(R.string.split_pay));
 
 
             if (p.getPartAcount() > 0) {
@@ -115,7 +115,7 @@ public class PamentMethodAdapter extends BaseAdapter {
                 holder.money.setVisibility(View.GONE);
             }
         } else {
-            holder.pay.setText("All-pay");
+            holder.pay.setText(context.getString(R.string.all_pay));
             holder.symbol.setVisibility(View.GONE);
             holder.money.setVisibility(View.GONE);
 
