@@ -374,7 +374,7 @@ public class CameraManager {
 
 	/**
 	 * A factory method to build the appropriate LuminanceSource object based on
-	 * the format of the preview buffers, as described by Camera.Parameters.
+	 * the formatLocale of the preview buffers, as described by Camera.Parameters.
 	 * 
 	 * @param data
 	 *            A preview frame.

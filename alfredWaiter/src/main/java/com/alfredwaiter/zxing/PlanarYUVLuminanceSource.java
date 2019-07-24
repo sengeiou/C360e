@@ -25,7 +25,7 @@ import com.google.zxing.LuminanceSource;
  * with the option to crop to a rectangle within the full data. This can be used to exclude
  * superfluous pixels around the perimeter and speed up decoding.
  *
- * It works for any pixel format where the Y channel is planar and appears first, including
+ * It works for any pixel formatLocale where the Y channel is planar and appears first, including
  * YCbCr_420_SP and YCbCr_422_SP.
  *
  * @author dswitkin@google.com (Daniel Switkin)

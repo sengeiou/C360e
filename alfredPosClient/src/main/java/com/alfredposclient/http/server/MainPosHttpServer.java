@@ -5,7 +5,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -2615,7 +2614,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
                         if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-                            String orderNo = kotSummary.getNumTag() + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
+                            String orderNo = kotSummary.getNumTag() + IntegerUtils.formatLocale(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
                             SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getNumTag(), orderNo);
 
                         }

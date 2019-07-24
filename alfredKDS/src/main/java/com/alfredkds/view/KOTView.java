@@ -235,7 +235,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
         if (!TextUtils.isEmpty(kot.getKotSummary().getEmpName())) {
             orderNoStr = orderNoStr + "(Emp:" + kot.getKotSummary().getEmpName() + ")";
         }
-        String kioskOrderNoStr = context.getResources().getString(R.string.order_no) + kot.getKotSummary().getNumTag() + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
+        String kioskOrderNoStr = context.getResources().getString(R.string.order_no) + kot.getKotSummary().getNumTag() + IntegerUtils.formatLocale(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
         if (kot.getKotSummary() != null && kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.TAKE_AWAY) {
             orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.takeaway) + ")";
             kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.takeaway) + ")";
@@ -312,10 +312,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
         date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
         time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
 
-//		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+//		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
 //		long currentTime = System.currentTimeMillis();
         long createTime = kot.getKotSummary().getUpdateTime();
-//		final String str = sdf.format(new Date(currentTime - createTime));
+//		final String str = sdf.formatLocale(new Date(currentTime - createTime));
         tv_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
 //		int hour = (int) ((System.currentTimeMillis() - createTime) / 1000 / 60/60);
 //		tv_progress.setFormat("0"+String.valueOf(hour)+":%s");

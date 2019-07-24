@@ -244,7 +244,7 @@ public class KitchenOrder extends BaseActivity {
                     break;
                 case App.HANDLER_KOT_CALL_NUM: {
                     KotItem kotItem = (KotItem) msg.obj;
-                    String str = kotItem.getNumTag() + IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
+                    String str = kotItem.getNumTag() + IntegerUtils.formatLocale(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
                     String numTag = kotItem.getNumTag();
                     int id = msg.arg2;
                     if (!TextUtils.isEmpty(str)) {
@@ -261,7 +261,7 @@ public class KitchenOrder extends BaseActivity {
                 case App.HANDLER_KOT_CALL_NUM_OLD: {
                     Kot kot = (Kot) msg.obj;
                     KotSummary k = kot.getKotSummary();
-                    String str = k.getNumTag() + IntegerUtils.fromat(k.getRevenueCenterIndex(), k.getOrderNo() + "");
+                    String str = k.getNumTag() + IntegerUtils.formatLocale(k.getRevenueCenterIndex(), k.getOrderNo() + "");
                     String numTag = k.getNumTag();
                     int id = msg.arg2;
                     if (!TextUtils.isEmpty(str)) {
@@ -673,7 +673,7 @@ public class KitchenOrder extends BaseActivity {
         }
         kotId.setText(kot.getKotSummary().getId() + "");
         orderId.setText(context.getResources().getString(R.string.order_no) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo() + "");
-        tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_no) + kot.getKotSummary().getNumTag() + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
+        tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_no) + kot.getKotSummary().getNumTag() + IntegerUtils.formatLocale(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
         table.setText(context.getResources().getString(R.string.table) + " - " + kot.getKotSummary().getTableName() + "");
         posName.setText(kot.getKotSummary().getRevenueCenterName() + "");
         date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));

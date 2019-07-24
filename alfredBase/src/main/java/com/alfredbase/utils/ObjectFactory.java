@@ -2,6 +2,7 @@ package com.alfredbase.utils;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
@@ -37,7 +38,6 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -66,7 +66,6 @@ import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
-import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
 import com.alfredbase.store.sql.BohHoldSettlementSQL;
@@ -1841,6 +1840,7 @@ public class ObjectFactory {
         printerTitle.setOp(userName);
         printerTitle.setPos(revenue.getId().intValue() + "");
         printerTitle.setDate(TimeUtil.getPrintDate(order.getCreateTime()));
+        Log.wtf("Test_","t1");
         printerTitle.setBill_NO(ParamHelper.getPrintOrderBillNo(OrderBillSQL.getOrderBillByOrder(order).getBillNo()));
         printerTitle.setTime(TimeUtil.getPrintTime(order.getCreateTime()));
         printerTitle.setTableName(tableName);
@@ -1853,7 +1853,7 @@ public class ObjectFactory {
         printerTitle.setIsKiosk(revenue.getIsKiosk());
         printerTitle.setCopy(copy);
         if (revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
-            printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
+            printerTitle.setOrderNo(IntegerUtils.formatLocale(revenue.getIndexId(), order.getOrderNo().toString()));
         } else {
             printerTitle.setOrderNo(order.getOrderNo().toString());
         }
@@ -1875,6 +1875,7 @@ public class ObjectFactory {
         printerTitle.setOp(userName);
         printerTitle.setPos(revenue.getId() + "");
         printerTitle.setDate(TimeUtil.getPrintDate(orderSplit.getCreateTime()));
+        Log.wtf("Test_","t2");
         printerTitle.setBill_NO(ParamHelper.getPrintOrderBillNo(orderBill.getBillNo()));
         printerTitle.setTime(TimeUtil.getPrintTime(orderSplit.getCreateTime()));
         printerTitle.setTableName(tableName);
@@ -1888,7 +1889,7 @@ public class ObjectFactory {
         printerTitle.setCopy(copy);
 //		printerTitle.setOrderNo(orderSplit.getOrderId().toString());
         if (revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
-            printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
+            printerTitle.setOrderNo(IntegerUtils.formatLocale(revenue.getIndexId(), order.getOrderNo().toString()));
         } else {
             printerTitle.setOrderNo(order.getOrderNo().toString());
         }
@@ -1913,6 +1914,7 @@ public class ObjectFactory {
         long time = System.currentTimeMillis();
         printerTitle.setPos(revenueId + "");
         printerTitle.setDate(TimeUtil.getPrintDate(time));
+        Log.wtf("Test_","t3");
         printerTitle.setBill_NO(billNo);
         printerTitle.setTime(TimeUtil.getPrintTime(time));
         printerTitle.setTableName(tableName);

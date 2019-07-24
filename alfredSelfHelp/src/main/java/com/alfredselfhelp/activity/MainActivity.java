@@ -536,7 +536,7 @@ public class MainActivity extends BaseActivity implements LanguageManager.Langua
                 return;// 不播放视频
             }
         }
-        //   LogFile.i(String.format("playing video file:%s", mstrPlayFile));
+        //   LogFile.i(String.formatLocale("playing video file:%s", mstrPlayFile));
         String dir = TvPref.readVideoFile();
         if (!mstrPlayFile.contains(dir)) {
             dir = TvPref.readExstoragePath();
@@ -559,7 +559,7 @@ public class MainActivity extends BaseActivity implements LanguageManager.Langua
                 .setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-//                        LogFile.i(String.format("OnCompletion,file=%s",
+//                        LogFile.i(String.formatLocale("OnCompletion,file=%s",
 //                                mstrPlayFile));
                         mVideoState = VIDEO_STATE_ONE_COMPLETE;
                         play_end_timestamp = System.currentTimeMillis();
@@ -571,8 +571,8 @@ public class MainActivity extends BaseActivity implements LanguageManager.Langua
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
 //
-//                LogFile.e(String.format("playfile=%s,OnError", mstrPlayFile));
-//                LogFile.i(String.format("what=%d,ex=%d", what, extra));
+//                LogFile.e(String.formatLocale("playfile=%s,OnError", mstrPlayFile));
+//                LogFile.i(String.formatLocale("what=%d,ex=%d", what, extra));
 
                 mVideoState = VIDEO_STATE_ONE_COMPLETE;// 跳过当前文件
                 play_end_timestamp = System.currentTimeMillis();

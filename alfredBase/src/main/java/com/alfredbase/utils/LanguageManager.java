@@ -147,17 +147,6 @@ public class LanguageManager {
         return context;
     }
 
-    /**
-     * get current locale
-     *
-     * @param res
-     * @return
-     */
-    public static Locale getLocale(Resources res) {
-        Configuration config = res.getConfiguration();
-        return config.locale;
-
-    }
 
     public static AlertDialog alertLanguage(Context context, LanguageDialogListener languageDialogListener) {
         AlertDialog.Builder dialogLanguage = new AlertDialog.Builder(context);

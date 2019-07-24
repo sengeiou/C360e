@@ -181,7 +181,7 @@ package com.alfredposclient.zxing.camera.open;//package com.example.zun.zunzxing
 //    }
 //
 //    /**
-//     * A factory method to build the appropriate LuminanceSource object based on the format
+//     * A factory method to build the appropriate LuminanceSource object based on the formatLocale
 //     * of the preview buffers, as described by Camera.Parameters.
 //     *
 //     * @param data   A preview frame.

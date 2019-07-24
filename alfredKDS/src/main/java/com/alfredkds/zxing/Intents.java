@@ -88,7 +88,7 @@ public final class Intents {
     public static final String RESULT = "SCAN_RESULT";
 
     /**
-     * Call intent.getStringExtra(RESULT_FORMAT) to determine which barcode format was found.
+     * Call intent.getStringExtra(RESULT_FORMAT) to determine which barcode formatLocale was found.
      * See Contents.Format for possible values.
      */
     public static final String RESULT_FORMAT = "SCAN_RESULT_FORMAT";
@@ -111,21 +111,21 @@ public final class Intents {
 
     /**
      * The data to encode. Use Intent.putExtra(DATA, data) where data is either a String or a
-     * Bundle, depending on the type and format specified. Non-QR Code formats should
+     * Bundle, depending on the type and formatLocale specified. Non-QR Code formats should
      * just use a String here. For QR Code, see Contents for details.
      */
     public static final String DATA = "ENCODE_DATA";
 
     /**
-     * The type of data being supplied if the format is QR Code. Use
+     * The type of data being supplied if the formatLocale is QR Code. Use
      * Intent.putExtra(TYPE, type) with one of Contents.Type.
      */
     public static final String TYPE = "ENCODE_TYPE";
     
     /**
-     * The barcode format to be displayed. If this isn't specified or is blank, 
-     * it defaults to QR Code. Use Intent.putExtra(FORMAT, format), where
-     * format is one of Contents.Format. 
+     * The barcode formatLocale to be displayed. If this isn't specified or is blank,
+     * it defaults to QR Code. Use Intent.putExtra(FORMAT, formatLocale), where
+     * formatLocale is one of Contents.Format.
      */
     public static final String FORMAT = "ENCODE_FORMAT";
 

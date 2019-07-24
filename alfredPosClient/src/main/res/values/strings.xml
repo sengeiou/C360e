@@ -189,7 +189,7 @@
     <string name="pos_notification">Alfred POS Notification</string>
     <string name="alfred_pos">Alfred POS</string>
     <string name="online_order">Online Order</string>
-    <string name="the_most_selections">%d selections at most</string>
+    <string name="the_most_selections">%1$d selections at most</string>
     <string name="table_dining">The table has been occupied</string>
     <string name="items"> modifier</string>
     <string name="at_only">choose ONLY  </string>

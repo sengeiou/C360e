@@ -64,7 +64,7 @@ public class CalendarCard extends RelativeLayout {
 		View layout = LayoutInflater.from(ctx).inflate(R.layout.card_view, null, false);
 		
 		if (dateDisplay == null)
-			dateDisplay = Calendar.getInstance();
+			dateDisplay = Calendar.getInstance(Locale.US);
 		
 		cardTitle = (TextView)layout.findViewById(R.id.cardTitle);
 		cardGrid = (LinearLayout)layout.findViewById(R.id.cardGrid);
@@ -75,7 +75,7 @@ public class CalendarCard extends RelativeLayout {
 		
 		cardTitle.setText(new SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(dateDisplay.getTime()));
 		
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(Locale.US);
 		cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		((TextView)layout.findViewById(R.id.cardDay1)).setText(cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()));
 		cal.add(Calendar.DAY_OF_WEEK, 1);
@@ -121,7 +121,7 @@ public class CalendarCard extends RelativeLayout {
 			public void onRender(CheckableLayout v, CardGridItem item) {
 				boolean boo = v.isEnabled();
 				((CheckedTextView)((RelativeLayout)v.getChildAt(0)).getChildAt(0)).setText(item.getDayOfMonth().toString());
-				Calendar cal = Calendar.getInstance();
+				Calendar cal = Calendar.getInstance(Locale.US);
 				cal.setTime(new Date(App.instance.getBusinessDate()));
 				String mStr = new SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(cal.getTime());
 				String str = new SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(dateDisplay.getTime());
@@ -152,7 +152,7 @@ public class CalendarCard extends RelativeLayout {
 	OnClickListener onClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Calendar calendar = Calendar.getInstance();
+			Calendar calendar = Calendar.getInstance(Locale.US);
 			switch (v.getId()){
 				case R.id.next:
 					calendar.add(calendar.MONTH, pos++);
@@ -185,7 +185,7 @@ public class CalendarCard extends RelativeLayout {
 		if (dateDisplay != null) 
 			cal = (Calendar)dateDisplay.clone();
 		else
-			cal = Calendar.getInstance();
+			cal = Calendar.getInstance(Locale.US);
 
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		
@@ -222,7 +222,7 @@ public class CalendarCard extends RelativeLayout {
 		if (dateDisplay != null) 
 			cal = (Calendar)dateDisplay.clone();
 		else
-			cal = Calendar.getInstance();
+			cal = Calendar.getInstance(Locale.US);
 		
 		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 		

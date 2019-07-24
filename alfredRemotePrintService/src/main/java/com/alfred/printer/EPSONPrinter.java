@@ -107,7 +107,7 @@ public class EPSONPrinter {
 				int isUnderline = Builder.FALSE;
 				if (toPrint.isUnderline())
 					isUnderline = Builder.TRUE;
-				//format
+				//formatLocale
 				if (toPrint.getLanguage() == PrintData.LANG_CN) {
 					try {
 						builder.addTextLang(Builder.LANG_ZH_CN);

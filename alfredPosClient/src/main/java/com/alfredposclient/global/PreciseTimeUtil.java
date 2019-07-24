@@ -1,6 +1,7 @@
 package com.alfredposclient.global;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.Activity;
 
@@ -17,7 +18,7 @@ public class PreciseTimeUtil {
 
 	public PreciseTimeUtil(Activity context) {
 		this.context = context;
-		Calendar rightNow = Calendar.getInstance();
+		Calendar rightNow = Calendar.getInstance(Locale.US);
 		year = rightNow.get(Calendar.YEAR);
 		month = rightNow.get(Calendar.MONTH);
 		day = rightNow.get(Calendar.DAY_OF_MONTH);

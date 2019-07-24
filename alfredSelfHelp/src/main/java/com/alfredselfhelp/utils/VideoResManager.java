@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class VideoResManager {
 	public static Context mCtx;
@@ -169,7 +170,7 @@ public class VideoResManager {
 		}
 
 		if (file.isFile()) {
-		//	Log.i(String.format("video dir:%s", dir));
+		//	Log.i(String.formatLocale("video dir:%s", dir));
 			filelists.add(dir);// 选中一个文件
 			return;
 		}
@@ -212,7 +213,7 @@ public class VideoResManager {
 		for (int i = 0; i < files.size(); i++) {
 			String filename = files.get(i).getText();
 			String path = file.getAbsolutePath() + File.separator + filename;
-		//	LogFile.i(String.format("video file:%s", path));
+		//	LogFile.i(String.formatLocale("video file:%s", path));
 			filelists.add(path);
 		}
 		for (int i = 0; i < subdirs.size(); i++) {
@@ -245,7 +246,7 @@ public class VideoResManager {
 			return;
 		}
 		for (int i = 0; i < files.size(); i++) {
-			String filename = String.format("%d%s", i + base, HD2_EXT);
+			String filename = String.format(Locale.US,"%d%s", i + base, HD2_EXT);
 			String path = parent + File.separator + filename;
 			File f = new File(path);
 			if (f.exists()) {

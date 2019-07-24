@@ -79,6 +79,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
@@ -234,7 +235,7 @@ public class AsyncHttpClient {
                     if (request.containsHeader(header)) {
                         Header overwritten = request.getFirstHeader(header);
                         Log.d(LOG_TAG,
-                                String.format("Headers were overwritten! (%s | %s) overwrites (%s | %s)",
+                                String.format(Locale.US,"Headers were overwritten! (%s | %s) overwrites (%s | %s)",
                                         header, clientHeaderMap.get(header),
                                         overwritten.getName(), overwritten.getValue())
                         );

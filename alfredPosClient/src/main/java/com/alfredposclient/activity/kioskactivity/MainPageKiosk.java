@@ -141,6 +141,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import rx.Observable;
@@ -1560,10 +1561,10 @@ public class MainPageKiosk extends BaseActivity {
 
                     if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
                         return;
-                        //	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+                        //	UIHelp.showToast(context, String.formatLocale(context.getResources().getString(R.string.no_set_item_print), itemName));
 
                     } else {
-                        UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+                        UIHelp.showToast(context, String.format(Locale.US,context.getResources().getString(R.string.no_set_item_print), itemName));
                     }
 
                 }
@@ -1575,7 +1576,7 @@ public class MainPageKiosk extends BaseActivity {
 
                     if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
                         return;
-                        //	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+                        //	UIHelp.showToast(context, String.formatLocale(context.getResources().getString(R.string.no_set_item_print), itemName));
 
                     } else {
                         UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));

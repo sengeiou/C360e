@@ -56,6 +56,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Alex on 2018/4/16.
@@ -240,9 +241,9 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
         String holdOrderStr = context.getString(R.string.hold_order);
         String holdKitchenStr = context.getString(R.string.hold_kitchen);
         String kioskOrderStr = context.getString(R.string.kiosk_order);
-        tv_hold_order.setText(holdNum > 0 ? String.format(holdOrderStr + " (*%d)", holdNum) : holdOrderStr);
-        tv_hold_kitchen_order.setText(holdKitchenNum > 0 ? String.format(holdKitchenStr + " (*%d)", holdKitchenNum) : holdKitchenStr);
-        tv_kiosk_order.setText(kioskNum > 0 ? String.format(kioskOrderStr + " (*%d)", kioskNum) : kioskOrderStr);
+        tv_hold_order.setText(holdNum > 0 ? String.format(Locale.US,holdOrderStr + " (*%d)", holdNum) : holdOrderStr);
+        tv_hold_kitchen_order.setText(holdKitchenNum > 0 ? String.format(Locale.US,holdKitchenStr + " (*%d)", holdKitchenNum) : holdKitchenStr);
+        tv_kiosk_order.setText(kioskNum > 0 ? String.format(Locale.US,kioskOrderStr + " (*%d)", kioskNum) : kioskOrderStr);
         int orderStatus = ParamConst.ORDER_STATUS_HOLD_KITCHEN;
         switch (selectViewId) {
             case R.id.tv_hold_order:

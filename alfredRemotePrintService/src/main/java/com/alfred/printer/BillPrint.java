@@ -2,6 +2,7 @@ package com.alfred.printer;
 
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 
 import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class BillPrint extends PrintJob {
@@ -188,7 +190,7 @@ public class BillPrint extends PrintJob {
         billNoPrint.setText(dateStr + padBillNo);
         this.data.add(billNoPrint);
 
-
+        Log.wtf("Test_",""+dateStr+" "+padBillNo);
         //Table & PAX
 
         PrintData tabPrint = new PrintData();
@@ -268,7 +270,7 @@ public class BillPrint extends PrintJob {
 
 
     public void AddHeaderCash(int id, String time) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");// HH:mm:ss
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.US);// HH:mm:ss
 
         Date date = new Date(System.currentTimeMillis());
         String dates = simpleDateFormat.format(date).toString().trim();
@@ -283,6 +285,7 @@ public class BillPrint extends PrintJob {
         billEmpPrint.setDataFormat(PrintData.FORMAT_TXT);
         billEmpPrint.setTextAlign(PrintData.ALIGN_LEFT);
         billEmpPrint.setText(dateStr + padBillNo);
+
         this.data.add(billEmpPrint);
         addHortionaDoublelLine(this.charSize);
 
@@ -667,7 +670,7 @@ public class BillPrint extends PrintJob {
         PrintData header = new PrintData();
         header.setDataFormat(PrintData.FORMAT_TXT);
         header.setFontsize(2);
-        StringBuilder sbr = new StringBuilder(String.format("%1$" + this.charSize / 2 + "s", ""));
+        StringBuilder sbr = new StringBuilder(String.format(Locale.US,"%1$" + this.charSize / 2 + "s", ""));
         String ord = PrintService.instance.getResources().getString(R.string.order_no) + orderNo;
         sbr.replace(this.charSize / 2 - ord.length() * 2 - 1, this.charSize / 2 - 1, ord);
         header.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -757,7 +760,7 @@ public class BillPrint extends PrintJob {
             }
 //			for (int i = 0; i < taxPriceSUM.size(); i++) {
 //				PrintData taxPrint = new PrintData();
-//	            String taxvalue = StringUtil.padLeft(BH.doubleFormat.format(BH.getBD(taxPriceSUM
+//	            String taxvalue = StringUtil.padLeft(BH.doubleFormat.formatLocale(BH.getBD(taxPriceSUM
 //							.get(i))), this.FIXED_COL4_TOTAL);
 //
 //	            String padTax = taxNames.get(i)
@@ -894,7 +897,7 @@ public class BillPrint extends PrintJob {
         this.addSingleLineCenteredTextPaddingWithDash(this.charSize,
                 PrintService.instance.getResources().getString(R.string.check_closed), 0);
 
-        Calendar now = Calendar.getInstance();
+        Calendar now = Calendar.getInstance(Locale.US);
         String nowstr = TimeUtil.getCloseBillDataTime(now.getTimeInMillis());
         addSingleLineCenteredText(this.charSize, nowstr, 0);
     }
@@ -1060,7 +1063,7 @@ public class BillPrint extends PrintJob {
         this.addBlankLine();
         this.addHortionaDoublelLine(this.charSize);
         this.addBlankLine();
-        Calendar now = Calendar.getInstance();
+        Calendar now = Calendar.getInstance(Locale.US);
         String nowstr = TimeUtil.getCloseBillDataTime(now.getTimeInMillis());
         addSingleLineCenteredText(this.charSize, nowstr, 0);
         AddCut();

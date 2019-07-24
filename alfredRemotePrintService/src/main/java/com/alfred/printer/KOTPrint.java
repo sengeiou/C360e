@@ -192,7 +192,7 @@ public class KOTPrint extends PrintJob{
 		int revenueIndex = kotSummary.getRevenueCenterIndex();
 		int isTakeAway = kotSummary.getIsTakeAway();
 		String orderNo = PrintService.instance.getResources().getString(R.string.order_no) + kotSummary.getNumTag()
-				+IntegerUtils.fromat(revenueIndex, orderId);
+				+IntegerUtils.formatLocale(revenueIndex, orderId);
 
 		String tableName =PrintService.instance.getResources().getString(R.string.table_num)
 				+kotSummary.getTableName();

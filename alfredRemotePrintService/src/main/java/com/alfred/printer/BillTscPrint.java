@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class BillTscPrint extends PrintJob {
@@ -74,7 +75,7 @@ public class BillTscPrint extends PrintJob {
 
             ++num;
             String strnum;
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd ");// HH:mm:ss
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd ", Locale.US);// HH:mm:ss
             Date date = new Date(System.currentTimeMillis());
             StringBuilder numbuf = new StringBuilder();
             String dates = simpleDateFormat.format(date).toString().trim();
@@ -164,7 +165,7 @@ public class BillTscPrint extends PrintJob {
             //  日期
             ++num;
             String strnum;
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd ");// HH:mm:ss
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd ", Locale.US);// HH:mm:ss
             Date date = new Date(System.currentTimeMillis());
             StringBuilder datebuf = new StringBuilder();
             String dates = simpleDateFormat.format(date).toString().trim();

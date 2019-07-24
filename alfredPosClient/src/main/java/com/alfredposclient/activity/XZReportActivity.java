@@ -63,6 +63,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class XZReportActivity extends BaseActivity {
@@ -278,7 +279,7 @@ public class XZReportActivity extends BaseActivity {
         ll_print.setVisibility(View.INVISIBLE);
         loadingDialog = new LoadingDialog(this);
 
-        calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance(Locale.US);
         businessDate = App.instance.getBusinessDate();
         Date date = new Date(businessDate);
         curStr = yearMonthDayFormater.format(date);

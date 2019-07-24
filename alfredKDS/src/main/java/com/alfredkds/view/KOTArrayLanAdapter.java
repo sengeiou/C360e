@@ -95,7 +95,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 //        int itemViewType = KOTArrayLanAdapter.this.getItemViewType(position);
 //        if (itemViewType == 1) {
             final KotItem kotItem = kots.get(position);
-            String orderNoStr = kotItem.getNumTag() + IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
+            String orderNoStr = kotItem.getNumTag() + IntegerUtils.formatLocale(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
             holder.orderNo.setText(orderNoStr);
             holder.mod.setText(kotItem.getItemModName());
             holder.detail.setText(kotItem.getItemDetailName());

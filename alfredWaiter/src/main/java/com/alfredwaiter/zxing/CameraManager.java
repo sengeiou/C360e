@@ -314,7 +314,7 @@ public final class CameraManager {
 
 	/**
 	 * A factory method to build the appropriate LuminanceSource object based on
-	 * the format of the preview buffers, as described by Camera.Parameters.
+	 * the formatLocale of the preview buffers, as described by Camera.Parameters.
 	 * 
 	 * @param data
 	 *            A preview frame.
@@ -330,11 +330,11 @@ public final class CameraManager {
 		int previewFormat = configManager.getPreviewFormat();
 		String previewFormatString = configManager.getPreviewFormatString();
 		switch (previewFormat) {
-		// This is the standard Android format which all devices are REQUIRED to
+		// This is the standard Android formatLocale which all devices are REQUIRED to
 		// support.
 		// In theory, it's the only one we should ever care about.
 		case PixelFormat.YCbCr_420_SP:
-			// This format has never been seen in the wild, but is compatible as
+			// This formatLocale has never been seen in the wild, but is compatible as
 			// we only care
 			// about the Y channel, so allow it.
 		case PixelFormat.YCbCr_422_SP:
@@ -350,7 +350,7 @@ public final class CameraManager {
 						rect.left, rect.top, rect.width(), rect.height());
 			}
 		}
-		throw new IllegalArgumentException("Unsupported picture format: "
+		throw new IllegalArgumentException("Unsupported picture formatLocale: "
 				+ previewFormat + '/' + previewFormatString);
 	}
 

@@ -1100,11 +1100,11 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
     // private void initAuthentication() {
     // ((TextView) contentView
     // .findViewById(R.id.tv_authentication_amount_due_num))
-    // .setText("$" + BH.doubleFormat.format(remainTotal));
+    // .setText("$" + BH.doubleFormat.formatLocale(remainTotal));
     // tv_authentication_amount_num = ((TextView) contentView
     // .findViewById(R.id.tv_authentication_amount_num));
     // tv_authentication_amount_num.setText(
-    // BH.doubleFormat.format(remainTotal));
+    // BH.doubleFormat.formatLocale(remainTotal));
     // tv_authentication_remarks_text = (TextView) contentView
     // .findViewById(R.id.tv_authentication_remarks_text);
     // tv_authentication_reason_name = (TextView) contentView
@@ -1209,7 +1209,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
     // private void initVoidSettlement() {
     // ((TextView) contentView.findViewById(R.id.tv_void_amount_due_num))
-    // .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.format(remainTotal));
+    // .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.doubleFormat.formatLocale(remainTotal));
     //
     // }
 
@@ -2020,7 +2020,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //		parameters.put("orderId", order.getId());
 //		parameters.put("billNo", orderBill.getBillNo());
 //		parameters.put("orderCreateTime", orderBill.getCreateTime());
-//		parameters.put("amount", BH.doubleFormat.format(remainTotal));
+//		parameters.put("amount", BH.doubleFormat.formatLocale(remainTotal));
 //		parameters.put("appOrderId", order.getAppOrderId());
 //		String url = SyncCentre.getInstance().requestAlipayUrl(parameters);
 //		web_alipay.loadUrl(url);
@@ -3077,7 +3077,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD: {
                 // if (remainTotal.compareTo(showBigDecimal) > -1) {
                 // tv_authentication_amount_num.setText(BH.doubleFormat
-                // .format(shownum));
+                // .formatLocale(shownum));
                 // } else {
                 // show.delete(show.length() - key.length(), show.length());
                 // }
@@ -3087,7 +3087,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 // if (remainTotal.compareTo(showBigDecimal) > -1) {
                 // ((TextView) contentView
                 // .findViewById(R.id.tv_entertainment_amount_num))
-                // .setText(BH.doubleFormat.format(shownum));
+                // .setText(BH.doubleFormat.formatLocale(shownum));
                 // } else {
                 // show.delete(show.length() - key.length(), show.length());
                 // }

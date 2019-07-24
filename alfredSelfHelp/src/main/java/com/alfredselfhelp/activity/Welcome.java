@@ -36,6 +36,8 @@ import com.alfredselfhelp.utils.UIHelp;
 import com.google.gson.Gson;
 import com.umeng.analytics.MobclickAgent;
 
+import java.util.Locale;
+
 public class Welcome extends BaseActivity {
     private View rootView;
     private DownloadManager downManager;
@@ -101,8 +103,8 @@ public class Welcome extends BaseActivity {
         String trace = "612000109040112121200001";
         String msg = "100";
         StringBuffer str = new StringBuffer(sales);
-        str.append(String.format(amount, Integer.parseInt(msg)));
-        str.append(String.format(identifier, 75));
+        str.append(String.format(Locale.US,amount, Integer.parseInt(msg)));
+        str.append(String.format(Locale.US,identifier, 75));
         msg = str.append(trace).toString();
         Log.e("TAG", "msg:" + msg);
 

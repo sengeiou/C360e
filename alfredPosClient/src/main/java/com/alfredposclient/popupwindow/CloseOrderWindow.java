@@ -89,6 +89,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener {
@@ -1510,7 +1511,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         return;
                     }
                     String payHalalOrderId = order.getRestId()+""+order.getRevenueId()+""+orderBill.getBillNo();
-                    String url = String.format("https://payhalal.me/qr/%s/%s/%s","1001",BH.getBD(order.getTotal()).toString(),payHalalOrderId);
+                    String url = String.format(Locale.US,"https://payhalal.me/qr/%s/%s/%s","1001",BH.getBD(order.getTotal()).toString(),payHalalOrderId);
                     DialogFactory.commonTwoBtnQRDialog(parent, url, parent.getResources().getString(R.string.back), "Paid", null, new OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1692,7 +1693,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //		parameters.put("orderId", order.getId());
 //		parameters.put("billNo", orderBill.getBillNo());
 //		parameters.put("orderCreateTime", orderBill.getCreateTime());
-//		parameters.put("amount", BH.doubleFormat.format(remainTotal));
+//		parameters.put("amount", BH.doubleFormat.formatLocale(remainTotal));
 //		parameters.put("appOrderId", order.getAppOrderId());
 //		String url = SyncCentre.getInstance().requestAlipayUrl(parameters);
 //		web_alipay.loadUrl(url);
@@ -2711,7 +2712,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD: {
                 // if (remainTotal.compareTo(showBigDecimal) > -1) {
                 // tv_authentication_amount_num.setText(BH.doubleFormat
-                // .format(shownum));
+                // .formatLocale(shownum));
                 // } else {
                 // show.delete(show.length() - key.length(), show.length());
                 // }

@@ -1029,7 +1029,7 @@ public class OrderHelper {
 				}
 			}
 		}
-		order.setTaxAmount(BH.doubleFormat.format(tax));
+		order.setTaxAmount(BH.doubleFormat.formatLocale(tax));
 		 */
 		BigDecimal orderSplitTax = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if(!orderDetails.isEmpty()){

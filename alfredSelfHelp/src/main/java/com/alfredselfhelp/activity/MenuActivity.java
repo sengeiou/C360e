@@ -77,6 +77,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -1268,7 +1269,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-////                VtintApiCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+////                VtintApiCentre.getInstance().startPay(new DecimalFormat("0").formatLocale(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
 //
 //            }
 //        }).start();
@@ -1466,7 +1467,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
     private void timeSlot() {
-        Calendar cal = Calendar.getInstance();// 当前日期
+        Calendar cal = Calendar.getInstance(Locale.US);// 当前日期
         int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
         int minute = cal.get(Calendar.MINUTE);// 获取分钟
         if (hour >= 0 && hour < 12) {
