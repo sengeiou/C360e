@@ -13,6 +13,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
@@ -56,7 +57,8 @@ public class KdsHttpServer extends AlfredHttpServer {
             }
             if (uri.equals(APIName.SUBMIT_NEW_KOT)) {
                 //handlerSubmitNewKot
-                App.instance.ringUtil.playRingOnce();
+                if (App.instance.getKdsDevice().getKdsType() != Printer.KDS_SUMMARY)
+                    App.instance.ringUtil.playRingOnce();
                 resp = handlerSubmitNewKot(body);
             } else if (uri.equals(APIName.TRANSFER_KOT)) {
                 App.instance.ringUtil.playRingOnce();
@@ -71,11 +73,57 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = handlerTmpKot(body);
             } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
                 resp = handlerNextKot(body);
+            } else if (uri.equals(APIName.DELETE_KOT_ON_SUMMARY_KDS)) {
+                resp = handlerDeleteSummary(body);
             } else {
                 resp = getNotFoundResponse();
             }
         }
 
+        return resp;
+    }
+
+    private Response handlerDeleteSummary(String params) {
+        Response resp;
+        Map<String, Object> result = new HashMap<>();
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final Gson gson = new Gson();
+            String method = jsonObject.optString("method");
+            KotSummary kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
+            if (kotSummary == null) {
+                resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+                return resp;
+            }
+
+            int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
+            if (revenueCenterId != kotSummary.getRevenueCenterId()) {
+                App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                result.put("resultCode", ResultCode.CONNECTION_FAILED);
+                resp = getJsonResponse(new Gson().toJson(result));
+                return resp;
+            }
+
+            ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotSummary.getOrderId());
+
+            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                List<KotItemModifier> kotItemModifierList =
+                        KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+
+                for (KotItemModifier kotItemModifier : kotItemModifierList) {
+                    KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
+                }
+            }
+
+            KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
+            KotSummarySQL.deleteKotSummary(kotSummary);
+
+            App.getTopActivity().httpRequestAction(App.HANDLER_DELETE_KOT, null);
+            result.put("resultCode", ResultCode.SUCCESS);
+            resp = getJsonResponse(new Gson().toJson(result));
+        } catch (JSONException ex) {
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+        }
         return resp;
     }
 
@@ -96,6 +144,7 @@ public class KdsHttpServer extends AlfredHttpServer {
             }
 
             final KotSummary kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
+
             if (kotSummary == null) {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
@@ -117,7 +166,6 @@ public class KdsHttpServer extends AlfredHttpServer {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-
                     KotSummarySQL.update(kotSummary);
                     if (kotItemDetails != null) {
                         KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -152,7 +200,7 @@ public class KdsHttpServer extends AlfredHttpServer {
         try {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
-            String method = jsonObject.optString("method");
+            final String method = jsonObject.optString("method");
 
             //region parameter validation
             if (TextUtils.isEmpty(method)) {
@@ -183,16 +231,21 @@ public class KdsHttpServer extends AlfredHttpServer {
                 @Override
                 public void run() {
 
-                    //region update to db
-                    KotSummarySQL.update(kotSummary);
-                    if (kotItemDetails != null) {
-                        KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                    if (method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT)) {
+                        KotItemDetailSQL.deleteKotItemDetail(kotItemDetails);
+                        KotItemModifierSQL.deleteKotItemModifiers(kotItemModifiers);
+                    } else {
+                        //region update to db
+                        if (kotItemDetails != null) {
+                            KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                        }
+                        if (kotItemModifiers != null) {
+                            KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
+                        }
+                        //endregion
                     }
-                    if (kotItemModifiers != null) {
-                        KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
-                    }
-                    //endregion
 
+                    KotSummarySQL.update(kotSummary);
                     App.getTopActivity().httpRequestAction(App.HANDLER_TMP_KOT, kotSummary);
                 }
             }).start();
@@ -302,6 +355,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 }
             }
 
+            //region new kot
             if (method.equals(ParamConst.JOB_NEW_KOT)) {
                 final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
                 }.getType());
@@ -329,7 +383,9 @@ public class KdsHttpServer extends AlfredHttpServer {
                 result.put("orderId", kotSummary.getOrderId());
                 resp = getJsonResponse(new Gson().toJson(result));
             }
+            //endregion
 
+            //region update kot
             if (method.equals(ParamConst.JOB_UPDATE_KOT)) {
 //				kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
                 final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
@@ -377,6 +433,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 result.put("orderDetailIds", orderDetailIds);
                 resp = getJsonResponse(new Gson().toJson(result));
             }
+            //endregion
 
             if (method.equals(ParamConst.JOB_DELETE_KOT)) {
                 final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {

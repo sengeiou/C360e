@@ -68,7 +68,7 @@ public class SelectKitchen extends BaseActivity {
                 kdsDevice.setName(printer.getPrinterName());
                 kdsDevice.setIP(CommonUtil.getLocalIpAddress());
                 kdsDevice.setMac(CommonUtil.getLocalMacAddress(context));
-                kdsDevice.setKdsType(printer.getPrinterType());
+                kdsDevice.setKdsType(printer.getPrinterUsageType());
                 App.instance.setPrinter(printer);
                 App.instance.setKdsDevice(kdsDevice);
                 Map<String, Object> parameters = new HashMap<String, Object>();

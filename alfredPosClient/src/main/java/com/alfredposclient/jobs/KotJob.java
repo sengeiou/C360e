@@ -40,6 +40,14 @@ public class KotJob extends Job {
     private Map<String, Object> data = new HashMap<String, Object>();
     private int failCount = 0;
 
+    public KotJob(KDSDevice kdsDevice, KotSummary kotSummary, String method, String apiName) {
+        super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
+        this.kds = kdsDevice;
+        this.apiName = apiName;
+        data.put("kotSummary", kotSummary);
+        data.put("method", method);
+    }
+
     public KotJob(KDSDevice kds, KotSummary kotSummary, ArrayList<KotItemDetail> itemDetails,
                   ArrayList<KotItemModifier> modifiers, String method, Map<String, Object> kotMap, String apiName) {
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
@@ -238,6 +246,8 @@ public class KotJob extends Job {
                 SyncCentre.getInstance().syncSubmitTmpKotToKDS(kds, context, data, null);
             } else if (APIName.SUBMIT_NEXT_KOT.equals(apiName)) {
                 SyncCentre.getInstance().syncSubmitKotToNextKDS(kds, context, data, null);
+            } else if (APIName.DELETE_KOT_ON_SUMMARY_KDS.equals(apiName)) {
+                SyncCentre.getInstance().deleteKotSummary(kds, context, data, null);
             }
             LogUtil.d(TAG, "KOT JOB Successful");
         } catch (Throwable e) {

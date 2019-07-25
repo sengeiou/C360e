@@ -1,6 +1,10 @@
 package com.alfredbase.javabean;
 
 public class PrinterGroup {
+
+    public static final int KDS_NORMAL = 0;
+    public static final int KDS_ASMBLY_LINE = 1;
+
     private Integer id;
 
     private Integer printerGroupId;

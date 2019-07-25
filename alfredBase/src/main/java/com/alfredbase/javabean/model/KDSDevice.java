@@ -12,7 +12,7 @@ public class KDSDevice implements Serializable {
     String name;
     String mac;
     String IP;
-    String kdsType;
+    int kdsType;
 
     public int getDevice_id() {
         return device_id;
@@ -46,18 +46,23 @@ public class KDSDevice implements Serializable {
         this.name = name;
     }
 
-    public String getKdsType() {
+    public int getKdsType() {
         return kdsType;
     }
 
-    public void setKdsType(String kdsType) {
+    public void setKdsType(int kdsType) {
         this.kdsType = kdsType;
     }
 
     @Override
     public String toString() {
-        return "KDSDevice [device_id=" + device_id + ", mac=" + mac + ", IP="
-                + IP + "]";
+        return "KDSDevice{" +
+                "device_id=" + device_id +
+                ", name='" + name + '\'' +
+                ", mac='" + mac + '\'' +
+                ", IP='" + IP + '\'' +
+                ", kdsType='" + kdsType + '\'' +
+                '}';
     }
 
     public KDSDevice clone() {

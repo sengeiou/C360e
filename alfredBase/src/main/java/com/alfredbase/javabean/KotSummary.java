@@ -45,6 +45,8 @@ public class KotSummary implements Serializable {
     private String remarks;
     private int isSubPos;
     private String kotSummaryLog;
+    private int kdsType;
+    private int orderDetailCount;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -278,6 +280,22 @@ public class KotSummary implements Serializable {
         this.kotSummaryLog = kotSummaryLog;
     }
 
+    public int getKdsType() {
+        return kdsType;
+    }
+
+    public void setKdsType(int kdsType) {
+        this.kdsType = kdsType;
+    }
+
+    public int getOrderDetailCount() {
+        return orderDetailCount;
+    }
+
+    public void setOrderDetailCount(int orderDetailCount) {
+        this.orderDetailCount = orderDetailCount;
+    }
+
     @Override
     public String toString() {
         return "KotSummary{" +
@@ -306,6 +324,9 @@ public class KotSummary implements Serializable {
                 ", appOrderId=" + appOrderId +
                 ", remarks='" + remarks + '\'' +
                 ", isSubPos=" + isSubPos +
+                ", kotSummaryLog='" + kotSummaryLog + '\'' +
+                ", kdsType=" + kdsType +
+                ", orderDetailCount=" + orderDetailCount +
                 '}';
     }
 }

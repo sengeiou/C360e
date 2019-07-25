@@ -208,16 +208,11 @@ public class HttpAnalysis {
                     new TypeToken<ArrayList<Printer>>() {
                     }.getType());
 
-            //TODO : dummy data printer type
-            //region hardcode for printer testing
             for (Printer printer : printers) {
-                if ("EX Kitchen".equalsIgnoreCase(printer.getPrinterName())) {
-                    printer.setPrinterType("1");
-                } else {
-                    printer.setPrinterType("0");
+                if ("Summary Printer".equalsIgnoreCase(printer.getPrinterName())) {
+                    printer.setPrinterUsageType(Printer.KDS_SUMMARY);
                 }
             }
-            //endregion
 
             CoreData.getInstance().setPrinters(printers);
             PrinterSQL.deleteAllPrinter();

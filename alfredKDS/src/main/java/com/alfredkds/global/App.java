@@ -255,16 +255,18 @@ public class App extends BaseApplication {
         List<Kot> kotList = new ArrayList<>();
         Kot kot;
         boolean flag = false;
-        boolean isPlaceOrder = false;
         List<KotSummary> kotSummaries;
         List<KotItemDetail> kotItemDetails;
         kotSummaries = KotSummarySQL.getUndoneKotSummary();
         List<KotItemModifier> kotItemModifiers = new ArrayList<>();
 
         for (int i = 0; i < kotSummaries.size(); i++) {
+
             kot = new Kot();
             kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(kotSummaries.get(i).getId(),
                     kotSummaries.get(i).getOrderId());
+
+            boolean isPlaceOrder = false;
 
             for (int j = 0; j < kotItemDetails.size(); j++) {
                 if (kotSummaries.get(i).getStatus() == ParamConst.KOTS_STATUS_UNDONE) {

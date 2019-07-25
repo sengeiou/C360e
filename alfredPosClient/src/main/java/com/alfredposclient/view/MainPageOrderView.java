@@ -135,6 +135,8 @@ public class MainPageOrderView extends LinearLayout {
             btn_place_order.setBackgroundResource(R.drawable.box_place_order_selector_zh);
 
         tv_grand_total = (TextView) findViewById(R.id.tv_grand_total);
+
+        //region button place order
         btn_place_order.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -343,6 +345,7 @@ public class MainPageOrderView extends LinearLayout {
 
             }
         });
+        //endregiona
     }
 
     private void initTextTypeFace() {

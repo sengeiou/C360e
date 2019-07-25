@@ -279,6 +279,15 @@ public class CoreData {
         return result;
     }
 
+    public Printer getPrinterByGroupId(int printerGroupId) {
+        for (Printer printer : getPrinters()) {
+            if (printer.getId() == printerGroupId) {
+                return printer;
+            }
+        }
+        return null;
+    }
+
     public List<PrinterGroup> getPrinterGroupByPrinter(int printerId) {
         List<PrinterGroup> printerGroupList = new ArrayList<PrinterGroup>();
         for (PrinterGroup pg : this.printerGroups) {

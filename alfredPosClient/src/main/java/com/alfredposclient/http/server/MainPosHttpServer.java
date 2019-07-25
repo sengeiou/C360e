@@ -117,6 +117,7 @@ import com.alfredbase.store.sql.cpsql.CPOrderSplitSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
@@ -2507,7 +2508,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 if (isPermitted) {
                     List<Printer> printers = PrinterSQL
                             .getAllPrinterByType(printerType);
-                    LogUtil.i("http", PrinterSQL.getAllPrinter().toString());
+                    LogUtil.i("http printers", PrinterSQL.getAllPrinter().toString());
                     result.put("printers", printers);
                     result.put("user", usr);
                     result.put("resultCode", ResultCode.SUCCESS);
@@ -2610,8 +2611,19 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         try {
             JSONObject jsonObject = new JSONObject(params);
-            final KotSummary kotSummary = new Gson().fromJson(
-                    jsonObject.getString("kotSummary"), KotSummary.class);
+            String kotSummaryStr = jsonObject.getString("kotSummary");
+            int kdsId = jsonObject.getInt("kdsId");
+            KotSummary kotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
+            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
+
+            if (kotSummaryLocal == null) {
+                result.put("kotSummary", kotSummary);
+                result.put("resultCode", ResultCode.KOTSUMMARY_IS_UNREAL);
+                return this.getJsonResponse(new Gson().toJson(result));
+            }
+
+            kotSummaryLocal.setKotSummaryLog(KDSLogUtil.setEndTime(kotSummaryLocal.getKotSummaryLog(), App.instance.getKDSDevice(kdsId)));
+            KotSummarySQL.updateKotSummaryLog(kotSummaryLocal);
 
             result.put("kotSummary", kotSummary);
             result.put("resultCode", ResultCode.SUCCESS);
@@ -2645,6 +2657,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
             final Order order = OrderSQL.getOrder(kotSummary.getOrderId());
             if (order == null) return;
 
+            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
+
+            if (kotSummaryLocal == null) {
+                return;
+            }
+
             final List<Integer> orderDetailIds = new ArrayList<>();
             List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
 
@@ -2671,6 +2689,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
     }
 
+    private void deleteKotSummary(final KotSummary kotSummary, final List<KotItemDetail> kotItemDetails) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                App.instance.getKdsJobManager().deleteKotSummary(kotSummary, kotItemDetails);
+            }
+        }).start();
+    }
+
     private Response handlerKOTItemComplete(String params) {
         Map<String, Object> result = new HashMap<String, Object>();
         Response resp;
@@ -2678,19 +2705,25 @@ public class MainPosHttpServer extends AlfredHttpServer {
         try {
             JSONObject jsonObject = new JSONObject(params);
 
-            final KotSummary kotSummary = gson.fromJson(
-                    jsonObject.getString("kotSummary"), KotSummary.class);
+            String kotSummaryStr = jsonObject.getString("kotSummary");
+            int kdsId = jsonObject.getInt("kdsId");
+            final KotSummary kotSummary = gson.fromJson(kotSummaryStr, KotSummary.class);
             List<KotNotification> kotNotifications = new ArrayList<KotNotification>();
             ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
                     jsonObject.optString("kotItemDetails"),
                     new TypeToken<ArrayList<KotItemDetail>>() {
                     }.getType());
+
             KotSummary localKotSummary = KotSummarySQL.getKotSummaryById(kotSummary.getId().intValue());
             if (localKotSummary == null) {
                 result.put("resultCode", ResultCode.KOTSUMMARY_IS_UNREAL);
                 resp = this.getJsonResponse(new Gson().toJson(result));
                 return resp;
             }
+
+            localKotSummary.setKotSummaryLog(KDSLogUtil.setEndTime(localKotSummary.getKotSummaryLog(), App.instance.getKDSDevice(kdsId)));
+            KotSummarySQL.updateKotSummaryLog(localKotSummary);
+
             // : fix bug: filter out old data that may be in KDS
             ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
             for (int i = 0; i < kotItemDetails.size(); i++) {
@@ -2789,6 +2822,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         }
                     }
                 }).start();
+
+                deleteKotSummary(kotSummary, kotItemDetails);
                 resp = this.getJsonResponse(new Gson().toJson(result));
             } else {
                 result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);

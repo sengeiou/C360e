@@ -19,7 +19,6 @@ import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
-import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.http.HTTPKDSRequest;
 import com.alfredposclient.http.HTTPWaiterRequest;
 import com.alfredposclient.http.HttpAPI;
@@ -553,7 +552,15 @@ public class SyncCentre {
     public void syncSubmitKotToNextKDS(KDSDevice kdsDevice, BaseActivity context,
                                        Map<String, Object> parameters, Handler handler) throws Throwable {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEXT_KOT);
-        HTTPKDSRequest.syncSubmitTmpKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+        HTTPKDSRequest.syncSubmitKotToNextKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void deleteKotSummary(KDSDevice kdsDevice, BaseActivity context,
+                                 Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.DELETE_KOT_ON_SUMMARY_KDS);
+        HTTPKDSRequest.deleteKotSummary(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
 
     }

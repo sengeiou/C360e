@@ -36,12 +36,12 @@
             android:textSize="@dimen/text_size_m_smail" />
     </LinearLayout>
 
-    <Chronometer
-        android:id="@+id/cmItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="10dp" />
+    <!--<Chronometer-->
+        <!--android:id="@+id/cmItem"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:padding="10dp" />-->
 
     <TextView
         android:id="@+id/tv_order_num"

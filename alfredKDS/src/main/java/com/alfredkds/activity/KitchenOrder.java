@@ -338,6 +338,7 @@ public class KitchenOrder extends BaseActivity {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", kotSummary);
                             parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                             parameters.put("type", 1);
                             SyncCentre.getInstance().kotComplete(KitchenOrder.this,
                                     App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
@@ -379,6 +380,7 @@ public class KitchenOrder extends BaseActivity {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", kotSummary1);
                             parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                             parameters.put("type", 1);
                             SyncCentre.getInstance().kotComplete(KitchenOrder.this,
                                     App.instance.getCurrentConnectedMainPos(), parameters, handler, 1);
@@ -698,6 +700,7 @@ public class KitchenOrder extends BaseActivity {
                         parameters.put("kotSummary", kotSummary);
                         parameters.put("kotItemDetails", itemDetails);
                         parameters.put("type", 1);
+                        parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                         SyncCentre.getInstance().kotComplete(KitchenOrder.this,
                                 App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
                         loadingDialog.show();
@@ -870,6 +873,7 @@ public class KitchenOrder extends BaseActivity {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", popKot.getKotSummary());
                             parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                             SyncCentre.getInstance().kotComplete(context,
                                     App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
                         }
@@ -1035,6 +1039,7 @@ public class KitchenOrder extends BaseActivity {
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("kotSummary", popKot.getKotSummary());
                 parameters.put("kotItemDetails", itemDetails);
+                parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                 SyncCentre.getInstance().kotComplete(context,
                         App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
             }

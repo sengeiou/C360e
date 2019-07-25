@@ -6,8 +6,8 @@ import android.os.Handler;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotSummary;
-import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
@@ -52,6 +52,71 @@ public class HTTPKDSRequest {
                 });
     }
 
+    public static void syncSubmitKotToNextKDS(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
+                                              SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+
+        parameters.put("mainpos", App.instance.getMainPosInfo());
+        final KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
+
+        syncHttpClient.post(context, url,
+                new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
+                        "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                new AsyncHttpResponseHandlerEx() {
+                    @Override
+                    public void onSuccess(final int statusCode, final Header[] headers,
+                                          final byte[] responseBody) {
+                        super.onSuccess(statusCode, headers, responseBody);
+                        if (resultCode == ResultCode.INVALID_DEVICE) {
+                            // if kds device is invadate, POS need remove it.
+//									App.instance.removeKDSDevice(kds.getDevice_id());
+                        } else if (resultCode == ResultCode.SUCCESS) {
+                            if (kotSummary != null) {
+                                kotSummary.setKotSummaryLog(KDSLogUtil.setStartTime(kotSummary.getKotSummaryLog(), kds));
+                                KotSummarySQL.updateKotSummaryLog(kotSummary);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        if (error.getCause() instanceof ConnectException) {
+                            throw new RuntimeException(error);
+                        }
+                    }
+                });
+    }
+
+    public static void deleteKotSummary(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
+                                        SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+
+        parameters.put("mainpos", App.instance.getMainPosInfo());
+
+        syncHttpClient.post(context, url,
+                new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
+                        "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                new AsyncHttpResponseHandlerEx() {
+                    @Override
+                    public void onSuccess(final int statusCode, final Header[] headers,
+                                          final byte[] responseBody) {
+                        super.onSuccess(statusCode, headers, responseBody);
+                        if (resultCode == ResultCode.INVALID_DEVICE) {
+                            // if kds device is invadate, POS need remove it.
+//									App.instance.removeKDSDevice(kds.getDevice_id());
+                        } else if (resultCode == ResultCode.SUCCESS) {
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        if (error.getCause() instanceof ConnectException) {
+                            throw new RuntimeException(error);
+                        }
+                    }
+                });
+    }
+
     public static void syncSubmitKot(Context context, final Map<String, Object> parameters, String url, final KDSDevice kds,
                                      SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
 
@@ -69,7 +134,8 @@ public class HTTPKDSRequest {
                         super.onSuccess(statusCode, headers, responseBody);
                         if (resultCode == ResultCode.SUCCESS) {
                             if (kotSummary != null) {
-                                kotSummary.setKotSummaryLog(KDSLogUtil.setKds(kotSummary.getKotSummaryLog(), kds));
+                                kotSummary.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummary.getKotSummaryLog(), kds));
+                                KotSummarySQL.updateKotSummaryLog(kotSummary);
                             }
                         } else if (resultCode == ResultCode.INVALID_DEVICE) {
                             // if kds device is invadate, POS need remove it.

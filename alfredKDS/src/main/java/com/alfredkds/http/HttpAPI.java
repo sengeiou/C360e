@@ -245,6 +245,8 @@ public class HttpAPI {
                             if (resultCode == ResultCode.SUCCESS) {
                                 HttpAnalysis.deleteKot(statusCode, headers, responseBody, handler);
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_SUCCESS, null));
+                            } else if (resultCode == ResultCode.KOTSUMMARY_IS_UNREAL) {
+                                HttpAnalysis.deleteKot(statusCode, headers, responseBody, handler);
                             } else {
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_FAILED, null));
                             }

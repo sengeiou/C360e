@@ -232,6 +232,7 @@
                 android:background="@color/black" />
 
             <LinearLayout
+                android:id="@+id/llAction"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:background="@color/color_kotview">

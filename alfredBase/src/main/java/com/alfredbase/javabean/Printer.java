@@ -9,6 +9,10 @@ public class Printer implements Serializable {
      */
     private static final long serialVersionUID = -4652260147089403168L;
 
+    public static final int KDS_SUB = 0;
+    public static final int KDS_EXPEDITER = 1;
+    public static final int KDS_SUMMARY = 2;
+
     private Integer id;
 
     private String printerGroupName; //printer name
@@ -17,11 +21,6 @@ public class Printer implements Serializable {
 
     private String printerLocation;
 
-    /**
-     * Printer Type
-     * 0 = sub kds
-     * 1 = Kitchen Assembly point
-     */
     private String printerType;
 
     private String qPrint;
@@ -34,20 +33,32 @@ public class Printer implements Serializable {
     /* 0为打印机组 1为打印设备*/
     private Integer type;
 
-    public Integer getIsLablePrinter() {
-        return isLablePrinter;
-    }
+    private Long createTime;
 
-    public void setIsLablePrinter(Integer isLablePrinter) {
-        this.isLablePrinter = isLablePrinter;
-    }
+    private Long updateTime;
 
     /* 0票据 1标签*/
     private Integer isLablePrinter;
 
-    private Long createTime;
+    /**
+     * Printer Type
+     * 0 = sub kds
+     * 1 = Kitchen Assembly point
+     */
+    private int printerGroupType;
 
-    private Long updateTime;
+    /**
+     * Printer Type
+     * 0 = KiDS sub
+     * 1 = KDS Assembly point
+     * 2 = KDS Summary
+     */
+    private int printerUsageType;
+
+    /**
+     * Tmp not save to db
+     */
+    public int kdsType;
 
     public Integer getId() {
         return id;
@@ -55,6 +66,14 @@ public class Printer implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getIsLablePrinter() {
+        return isLablePrinter;
+    }
+
+    public void setIsLablePrinter(Integer isLablePrinter) {
+        this.isLablePrinter = isLablePrinter;
     }
 
     public String getPrinterGroupName() {
@@ -151,14 +170,41 @@ public class Printer implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public int getPrinterGroupType() {
+        return printerGroupType;
+    }
+
+    public void setPrinterGroupType(int printerGroupType) {
+        this.printerGroupType = printerGroupType;
+    }
+
+    public int getPrinterUsageType() {
+        return printerUsageType;
+    }
+
+    public void setPrinterUsageType(int printerUsageType) {
+        this.printerUsageType = printerUsageType;
+    }
+
     @Override
     public String toString() {
-        return "Printer [id=" + id + ", printerGroupName=" + printerGroupName
-                + ", printerName=" + printerName + ", printerLocation="
-                + printerLocation + ", printerType=" + printerType
-                + ", qPrint=" + qPrint + ", isCashdrawer=" + isCashdrawer
-                + ", companyId=" + companyId + ", restaurantId=" + restaurantId
-                + ", type=" + type + ", createTime=" + createTime
-                + ", updateTime=" + updateTime + "]";
+        return "Printer{" +
+                "id=" + id +
+                ", printerGroupName='" + printerGroupName + '\'' +
+                ", printerName='" + printerName + '\'' +
+                ", printerLocation='" + printerLocation + '\'' +
+                ", printerType='" + printerType + '\'' +
+                ", qPrint='" + qPrint + '\'' +
+                ", isCashdrawer=" + isCashdrawer +
+                ", companyId=" + companyId +
+                ", restaurantId=" + restaurantId +
+                ", type=" + type +
+                ", printerGroupType=" + printerGroupType +
+                ", printerUsageType=" + printerUsageType +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", isLablePrinter=" + isLablePrinter +
+                ", kdsType=" + kdsType +
+                '}';
     }
 }

@@ -2362,6 +2362,10 @@ public class MainPage extends BaseActivity {
     }
 
     private void sendKOTTmpToKDS(final OrderDetail orderDetail) {
+        sendKOTTmpToKDS(orderDetail, null, ParamConst.JOB_TMP_KOT);
+    }
+
+    private void sendKOTTmpToKDS(final OrderDetail orderDetail, final KotItemDetail mKotItemDetail, final String method) {
 
         if (currentOrder.getOrderNo().equals(0)) {
             currentOrder.setOrderNo(OrderHelper.calculateOrderNo(currentOrder.getBusinessDate()));
@@ -2390,26 +2394,39 @@ public class MainPage extends BaseActivity {
                 List<Integer> orderDetailIds = new ArrayList<>();
                 ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
 
-                KotItemDetail kotItemDetail = ObjectFactory
-                        .getInstance()
-                        .getKotItemDetail(
-                                order,
-                                orderDetail,
-                                CoreData.getInstance()
-                                        .getItemDetailById(
-                                                orderDetail
-                                                        .getItemId()),
-                                kotSummary,
-                                App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+                KotItemDetail kotItemDetail;
 
-                kotItemDetail.setItemNum(orderDetail.getItemNum());
-                kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_TMP);
+                if (method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT) && mKotItemDetail != null) {
+                    kotItemDetail = mKotItemDetail;
+                } else {
+                    kotItemDetail = ObjectFactory
+                            .getInstance()
+                            .getKotItemDetail(
+                                    order,
+                                    orderDetail,
+                                    CoreData.getInstance()
+                                            .getItemDetailById(
+                                                    orderDetail
+                                                            .getItemId()),
+                                    kotSummary,
+                                    App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+                }
 
-                KotItemDetailSQL.update(kotItemDetail);
+                if (!method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT)) {
+                    kotItemDetail.setItemNum(orderDetail.getItemNum());
+                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_TMP);
+
+                    KotItemDetailSQL.update(kotItemDetail);
+                }
+
                 kotItemDetails.add(kotItemDetail);
                 orderDetailIds.add(orderDetail.getId());
                 ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
                         .getOrderModifiers(order, orderDetail);
+
+                if (method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT)) {
+                    orderModifiers = new ArrayList<>();
+                }
 
                 for (OrderModifier orderModifier : orderModifiers) {
                     if (orderModifier.getStatus().equals(ParamConst.ORDER_MODIFIER_STATUS_NORMAL)) {
@@ -2427,14 +2444,16 @@ public class MainPage extends BaseActivity {
                     }
                 }
 
-                KotSummarySQL.update(kotSummary);
+                if (!method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT)) {
+                    KotSummarySQL.update(kotSummary);
+                }
 
                 Map<String, Object> orderMap = new HashMap<>();
                 orderMap.put("orderId", currentOrder.getId());
                 orderMap.put("orderDetailIds", orderDetailIds);
                 App.instance.getKdsJobManager().sendKOTTmpToKDS(
                         kotSummary, kotItemDetails,
-                        kotItemModifiers, ParamConst.JOB_TMP_KOT,
+                        kotItemModifiers, method,
                         orderMap);
             }
         }).start();
@@ -2613,6 +2632,10 @@ public class MainPage extends BaseActivity {
 
                             }
 
+                            KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
+                            KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(kotSummary.getId(), tag.getId());
+
+                            sendKOTTmpToKDS(tag, kotItemDetail, ParamConst.JOB_DELETE_TMP_ITEM_KOT);
 //
 //                            RemainingStockSQL.updateRemainingNum(num,itemTempId);
                             OrderDetailSQL.deleteOrderDetail(tag);

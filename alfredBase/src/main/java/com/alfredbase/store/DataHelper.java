@@ -1644,10 +1644,20 @@ public class DataHelper {
                     + TableNames.PrinterGroup
                     + " ADD COLUMN  printerType INTEGER default 0");
             db.execSQL("ALTER TABLE "
+                    + TableNames.Printer
+                    + " ADD COLUMN  printerUsageType INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Printer
+                    + " ADD COLUMN  printerGroupType INTEGER default 0");
+            db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
                     + " ADD COLUMN  kotItemStatus INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN kotSummaryLog TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN kdsType INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN orderDetailCount INTEGER default 0");
         }
     }
 }

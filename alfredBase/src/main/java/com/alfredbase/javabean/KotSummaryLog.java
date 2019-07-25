@@ -7,6 +7,6 @@ import com.alfredbase.javabean.model.KDSDevice;
  */
 public class KotSummaryLog {
     public KDSDevice kdsDevice;
-    public long expectedTime;
-    public long timeElapse;
+    public long startTime;
+    public long endTime;
 }
