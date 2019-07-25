@@ -166,7 +166,11 @@ public class XMPP implements ConnectionListener, PingFailedListener{
             if (App.instance.isOpenLog){
                 HOST = "www.servedbyalfred.cn";  // 测试环境
             }else {
-                HOST = "www.servedbyalfred.org";  // 正式环境
+                if (App.instance.isCartenzLog) {
+                    HOST = "http://18.139.110.250";  // 正式环境
+                }else {
+                    HOST = "www.servedbyalfred.org";  // 正式环境
+                }
             }
             pushListener = new PushListenerClient(App.instance);
         }
