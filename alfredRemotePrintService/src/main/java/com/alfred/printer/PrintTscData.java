@@ -9,7 +9,7 @@ public class PrintTscData implements Serializable{
 	//Languate
 	public static int LANG_EN = 0;
 	public static int LANG_CN = 1;
-	//content formatLocale
+	//content format
 
 	public static int FORMAT_BAR = 8;
 	public static int FORMAT_RESET = 9;
@@ -27,7 +27,7 @@ public class PrintTscData implements Serializable{
 	public static int ALIGN_CENTRE = 1;
 	public static int ALIGN_RIGHT=2;
 
-	//image formatLocale
+	//image format
 	public static int IMAGE_PNG = 20;
 	public static int IMAGE_JPG = 21;
 

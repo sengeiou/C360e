@@ -1269,7 +1269,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
-////                VtintApiCentre.getInstance().startPay(new DecimalFormat("0").formatLocale(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
+////                VtintApiCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)));
 //
 //            }
 //        }).start();

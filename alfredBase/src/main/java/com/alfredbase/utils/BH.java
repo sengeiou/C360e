@@ -72,7 +72,7 @@ public class BH {
             return new BigDecimal(money);
         } else {
             value2 = new BigDecimal(string);
-            //return new BigDecimal(doubleFormat.formatLocale(value2));
+            //return new BigDecimal(doubleFormat.format(value2));
             return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
     }
@@ -102,7 +102,7 @@ public class BH {
             return new BigDecimal(money);
         } else {
             value2 = new BigDecimal(integer);
-            //return new BigDecimal(doubleFormat.formatLocale(value2));
+            //return new BigDecimal(doubleFormat.format(value2));
             return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
     }
@@ -273,7 +273,7 @@ public class BH {
 //	 */
 //	public static BigDecimal formatDouble(BigDecimal value1, boolean needFormat) {
 //		if (needFormat) {
-//			return new BigDecimal(formatLocale.formatLocale(value1));
+//			return new BigDecimal(format.format(value1));
 //		} else {
 //			return value1;
 //		}

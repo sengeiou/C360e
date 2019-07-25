@@ -313,7 +313,7 @@ public static final String PATH_IMAGE = "IMAGE_PATH";
 			return gson.fromJson(str, classOfT);
 		} catch (Exception e) {
 			e.printStackTrace();
-			LogUtil.e("Store", key + ": formatLocale error in shared preference.");
+			LogUtil.e("Store", key + ": format error in shared preference.");
 		}
 		return null;
 	}
@@ -331,7 +331,7 @@ public static final String PATH_IMAGE = "IMAGE_PATH";
 				return gson.fromJson(str, classOfT);
 			} catch (Exception e) {
 				e.printStackTrace();
-				LogUtil.e("Store", key + ": formatLocale error in shared preference.");
+				LogUtil.e("Store", key + ": format error in shared preference.");
 			}
 			return null;
 		}

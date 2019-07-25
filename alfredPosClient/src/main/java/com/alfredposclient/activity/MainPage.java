@@ -1698,7 +1698,7 @@ public class MainPage extends BaseActivity {
                     } else {
                         UIHelp.showToast(context, String.format(Locale.US,context.getResources().getString(R.string.no_set_item_print), itemName));
                     }
-                    //   UIHelp.showToast(context, String.formatLocale(context.getResources().getString(R.string.no_set_item_print), itemName));
+                    //   UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
                 }
                 break;
                 // kot Print status
@@ -1713,7 +1713,7 @@ public class MainPage extends BaseActivity {
 
                         if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
                             return;
-                            //	UIHelp.showToast(context, String.formatLocale(context.getResources().getString(R.string.no_set_item_print), itemName));
+                            //	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
 
                         } else {
                             UIHelp.showToast(context, context.getResources().getString(R.string.place_order_failed));
@@ -1955,7 +1955,7 @@ public class MainPage extends BaseActivity {
 //                    if(App.instance.isRevenueKiosk()&&!App.instance.getSystemSettings().isPrintBill())
 //                    {
 //
-//                        //	UIHelp.showToast(context, String.formatLocale(context.getResources().getString(R.string.no_set_item_print), itemName));
+//                        //	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
 //
 //                    }else {
 //

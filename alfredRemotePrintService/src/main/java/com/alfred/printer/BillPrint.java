@@ -760,7 +760,7 @@ public class BillPrint extends PrintJob {
             }
 //			for (int i = 0; i < taxPriceSUM.size(); i++) {
 //				PrintData taxPrint = new PrintData();
-//	            String taxvalue = StringUtil.padLeft(BH.doubleFormat.formatLocale(BH.getBD(taxPriceSUM
+//	            String taxvalue = StringUtil.padLeft(BH.doubleFormat.format(BH.getBD(taxPriceSUM
 //							.get(i))), this.FIXED_COL4_TOTAL);
 //
 //	            String padTax = taxNames.get(i)

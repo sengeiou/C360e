@@ -170,7 +170,7 @@ public class VideoResManager {
 		}
 
 		if (file.isFile()) {
-		//	Log.i(String.formatLocale("video dir:%s", dir));
+		//	Log.i(String.format("video dir:%s", dir));
 			filelists.add(dir);// 选中一个文件
 			return;
 		}
@@ -213,7 +213,7 @@ public class VideoResManager {
 		for (int i = 0; i < files.size(); i++) {
 			String filename = files.get(i).getText();
 			String path = file.getAbsolutePath() + File.separator + filename;
-		//	LogFile.i(String.formatLocale("video file:%s", path));
+		//	LogFile.i(String.format("video file:%s", path));
 			filelists.add(path);
 		}
 		for (int i = 0; i < subdirs.size(); i++) {

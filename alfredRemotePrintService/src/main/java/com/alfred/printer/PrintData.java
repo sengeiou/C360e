@@ -9,7 +9,7 @@ public class PrintData  implements Serializable{
 	//Languate
 	public static int LANG_EN = 0;
 	public static int LANG_CN = 1;
-	//content formatLocale
+	//content format
 	public static int FORMAT_TXT = 10;
 	public static int FORMAT_IMG = 11;
 	public static int FORMAT_QR = 12;
@@ -24,7 +24,7 @@ public class PrintData  implements Serializable{
 	public static int ALIGN_CENTRE = 1;
 	public static int ALIGN_RIGHT=2;
 	
-	//image formatLocale
+	//image format
 	public static int IMAGE_PNG = 20;
 	public static int IMAGE_JPG = 21;
 	

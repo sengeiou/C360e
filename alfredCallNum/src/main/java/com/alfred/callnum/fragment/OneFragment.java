@@ -126,7 +126,6 @@ public class OneFragment extends Fragment {
     public void setViewId(int vid, Handler mhandler) {
         this.vid = vid;
         this.handler = mhandler;
-
     }
 
 

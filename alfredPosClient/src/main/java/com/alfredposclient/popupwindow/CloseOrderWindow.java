@@ -1693,7 +1693,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //		parameters.put("orderId", order.getId());
 //		parameters.put("billNo", orderBill.getBillNo());
 //		parameters.put("orderCreateTime", orderBill.getCreateTime());
-//		parameters.put("amount", BH.doubleFormat.formatLocale(remainTotal));
+//		parameters.put("amount", BH.doubleFormat.format(remainTotal));
 //		parameters.put("appOrderId", order.getAppOrderId());
 //		String url = SyncCentre.getInstance().requestAlipayUrl(parameters);
 //		web_alipay.loadUrl(url);
@@ -2712,7 +2712,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD: {
                 // if (remainTotal.compareTo(showBigDecimal) > -1) {
                 // tv_authentication_amount_num.setText(BH.doubleFormat
-                // .formatLocale(shownum));
+                // .format(shownum));
                 // } else {
                 // show.delete(show.length() - key.length(), show.length());
                 // }

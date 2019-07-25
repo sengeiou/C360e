@@ -42,11 +42,11 @@ public class IntegerUtils {
      * @param num
      * @return
      */
+    public static String format(int index, String num) {
+        return index + String.format(Locale.US, "%03d", Integer.parseInt(num));
+    }
+
     public static String formatLocale(int index, String num) {
-//        return index + String.formatLocale("%03d", Integer.parseInt(num));
-//    }
-//
-//    public static String formatLocale(int index, String num) {
         String numFormat = String.format("%03d", Integer.parseInt(num));
         int formatSize = (index + "").length() + 3;
         String format = "%0" + formatSize + "d";

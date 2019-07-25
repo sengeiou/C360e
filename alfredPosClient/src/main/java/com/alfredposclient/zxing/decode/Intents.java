@@ -109,7 +109,7 @@ public final class Intents {
 
     /**
      * Call {@link android.content.Intent#getStringExtra(String)} with {@link #RESULT_FORMAT}
-     * to determine which barcode formatLocale was found.
+     * to determine which barcode format was found.
      * See {@link com.google.zxing.BarcodeFormat} for possible values.
      */
     public static final String RESULT_FORMAT = "SCAN_RESULT_FORMAT";
@@ -175,21 +175,21 @@ public final class Intents {
     /**
      * The data to encode. Use {@link android.content.Intent#putExtra(String, String)} or
      * {@link android.content.Intent#putExtra(String, android.os.Bundle)}, 
-     * depending on the type and formatLocale specified. Non-QR Code formats should
+     * depending on the type and format specified. Non-QR Code formats should
      * just use a String here. For QR Code, see Contents for details.
      */
     public static final String DATA = "ENCODE_DATA";
 
     /**
-     * The type of data being supplied if the formatLocale is QR Code. Use
+     * The type of data being supplied if the format is QR Code. Use
      * {@link android.content.Intent#putExtra(String, String)} with one of
      */
     public static final String TYPE = "ENCODE_TYPE";
 
     /**
-     * The barcode formatLocale to be displayed. If this isn't specified or is blank,
+     * The barcode format to be displayed. If this isn't specified or is blank,
      * it defaults to QR Code. Use {@link android.content.Intent#putExtra(String, String)}, where
-     * formatLocale is one of {@link com.google.zxing.BarcodeFormat}.
+     * format is one of {@link com.google.zxing.BarcodeFormat}.
      */
     public static final String FORMAT = "ENCODE_FORMAT";
 

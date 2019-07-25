@@ -315,7 +315,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 //		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
 //		long currentTime = System.currentTimeMillis();
         long createTime = kot.getKotSummary().getUpdateTime();
-//		final String str = sdf.formatLocale(new Date(currentTime - createTime));
+//		final String str = sdf.format(new Date(currentTime - createTime));
         tv_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
 //		int hour = (int) ((System.currentTimeMillis() - createTime) / 1000 / 60/60);
 //		tv_progress.setFormat("0"+String.valueOf(hour)+":%s");

@@ -170,7 +170,7 @@ public class CallNumUtil {
 //				File[] files = custwave.listFiles();
 //				if (files != null && files.length > 10) {
 //					mbHasCustWave = true;
-////					Log.i(String.formatLocale("使用自定义语音包,file count=%d",
+////					Log.i(String.format("使用自定义语音包,file count=%d",
 ////							files.length));
 //				}
 //			}
@@ -228,7 +228,7 @@ public class CallNumUtil {
 
         byte[] data = readPCM(in);
         if (data == null) {
-//			LogFile.e(String.formatLocale("wavfile=%s err", file.getName()));
+//			LogFile.e(String.format("wavfile=%s err", file.getName()));
         }
         return data;
     }
@@ -239,7 +239,7 @@ public class CallNumUtil {
         WaveFileReader reader = new WaveFileReader(file);
         byte[] data = intToBytes(reader.getMyData()[0]);
         if (data == null) {
-//			LogFile.e(String.formatLocale("wavfile=%s err", file.getName()));
+//			LogFile.e(String.format("wavfile=%s err", file.getName()));
         }
         return data;
     }
@@ -260,9 +260,9 @@ public class CallNumUtil {
 //
 //			buffer.rewind();
 //			buffer.position(buffer.position() + 20);
-//			int formatLocale = buffer.getShort();
-//			//checkFormat(formatLocale == 1,  // 1 means Linear PCM
-//			Log.e("TAG", "Unsupported encoding: " + formatLocale);
+//			int format = buffer.getShort();
+//			//checkFormat(format == 1,  // 1 means Linear PCM
+//			Log.e("TAG", "Unsupported encoding: " + format);
 //			int channels = buffer.getShort();
 //			//checkFormat(channels == 1 || channels == 2, "Unsupported channels: " + channels);
 //			Log.e("TAG", "Unsupported channels: " + channels);
@@ -386,7 +386,7 @@ public class CallNumUtil {
 ////
 //////					Uri filepath = "android.resource://" + mCxt.getPackageName() + "/" +resid;
 //////				      String	  filepath =getFilePath(mCxt,uri);
-////					//String filepath = String.formatLocale("%c.wav", c);
+////					//String filepath = String.format("%c.wav", c);
 ////						// 得到wav数据流
 ////					//chars_list.add(readPCMString(filepath));
 ////
@@ -497,7 +497,7 @@ public class CallNumUtil {
 ////					String	filepath =getFilePath(mCxt,uri);
 ////					InputStream in = mCxt.getResources().openRawResource(resid);
 ////					chars_list.add(input2byte(in));
-////					String filepath = String.formatLocale("n%c.wav", c);
+////					String filepath = String.format("n%c.wav", c);
 //                InputStream in = mCxt.getResources().openRawResource(resid);
 //                nums_list.add(input2byte(in));
 //            } catch (Exception e) {
@@ -587,7 +587,7 @@ public class CallNumUtil {
                     nums_list.add(readPCM(wavfile));
                 } else {
                     nums_list.add(null);// 文件不存在
-//					LogFile.i(String.formatLocale("n%c.wav 不存在", c));
+//					LogFile.i(String.format("n%c.wav 不存在", c));
                 }
                 // 加载e语音
                 String efilepath = mstrCustWavPath + File.separator
@@ -597,7 +597,7 @@ public class CallNumUtil {
                     nums2_list.add(readPCM(ewavfile));
                 } else {
                     // 文件不存在
-                    // LogFile.i(String.formatLocale("e%c.wav 不存在",c));
+                    // LogFile.i(String.format("e%c.wav 不存在",c));
                 }
 
             } catch (Exception e) {
@@ -618,7 +618,7 @@ public class CallNumUtil {
         if (g_bAudioPlaying) {
             enqueue(num);
         } else {
-//			LogUtil.d("LXX",String.formatLocale("new Call:(%s,%s),cn=%d", num.queid,
+//			LogUtil.d("LXX",String.format("new Call:(%s,%s),cn=%d", num.queid,
 //					num.value, num.called_num));
             if (mMsgHandler != null) {
                 mMsgHandler.obtainMessage(MSG_TYPE_START_CALL).sendToTarget();// 通知视频暂停
@@ -640,7 +640,7 @@ public class CallNumUtil {
     }
 
     public static void enqueue(CallNumQueueUtil num) {
-//		LogUtil.d("LXX",String.formatLocale("enqueue:(%s,%s),cn=%d,@%d", num.queid,
+//		LogUtil.d("LXX",String.format("enqueue:(%s,%s),cn=%d,@%d", num.queid,
 //				num.value, num.called_num, mTail));
 
         mPlayTaskList[mTail] = num;
@@ -652,7 +652,7 @@ public class CallNumUtil {
         if (mTail != mHead) {
             CallNumQueueUtil num = mPlayTaskList[mHead];
             mPlayTaskList[mHead] = null;// release
-//			LogFile.i(String.formatLocale("dequeue:(%s,%s),cn=%d,@%d", num.queid,
+//			LogFile.i(String.format("dequeue:(%s,%s),cn=%d,@%d", num.queid,
 //					num.value, num.called_num, mHead));
 
             mHead++;
@@ -681,7 +681,7 @@ public class CallNumUtil {
             long deltat = System.currentTimeMillis() - s_StartPlayTime;
             long duration = mplayer.getDuration() + 2000;
             if (deltat > duration) {
-//				LogUtil.d("LXX", String.formatLocale(
+//				LogUtil.d("LXX", String.format(
 //						"play timeout:dura=%d,cost=%d,file type=%d", duration,
 //						deltat, s_PlayingRes.type));
 
@@ -1091,7 +1091,7 @@ public class CallNumUtil {
                         //    audioTrack.write(data, 0, data.length);
                         // long delteT=System.currentTimeMillis()-prepared_time;
 
-                        // Log.e(TAG, String.formatLocale("audio write=%d", delteT));
+                        // Log.e(TAG, String.format("audio write=%d", delteT));
                         /*
                          * write():blocking and return when the data has been
                          * transferred from the Java layer to the native layer
@@ -1175,7 +1175,7 @@ public class CallNumUtil {
                     audioTrack.write(silence, 0, silence.length);// 与前一个号间隔
                 }
                 String playstring = mCurTask.quenamevoice + mCurTask.value;// 桌名+号码
-//				LogFile.i(String.formatLocale("playstring=%s,callidx=%d", playstring,
+//				LogFile.i(String.format("playstring=%s,callidx=%d", playstring,
 //						mCurTask.custcallwav));
                 byte[] chars = playstring.toUpperCase().getBytes(); // 全部大写
                 for (byte c : chars) {
@@ -1253,7 +1253,7 @@ public class CallNumUtil {
                         audioTrack.write(data, 0, data.length);
                         // long delteT=System.currentTimeMillis()-prepared_time;
 
-                        // Log.e(TAG, String.formatLocale("audio write=%d", delteT));
+                        // Log.e(TAG, String.format("audio write=%d", delteT));
                         /*
                          * write():blocking and return when the data has been
                          * transferred from the Java layer to the native layer
