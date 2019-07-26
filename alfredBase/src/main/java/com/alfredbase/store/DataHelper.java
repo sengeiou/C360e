@@ -1658,6 +1658,8 @@ public class DataHelper {
                     + " ADD COLUMN kdsType INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN orderDetailCount INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN originalId INTEGER default 0");
         }
     }
 }

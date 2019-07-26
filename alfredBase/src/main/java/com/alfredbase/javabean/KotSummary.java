@@ -47,6 +47,10 @@ public class KotSummary implements Serializable {
     private String kotSummaryLog;
     private int kdsType;
     private int orderDetailCount;
+    /**
+     * put original kotSummary id here for temporary
+     */
+    private Integer originalId;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -296,6 +300,14 @@ public class KotSummary implements Serializable {
         this.orderDetailCount = orderDetailCount;
     }
 
+    public Integer getOriginalId() {
+        return originalId;
+    }
+
+    public void setOriginalId(Integer originalId) {
+        this.originalId = originalId;
+    }
+
     @Override
     public String toString() {
         return "KotSummary{" +
@@ -327,6 +339,7 @@ public class KotSummary implements Serializable {
                 ", kotSummaryLog='" + kotSummaryLog + '\'' +
                 ", kdsType=" + kdsType +
                 ", orderDetailCount=" + orderDetailCount +
+                ", originalId=" + originalId +
                 '}';
     }
 }

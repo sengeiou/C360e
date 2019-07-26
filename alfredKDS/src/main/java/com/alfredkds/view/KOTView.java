@@ -414,6 +414,24 @@ public class KOTView extends LinearLayout implements AnimationListener,
             }
         });
 
+        lv_dishes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!ButtonClickTimer.canClick(view)) {
+                    return false;
+                }
+
+                Message message = new Message();
+                Bundle bundle = new Bundle();
+                bundle.putString("kot", new Gson().toJson(kot));
+                message.setData(bundle);
+                message.what = App.HANDLER_KOT_NEXT;
+                handler.sendMessage(message);
+
+                return false;
+            }
+        });
+
         if (isComplete()) {
             tv_progress.setText(context.getResources().getString(R.string.item_complete));
             tv_progress.setOnClickListener(new OnClickListener() {

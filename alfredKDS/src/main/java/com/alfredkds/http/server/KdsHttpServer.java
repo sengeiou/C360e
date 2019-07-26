@@ -395,6 +395,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+
                         KotSummarySQL.update(kotSummary);
                         if (kotItemModifiers != null) {
                             KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
