@@ -426,7 +426,7 @@ public class KotJobManager {
                 if (printerDevice != null) {
                     printerDevice.setGroupId(prgid.intValue());
 
-                    boolean printed = false;
+                    boolean printed;
 
                     if ((!printerDevice.getIP().contains(":") && !printerDevice.getIP().contains(",")) || printerDevice.getIsLablePrinter() != 1) {
                         printed = App.instance.remoteKotPrint(printerDevice,
