@@ -388,6 +388,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //			includTax = BH.getBD(ParamConst.DOUBLE_ZERO);
 //		}
         moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
         cash_num = null;
         change_num = null;
         cardNo = null;
@@ -1414,6 +1418,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
                 }
                 case R.id.tv_exact: {
+                    moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
+                    moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
+                    moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
+                    moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
+                    moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     isFirstClickCash = true;
                     clickEnterAction();
@@ -2009,21 +2018,32 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             clickClearAction();
 
         } else if ("200".equals(key)) {
-
+            moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
             selectNumberAction(200);
+            moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+            moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+            moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
 
         } else if ("100".equals(key)) {
-
-
+            moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
             selectNumberAction(100);
+            moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
+            moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+            moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
 
         } else if ("50".equals(key)) {
-
+            moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
             selectNumberAction(50);
+            moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
+            moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+            moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
 
         } else if ("10".equals(key)) {
-
+            moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
             selectNumberAction(10);
+            moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
+            moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+            moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
 
         } else {
             clickOtherAction(key);
