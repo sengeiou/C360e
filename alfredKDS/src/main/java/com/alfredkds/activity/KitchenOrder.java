@@ -31,6 +31,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.DialogFactory;
@@ -294,6 +295,13 @@ public class KitchenOrder extends BaseActivity {
                         Map<String, Object> parameters = new HashMap<String, Object>();
                         parameters.put("callNumber", str);
                         parameters.put("numTag", numTag);
+
+                        Printer printer = App.instance.getPrinter();
+                        if (printer != null) {
+                            parameters.put("printerGroupId", printer.getId());
+                            parameters.put("printerName", printer.getPrinterName());
+                        }
+
                         SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
                     } else {
                         UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
@@ -311,6 +319,13 @@ public class KitchenOrder extends BaseActivity {
                         Map<String, Object> parameters = new HashMap<String, Object>();
                         parameters.put("callNumber", str);
                         parameters.put("numTag", numTag);
+
+                        Printer printer = App.instance.getPrinter();
+                        if (printer != null) {
+                            parameters.put("printerGroupId", printer.getId());
+                            parameters.put("printerName", printer.getPrinterName());
+                        }
+
                         SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
                     } else {
                         UIHelp.showToast(KitchenOrder.this, "The order number can not be empty");
