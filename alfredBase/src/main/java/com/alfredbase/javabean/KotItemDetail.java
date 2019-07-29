@@ -59,6 +59,8 @@ public class KotItemDetail implements Serializable {
      */
     private int callType;
 
+    public boolean isChecklist;
+
     public KotItemDetail() {
     }
 

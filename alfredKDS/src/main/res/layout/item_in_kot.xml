@@ -37,11 +37,20 @@
     </LinearLayout>
 
     <!--<Chronometer-->
-        <!--android:id="@+id/cmItem"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center_vertical"-->
-        <!--android:padding="10dp" />-->
+    <!--android:id="@+id/cmItem"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_vertical"-->
+    <!--android:padding="10dp" />-->
+
+    <ImageView
+        android:id="@+id/ivChecklist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/ic_check_blue_24dp" />
 
     <TextView
         android:id="@+id/tv_order_num"

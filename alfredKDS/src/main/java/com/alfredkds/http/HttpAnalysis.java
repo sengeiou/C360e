@@ -169,15 +169,17 @@ public class HttpAnalysis {
         }
     }
 
-    public static void deleteKot(int statusCode, Header[] headers,
-                                 byte[] responseBody, Handler handler) {
+    public static void deleteKotItemDetails(int statusCode, Header[] headers,
+                                            byte[] responseBody, Handler handler) {
         try {
             Gson gson = new Gson();
             JSONObject jsonObject = new JSONObject(new String(responseBody));
             final KotSummary kotSummary = gson.fromJson(
                     jsonObject.getString("kotSummary"), KotSummary.class);
-
-            ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotSummary.getOrderId());
+            final ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
+                    jsonObject.optString("kotItemDetails"),
+                    new TypeToken<ArrayList<KotItemDetail>>() {
+                    }.getType());
 
             for (KotItemDetail kotItemDetail : kotItemDetails) {
                 List<KotItemModifier> kotItemModifierList =
@@ -188,8 +190,37 @@ public class HttpAnalysis {
                 }
             }
 
-            KotSummarySQL.deleteKotSummary(kotSummary);
+            KotItemDetailSQL.deleteKotItemDetail(kotItemDetails);
+
+            List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+            if (kotItemDetailList.size() <= 0)
+                KotSummarySQL.deleteKotSummary(kotSummary);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteKot(int statusCode, Header[] headers,
+                                 byte[] responseBody, Handler handler) {
+        try {
+            Gson gson = new Gson();
+            JSONObject jsonObject = new JSONObject(new String(responseBody));
+            final KotSummary kotSummary = gson.fromJson(
+                    jsonObject.getString("kotSummary"), KotSummary.class);
+
+            ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                List<KotItemModifier> kotItemModifierList =
+                        KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+
+                for (KotItemModifier kotItemModifier : kotItemModifierList) {
+                    KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
+                }
+            }
+
             KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
+            KotSummarySQL.deleteKotSummary(kotSummary);
 
         } catch (JSONException e) {
             e.printStackTrace();

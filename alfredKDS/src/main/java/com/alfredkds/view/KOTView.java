@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Chronometer;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -195,6 +196,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 holder.tv_order_num = (TextView) convertView.findViewById(R.id.tv_order_num);
                 holder.tv_text = (TextView) convertView.findViewById(R.id.tv_text);
                 holder.tv_dish_introduce = (TextView) convertView.findViewById(R.id.tv_dish_introduce);
+                holder.ivChecklist = (ImageView) convertView.findViewById(R.id.ivChecklist);
 //                holder.cmItem = (Chronometer) convertView.findViewById(R.id.cmItem);
                 convertView.setTag(holder);
             } else {
@@ -202,6 +204,31 @@ public class KOTView extends LinearLayout implements AnimationListener,
             }
 
             KotItemDetail kotItemDetail = kotItemDetails.get(position);
+
+            if (kotItemDetail.isChecklist) {
+                holder.ivChecklist.setVisibility(VISIBLE);
+            } else {
+                holder.ivChecklist.setVisibility(GONE);
+            }
+
+            holder.ivChecklist.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ArrayList<KotItemDetail> selectedKotItemDetails = new ArrayList<>();
+                    for (KotItemDetail kid : kotItemDetails) {
+                        if (kid.isChecklist)
+                            selectedKotItemDetails.add(kid);
+                    }
+
+                    Message message = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("kot", new Gson().toJson(kot));
+                    bundle.putString("kotItemDetails", new Gson().toJson(selectedKotItemDetails));
+                    message.setData(bundle);
+                    message.what = App.HANDLER_KOT_NEXT;
+                    handler.sendMessage(message);
+                }
+            });
 
             if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
                 convertView.setBackgroundResource(R.color.white);
@@ -254,6 +281,24 @@ public class KOTView extends LinearLayout implements AnimationListener,
 //			textTypeFace.setTrajanProRegular(holder.tv_dish_introduce);
             return convertView;
         }
+
+        public void setCheckListPosition(int i) {
+            kotItemDetails.get(i).isChecklist = !kotItemDetails.get(i).isChecklist;
+            notifyDataSetChanged();
+        }
+
+        public boolean isChecklistExists() {
+            boolean isCheckListExist = false;
+
+            for (KotItemDetail kid : kotItemDetails) {
+                if (kid.isChecklist) {
+                    isCheckListExist = true;
+                    break;
+                }
+            }
+
+            return isCheckListExist;
+        }
     }
 
     class ViewHolder {
@@ -261,6 +306,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
         private TextView tv_text;
         private TextView tv_dish_introduce;
         private Chronometer cmItem;
+        private ImageView ivChecklist;
     }
 
 
@@ -277,10 +323,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
             linear_progress.setVisibility(VISIBLE);
             if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUB) {
 //                if (kot.getKotSummary().getKdsType() == Printer.KDS_SUB) {
-                llAction.setVisibility(VISIBLE);
+                llAction.setVisibility(GONE);
                 call_num_tv.setVisibility(GONE);
                 complete_all_tv.setVisibility(GONE);
-                tvNext.setVisibility(VISIBLE);
+                tvNext.setVisibility(GONE);
             } else if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
                 llAction.setVisibility(GONE);
             } else {
@@ -410,7 +456,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 if (!ButtonClickTimer.canClick(View)) {
                     return;
                 }
-                parent.showOrderItem(kot.getKotSummary());
+
+                if (kot.isPlaceOrder())
+                    adapter.setCheckListPosition(position);
             }
         });
 
@@ -421,13 +469,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
                     return false;
                 }
 
-                Message message = new Message();
-                Bundle bundle = new Bundle();
-                bundle.putString("kot", new Gson().toJson(kot));
-                message.setData(bundle);
-                message.what = App.HANDLER_KOT_NEXT;
-                handler.sendMessage(message);
-
+                if (kot.isPlaceOrder())
+                    parent.showOrderItem(kot.getKotSummary());
                 return false;
             }
         });
@@ -472,6 +515,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 message.setData(bundle);
                 message.what = App.HANDLER_KOT_COMPLETE_ALL;
                 handler.sendMessage(message);
+
             }
         });
 
@@ -483,6 +527,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 Message message = new Message();
                 Bundle bundle = new Bundle();
                 bundle.putString("kot", new Gson().toJson(kot));
+                bundle.putString("kotItemDetails", new Gson().toJson(kotItemDetails));
                 message.setData(bundle);
                 message.what = App.HANDLER_KOT_NEXT;
                 handler.sendMessage(message);

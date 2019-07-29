@@ -61,6 +61,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -406,9 +407,13 @@ public class KitchenOrder extends BaseActivity {
                     //region next kds
                     Bundle bundle2 = msg.getData();
                     String kotStr = bundle2.getString("kot");
+                    String kidStr = bundle2.getString("kotItemDetails");
 
                     final Kot kot = new Gson().fromJson(kotStr, Kot.class);
                     if (kot == null) return;
+
+                    final List<KotItemDetail> kotItemDetails = new Gson().fromJson(kidStr, new TypeToken<List<KotItemDetail>>() {
+                    }.getType());
 
                     String titleNext = getResources().getString(R.string.warning);
                     String contentNext = "Are you sure bring to next kds?";
@@ -420,7 +425,8 @@ public class KitchenOrder extends BaseActivity {
                                 public void onClick(View view) {
                                     Map<String, Object> parameters = new HashMap<>();
                                     parameters.put("kotSummary", kot.getKotSummary());
-                                    parameters.put("kotItemDetails", kot.getKotItemDetails());
+//                                    parameters.put("kotItemDetails", kot.getKotItemDetails());
+                                    parameters.put("kotItemDetails", kotItemDetails);
                                     parameters.put("kotModifiers", kot.getKotItemModifiers());
                                     parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                                     parameters.put("type", 1);

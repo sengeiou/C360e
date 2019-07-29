@@ -2607,13 +2607,20 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
     private Response handlerNextKDSKOT(String params) {
         Map<String, Object> result = new HashMap<>();
-        sendToNextKDS(params);
+        Gson gson = new Gson();
 
         try {
             JSONObject jsonObject = new JSONObject(params);
             String kotSummaryStr = jsonObject.getString("kotSummary");
+            String kidStr = jsonObject.getString("kotItemDetails");
             int kdsId = jsonObject.getInt("kdsId");
-            KotSummary kotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
+
+            final ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
+                    jsonObject.optString("kotItemDetails"),
+                    new TypeToken<ArrayList<KotItemDetail>>() {
+                    }.getType());
+
+            KotSummary kotSummary = gson.fromJson(kotSummaryStr, KotSummary.class);
             int kotSummaryId;
 
             if (CommonSQL.isFakeId(kotSummary.getId())) {
@@ -2627,13 +2634,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (kotSummaryLocal == null) {
                 result.put("kotSummary", kotSummary);
                 result.put("resultCode", ResultCode.KOTSUMMARY_IS_UNREAL);
-                return this.getJsonResponse(new Gson().toJson(result));
+                return this.getJsonResponse(gson.toJson(result));
             }
 
             kotSummaryLocal.setKotSummaryLog(KDSLogUtil.setEndTime(kotSummaryLocal.getKotSummaryLog(), App.instance.getKDSDevice(kdsId)));
             KotSummarySQL.updateKotSummaryLog(kotSummaryLocal);
 
+            sendToNextKDS(params);
+
             result.put("kotSummary", kotSummary);
+            result.put("kotItemDetails", kotItemDetails);
             result.put("resultCode", ResultCode.SUCCESS);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -2657,10 +2667,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     jsonObject.optString("kotItemDetails"),
                     new TypeToken<ArrayList<KotItemDetail>>() {
                     }.getType());
+
+            //region currently not used
             final ArrayList<KotItemModifier> kotModifiers = gson.fromJson(
                     jsonObject.optString("kotModifiers"),
                     new TypeToken<ArrayList<KotItemModifier>>() {
                     }.getType());
+            //endregion
 
             final Order order = OrderSQL.getOrder(kotSummary.getOrderId());
             if (order == null) return;
@@ -2686,6 +2699,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 orderDetailIds.add(orderDetail.getId());
             }
 
+            final ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
+
+            for (KotItemDetail kid : kotItemDetails) {
+                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kid.getId()));
+            }
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -2695,7 +2714,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     orderMap.put("orderDetailIds", orderDetailIds);
                     App.instance.getKdsJobManager().sendKOTToNextKDS(
                             kotSummary, kotItemDetails,
-                            kotModifiers, ParamConst.JOB_TMP_KOT,
+                            kotItemModifiers, ParamConst.JOB_TMP_KOT,
                             orderMap, kdsId);
                 }
             }).start();
