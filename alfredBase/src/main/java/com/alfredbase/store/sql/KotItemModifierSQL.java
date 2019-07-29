@@ -38,8 +38,7 @@ public class KotItemModifierSQL {
         }
     }
 
-    public static void addKotItemModifierList(
-            List<KotItemModifier> kotItemModifiers) {
+    public static void addKotItemModifierList(List<KotItemModifier> kotItemModifiers) {
         if (kotItemModifiers == null) {
             return;
         }

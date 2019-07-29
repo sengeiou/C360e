@@ -17,6 +17,7 @@ import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -72,6 +73,7 @@ public class KdsHttpServer extends AlfredHttpServer {
             } else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
                 resp = handlerTmpKot(body);
             } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
+                App.instance.ringUtil.playRingOnce();
                 resp = handlerNextKot(body);
             } else if (uri.equals(APIName.DELETE_KOT_ON_SUMMARY_KDS)) {
                 resp = handlerDeleteSummary(body);
@@ -236,16 +238,62 @@ public class KdsHttpServer extends AlfredHttpServer {
                         KotItemModifierSQL.deleteKotItemModifiers(kotItemModifiers);
                     } else {
                         //region update to db
-                        if (kotItemDetails != null) {
+                        ArrayList<KotSummary> kotSummariesLocal = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
+
+                        if (kotSummariesLocal.size() > 0) {
+
+                            KotSummary kotSumSelected = null;
+                            for (KotSummary kotSLocal : kotSummariesLocal) {
+
+                                List<KotItemDetail> kotDetailLocal = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSLocal.getId());
+                                boolean isPlaceOrder = false;
+                                for (KotItemDetail kotItemDetail : kotDetailLocal) {
+                                    if (kotItemDetail.getKotStatus() > ParamConst.KOT_STATUS_TMP) {
+                                        isPlaceOrder = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!isPlaceOrder) {
+                                    kotSumSelected = kotSLocal;
+                                    break;
+                                }
+                            }
+
+                            if (kotItemDetails != null) {
+                                if (kotSumSelected == null) {
+                                    ArrayList<KotSummary> kotsList = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
+                                    int fakeId = 0;
+                                    if (kotsList.size() > 0) {
+                                        fakeId = CommonSQL.getfakeId(kotSummary.getId(), kotsList.size());
+                                        kotSummary.setId(fakeId);
+                                    }
+
+                                    KotSummarySQL.addKotSummary(kotSummary);
+
+                                    for (int i = 0; i < kotItemDetails.size(); i++) {
+                                        kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
+                                        KotItemDetailSQL.update(kotItemDetails.get(i));
+                                    }
+                                } else {
+                                    for (int i = 0; i < kotItemDetails.size(); i++) {
+                                        kotItemDetails.get(i).setKotSummaryId(kotSumSelected.getId());//assign to fake id
+                                        KotItemDetailSQL.update(kotItemDetails.get(i));
+                                    }
+                                    KotSummarySQL.update(kotSumSelected);
+                                }
+                            }
+                        } else {
                             KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                            KotSummarySQL.update(kotSummary);
                         }
+
                         if (kotItemModifiers != null) {
                             KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                         }
                         //endregion
                     }
 
-                    KotSummarySQL.update(kotSummary);
                     App.getTopActivity().httpRequestAction(App.HANDLER_TMP_KOT, kotSummary);
                 }
             }).start();
@@ -366,6 +414,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                     public void run() {
 
                         KotSummarySQL.update(kotSummary);
+                        KotSummary kots = KotSummarySQL.getKotSummaryById(kotSummary.getId());
                         if (kotItemDetails != null) {
                             KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
                         }
@@ -396,26 +445,38 @@ public class KdsHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
 
-                        KotSummarySQL.update(kotSummary);
+                        KotSummarySQL.deleteKotSummaryTmp(kotSummary);
+                        ArrayList<KotSummary> kotsList = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
+                        int fakeId = 0;
+                        if (kotsList.size() > 0) {
+                            fakeId = CommonSQL.getfakeId(kotSummary.getId(), kotsList.size());
+                            kotSummary.setId(fakeId);
+                        }
+
+                        KotSummarySQL.addKotSummary(kotSummary);
+//                        KotSummarySQL.update(kotSummary);
                         if (kotItemModifiers != null) {
                             KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                         }
                         for (int i = 0; i < kotItemDetails.size(); i++) {
 //					KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(
 //							kotItemDetails.get(i).getOrderDetailId(),kotItemDetails.get(i).getCategoryId());
-                            KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), kotItemDetails.get(i).getOrderDetailId());
-                            if (kotItemDetail != null) {
-                                if (kotItemDetails.get(i).getKotStatus() < ParamConst.KOT_STATUS_DONE) {
-                                    kotItemDetails.get(i).setKotStatus(ParamConst.KOT_STATUS_UPDATE);
-                                    KotItemDetailSQL.update(kotItemDetails.get(i));
-                                    orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
-                                } else {
-                                    //TODO
-                                }
-                            } else {
-                                KotItemDetailSQL.update(kotItemDetails.get(i));
-                                orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
-                            }
+                            //------use if kds display per table not per order(place order)----
+//                            KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), kotItemDetails.get(i).getOrderDetailId());
+//                            if (kotItemDetail != null) {
+//                                if (kotItemDetails.get(i).getKotStatus() < ParamConst.KOT_STATUS_DONE) {
+//                                    kotItemDetails.get(i).setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+//                                    kotItemDetails.get(i).setKotSummaryId(kotSummary.getId());//assign to fake id
+//                                    KotItemDetailSQL.update(kotItemDetails.get(i));
+//                                    orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
+//                                } else {
+//                                    //TODO
+//                                }
+//                            } else {
+                            kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
+                            KotItemDetailSQL.update(kotItemDetails.get(i));
+                            orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
+//                            }
                         }
 
 

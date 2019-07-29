@@ -2614,7 +2614,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
             String kotSummaryStr = jsonObject.getString("kotSummary");
             int kdsId = jsonObject.getInt("kdsId");
             KotSummary kotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
-            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
+            int kotSummaryId;
+
+            if (CommonSQL.isFakeId(kotSummary.getId())) {
+                kotSummaryId = kotSummary.getOriginalId();
+            } else {
+                kotSummaryId = kotSummary.getId();
+            }
+
+            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummaryId);
 
             if (kotSummaryLocal == null) {
                 result.put("kotSummary", kotSummary);
@@ -2657,7 +2665,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
             final Order order = OrderSQL.getOrder(kotSummary.getOrderId());
             if (order == null) return;
 
-            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
+            int kotSummaryId;
+
+            if (CommonSQL.isFakeId(kotSummary.getId())) {
+                kotSummaryId = kotSummary.getOriginalId();
+            } else {
+                kotSummaryId = kotSummary.getId();
+            }
+
+            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummaryId);
 
             if (kotSummaryLocal == null) {
                 return;
