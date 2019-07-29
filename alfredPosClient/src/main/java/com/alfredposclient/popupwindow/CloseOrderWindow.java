@@ -387,6 +387,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //		} else {
 //			includTax = BH.getBD(ParamConst.DOUBLE_ZERO);
 //		}
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
         cash_num = null;
         change_num = null;
         cardNo = null;
@@ -2001,6 +2002,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             closeMoneyKeyboard();
         } else if ("Enter".equals(key)) {
             if (ButtonClickTimer.canClick()) {
+                moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
                 clickEnterAction();
             }
         } else if ("C".equals(key)) {
@@ -2621,7 +2623,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 printBill(true, null);
             }
         }
-
     }
 
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {
