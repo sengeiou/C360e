@@ -378,7 +378,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 
     private Response handlerSubmitNewKot(String params) {
         Response resp = null;
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
         try {
             JSONObject jsonObject = new JSONObject(params);
@@ -413,8 +413,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
 
+                        kotSummary.setOrderDetailCount(kotItemDetails.size());
                         KotSummarySQL.update(kotSummary);
-                        KotSummary kots = KotSummarySQL.getKotSummaryById(kotSummary.getId());
                         if (kotItemDetails != null) {
                             KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
                         }
@@ -453,6 +453,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                             kotSummary.setId(fakeId);
                         }
 
+                        kotSummary.setOrderDetailCount(kotItemDetails.size());
                         KotSummarySQL.addKotSummary(kotSummary);
 //                        KotSummarySQL.update(kotSummary);
                         if (kotItemModifiers != null) {

@@ -388,7 +388,8 @@ public class KotJobManager {
 
         if (printerGrougIds != null && printerGrougIds.size() > 0 && kotSummary != null) {
             KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
-            int count = kotSummaryLocal != null ? kotSummaryLocal.getOrderDetailCount() + kot.size() : kot.size();
+//            int count = kotSummaryLocal != null ? kotSummaryLocal.getOrderDetailCount() + kot.size() : kot.size();
+            int count = kot.size();
             kotSummary.setOrderDetailCount(count);
             KotSummarySQL.updateKotSummaryOrderCountById(count, kotSummary.getId().intValue());
 

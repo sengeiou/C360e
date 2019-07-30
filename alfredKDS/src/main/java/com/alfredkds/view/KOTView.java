@@ -230,6 +230,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 }
             });
 
+            holder.tv_order_num.setTextColor(ContextCompat.getColor(context, R.color.black));
+
             if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
                 convertView.setBackgroundResource(R.color.white);
                 holder.tv_text.setTextColor(ContextCompat.getColor(context, R.color.black));
@@ -448,19 +450,22 @@ public class KOTView extends LinearLayout implements AnimationListener,
         } else {
             adapter.notifyDataSetChanged();
         }
-        lv_dishes.setOnItemClickListener(new OnItemClickListener() {
 
-            @Override
-            public void onItemClick(AdapterView<?> parentView, View View, int position,
-                                    long id) {
-                if (!ButtonClickTimer.canClick(View)) {
-                    return;
+        if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUB) {
+            lv_dishes.setOnItemClickListener(new OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parentView, View View, int position,
+                                        long id) {
+                    if (!ButtonClickTimer.canClick(View)) {
+                        return;
+                    }
+
+                    if (kot.isPlaceOrder())
+                        adapter.setCheckListPosition(position);
                 }
-
-                if (kot.isPlaceOrder())
-                    adapter.setCheckListPosition(position);
-            }
-        });
+            });
+        }
 
         lv_dishes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
