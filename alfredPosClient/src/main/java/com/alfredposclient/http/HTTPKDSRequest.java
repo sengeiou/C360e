@@ -3,10 +3,15 @@ package com.alfredposclient.http;
 import android.content.Context;
 import android.os.Handler;
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
@@ -19,6 +24,7 @@ import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
 
 import java.net.ConnectException;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class HTTPKDSRequest {
@@ -71,9 +77,41 @@ public class HTTPKDSRequest {
 //									App.instance.removeKDSDevice(kds.getDevice_id());
                         } else if (resultCode == ResultCode.SUCCESS) {
                             if (kotSummary != null) {
-                                kotSummary.setKotSummaryLog(KDSLogUtil.setStartTime(kotSummary.getKotSummaryLog(), kds));
-                                KotSummarySQL.updateKotSummaryLog(kotSummary);
+                                int kotSummaryId = kotSummary.getId() <= 0 ? kotSummary.getOriginalId() : kotSummary.getId();
+                                KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummaryId);
+                                kotSummaryLocal.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummaryLocal.getKotSummaryLog(), kds));
+                                KotSummarySQL.updateKotSummaryLog(kotSummaryLocal);
+
+                                sendKOTToSummaryKDS(kotSummaryLocal);
                             }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        if (error.getCause() instanceof ConnectException) {
+                            throw new RuntimeException(error);
+                        }
+                    }
+                });
+    }
+
+    public static void syncSubmitKotToSummaryKDS(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
+                                                 SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+
+        parameters.put("mainpos", App.instance.getMainPosInfo());
+
+        syncHttpClient.post(context, url,
+                new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
+                        "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                new AsyncHttpResponseHandlerEx() {
+                    @Override
+                    public void onSuccess(final int statusCode, final Header[] headers,
+                                          final byte[] responseBody) {
+                        super.onSuccess(statusCode, headers, responseBody);
+                        if (resultCode == ResultCode.INVALID_DEVICE) {
+                        } else if (resultCode == ResultCode.SUCCESS) {
                         }
                     }
 
@@ -136,6 +174,9 @@ public class HTTPKDSRequest {
                             if (kotSummary != null) {
                                 kotSummary.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummary.getKotSummaryLog(), kds));
                                 KotSummarySQL.updateKotSummaryLog(kotSummary);
+
+                                sendKOTToSummaryKDS(kotSummary);
+
                             }
                         } else if (resultCode == ResultCode.INVALID_DEVICE) {
                             // if kds device is invadate, POS need remove it.
@@ -151,6 +192,19 @@ public class HTTPKDSRequest {
                         }
                     }
                 });
+    }
+
+    private static void sendKOTToSummaryKDS(KotSummary kotSummary) {
+        ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+        ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
+
+        for (KotItemDetail kotItemDetail : kotItemDetails) {
+            kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId()));
+        }
+
+        App.instance.getKdsJobManager().sendKOTToKDSSummary(
+                kotSummary, kotItemDetails,
+                kotItemModifiers, ParamConst.JOB_KOT_SUMMARY);
     }
 
 //	public static void asyncSubmitKot(Context context, Map<String, Object> parameters, String url,

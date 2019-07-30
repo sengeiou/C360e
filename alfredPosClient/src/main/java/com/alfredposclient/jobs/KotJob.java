@@ -248,6 +248,8 @@ public class KotJob extends Job {
                 SyncCentre.getInstance().syncSubmitKotToNextKDS(kds, context, data, null);
             } else if (APIName.DELETE_KOT_ON_SUMMARY_KDS.equals(apiName)) {
                 SyncCentre.getInstance().deleteKotSummary(kds, context, data, null);
+            } else if (APIName.SUBMIT_SUMMARY_KDS.equals(apiName)) {
+                SyncCentre.getInstance().syncSubmitKotToSummaryKDS(kds, context, data, null);
             }
             LogUtil.d(TAG, "KOT JOB Successful");
         } catch (Throwable e) {

@@ -15,18 +15,6 @@ import java.util.List;
  */
 public class KDSLogUtil {
 
-    public static String setStartTime(String kotSummaryLogStr, KDSDevice kdsDevice) {
-        if (TextUtils.isEmpty(kotSummaryLogStr)) return "";
-        List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(kotSummaryLogStr);
-        KotSummaryLog kotSummaryLog = getKotSummaryLog(kdsDevice.getDevice_id(), kotSummaryLogs);
-
-        if (kotSummaryLog != null) {
-            kotSummaryLog.startTime = System.currentTimeMillis();
-            kotSummaryLogs.add(kotSummaryLog);
-        }
-        return new Gson().toJson(kotSummaryLogs);
-    }
-
     public static String setEndTime(String kotSummaryLogStr, KDSDevice kdsDevice) {
         if (TextUtils.isEmpty(kotSummaryLogStr)) return "";
         List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(kotSummaryLogStr);
@@ -34,9 +22,8 @@ public class KDSLogUtil {
 
         if (kotSummaryLog != null) {
             kotSummaryLog.endTime = System.currentTimeMillis();
-            kotSummaryLogs.add(kotSummaryLog);
         }
-        return new Gson().toJson(kotSummaryLogs);
+        return createLogs(kotSummaryLogs, kotSummaryLog);
     }
 
     public static String putKdsLog(String kotSummaryLogStr, KDSDevice kdsDevice) {
@@ -51,7 +38,32 @@ public class KDSLogUtil {
 
         kotSummaryLog.kdsDevice = kdsDevice;
         kotSummaryLog.startTime = System.currentTimeMillis();
-        kotSummaryLogs.add(kotSummaryLog);
+
+        return createLogs(kotSummaryLogs, kotSummaryLog);
+    }
+
+    private static String createLogs(List<KotSummaryLog> kotSummaryLogs, KotSummaryLog newKotSummaryLog) {
+        int position = 0;
+        boolean isFound = false;
+        for (KotSummaryLog ksl : kotSummaryLogs) {
+            if (ksl.kdsDevice.getDevice_id() == newKotSummaryLog.kdsDevice.getDevice_id()) {
+                isFound = true;
+                break;
+            }
+
+            position++;
+        }
+
+        if (isFound) {
+            kotSummaryLogs.remove(position);
+
+            if (position < kotSummaryLogs.size())
+                kotSummaryLogs.add(position, newKotSummaryLog);
+            else
+                kotSummaryLogs.add(newKotSummaryLog);
+        } else {
+            kotSummaryLogs.add(newKotSummaryLog);
+        }
 
         return new Gson().toJson(kotSummaryLogs);
     }
