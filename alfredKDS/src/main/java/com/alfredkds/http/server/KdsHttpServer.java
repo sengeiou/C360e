@@ -168,6 +168,13 @@ public class KdsHttpServer extends AlfredHttpServer {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+
+                    if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
+                        if (CommonSQL.isFakeId(kotSummary.getId())) {
+                            kotSummary.setId(kotSummary.getOriginalId());
+                        }
+                    }
+
                     KotSummarySQL.update(kotSummary);
                     if (kotItemDetails != null) {
                         KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -445,24 +452,36 @@ public class KdsHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
 
-                        KotSummarySQL.deleteKotSummaryTmp(kotSummary);
-                        ArrayList<KotSummary> kotsList = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
-                        int fakeId = 0;
-                        if (kotsList.size() > 0) {
-                            fakeId = CommonSQL.getfakeId(kotSummary.getId(), kotsList.size());
-                            kotSummary.setId(fakeId);
-                        }
+                        if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
+                            KotSummarySQL.update(kotSummary);
+                            if (kotItemDetails != null) {
+                                KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+                                for (int i = 0; i < kotItemDetails.size(); i++) {
+                                    orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
+                                }
+                            }
+                            if (kotItemModifiers != null) {
+                                KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
+                            }
 
-                        kotSummary.setOrderDetailCount(kotItemDetails.size());
-                        KotSummarySQL.addKotSummary(kotSummary);
-//                        KotSummarySQL.update(kotSummary);
-                        if (kotItemModifiers != null) {
-                            KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
-                        }
-                        for (int i = 0; i < kotItemDetails.size(); i++) {
+                        } else {
+                            KotSummarySQL.deleteKotSummaryTmp(kotSummary);
+                            ArrayList<KotSummary> kotsList = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
+                            int fakeId = 0;
+                            if (kotsList.size() > 0) {
+                                fakeId = CommonSQL.getfakeId(kotSummary.getId(), kotsList.size());
+                                kotSummary.setId(fakeId);
+                            }
+
+                            kotSummary.setOrderDetailCount(kotItemDetails.size());
+                            KotSummarySQL.addKotSummary(kotSummary);
+                            if (kotItemModifiers != null) {
+                                KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
+                            }
+                            for (int i = 0; i < kotItemDetails.size(); i++) {
 //					KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(
 //							kotItemDetails.get(i).getOrderDetailId(),kotItemDetails.get(i).getCategoryId());
-                            //------use if kds display per table not per order(place order)----
+                                //------use if kds display per table not per order(place order)----
 //                            KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), kotItemDetails.get(i).getOrderDetailId());
 //                            if (kotItemDetail != null) {
 //                                if (kotItemDetails.get(i).getKotStatus() < ParamConst.KOT_STATUS_DONE) {
@@ -474,10 +493,11 @@ public class KdsHttpServer extends AlfredHttpServer {
 //                                    //TODO
 //                                }
 //                            } else {
-                            kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
-                            KotItemDetailSQL.update(kotItemDetails.get(i));
-                            orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
+                                kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
+                                KotItemDetailSQL.update(kotItemDetails.get(i));
+                                orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
 //                            }
+                            }
                         }
 
 
