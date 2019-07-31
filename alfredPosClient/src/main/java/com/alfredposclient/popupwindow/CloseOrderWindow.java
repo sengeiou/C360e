@@ -2089,11 +2089,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                     order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                     OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
-                    moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
-                    moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
-                    moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
-                    moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
-                    moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
+                    disableButtons();
                     OrderSQL.update(order);
                     paymentSettlement.setCashChange(BH.sub(showStrBigDecimal,
                             remainTotalAfterRound, true).toString());
@@ -2134,11 +2130,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                         PaymentSQL.updatePaymentAmount(order.getTotal(), order.getId().intValue());
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
-                        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
-                        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
-                        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
-                        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
-                        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
+                        disableButtons();
                         OrderSQL.update(order);
                     } else {
                         settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2203,11 +2195,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                         paidBD.toString());
                         if (paidBD.compareTo(remainTotal) > -1) {
                             order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
-                            moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
-                            moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
-                            moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
-                            moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
-                            moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
+                            disableButtons();
                             OrderSQL.update(order);
                         } else {
                             settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2228,11 +2216,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                             RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                             order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                             OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
-                            moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
-                            moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
-                            moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
-                            moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
-                            moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
+                            disableButtons();
                             OrderSQL.update(order);
                         } else {
                             settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2665,6 +2649,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             newPaymentMapList.add(paymentMap);
         }
         initBillSummary();
+    }
+
+    private void disableButtons() {
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
     }
 
     private void clickOtherAction(String key) {
