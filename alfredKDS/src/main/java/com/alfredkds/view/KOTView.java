@@ -32,7 +32,7 @@ import android.widget.TextView;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
-import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -46,6 +46,7 @@ import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
 import com.alfredkds.javabean.Kot;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
     private RelativeLayout ll_progress;
     private LinearLayout linear_progress;
     private LinearLayout llAction;
+    private List<KotSummaryLog> kotSummaryLogs;
 
     public KOTView(Context context) {
         super(context);
@@ -197,11 +199,13 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 holder.tv_text = (TextView) convertView.findViewById(R.id.tv_text);
                 holder.tv_dish_introduce = (TextView) convertView.findViewById(R.id.tv_dish_introduce);
                 holder.ivChecklist = (ImageView) convertView.findViewById(R.id.ivChecklist);
-//                holder.cmItem = (Chronometer) convertView.findViewById(R.id.cmItem);
+                holder.cmItem = (Chronometer) convertView.findViewById(R.id.cmItem);
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
+
+            holder.cmItem.setVisibility(GONE);
 
             KotItemDetail kotItemDetail = kotItemDetails.get(position);
 
@@ -214,49 +218,79 @@ public class KOTView extends LinearLayout implements AnimationListener,
             holder.ivChecklist.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ArrayList<KotItemDetail> selectedKotItemDetails = new ArrayList<>();
-                    for (KotItemDetail kid : kotItemDetails) {
-                        if (kid.isChecklist)
-                            selectedKotItemDetails.add(kid);
-                    }
 
-                    Message message = new Message();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("kot", new Gson().toJson(kot));
-                    bundle.putString("kotItemDetails", new Gson().toJson(selectedKotItemDetails));
-                    message.setData(bundle);
-                    message.what = App.HANDLER_KOT_NEXT;
-                    handler.sendMessage(message);
+                    ArrayList<KotItemDetail> selectedKotItemDetails = getSelectedKotItemDetails();
+
+                    if (selectedKotItemDetails.size() > 0) {
+                        Message message = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("kot", new Gson().toJson(kot));
+                        bundle.putString("kotItemDetails", new Gson().toJson(selectedKotItemDetails));
+                        message.setData(bundle);
+                        message.what = App.HANDLER_KOT_NEXT;
+                        handler.sendMessage(message);
+                    } else {
+                        //TODO: show toast here
+                    }
                 }
             });
 
             holder.tv_order_num.setTextColor(ContextCompat.getColor(context, R.color.black));
+            convertView.setBackgroundResource(R.color.white);
 
-            if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
+            if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE) {
+                convertView.setBackgroundResource(R.color.bg_complete_item);
+            } else if (kotItemDetail.getFireStatus() == 1) {
+                convertView.setBackgroundResource(R.color.viewfinder_laser);
+            } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
+                convertView.setBackgroundResource(R.color.possible_result_points);
+                holder.tv_text.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+            } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNSEND) {
                 convertView.setBackgroundResource(R.color.white);
                 holder.tv_text.setTextColor(ContextCompat.getColor(context, R.color.black));
+            } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TMP) {
+                holder.tv_text.setTextColor(ContextCompat.getColor(context, R.color.gray));
+                holder.tv_order_num.setTextColor(ContextCompat.getColor(context, R.color.white));
             } else {
-                if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_DONE) {
-                    convertView.setBackgroundResource(R.color.bg_complete_item);
-                } else if (kotItemDetail.getFireStatus() == 1) {
-                    convertView.setBackgroundResource(R.color.viewfinder_laser);
-                } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
-                    convertView.setBackgroundResource(R.color.possible_result_points);
-                    holder.tv_text.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.FAKE_BOLD_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-                } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNSEND) {
-                    convertView.setBackgroundResource(R.color.white);
-                    holder.tv_text.setTextColor(ContextCompat.getColor(context, R.color.black));
-                } else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TMP) {
-                    holder.tv_text.setTextColor(ContextCompat.getColor(context, R.color.gray));
-                    holder.tv_order_num.setTextColor(ContextCompat.getColor(context, R.color.white));
+                if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
+                    convertView.setBackgroundResource(R.color.bg_update_item);
                 } else {
-                    if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UPDATE) {
-                        convertView.setBackgroundResource(R.color.bg_update_item);
-                    } else {
-                        convertView.setBackgroundResource(R.color.white);
-                    }
+                    convertView.setBackgroundResource(R.color.white);
                 }
             }
+
+            if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
+                holder.tv_text.setTextColor(ContextCompat.getColor(context, R.color.black));
+                holder.cmItem.setVisibility(VISIBLE);
+//                long createTime = kot.getKotSummary().getUpdateTime();
+//                holder.cmItem.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
+
+                boolean isCompleted = false;
+                for (KotSummaryLog kotSummaryLog : kotSummaryLogs) {
+                    if (kotSummaryLog.kdsDevice.getKdsType() == Printer.KDS_EXPEDITER ||
+                            kotSummaryLog.kdsDevice.getKdsType() == Printer.KDS_SUMMARY) {
+                        List<KotItemDetail> kotItemDetails = kotSummaryLog.kotItemDetails;
+
+                        for (KotItemDetail kid : kotItemDetails) {
+                            if (kid.getId().equals(kotItemDetail.getId()) && kid.getEndTime() > 0) {
+                                convertView.setBackgroundResource(R.color.bg_complete_item);
+                                holder.cmItem.stop();
+                                isCompleted = true;
+                                break;
+                            }
+                        }
+
+                        if (isCompleted)
+                            break;
+
+                    }
+                }
+
+                if (!isCompleted)
+                    holder.cmItem.start();
+
+            }
+
             StringBuffer sBuffer = new StringBuffer();
             for (int j = 0; j < kotItemModifiers.size(); j++) {
                 KotItemModifier kotItemModifier = kotItemModifiers.get(j);
@@ -275,9 +309,6 @@ public class KOTView extends LinearLayout implements AnimationListener,
             holder.tv_text.setText(kotItemDetail.getItemName());
             holder.tv_dish_introduce.setText(sBuffer);
 
-//            long createTime = kot.getKotSummary().getUpdateTime();
-//            holder.cmItem.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
-//            holder.cmItem.start();
 //			textTypeFace.setTrajanProBlod(holder.tv_text);
 //			textTypeFace.setTrajanProRegular(holder.tv_order_num);
 //			textTypeFace.setTrajanProRegular(holder.tv_dish_introduce);
@@ -311,6 +342,16 @@ public class KOTView extends LinearLayout implements AnimationListener,
         private ImageView ivChecklist;
     }
 
+    private ArrayList<KotItemDetail> getSelectedKotItemDetails() {
+        ArrayList<KotItemDetail> selectedKotItemDetails = new ArrayList<>();
+        for (KotItemDetail kid : kotItemDetails) {
+            if (kid.isChecklist)
+                selectedKotItemDetails.add(kid);
+        }
+
+        return selectedKotItemDetails;
+    }
+
 
     public void setData(Kot originKot) {
         this.kot = originKot;
@@ -318,6 +359,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
         this.kotItemDetails.addAll(kot.getKotItemDetails());
         this.kotItemModifiers.clear();
         this.kotItemModifiers.addAll(kot.getKotItemModifiers());
+        this.kotSummaryLogs = new Gson().fromJson(kot.getKotSummary().getKotSummaryLog(),
+                new TypeToken<List<KotSummaryLog>>() {
+                }.getType());
 
         if (!kot.isPlaceOrder()) {
             linear_progress.setVisibility(GONE);
@@ -325,10 +369,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
             linear_progress.setVisibility(VISIBLE);
             if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUB) {
 //                if (kot.getKotSummary().getKdsType() == Printer.KDS_SUB) {
-                llAction.setVisibility(GONE);
+                llAction.setVisibility(VISIBLE);
                 call_num_tv.setVisibility(GONE);
                 complete_all_tv.setVisibility(GONE);
-                tvNext.setVisibility(GONE);
+                tvNext.setVisibility(VISIBLE);
             } else if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
                 llAction.setVisibility(GONE);
             } else {
@@ -336,6 +380,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 complete_all_tv.setVisibility(VISIBLE);
                 call_num_tv.setVisibility(VISIBLE);
 
+                //kds epediter
                 if (kot.getKotItemDetails().size() >= kot.getKotSummary().getOrderDetailCount()) {
                     llAction.setVisibility(VISIBLE);
                 } else {
@@ -529,13 +574,20 @@ public class KOTView extends LinearLayout implements AnimationListener,
             public void onClick(View view) {
                 if (!ButtonClickTimer.canClick()) return;
 
-                Message message = new Message();
-                Bundle bundle = new Bundle();
-                bundle.putString("kot", new Gson().toJson(kot));
-                bundle.putString("kotItemDetails", new Gson().toJson(kotItemDetails));
-                message.setData(bundle);
-                message.what = App.HANDLER_KOT_NEXT;
-                handler.sendMessage(message);
+                ArrayList<KotItemDetail> selectedKotItemDetails = getSelectedKotItemDetails();
+
+                if (selectedKotItemDetails.size() > 0) {
+                    Message message = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("kot", new Gson().toJson(kot));
+//                bundle.putString("kotItemDetails", new Gson().toJson(kotItemDetails));
+                    bundle.putString("kotItemDetails", new Gson().toJson(selectedKotItemDetails));
+                    message.setData(bundle);
+                    message.what = App.HANDLER_KOT_NEXT;
+                    handler.sendMessage(message);
+                } else {
+                    //TODO: show toast here
+                }
             }
         });
 

@@ -9,6 +9,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
@@ -25,6 +26,7 @@ import org.apache.http.entity.StringEntity;
 
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class HTTPKDSRequest {
@@ -63,6 +65,7 @@ public class HTTPKDSRequest {
 
         parameters.put("mainpos", App.instance.getMainPosInfo());
         final KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
+        final List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
 
         syncHttpClient.post(context, url,
                 new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
@@ -78,8 +81,30 @@ public class HTTPKDSRequest {
                         } else if (resultCode == ResultCode.SUCCESS) {
                             if (kotSummary != null) {
                                 int kotSummaryId = kotSummary.getId() <= 0 ? kotSummary.getOriginalId() : kotSummary.getId();
+
                                 KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummaryId);
-                                kotSummaryLocal.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummaryLocal.getKotSummaryLog(), kds));
+
+                                if (kotSummaryLocal == null) return;
+
+                                List<KotItemDetail> kotItemDetailsCopy = new ArrayList<>();
+                                if (kotItemDetails != null) {
+
+                                    for (KotItemDetail kotItemDetail : kotItemDetails) {
+                                        KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                                        if (kidLocal == null) continue;
+
+                                        kidLocal.setStartTime(System.currentTimeMillis());
+
+                                        if (kds.getKdsType() == Printer.KDS_EXPEDITER ||
+                                                kds.getKdsType() == Printer.KDS_SUMMARY) {
+                                            kidLocal.setEndTime(System.currentTimeMillis());
+                                        }
+                                        KotItemDetailSQL.update(kidLocal);
+                                        kotItemDetailsCopy.add(kidLocal);
+                                    }
+                                }
+
+                                kotSummaryLocal.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummaryLocal, kotItemDetailsCopy, kds));
                                 KotSummarySQL.updateKotSummaryLog(kotSummaryLocal);
 
                                 sendKOTToSummaryKDS(kotSummaryLocal);
@@ -161,6 +186,7 @@ public class HTTPKDSRequest {
         parameters.put("mainpos", App.instance.getMainPosInfo());
 
         final KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
+        final List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
 
         syncHttpClient.post(context, url,
                 new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
@@ -172,7 +198,18 @@ public class HTTPKDSRequest {
                         super.onSuccess(statusCode, headers, responseBody);
                         if (resultCode == ResultCode.SUCCESS) {
                             if (kotSummary != null) {
-                                kotSummary.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummary.getKotSummaryLog(), kds));
+
+                                List<KotItemDetail> kotItemDetailsCopy = new ArrayList<>();
+
+                                if (kotItemDetails != null) {
+                                    for (KotItemDetail kotItemDetail : kotItemDetails) {
+                                        kotItemDetail.setStartTime(System.currentTimeMillis());
+                                        KotItemDetailSQL.update(kotItemDetail);
+                                        kotItemDetailsCopy.add(kotItemDetail);
+                                    }
+                                }
+
+                                kotSummary.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummary, kotItemDetailsCopy, kds));
                                 KotSummarySQL.updateKotSummaryLog(kotSummary);
 
                                 sendKOTToSummaryKDS(kotSummary);

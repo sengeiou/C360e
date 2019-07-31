@@ -5,6 +5,8 @@ import android.database.Cursor;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 
+import java.util.Random;
+
 public class CommonSQL {
 
     public static int getNextSeq(String table) {
@@ -30,9 +32,9 @@ public class CommonSQL {
         }
     }
 
-    public static int getfakeId(int originId, int count) {
-        String fakeId = "-" + originId + "" + count;
-        return Integer.parseInt(fakeId);
+    public static int getFakeId() {
+        int fakeId = new Random().nextInt(100);
+        return -fakeId;
     }
 
     public static boolean isFakeId(int id) {

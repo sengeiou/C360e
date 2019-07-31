@@ -310,8 +310,10 @@ public class HttpAPI {
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_RETURN_ERROR_SHOW, kotItemDetails));
                             } else if (resultCode == ResultCode.KOTSUMMARY_IS_UNREAL) {
                                 KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
-                                KotSummarySQL.deleteKotSummary(kotSummary);
-                                KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
+                                if (kotSummary != null) {
+                                    KotSummarySQL.deleteKotSummary(kotSummary);
+                                    KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
+                                }
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOTSUMMARY_IS_UNREAL));
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);

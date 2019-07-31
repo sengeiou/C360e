@@ -2,8 +2,13 @@ package com.alfredbase.utils;
 
 import android.text.TextUtils;
 
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.KotSummaryLog;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.PrinterSQL;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -15,19 +20,41 @@ import java.util.List;
  */
 public class KDSLogUtil {
 
-    public static String setEndTime(String kotSummaryLogStr, KDSDevice kdsDevice) {
-        if (TextUtils.isEmpty(kotSummaryLogStr)) return "";
-        List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(kotSummaryLogStr);
+    public static String setEndTime(KotSummary kotSummary, List<KotItemDetail> kotItemDetails, KDSDevice kdsDevice) {
+        List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(kotSummary.getKotSummaryLog());
         KotSummaryLog kotSummaryLog = getKotSummaryLog(kdsDevice.getDevice_id(), kotSummaryLogs);
 
         if (kotSummaryLog != null) {
-            kotSummaryLog.endTime = System.currentTimeMillis();
+            kotSummaryLog.endTime = System.currentTimeMillis();//parent
+
+            List<KotItemDetail> tmpKotItemDetails = new ArrayList<>(kotSummaryLog.kotItemDetails);
+            int position = 0;
+            for (KotItemDetail kotItemDetail : tmpKotItemDetails) {
+                for (KotItemDetail kid : kotItemDetails) {
+                    if (kid.getId().equals(kotItemDetail.getId())) {
+                        //replace data
+                        kotSummaryLog.kotItemDetails.remove(position);
+
+                        if (position < kotSummaryLog.kotItemDetails.size())
+                            kotSummaryLog.kotItemDetails.add(position, kid);
+                        else
+                            kotSummaryLog.kotItemDetails.add(kid);
+
+                        kotItemDetails.remove(kid);
+                        break;
+                    }
+                }
+                position++;
+            }
+
+            if (kotItemDetails.size() > 0)
+                kotSummaryLog.kotItemDetails.addAll(kotItemDetails);
         }
         return createLogs(kotSummaryLogs, kotSummaryLog);
     }
 
-    public static String putKdsLog(String kotSummaryLogStr, KDSDevice kdsDevice) {
-        List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(kotSummaryLogStr);
+    public static String putKdsLog(KotSummary kotSummary, List<KotItemDetail> kotItemDetails, KDSDevice kdsDevice) {
+        List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(kotSummary.getKotSummaryLog());
         KotSummaryLog kotSummaryLog = getKotSummaryLog(kdsDevice.getDevice_id(), kotSummaryLogs);
 
         //Not found kot summary log by kds id
@@ -39,6 +66,29 @@ public class KDSLogUtil {
         kotSummaryLog.kdsDevice = kdsDevice;
         kotSummaryLog.startTime = System.currentTimeMillis();
 
+        List<KotItemDetail> tmpKotItemDetails = new ArrayList<>(kotSummaryLog.kotItemDetails);
+        int position = 0;
+        for (KotItemDetail kotItemDetail : tmpKotItemDetails) {
+            for (KotItemDetail kid : kotItemDetails) {
+                if (kid.getId().equals(kotItemDetail.getId())) {
+                    //replace data
+                    kotSummaryLog.kotItemDetails.remove(position);
+
+                    if (position < kotSummaryLog.kotItemDetails.size())
+                        kotSummaryLog.kotItemDetails.add(position, kid);
+                    else
+                        kotSummaryLog.kotItemDetails.add(kid);
+
+                    kotItemDetails.remove(kid);
+                    break;
+                }
+            }
+            position++;
+        }
+
+        if (kotItemDetails.size() > 0)
+            kotSummaryLog.kotItemDetails.addAll(kotItemDetails);
+
         return createLogs(kotSummaryLogs, kotSummaryLog);
     }
 
@@ -46,6 +96,7 @@ public class KDSLogUtil {
         int position = 0;
         boolean isFound = false;
         for (KotSummaryLog ksl : kotSummaryLogs) {
+            if (newKotSummaryLog == null) break;
             if (ksl.kdsDevice.getDevice_id() == newKotSummaryLog.kdsDevice.getDevice_id()) {
                 isFound = true;
                 break;
@@ -62,7 +113,8 @@ public class KDSLogUtil {
             else
                 kotSummaryLogs.add(newKotSummaryLog);
         } else {
-            kotSummaryLogs.add(newKotSummaryLog);
+            if (newKotSummaryLog != null)
+                kotSummaryLogs.add(newKotSummaryLog);
         }
 
         return new Gson().toJson(kotSummaryLogs);

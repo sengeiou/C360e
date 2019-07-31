@@ -14,7 +14,6 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Printer;
-import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.sql.CommonSQL;
@@ -337,13 +336,8 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                             if (kotItemDetails != null) {
                                 if (kotSumSelected == null) {
-                                    ArrayList<KotSummary> kotsList = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
-                                    int fakeId = 0;
-                                    if (kotsList.size() > 0) {
-                                        fakeId = CommonSQL.getfakeId(kotSummary.getId(), kotsList.size());
-                                        kotSummary.setId(fakeId);
-                                    }
-
+                                    int fakeId = CommonSQL.getFakeId();
+                                    kotSummary.setId(fakeId);
                                     KotSummarySQL.addKotSummary(kotSummary);
 
                                     for (int i = 0; i < kotItemDetails.size(); i++) {
@@ -534,13 +528,16 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                         } else {
                             KotSummarySQL.deleteKotSummaryTmp(kotSummary);
-                            ArrayList<KotSummary> kotsList = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
-                            int fakeId = 0;
-                            if (kotsList.size() > 0) {
-                                fakeId = CommonSQL.getfakeId(kotSummary.getId(), kotsList.size());
-                                kotSummary.setId(fakeId);
-                            }
+//                            ArrayList<KotSummary> kotsList = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
+//                            int fakeId = 0;
+//                            if (kotsList.size() > 0) {
+//                                fakeId = CommonSQL.getFakeId(kotSummary.getId(), kotsList.size());
+//                                kotSummary.setId(fakeId);
+//                            }
 
+                            int fakeId = CommonSQL.getFakeId();
+
+                            kotSummary.setId(fakeId);
                             kotSummary.setOrderDetailCount(kotItemDetails.size());
                             KotSummarySQL.addKotSummary(kotSummary);
                             if (kotItemModifiers != null) {

@@ -400,6 +400,7 @@ public class KotJobManager {
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
+                    kdsDevice.setKdsType(printer.getPrinterUsageType());
                     KotJob kotjob = new KotJob(kdsDevice, kotSummary,
                             mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_NEXT_KOT);
 
@@ -495,7 +496,8 @@ public class KotJobManager {
                     return;
                 }
                 if (kdsDevice != null && kotSummary != null) {
-                    kotSummary.setKdsType(printer.kdsType);
+                    kdsDevice.setKdsType(printer.getPrinterUsageType());
+                    kotSummary.setKdsType(printer.getPrinterUsageType());
                     kotSummary.setOriginalId(kotSummary.getId());
 
                     KotJob kotjob;
@@ -511,8 +513,8 @@ public class KotJobManager {
 //                        kotjob = new KotJob(kdsDevice, kotSummary,
 //                                kotItemDetails, kotItemModifiers, method, orderMap);
 //                    } else {
-                        kotjob = new KotJob(kdsDevice, kotSummary,
-                                kots.get(prgid), mods.get(prgid), method, orderMap);
+                    kotjob = new KotJob(kdsDevice, kotSummary,
+                            kots.get(prgid), mods.get(prgid), method, orderMap);
 //                    }
                     kotJobManager.addJob(kotjob);
                 }

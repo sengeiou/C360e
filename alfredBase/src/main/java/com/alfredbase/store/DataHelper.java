@@ -1651,7 +1651,13 @@ public class DataHelper {
                     + " ADD COLUMN  printerGroupType INTEGER default 0");
             db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
-                    + " ADD COLUMN  kotItemStatus INTEGER default 0");
+                    + " ADD COLUMN  expectedTime INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  startTime INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  endTime INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN kotSummaryLog TEXT");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary

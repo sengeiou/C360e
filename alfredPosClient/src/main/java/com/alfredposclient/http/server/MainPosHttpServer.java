@@ -2637,7 +2637,17 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return this.getJsonResponse(gson.toJson(result));
             }
 
-            kotSummaryLocal.setKotSummaryLog(KDSLogUtil.setEndTime(kotSummaryLocal.getKotSummaryLog(), App.instance.getKDSDevice(kdsId)));
+            List<KotItemDetail> kotItemDetailsCopy = new ArrayList<>();
+            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                if (kidLocal == null) continue;
+
+                kidLocal.setEndTime(System.currentTimeMillis());
+                KotItemDetailSQL.update(kidLocal);
+                kotItemDetailsCopy.add(kidLocal);
+            }
+
+            kotSummaryLocal.setKotSummaryLog(KDSLogUtil.setEndTime(kotSummaryLocal, kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
             KotSummarySQL.updateKotSummaryLog(kotSummaryLocal);
 
             sendToNextKDS(params);
@@ -2749,21 +2759,39 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<ArrayList<KotItemDetail>>() {
                     }.getType());
 
-            KotSummary localKotSummary = KotSummarySQL.getKotSummaryById(kotSummary.getId().intValue());
+            int kotSummaryId;
+
+            if (CommonSQL.isFakeId(kotSummary.getId())) {
+                kotSummaryId = kotSummary.getOriginalId();
+            } else {
+                kotSummaryId = kotSummary.getId();
+            }
+
+            final KotSummary localKotSummary = KotSummarySQL.getKotSummaryById(kotSummaryId);
             if (localKotSummary == null) {
                 result.put("resultCode", ResultCode.KOTSUMMARY_IS_UNREAL);
                 resp = this.getJsonResponse(new Gson().toJson(result));
                 return resp;
             }
 
-            localKotSummary.setKotSummaryLog(KDSLogUtil.setEndTime(localKotSummary.getKotSummaryLog(), App.instance.getKDSDevice(kdsId)));
+            List<KotItemDetail> kotItemDetailsCopy = new ArrayList<>();
+            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                if (kidLocal == null) continue;
+
+                kidLocal.setEndTime(System.currentTimeMillis());
+                KotItemDetailSQL.update(kidLocal);
+                kotItemDetailsCopy.add(kidLocal);
+            }
+
+            localKotSummary.setKotSummaryLog(KDSLogUtil.setEndTime(localKotSummary, kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
             KotSummarySQL.updateKotSummaryLog(localKotSummary);
 
             // : fix bug: filter out old data that may be in KDS
             ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
             for (int i = 0; i < kotItemDetails.size(); i++) {
                 KotItemDetail kotItemDetail = kotItemDetails.get(i);
-                if (kotItemDetail.getOrderId().intValue() == kotSummary.getOrderId().intValue())
+                if (kotItemDetail.getOrderId().intValue() == localKotSummary.getOrderId().intValue())
                     filteredKotItemDetails.add(kotItemDetail);
             }
 
@@ -2797,7 +2825,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 resultKotItemDetails.add(subKotItemDetail);
                 KotNotification kotNotification = ObjectFactory.getInstance()
                         .getKotNotification(App.instance.getSessionStatus(),
-                                kotSummary, subKotItemDetail);
+                                localKotSummary, subKotItemDetail);
 
                 kotNotifications.add(kotNotification);
             }
@@ -2805,7 +2833,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 KotItemDetailSQL.addKotItemDetailList(filteredKotItemDetails);
                 KotNotificationSQL.addKotNotificationList(kotNotifications);
                 App.getTopActivity().httpRequestAction(
-                        MainPage.VIEW_EVENT_SET_DATA, kotSummary.getOrderId());
+                        MainPage.VIEW_EVENT_SET_DATA, localKotSummary.getOrderId());
                 result.put("resultCode", ResultCode.SUCCESS);
                 result.put("resultKotItemDetails", resultKotItemDetails);
                 result.put("kotSummaryId", kotSummary.getId());
@@ -2813,13 +2841,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
                         if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-                            String orderNo = kotSummary.getNumTag() + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
-                            SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getNumTag(), orderNo);
+                            String orderNo = localKotSummary.getNumTag() + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), localKotSummary.getOrderNo().toString());
+                            SyncCentre.getInstance().callAppNo(App.instance, localKotSummary.getNumTag(), orderNo);
 
                         }
-                        int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId());
+                        int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(localKotSummary.getId());
                         if (count == 0) {
-                            KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE, kotSummary.getId());
+                            KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE, localKotSummary.getId());
                         }
 
                         /* no waiter in kiosk mode*/
@@ -2836,7 +2864,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 //								}
 //							});
                         if (count == 0) {
-                            Order order = OrderSQL.getOrder(kotSummary.getOrderId().intValue());
+                            Order order = OrderSQL.getOrder(localKotSummary.getOrderId().intValue());
                             if (order != null && !IntegerUtils.isEmptyOrZero(order.getAppOrderId())) {
                                 AppOrder appOrder = AppOrderSQL.getAppOrderById(order.getAppOrderId().intValue());
                                 appOrder.setOrderStatus(ParamConst.APP_ORDER_STATUS_PREPARED);
@@ -2858,7 +2886,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     }
                 }).start();
 
-                deleteKotSummary(kotSummary, kotItemDetails);
+                //delete kot on summary kds
+                deleteKotSummary(localKotSummary, kotItemDetails);
                 resp = this.getJsonResponse(new Gson().toJson(result));
             } else {
                 result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);

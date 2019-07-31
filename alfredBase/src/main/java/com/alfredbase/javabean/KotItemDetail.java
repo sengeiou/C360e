@@ -59,6 +59,12 @@ public class KotItemDetail implements Serializable {
      */
     private int callType;
 
+    private long expectedTime;
+
+    private long startTime;
+
+    private long endTime;
+
     public boolean isChecklist;
 
     public KotItemDetail() {
@@ -234,6 +240,30 @@ public class KotItemDetail implements Serializable {
         this.fireStatus = fireStatus;
     }
 
+    public long getExpectedTime() {
+        return expectedTime;
+    }
+
+    public void setExpectedTime(long expectedTime) {
+        this.expectedTime = expectedTime;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
     @Override
     public String toString() {
         return "KotItemDetail{" +
@@ -257,6 +287,9 @@ public class KotItemDetail implements Serializable {
                 ", categoryId=" + categoryId +
                 ", isTakeAway=" + isTakeAway +
                 ", fireStatus=" + fireStatus +
+                ", expectedTime=" + expectedTime +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
                 '}';
     }
 }
