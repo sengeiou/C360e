@@ -236,7 +236,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                 @Override
                 public void run() {
 
-                    if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
+                    if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY ||
+                            App.instance.getKdsDevice().getKdsType() == Printer.KDS_EXPEDITER) {
                         if (CommonSQL.isFakeId(kotSummary.getId())) {
                             kotSummary.setId(kotSummary.getOriginalId());
                         }
@@ -244,6 +245,12 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                     KotSummarySQL.update(kotSummary);
                     if (kotItemDetails != null) {
+                        if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_EXPEDITER) {
+                            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                                kotItemDetail.setKotSummaryId(kotSummary.getOriginalId());//set original id
+                            }
+                        }
+
                         KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
                     }
                     if (kotItemModifiers != null) {
