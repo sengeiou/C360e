@@ -184,7 +184,6 @@ public class HTTPKDSRequest {
                                      SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
 
         parameters.put("mainpos", App.instance.getMainPosInfo());
-
         final KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
         final List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
 
@@ -197,6 +196,12 @@ public class HTTPKDSRequest {
                                           final byte[] responseBody) {
                         super.onSuccess(statusCode, headers, responseBody);
                         if (resultCode == ResultCode.SUCCESS) {
+                            boolean isFire = false;
+                            if (parameters.containsKey("isFire"))
+                                isFire = (boolean) parameters.get("isFire");
+
+                            if (isFire) return;
+
                             if (kotSummary != null) {
 
                                 List<KotItemDetail> kotItemDetailsCopy = new ArrayList<>();

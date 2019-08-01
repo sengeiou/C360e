@@ -760,7 +760,7 @@ public class KotJobManager {
                 }
                 if (kds1 != null) {
                     KotJob kotjob = new KotJob(kds1, kotSummary,
-                            kots.get(prgid), mods.get(prgid), method, orderMap);
+                            kots.get(prgid), mods.get(prgid), method, orderMap, true);
                     kotJobManager.addJob(kotjob);
                 }
                 if (prntd != null) {

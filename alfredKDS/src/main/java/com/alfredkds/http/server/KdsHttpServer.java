@@ -533,42 +533,38 @@ public class KdsHttpServer extends AlfredHttpServer {
                                 KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                             }
 
-                        } else {
-                            KotSummarySQL.deleteKotSummaryTmp(kotSummary);
-//                            ArrayList<KotSummary> kotsList = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
-//                            int fakeId = 0;
-//                            if (kotsList.size() > 0) {
-//                                fakeId = CommonSQL.getFakeId(kotSummary.getId(), kotsList.size());
-//                                kotSummary.setId(fakeId);
-//                            }
+                        } else {//sub kds with fake id
 
                             int fakeId = CommonSQL.getFakeId();
 
-                            kotSummary.setId(fakeId);
-                            kotSummary.setOrderDetailCount(kotItemDetails.size());
-                            KotSummarySQL.addKotSummary(kotSummary);
                             if (kotItemModifiers != null) {
                                 KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                             }
+
+                            boolean isFire = false;
                             for (int i = 0; i < kotItemDetails.size(); i++) {
-//					KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(
-//							kotItemDetails.get(i).getOrderDetailId(),kotItemDetails.get(i).getCategoryId());
-                                //------use if kds display per table not per order(place order)----
-//                            KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), kotItemDetails.get(i).getOrderDetailId());
-//                            if (kotItemDetail != null) {
-//                                if (kotItemDetails.get(i).getKotStatus() < ParamConst.KOT_STATUS_DONE) {
-//                                    kotItemDetails.get(i).setKotStatus(ParamConst.KOT_STATUS_UPDATE);
-//                                    kotItemDetails.get(i).setKotSummaryId(kotSummary.getId());//assign to fake id
-//                                    KotItemDetailSQL.update(kotItemDetails.get(i));
-//                                    orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
-//                                } else {
-//                                    //TODO
-//                                }
-//                            } else {
-                                kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
-                                KotItemDetailSQL.update(kotItemDetails.get(i));
-                                orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
-//                            }
+                                if (kotItemDetails.get(i).getFireStatus() == 1) {
+                                    KotItemDetail kidLocal = KotItemDetailSQL.
+                                            getKotItemDetailById(kotItemDetails.get(i).getId());
+
+                                    if (kidLocal != null) {
+                                        kidLocal.setFireStatus(1);
+                                        KotItemDetailSQL.update(kidLocal);
+                                    }
+
+                                    isFire = true;
+                                } else {
+                                    kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
+                                    KotItemDetailSQL.update(kotItemDetails.get(i));
+                                    orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
+                                }
+                            }
+
+                            if (!isFire) {
+                                KotSummarySQL.deleteKotSummaryTmp(kotSummary);
+                                kotSummary.setId(fakeId);
+                                kotSummary.setOrderDetailCount(kotItemDetails.size());
+                                KotSummarySQL.addKotSummary(kotSummary);
                             }
                         }
 

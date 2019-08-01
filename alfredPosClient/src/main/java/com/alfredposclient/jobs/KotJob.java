@@ -71,7 +71,13 @@ public class KotJob extends Job {
         failCount = 0;
     }
 
-    public KotJob(KDSDevice kds, KotSummary kotSummary, ArrayList<KotItemDetail> itemDetails, ArrayList<KotItemModifier> modifiers, String method, Map<String, Object> kotMap) {
+    public KotJob(KDSDevice kds, KotSummary kotSummary, ArrayList<KotItemDetail> itemDetails,
+                  ArrayList<KotItemModifier> modifiers, String method, Map<String, Object> kotMap) {
+        this(kds, kotSummary, itemDetails, modifiers, method, kotMap, false);
+    }
+
+    public KotJob(KDSDevice kds, KotSummary kotSummary, ArrayList<KotItemDetail> itemDetails,
+                  ArrayList<KotItemModifier> modifiers, String method, Map<String, Object> kotMap, boolean isFire) {
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
         //group the order, we don't want to send two in parallel
         //use a negative id so that it cannot collide w/ twitter ids
@@ -83,6 +89,7 @@ public class KotJob extends Job {
         data.put("kotItemModifiers", modifiers);
         data.put("kotSummary", kotSummary);
         data.put("method", method);
+        data.put("isFire", isFire);
         this.kds = kds;
         this.kotMap = kotMap;
         try {
