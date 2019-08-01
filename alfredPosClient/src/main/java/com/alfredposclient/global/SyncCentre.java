@@ -100,11 +100,6 @@ public class SyncCentre {
         }
     }
 
-    public void requestIpay88Payment(Context context, Map<String, Object> parameter, Handler handler) {
-        HttpAPI.requestIpay88Payment(context, parameter, getAbsoluteUrl(APIName.REQUEST_IPAY88),
-                httpClient, handler);
-    }
-
     public void login(Context context, Map<String, Object> parameters,
                       Handler handler) {
         HttpAPI.login(context, parameters,

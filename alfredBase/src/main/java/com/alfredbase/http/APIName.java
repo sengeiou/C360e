@@ -50,7 +50,6 @@ public class APIName {
     public static final String GET_REMAINING_STOCK = "/item/getRemainingStock";
     //3rd-party Serivce
     public static final String REQUEST_ALIPAY = "alipay/getAlipayUrl";
-    public static final String REQUEST_IPAY88 = "ipay88/getPayment";
     /**
      * 以pos作为服务器
      */

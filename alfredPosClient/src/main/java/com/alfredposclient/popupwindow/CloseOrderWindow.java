@@ -2957,34 +2957,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             verifyDialog.show("PAMENTMETHOD", null);
 
         } else {
-            if ("IPAY88".equalsIgnoreCase(paym.getNameOt())) {
-                //TODO: request generated QR Code to server
-                showDialogIpay88();
-            } else {
-                initPayment();
-            }
+            initPayment();
         }
-    }
-
-    private void showDialogIpay88() {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("amount", order.getTotal());
-        parameters.put("backendURL", 1);
-        parameters.put("barcodeNo", 1);
-        parameters.put("currency", "MYR");
-//        parameters.put("merchantCode", 1);
-        parameters.put("paymentId", paymentMethod.getPaymentTypeId());
-        parameters.put("prodDesc", 1);
-        parameters.put("refNo", 1);
-        parameters.put("remark", 1);
-        parameters.put("signature", 1);
-        parameters.put("signatureType", 1);
-        parameters.put("terminalID", 1);
-        parameters.put("userContact", 1);
-        parameters.put("userEmail", 1);
-        parameters.put("userName", 1);
-        parameters.put("lang", 1);
-        SyncCentre.getInstance().requestIpay88Payment(parent, parameters, handler);
     }
 
     private void initPayment() {
