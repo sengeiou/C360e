@@ -201,7 +201,6 @@ public class OrderSQL {
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);
 		OrderHelper.setPromotion(order);
-
 		OrderHelper.setOrderInclusiveTaxPrice(order);
 		List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
 		if(orderSplits != null && orderSplits.size() > 0){
@@ -221,6 +220,7 @@ public class OrderSQL {
 		OrderHelper.setOrderDiscount(order, orderDetails);
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);
+		OrderHelper.setOrderInclusiveTaxPrice(order);
 	}
 	/**
 	 * 修改订单Order折扣，调用这个方法

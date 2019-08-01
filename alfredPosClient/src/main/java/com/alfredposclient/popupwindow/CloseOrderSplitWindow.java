@@ -416,6 +416,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //	}
 
     private void init() {
+
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
 //		Tax tax = App.instance.getLocalRestaurantConfig().getIncludedTax().getTax();
 //		if(tax != null){
 //			includTax = BH.mul(BH.getBD(tax.getTaxPercentage()), BH.div(BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(order.getDiscountAmount()), false), BH.add(BH.getBD(1), BH.getBD(tax.getTaxPercentage()), false), false), true);
@@ -803,6 +809,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //							.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + settlementNum.toString());
                     if (!(parent instanceof EditSettlementPage)) {
                         orderSplit.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
+                        disableButtons();
                         OrderSplitSQL.update(orderSplit);
                         int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                         if (upDoneOrderSplitCount == 0) {
@@ -817,6 +824,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
                             if (roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
                                 orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
+                                disableButtons();
                                 OrderSplitSQL.update(orderSplit);
                                 if (parent instanceof EditSettlementPage) {
                                     roundAmount.setRoundBalancePrice(0.00);
@@ -848,6 +856,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                 RoundAmount roundAmounts = RoundAmountSQL.getRoundAmount(orderSplit);
                                 if (roundAmounts != null && BH.getBD(roundAmounts.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
                                     orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmounts.getRoundBalancePrice()), true).toString());
+                                    disableButtons();
                                     OrderSplitSQL.update(orderSplit);
                                     if (parent instanceof EditSettlementPage) {
                                         roundAmounts.setRoundBalancePrice(0.00);
@@ -1545,6 +1554,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
                     if (roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
                         orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
+                        disableButtons();
                         OrderSplitSQL.update(orderSplit);
                         RoundAmountSQL.deleteRoundAmount(roundAmount);
                     }
@@ -1567,6 +1577,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     payment_amount = remainTotal;
                     paymentType = viewTag;
                     orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                    disableButtons();
                     OrderSplitSQL.update(orderSplit);
                     int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                     if (upDoneOrderSplitCount == 0) {
@@ -2380,6 +2391,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     App.instance.getBusinessDate());
                     orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
                     OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
+                    disableButtons();
                     OrderSplitSQL.update(orderSplit);
                     PaymentSQL.updateSplitOrderPaymentAmount(orderSplit.getTotal(), orderSplit.getId().intValue());
                     int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
@@ -2399,6 +2411,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                         OrderHelper.setOrderTotalAlfterRound(order, orderRoundAmount);
+                        disableButtons();
                         OrderSQL.update(order);
                     }
                     paymentSettlement.setCashChange(BH.sub(showStrBigDecimal,
@@ -2438,6 +2451,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     remainTotal, true).toString());
                         }
                         orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                        disableButtons();
                         OrderSplitSQL.update(orderSplit);
                         int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                         if (upDoneOrderSplitCount == 0) {
@@ -2464,7 +2478,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             break;
             case ParamConst.SETTLEMENT_CUSTOM_ALL: {
                 PaymentSettlement paymentSettlement = null;
-                if (paymentMethod.getIsPart() == 0) {
+                if (paymentMethod.getIsTax() == 0) {
                     //不计税
                     deleteVoidOrEntTax();
 
@@ -2477,6 +2491,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 
                 orderSplit.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2516,6 +2531,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                         paidBD.toString());
                         if (paidBD.compareTo(remainTotal) > -1) {
                             orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                            disableButtons();
                             OrderSplitSQL.update(orderSplit);
                             int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                             if (upDoneOrderSplitCount == 0) {
@@ -2547,6 +2563,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                             App.instance.getBusinessDate());
                             orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
                             OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
+                            disableButtons();
                             OrderSplitSQL.update(orderSplit);
                             int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                             if (upDoneOrderSplitCount == 0) {
@@ -2566,6 +2583,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
                                 order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                                 OrderHelper.setOrderTotalAlfterRound(order, orderRoundAmount);
+                                disableButtons();
                                 OrderSQL.update(order);
 
                             }
@@ -2655,6 +2673,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 payment_amount = remainTotal;
                 paymentType = viewTag;
                 orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2702,6 +2721,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					OrderDetailSQL.updateOrderDetail(orderDetails.get(i));
 //				}
 //			}
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2752,6 +2772,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					OrderDetailSQL.updateOrderDetail(orderDetails.get(i));
 //				}
 //			}
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2776,6 +2797,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 payment_amount = remainTotal;
                 paymentType = viewTag;
                 orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2809,6 +2831,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 payment_amount = remainTotal;
                 paymentType = viewTag;
                 orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2842,6 +2865,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 payment_amount = remainTotal;
                 paymentType = viewTag;
                 orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2870,6 +2894,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     String.valueOf(paidBD.toString()));
                     if (paidBD.compareTo(remainTotal) > -1) {
                         orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                        disableButtons();
                         OrderSplitSQL.update(orderSplit);
                         int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                         if (upDoneOrderSplitCount == 0) {
@@ -2913,6 +2938,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     String.valueOf(paidBD.toString()));
                     if (paidBD.compareTo(remainTotal) > -1) {
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                        disableButtons();
                         OrderSQL.update(order);
                     } else {
                         settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2943,6 +2969,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     String.valueOf(paidBD.toString()));
                     if (paidBD.compareTo(remainTotal) > -1) {
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                        disableButtons();
                         OrderSQL.update(order);
                     } else {
                         settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2980,6 +3007,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 printBill(true, null);
             }
         }
+    }
+
+    private void disableButtons() {
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
     }
 
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {

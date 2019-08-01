@@ -240,7 +240,7 @@ public class EntVoidReportHtml extends BaseActivity {
 						App.instance.getRevenueCenter().getId(),
 						"ZY"+ParamHelper.getPrintOrderBillNo(App.instance.getIndexOfRevenueCenter(), 0),
 						App.instance.getUser().getFirstName()
-								+ App.instance.getUser().getLastName(), null,bizDate);
+								+ App.instance.getUser().getLastName(), null,bizDate,App.instance.getSystemSettings().getTrainType());
 
 		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 		if (cashierPrinter == null) {

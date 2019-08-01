@@ -22,7 +22,7 @@ public class AlfredRootCmdUtil {
 	private static final String COMMAND_IN = "<";
 	private static final String COMMAND_OUT = ">";
 	@SuppressLint("SdCardPath") 
-	private static final String COPY_FILE = Environment.getExternalStorageDirectory().getPath() + "alfred/com.puscene.posclient_assistant.sql";
+	public static final String COPY_FILE = Environment.getExternalStorageDirectory().getPath() + "alfred/com.puscene.posclient_assistant.sql";
 
 	
 	public static void executeOutputDB(String packagePathc){

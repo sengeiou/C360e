@@ -350,7 +350,22 @@ public class MainPageKiosk extends BaseActivity {
                 findViewById(R.id.lv_order), handler);
         setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
                 handler);
+        PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
+        if (placeInfo == null) {
+            placeInfo = ObjectFactory.getInstance().addNewPlace(App.instance.getRevenueCenter().getRestaurantId().intValue(),
+                    App.instance.getRevenueCenter().getId().intValue(), "kiosk");
+            placeInfo.setIsKiosk(1);
+            PlaceInfoSQL.addPlaceInfo(placeInfo);
+        }
         currentTable = TableInfoSQL.getKioskTable();
+        if(currentTable == null){
+            currentTable = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480,800);
+            currentTable.setIsKiosk(1);
+            TableInfoSQL.updateTables(currentTable);
+        }
+        if(currentTable == null){
+//            currentOrder = ObjectFactory.getInstance().getTa
+        }
         view_top = findViewById(R.id.view_top);
         setData();
         observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
@@ -693,7 +708,7 @@ public class MainPageKiosk extends BaseActivity {
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser()
                                                     .getLastName(),
-                                            currentTable.getName(), 1);
+                                            currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
                             currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
                             OrderSQL.update(currentOrder);
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
@@ -749,7 +764,7 @@ public class MainPageKiosk extends BaseActivity {
                                         paidOrder,
                                         App.instance.getUser().getFirstName()
                                                 + App.instance.getUser().getLastName(),
-                                        currentTable.getName(), 1);
+                                        currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
 
                         if (!TextUtils.isEmpty(changeNum)) {
@@ -878,7 +893,7 @@ public class MainPageKiosk extends BaseActivity {
                                             paidOrder,
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser().getLastName(),
-                                            currentTable.getName(), 1);
+                                            currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
                             Map<String, Object> orderMap = new HashMap<String, Object>();
 
@@ -1122,9 +1137,15 @@ public class MainPageKiosk extends BaseActivity {
                 }
                 case VIEW_EVENT_ADD_ORDER_DETAIL:
                     addOrderDetail((OrderDetail) msg.obj);
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case VIEW_EVENT_SET_DATA:
                     setData();
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case MainPage.VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
                     setData();
@@ -2281,7 +2302,7 @@ public class MainPageKiosk extends BaseActivity {
                                 App.instance.getRevenueCenter().getId(),
                                 "X"+reportDaySales.getReportNoStr(),
                                 App.instance.getUser().getFirstName()
-                                        + App.instance.getUser().getLastName(), null, bizDate);
+                                        + App.instance.getUser().getLastName(), null, bizDate,App.instance.getSystemSettings().getTrainType());
 
                 // Open Cash drawer
                 App.instance.kickOutCashDrawer(cashierPrinter);

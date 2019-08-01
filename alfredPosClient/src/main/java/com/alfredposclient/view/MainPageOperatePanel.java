@@ -118,7 +118,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 	
 	@Override
 	public void onClick(View v) {
-		if (ButtonClickTimer.canClick(v)) {
+		if (ButtonClickTimer.canClick()) {
 			switch (v.getId()) {
 			case R.id.tv_close_bill: {
 				Message msg = handler.obtainMessage();

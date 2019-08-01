@@ -580,8 +580,10 @@ public class XZReportActivity extends BaseActivity {
 //            ((TextView) findViewById(R.id.tv_voucher_item_num)).setText(reportDaySales.getVoucherQty() + "");
 //            ((TextView) findViewById(R.id.tv_voucher_item)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + reportDaySales.getVoucher());
             // TOTAL DELIVERY
-            float f = Float.parseFloat(reportDaySales.getDeliveroo()) + Float.parseFloat(reportDaySales.getUbereats()) + Float.parseFloat(reportDaySales.getFoodpanda());
-            if (BH.getBD(f + "").compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
+
+            BigDecimal f=BH.add(BH.add(BH.getBD(reportDaySales.getDeliveroo()),BH.getBD(reportDaySales.getUbereats()),false),BH.getBD(reportDaySales.getFoodpanda()),true) ;
+           // float f = Float.parseFloat(reportDaySales.getDeliveroo()) + Float.parseFloat(reportDaySales.getUbereats()) + Float.parseFloat(reportDaySales.getFoodpanda());
+            if (f.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
                 ReportDaySalesItem totalDelivery = new ReportDaySalesItem(context);
                 totalDelivery.setData("TOTAL DELIVERY", reportDaySales.getDeliverooQty().intValue() + reportDaySales.getUbereatsQty().intValue() + reportDaySales.getFoodpandaQty().intValue() + "",
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(f+""), true);
@@ -640,7 +642,9 @@ public class XZReportActivity extends BaseActivity {
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(reportDaySales.getBillVoid()).toString(), true);
                 ll_sales_total.addView(voidBillView);
                 // TOTAL VOID
-                float f1 = Float.parseFloat(reportDaySales.getItemVoid()) + Float.parseFloat(reportDaySales.getBillVoid());
+                BigDecimal f1=BH.add(BH.getBD(reportDaySales.getItemVoid()),BH.getBD(reportDaySales.getBillVoid()),true) ;
+
+               // float f1 = Float.parseFloat(reportDaySales.getItemVoid()) + Float.parseFloat(reportDaySales.getBillVoid());
                 ReportDaySalesItem totalVoid = new ReportDaySalesItem(context);
                 totalVoid.setData("TOTAL VOID", "",
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(f1+"").toString(), true);
@@ -656,8 +660,9 @@ public class XZReportActivity extends BaseActivity {
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(reportDaySales.getRefundTax()).toString(), true);
                 ll_sales_total.addView(refundTaxView);
                 // TOTAL REFUND
+                BigDecimal f2=BH.add(BH.getBD(reportDaySales.getBillRefund()),BH.getBD(reportDaySales.getRefundTax()),true) ;
 
-                float f2 = Float.parseFloat(reportDaySales.getBillRefund()) + Float.parseFloat(reportDaySales.getRefundTax());
+//                float f2 = Float.parseFloat(reportDaySales.getBillRefund()) + Float.parseFloat(reportDaySales.getRefundTax());
                 ReportDaySalesItem totalRefundView = new ReportDaySalesItem(context);
                 totalRefundView.setData("TOTAL REFUND", "",
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(f2+"").toString(), true);
@@ -681,7 +686,9 @@ public class XZReportActivity extends BaseActivity {
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(reportDaySales.getDiscount()).toString(), true);
                 ll_sales_total.addView(disncountViewB);
                 // Total Discount
-                float f3 = Float.parseFloat(reportDaySales.getDiscountPer()) + Float.parseFloat(reportDaySales.getDiscount());
+                BigDecimal f3=BH.add(BH.getBD(reportDaySales.getDiscountPer()),BH.getBD(reportDaySales.getDiscount()),true) ;
+
+              //  float f3 = Float.parseFloat(reportDaySales.getDiscountPer()) + Float.parseFloat(reportDaySales.getDiscount());
                 ReportDaySalesItem totalDiscount = new ReportDaySalesItem(context);
                 totalDiscount.setData("Total Discount", "",
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(f3+"").toString(), true);
@@ -722,7 +729,9 @@ public class XZReportActivity extends BaseActivity {
             ll_sales_total.addView(inclusiveTaxView);
             // Total Tax
 
-            float f4 = Float.parseFloat(reportDaySales.getTotalTax()) + Float.parseFloat(reportDaySales.getInclusiveTaxAmt());
+            BigDecimal f4=BH.add(BH.getBD(reportDaySales.getTotalTax()),BH.getBD(reportDaySales.getInclusiveTaxAmt()),true);
+
+           // float f4 = Float.parseFloat(reportDaySales.getTotalTax()) + Float.parseFloat(reportDaySales.getInclusiveTaxAmt());
             ReportDaySalesItem totalTaxView = new ReportDaySalesItem(context);
             totalTaxView.setData("Total TAX/SVC", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(f4 + ""), true);
@@ -743,7 +752,9 @@ public class XZReportActivity extends BaseActivity {
                     }
                 } else {
                     if (!TextUtils.isEmpty(startNum)) {
-                        start = (Float.parseFloat(startNum) + Float.parseFloat(reportDaySales.getStartDrawerAmount())) + "";
+                        start =BH.add(BH.getBD(startNum),BH.getBD(reportDaySales.getStartDrawerAmount()),true).toString();
+
+                       // start = (Float.parseFloat(startNum) + Float.parseFloat(reportDaySales.getStartDrawerAmount())) + "";
                     } else {
                         start = reportDaySales.getStartDrawerAmount();
                     }
@@ -960,7 +971,7 @@ public class XZReportActivity extends BaseActivity {
                         label + reportDaySales.getReportNoStr(),
                         App.instance.getUser().getFirstName()
                                 + App.instance.getUser().getLastName(), null,
-                        bizDate);
+                        bizDate,App.instance.getSystemSettings().getTrainType());
 
         PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
         List<ReportUserOpenDrawer> reportUserOpenDrawers = new ArrayList<ReportUserOpenDrawer>();

@@ -19,6 +19,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.adapter.HomePageViewPagerAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
+import com.floatwindow.float_lib.FloatActionController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -256,22 +257,23 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
+	@Override
+	public void onBackPressed() {
+		 if (doubleBackToExitPressedOnce) {
+			 FloatActionController.getInstance().stopMonkServer(context);
+		        super.onBackPressed();
+		        return;
+		    }
 
-        this.doubleBackToExitPressedOnce = true;
-        UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
+		    this.doubleBackToExitPressedOnce = true;
+		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
 
-        BaseApplication.postHandler.postDelayed(new Runnable() {
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
-    }
+		        @Override
+		        public void run() {
+		            doubleBackToExitPressedOnce=false;                       
+		        }
+		    }, 2000);
+	}
 }

@@ -2,6 +2,7 @@ package com.alfredposclient.global;
 
 import android.content.Context;
 
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.store.Store;
 
 public class SystemSettings {
@@ -32,11 +33,12 @@ public class SystemSettings {
     private boolean removeToVoid = false;
     private boolean isTransferPrint = true;
     private boolean isAutoToTable = false;
+    private Boolean isTraining= false;
 
     private int callStyle = 1;// 叫号端默认布局
 
     private int maxPrintOrderNo = 98;
-
+  private int trainType;
     public SystemSettings(Context context) {
         super();
         this.context = context;
@@ -593,6 +595,8 @@ public class SystemSettings {
         return isOfPax;
     }
 
+
+
     public void setOfPax(Integer ofPax) {
         Store.putInt(this.context, Store.OF_PAX,
                 ofPax.intValue());
@@ -602,7 +606,26 @@ public class SystemSettings {
             this.isOfPax = false;
     }
 
+    public boolean isTraining() {
+        Integer value = Store.getInt(context,
+                Store.TRAINING);
+        if (value != null && value != Store.DEFAULT_INT_TYPE) {
+            if (value.intValue() == 1)
+                this.isTraining = true;
+            else
+                this.isTraining = false;
+        }
+        return isTraining;
+    }
 
+    public void setTraining(Integer isTraining) {
+        Store.putInt(this.context, Store.TRAINING,
+                isTraining.intValue());
+        if (isTraining.intValue() == 1)
+            this.isTraining = true;
+        else
+            this.isTraining = false;
+    }
     public int getCallStyle() {
         Integer value = Store.getInt(context,
                 Store.CALL_STYLE);
@@ -621,5 +644,21 @@ public class SystemSettings {
                 style.intValue());
         this.callStyle = style.intValue();
 
+    }
+
+    public int getTrainType() {
+
+        Integer value = SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+        if (value == null) {
+            this.trainType = 0;
+        }else {
+            this.trainType=value.intValue();
+        }
+        return trainType;
+    }
+
+    public void setTrainType(int trainType) {
+
+        this.trainType = trainType;
     }
 }

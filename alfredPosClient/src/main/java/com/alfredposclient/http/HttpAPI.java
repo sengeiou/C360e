@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.MonthlyPLUReport;
@@ -159,6 +160,8 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                SharedPreferencesHelper.putInt(App.instance,SharedPreferencesHelper.TRAINING_MODE,0);
+
                                 HttpAnalysis.login(statusCode, headers,
                                         responseBody);
                                 handler.sendMessage(handler

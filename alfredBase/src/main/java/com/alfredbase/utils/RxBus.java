@@ -26,6 +26,7 @@ public class RxBus {
 
     public static final String showWelcom = "SHOW_WELCOM_VIEW";
     public static final String showOrder = "SHOW_ORDER_VIEW";
+    public static final String RX_TRAIN = "RX_TRAIN";
     private static RxBus instance;
     private ConcurrentHashMap<Object, List<Subject>> maps = new ConcurrentHashMap<Object, List<Subject>>();
 

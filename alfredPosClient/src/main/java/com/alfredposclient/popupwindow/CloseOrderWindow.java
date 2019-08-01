@@ -382,6 +382,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
     private void init() {
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
 //		Tax tax = App.instance.getLocalRestaurantConfig().getIncludedTax().getTax();
 //		if(tax != null){
 //			includTax = BH.mul(BH.getBD(tax.getTaxPercentage()), BH.div(BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(order.getDiscountAmount()), false), BH.add(BH.getBD(1), BH.getBD(tax.getTaxPercentage()), false), false), true);
@@ -2009,20 +2014,15 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             clickClearAction();
 
         } else if ("200".equals(key)) {
-
             selectNumberAction(200);
 
         } else if ("100".equals(key)) {
-
-
             selectNumberAction(100);
 
         } else if ("50".equals(key)) {
-
             selectNumberAction(50);
 
         } else if ("10".equals(key)) {
-
             selectNumberAction(10);
 
         } else {
@@ -2091,6 +2091,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                     order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                     OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
+                    disableButtons();
                     OrderSQL.update(order);
                     paymentSettlement.setCashChange(BH.sub(showStrBigDecimal,
                             remainTotalAfterRound, true).toString());
@@ -2112,10 +2113,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 //固定金额
             case ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE: {
 
-                if (paymentMethod.getIsTax() == 0) {
-                    //不计税
-                    deleteVoidOrEntTax();
-                }
+//                if (paymentMethod.getIsTax() == 0) {
+//                    //不计税
+//                    deleteVoidOrEntTax();
+//                }
                 BigDecimal paidBD = BH.getBD(paymentMethod.getPartAcount());
                 if (viewTag == ParamConst.SETTLEMENT_CUSTOM_PART) {
                     paidBD = BH.getBD(tv_part_total_amount_num.getText().toString());
@@ -2131,6 +2132,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                         PaymentSQL.updatePaymentAmount(order.getTotal(), order.getId().intValue());
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                        disableButtons();
                         OrderSQL.update(order);
                     } else {
                         settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2195,6 +2197,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                         paidBD.toString());
                         if (paidBD.compareTo(remainTotal) > -1) {
                             order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                            disableButtons();
                             OrderSQL.update(order);
                         } else {
                             settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2215,6 +2218,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                             RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                             order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                             OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
+                            disableButtons();
                             OrderSQL.update(order);
                         } else {
                             settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2623,7 +2627,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 printBill(true, null);
             }
         }
-
     }
 
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {
@@ -2648,6 +2651,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             newPaymentMapList.add(paymentMap);
         }
         initBillSummary();
+    }
+
+    private void disableButtons() {
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
     }
 
     private void clickOtherAction(String key) {

@@ -1,8 +1,5 @@
 package com.alfredposclient.popupwindow;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -47,11 +44,13 @@ import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
-
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OpenItemWindow implements OnClickListener, OnItemSelectedListener {
 	public static final int ITEM_MAIN_CATEGORY_TYPE = 1;
@@ -424,6 +423,7 @@ public class OpenItemWindow implements OnClickListener, OnItemSelectedListener {
 					.getOrderDetail(order, currentItemDetail, 0);
 			Message msg = handler.obtainMessage();
 			msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+			msg.arg1 = 1;
 			msg.obj = orderDetail;
 			handler.sendMessage(msg);
 		} else {
@@ -470,6 +470,7 @@ public class OpenItemWindow implements OnClickListener, OnItemSelectedListener {
 					ItemDetailSQL.getAllItemDetail());
 			Message msg = handler.obtainMessage();
 			msg.what = MainPage.VIEW_EVENT_SET_DATA;
+			msg.arg1 = 1;
 			handler.sendMessage(msg);
 		}
 		currentItemDetail = null;

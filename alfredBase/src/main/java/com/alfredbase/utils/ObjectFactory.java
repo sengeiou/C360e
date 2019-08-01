@@ -35,7 +35,6 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -64,7 +63,6 @@ import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
-import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
 import com.alfredbase.store.sql.BohHoldSettlementSQL;
@@ -445,22 +443,36 @@ public class ObjectFactory {
                           int orderStatus, Tax inclusiveTax, int appOrderId) {
 
         Order order = null;
+        int posId = 0;
+        int placesId = 0;
+        int pack = 4;
+        if(tables != null){
+            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+                posId = tables.getPosId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+                placesId = tables.getPlacesId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+                pack = tables.getPacks();
+            }
+        }
         synchronized (lock_order) {
-            order = OrderSQL.getUnfinishedOrderAtTable(tables.getPosId(), businessDate, sessionStatus);
+            order = OrderSQL.getUnfinishedOrderAtTable(posId, businessDate, sessionStatus);
             if (order == null) {
 
                 order = new Order();
                 order.setId(CommonSQL.getNextSeq(TableNames.Order));
                 order.setOrderOriginId(orderOriginId);
                 order.setUserId(user.getId());
-                order.setPersons(tables.getPacks());
+                order.setPersons(pack);
                 order.setOrderStatus(orderStatus);
                 order.setDiscountRate(ParamConst.DOUBLE_ZERO);
                 order.setSessionStatus(sessionStatus.getSession_status());
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
-                order.setPlaceId(tables.getPlacesId());
-                order.setTableId(tables.getPosId());
+                order.setPlaceId(placesId);
+                order.setTableId(posId);
                 long time = System.currentTimeMillis();
                 order.setCreateTime(time);
                 order.setUpdateTime(time);
@@ -479,6 +491,9 @@ public class ObjectFactory {
                 }
                 order.setSubPosBeanId(subPosBeanId);
                 OrderSQL.addOrder(order);
+            }else if (order.getPersons().intValue() != pack){
+                order.setPersons(pack);
+                OrderSQL.updateOrderPersions(pack,order.getId());
             }
         }
         return order;
@@ -489,20 +504,34 @@ public class ObjectFactory {
                                           SessionStatus sessionStatus, long businessDate, Tax inclusiveTax) {
 
         Order order = null;
+        int posId = 0;
+        int placesId = 0;
+        int pack = 4;
+        if(tables != null){
+            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+                posId = tables.getPosId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+                placesId = tables.getPlacesId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+                pack = tables.getPacks();
+            }
+        }
         synchronized (lock_order) {
             if (order == null) {
                 order = new Order();
                 order.setId(CommonSQL.getNextSeq(TableNames.Order));
                 order.setOrderOriginId(orderOriginId);
                 order.setUserId(user.getId());
-                order.setPersons(tables.getPacks());
+                order.setPersons(pack);
                 order.setOrderStatus(ParamConst.ORDER_STATUS_KIOSK);
                 order.setDiscountRate(ParamConst.DOUBLE_ZERO);
                 order.setSessionStatus(sessionStatus.getSession_status());
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
-                order.setPlaceId(tables.getPlacesId());
-                order.setTableId(tables.getPosId());
+                order.setPlaceId(placesId);
+                order.setTableId(posId);
                 long time = System.currentTimeMillis();
                 order.setCreateTime(time);
                 order.setUpdateTime(time);
@@ -530,6 +559,20 @@ public class ObjectFactory {
                                       TableInfo tables, long businessDate, Restaurant restaurant,
                                       Tax inclusiveTax, boolean isKiosk) {
         Order order = null;
+        int posId = 0;
+        int placesId = 0;
+        int pack = 4;
+        if(tables != null){
+            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+                posId = tables.getPosId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+                placesId = tables.getPlacesId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+                pack = tables.getPacks();
+            }
+        }
         if (appOrder != null) {
             synchronized (lock_order) {
                 order = OrderSQL.getOrderByAppOrderId(appOrder
@@ -549,8 +592,8 @@ public class ObjectFactory {
                     order.setSessionStatus(sessionStatus.getSession_status());
                     order.setRestId(restaurant.getId());
                     order.setRevenueId(revenueCenter.getId());
-                    order.setPlaceId(tables.getPlacesId());
-                    order.setTableId(tables.getPosId());
+                    order.setPlaceId(placesId);
+                    order.setTableId(posId);
                     long time = System.currentTimeMillis();
                     order.setCreateTime(time);
                     order.setUpdateTime(time);
@@ -642,7 +685,7 @@ public class ObjectFactory {
         }
         return orderDetail;
     }
-
+    // use in  transfer item feature
     public OrderDetail cpOrderDetail(OrderDetail cpOrderDetail) {
         OrderDetail orderDetail = new OrderDetail();
         synchronized (lock_orderDetail) {
@@ -651,6 +694,7 @@ public class ObjectFactory {
             orderDetail.setUpdateTime(cpOrderDetail.getUpdateTime());
             orderDetail.setOrderId(cpOrderDetail.getOrderId());
             orderDetail.setOrderOriginId(cpOrderDetail.getOrderOriginId());
+            orderDetail.setOrderSplitId(0);
             orderDetail.setUserId(cpOrderDetail.getUserId());
             orderDetail.setItemId(cpOrderDetail.getItemId());
             orderDetail.setItemName(cpOrderDetail.getItemName());
@@ -1805,7 +1849,7 @@ public class ObjectFactory {
     }
 
     public PrinterTitle getPrinterTitle(RevenueCenter revenue, Order order,
-                                        String userName, String tableName, int copy) {
+                                        String userName, String tableName, int copy,int trainType) {
         PrinterTitle printerTitle = new PrinterTitle();
         Restaurant restaurant = RestaurantSQL.getRestaurant();
         printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
@@ -1833,6 +1877,7 @@ public class ObjectFactory {
         } else {
             printerTitle.setOrderNo(order.getOrderNo().toString());
         }
+          printerTitle.setTrainType(trainType);
 
         return printerTitle;
     }
@@ -1862,6 +1907,10 @@ public class ObjectFactory {
         printerTitle.setGroupNum(orderSplit.getGroupId() + "");
         printerTitle.setIsKiosk(revenue.getIsKiosk());
         printerTitle.setCopy(copy);
+        String trainString = "";
+//        if(trainType==1){
+//            trainString=".Training";
+//        }
 //		printerTitle.setOrderNo(orderSplit.getOrderId().toString());
         if (revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
             printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
@@ -1872,7 +1921,7 @@ public class ObjectFactory {
     }
 
     public PrinterTitle getPrinterTitleForReport(int revenueId, String billNo,
-                                                 String userName, String tableName, String businessDate) {
+                                                 String userName, String tableName, String businessDate,int trainType) {
         PrinterTitle printerTitle = new PrinterTitle();
         Restaurant restaurant = new Restaurant();
         restaurant = RestaurantSQL.getRestaurant();
@@ -1896,6 +1945,7 @@ public class ObjectFactory {
                 restaurant.getLogoUrl()).getLogoString());
         printerTitle.setBizDate(businessDate);
         printerTitle.setOrderNo(billNo);
+        printerTitle.setTrainType(trainType);
 
         return printerTitle;
     }
@@ -2313,7 +2363,20 @@ public class ObjectFactory {
                                             User user, RevenueCenter revenueCenter, long businessDate) {
 
         ReportDiscount reportDiscount = null;
-
+        int posId = 0;
+        int placesId = 0;
+        int pack = 4;
+        if(tables != null){
+            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+                posId = tables.getPosId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+                placesId = tables.getPlacesId();
+            }
+            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+                pack = tables.getPacks();
+            }
+        }
         synchronized (lock_getReportDiscount) {
             reportDiscount = ReportDiscountSQL
                     .getReportDiscountByOrderId(order.getId());
@@ -2329,7 +2392,7 @@ public class ObjectFactory {
                 reportDiscount.setRevenueName(revenueCenter.getRevName());
                 reportDiscount.setBusinessDate(businessDate);
                 // reportDiscount.setBillNumber(OrderBillSQL.getOrderBillByOrder(order).getBillNo());
-                reportDiscount.setTableId(tables.getPosId());
+                reportDiscount.setTableId(posId);
                 reportDiscount.setTableName(tables.getName());
                 reportDiscount.setActuallAmount("0");// TODO
                 reportDiscount.setDiscount("0.00");// TODO

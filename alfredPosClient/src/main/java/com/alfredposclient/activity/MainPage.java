@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.hardware.display.DisplayManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,6 +79,7 @@ import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
@@ -321,7 +321,7 @@ public class MainPage extends BaseActivity {
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
         System.out.println("========MMMMMM");
         setContentView(R.layout.activity_main_page);
         super.initView();
@@ -407,10 +407,19 @@ public class MainPage extends BaseActivity {
         });
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
         XMPP.getInstance().setCanCheckAppOrder(true);
-
+        if(savedInstanceState != null){
+            currentOrder = (Order) savedInstanceState.getSerializable("currentOrder");
+            currentTable = (TableInfo) savedInstanceState.getSerializable("currentTable");
+            setData();
+        }
     }
 
- 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("currentOrder",currentOrder);
+        outState.putSerializable("currentTable",currentTable);
+    }
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {
@@ -559,9 +568,24 @@ public class MainPage extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
+        List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(oldOrder.getId().intValue());
+        StringBuffer orderSplitIds = new StringBuffer();
+        if(orderSplits != null && orderSplits.size() > 0) {
+            for (int i = 0; i < orderSplits.size(); i++) {
+                orderSplitIds.append(orderSplits.get(i).getId());
+                if (i < orderSplits.size() - 1) {
+                    orderSplitIds.append(',');
+                }
+            }
+        }
         Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
-        List<OrderDetail> orderDetails = OrderDetailSQL
-                .getUnFreeOrderDetails(oldOrder);
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        if(orderSplitIds.length() > 0){
+            orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(oldOrder,orderSplitIds.toString()));
+        }else{
+            orderDetails.addAll(OrderDetailSQL
+                    .getUnFreeOrderDetails(oldOrder));
+        }
         KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
         if (!orderDetails.isEmpty()) {
             for (OrderDetail orderDetail : orderDetails) {
@@ -588,9 +612,18 @@ public class MainPage extends BaseActivity {
                 }
             }
         }
-        OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-        OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-        OrderSQL.deleteOrder(oldOrder);
+
+        if(orderSplitIds.length() > 0){
+            OrderDetailSQL.deleteOrderDetailByOrderOutsideOrderSplit(oldOrder.getId(), orderSplitIds.toString());
+            OrderModifierSQL.deleteOrderModifierByOrderOutsideOrderDetail(oldOrder);
+            OrderSplitSQL.deleteBySpliteIdList(oldOrder.getId(), orderSplitIds.toString());
+            OrderSQL.updateOrder(oldOrder);
+            OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, oldOrder.getId());
+        }else {
+            OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
+            OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
+            OrderSQL.deleteOrder(oldOrder);
+        }
         initOrder(currentTable);
 
     }
@@ -776,13 +809,14 @@ public class MainPage extends BaseActivity {
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser()
                                                     .getLastName(),
-                                            currentTable.getName(), 1);
+                                            currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
+
                             currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
                             OrderSQL.update(currentOrder);
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
                                             .getId()));
-                            App.instance.remoteBillPrint(printer, title, currentOrder,
+                            App.instance. remoteBillPrint(printer, title, currentOrder,
                                     orderItems, orderModifiers, taxMap, null, null);
 //						handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                         }
@@ -839,7 +873,7 @@ public class MainPage extends BaseActivity {
                                     paidOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    currentTable.getName(), 1);
+                                    currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
 
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
@@ -1023,9 +1057,15 @@ public class MainPage extends BaseActivity {
                 }
                 case VIEW_EVENT_ADD_ORDER_DETAIL:
                     addOrderDetail((OrderDetail) msg.obj);
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case VIEW_EVENT_SET_DATA:
                     setData();
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
                     setData();
@@ -1752,7 +1792,8 @@ public class MainPage extends BaseActivity {
                                 printerLoadingDialog.dismiss();
                             }
                             if (!isShowTables) {
-                                showTables();
+//                                showTables();
+                                handler.sendEmptyMessage(VIEW_EVENT_SHOW_TABLES);
                             }
                         }
                     }
@@ -1991,17 +2032,18 @@ public class MainPage extends BaseActivity {
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
                             .getInstance().getItemList(orderSplitDetails);
                     List<Map<String, String>> taxMap = OrderDetailTaxSQL
-                            .getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
+                            .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
 
                     ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                             .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
                     Order temporaryOrder = new Order();
                     temporaryOrder.setPersons(paidOrderSplit.getPersons());
                     temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
+                    temporaryOrder.setDiscountAmount(currentOrder.getDiscountAmount());
+                    temporaryOrder.setTotal(currentOrder.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
@@ -2081,6 +2123,7 @@ public class MainPage extends BaseActivity {
 //			closeOrderSplitWindow.onBack();
 //			return;
 //		}
+        ButtonClickTimer.canClick();
         if (selectOrderSplitDialog != null && selectOrderSplitDialog.isShowing()) {
             selectOrderSplitDialog.dismiss();
         }
@@ -2294,8 +2337,16 @@ public class MainPage extends BaseActivity {
 
     private void setData() {
         initOrder(currentTable);
+        if(currentOrder == null){
+            showTables();
+            return;
+        }
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
-        //update tabels orders
+//        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
+//
+//
+//        List<OrderSplit> orderSplits  = OrderSplitSQL.getAllOrderSplits(currentOrder);
+//        //update tabels orders
         currentTable.setOrders(orderDetails.size());
         TableInfoSQL.updateTables(currentTable);
         mainPageMenuView.setParam(currentOrder, handler);
@@ -2614,7 +2665,11 @@ public class MainPage extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_CANCELED){
+            return;
+        }
         setData();
+
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NetWorkOrderActivity.CHECK_REQUEST_CODE && resultCode == NetWorkOrderActivity.CHECK_REQUEST_CODE) {
             activityRequestCode = requestCode;

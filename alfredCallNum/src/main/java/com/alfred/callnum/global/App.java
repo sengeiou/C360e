@@ -7,6 +7,7 @@ import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.http.server.CallNumHttpServer;
 import com.alfred.callnum.utils.TvPref;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.google.gson.Gson;
@@ -40,6 +41,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        BugseeHelper.init(this, "855edcc3-0ec8-40f7-b3e8-31ef79540932");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         TvPref.init();
 

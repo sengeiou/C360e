@@ -23,6 +23,8 @@ public class Store {
 	public static final String LOGIN_RESULT = "LOGIN_RESULT";
 	public static final String SESSION_STATUS = "SESSION_STATUS";
 	public static final String BUSINESS_DATE = "BUSINESS_DATE";
+	public static final String TRAIN_TYPE = "TRAIN_TYPE";
+	public static final String TRAIN_FIRST = "TRAIN_FIRST";
 
 	public static final String EMPLOYEE_ID = "EMPLOYEE_ID";
 	public static final String PASSWORD = "PASSWORD";
@@ -133,6 +135,7 @@ public class Store {
 
 	public static final String PRINT_BILL = "PRINT_BILL";
 	public static final String OF_PAX = "OF_PAX";
+	public static final String TRAINING = "training";
 
 	public static final String OPEN_BALANCE = "OPEN_BALANCE";
 	public static final String KDS_LANDSCAPE= "KDS_LANDSCAPE";

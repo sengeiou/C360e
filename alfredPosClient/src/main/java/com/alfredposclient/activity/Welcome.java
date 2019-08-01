@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.LoginResult;
@@ -48,6 +50,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.floatwindow.float_lib.FloatActionController;
 import com.google.gson.Gson;
 import com.umeng.analytics.MobclickAgent;
 
@@ -56,123 +59,135 @@ import java.util.List;
 import java.util.Map;
 
 public class Welcome extends BaseActivity {
-    private View rootView;
-    private IntentFilter downFilter;
-    private IntentFilter filter;
-    private DownloadManager downManager;
-    private LoadingDialog loadingDialog;
-    private int size = 0;
-    private PackageInfo pi;
-
-    @Override
-    protected void initView() {
-        super.initView();
-        ScreenSizeUtil.initScreenScale(context);
-        rootView = LayoutInflater.from(context).inflate(
-                R.layout.activity_welcome, null);
-        setContentView(rootView);
-        try {
-            pi = context.getPackageManager().getPackageInfo(
-                    context.getPackageName(),
-                    PackageManager.GET_CONFIGURATIONS);
-        } catch (NameNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        ObjectAnimator anim = ObjectAnimator.ofFloat(rootView, "alpha", 0f, 1f)
-                .setDuration(2000);
-        anim.start();
-        loadingDialog = new LoadingDialog(this);
-        loadingDialog.setTitle("Downloading");
-        TextTypeFace.getInstance().init(context);
+	private View rootView;
+	private IntentFilter downFilter;
+	private IntentFilter filter;
+	private DownloadManager downManager;
+	private LoadingDialog loadingDialog;
+	private int size = 0;
+	private PackageInfo pi;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		initviewWelcom();
+		ScreenSizeUtil.initScreenScale(context);
+		rootView = LayoutInflater.from(context).inflate(
+				R.layout.activity_welcome, null);
+		setContentView(rootView);
+		try {
+			pi = context.getPackageManager().getPackageInfo(
+					context.getPackageName(),
+					PackageManager.GET_CONFIGURATIONS);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ObjectAnimator anim = ObjectAnimator.ofFloat(rootView, "alpha", 0f, 1f)
+				.setDuration(2000);
+		anim.start();
+		loadingDialog = new LoadingDialog(this);
+		loadingDialog.setTitle("Downloading");
+		TextTypeFace.getInstance().init(context);
 //		check();
-        BaseApplication.postHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (App.instance.getPosType() == 1) {
-                    startSubPosNextActivity();
-                } else {
-                    startNextActivity();
-                }
-            }
-        }, 2000);
-        downFilter = new IntentFilter();
-        downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        registerReceiver(downReceiver, downFilter);
-        filter = new IntentFilter();
-        filter.addDataScheme("package");
-        filter.addAction(Intent.ACTION_PACKAGE_ADDED);
-        registerReceiver(receiver, filter);
-        downManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-
+		BaseApplication.postHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				if(App.instance.getPosType() == 1){
+					startSubPosNextActivity();
+				}else {
+					startNextActivity();
+				}
+			}
+		}, 2000);
+		downFilter = new IntentFilter();
+		downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+		registerReceiver(downReceiver, downFilter);
+		filter = new IntentFilter();
+		filter.addDataScheme("package");
+		filter.addAction(Intent.ACTION_PACKAGE_ADDED);
+		registerReceiver(receiver, filter);
+		downManager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
         BugseeHelper.trace("APP", getString(R.string.app_name));
-    }
+         int trainType= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+         if(trainType==1){
+            App.instance.getSystemSettings().setTraining(trainType);
+         }else {
+             App.instance.getSystemSettings().setTraining(0);
+         }
 
-    private boolean updateData() {
-        Long businessDate = (Long) Store.getLong(this, Store.BUSINESS_DATE);
-        if (pi != null
-                && Store.getBoolean(context, pi.versionName, false)
-                && businessDate == Store.DEFAULT_LONG_TYPE
-                && App.instance.getRevenueCenter() != null) {
+	}
 
-            AppVersion localVersion = new AppVersion(pi.versionName);
-            boolean updateData = Store.getBoolean(this, localVersion.getVersion(), false);
-            if (updateData) {
-                DialogFactory.compulsoryUpdateDialog(context, "注意", "该版本需要餐厅数据更新，\n请保证同步时网络畅通！", new OnClickListener() {
+	private boolean updateData(){
+		Long businessDate = (Long) Store.getLong(this, Store.BUSINESS_DATE);
+		if(pi != null
+				&& Store.getBoolean(context, pi.versionName, false)
+				&& businessDate == Store.DEFAULT_LONG_TYPE
+				&& App.instance.getRevenueCenter() != null){
 
-                    @Override
-                    public void onClick(View arg0) {
-                        Map<String, Integer> map = new HashMap<String, Integer>();
-                        map.put(PushMessage.HAPPY_HOURS, 1);
-                        map.put(PushMessage.PRINTER, 1);
-                        map.put(PushMessage.ITEM, 1);
-                        map.put(PushMessage.MODIFIER, 1);
-                        map.put(PushMessage.USER, 1);
-                        map.put(PushMessage.PLACE_TABLE, 1);
-                        map.put(PushMessage.TAX, 1);
-                        syncDataAction(map);
-                    }
-                });
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
+				AppVersion localVersion = new AppVersion(pi.versionName);
+				boolean updateData = Store.getBoolean(this, localVersion.getVersion(), false);
+				if(updateData){
+					DialogFactory.compulsoryUpdateDialog(context, "注意", "该版本需要餐厅数据更新，\n请保证同步时网络畅通！", new OnClickListener() {
 
-    private void startNextActivity() {
-        String str = Store.getString(
-                context, Store.SYNC_DATA_TAG);
-        App.instance.bindSyncService();
-        App.instance.connectRemotePrintService();
-        int time = Store.getInt(App.instance, Store.RELOGIN_TIME);
-        App.instance.setTime(time);
-        if (TextUtils.isEmpty(str)) {// 认为没有同步过服务器数据
-            UIHelp.startSyncData(context);
-            this.finish();
-        } else {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    CoreData.getInstance().init(context);
-                    App.instance.setLocalRestaurantConfig(CoreData.getInstance().getRestaurantConfigs());
-                    App.instance.initKdsAndPrinters();
-                    MainPosInfo mps = Store.getObject(context, Store.MAINPOSINFO, MainPosInfo.class);
-                    checkAndUpdateMainPOS(mps);
-                    clearNoActivePaymentSettlement();
-                    context.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            UIHelp.startLogin(context);
-                            context.finish();
-                        }
-                    });
-                }
-            }).start();
-        }
+						@Override
+						public void onClick(View arg0) {
+							Map<String, Integer> map = new HashMap<String, Integer>();
+							map.put(PushMessage.HAPPY_HOURS, 1);
+							map.put(PushMessage.PRINTER, 1);
+							map.put(PushMessage.ITEM, 1);
+							map.put(PushMessage.MODIFIER, 1);
+							map.put(PushMessage.USER, 1);
+							map.put(PushMessage.PLACE_TABLE, 1);
+							map.put(PushMessage.TAX, 1);
+							syncDataAction(map);
+						}
+					});
+				}
+				return true;
+		}else {
+			return false;
+		}
+	}
 
-    }
+	private void startNextActivity(){
+		String str = Store.getString(
+				context, Store.SYNC_DATA_TAG);
+		App.instance.bindSyncService();
+		App.instance.connectRemotePrintService();
+		int time = Store.getInt(App.instance, Store.RELOGIN_TIME);
+		App.instance.setTime(time);
+		if (TextUtils.isEmpty(str)) {// 认为没有同步过服务器数据
+			UIHelp.startSyncData(context);
+			this.finish();
+		} else {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
 
+					CoreData.getInstance().init(context);
+					App.instance.setLocalRestaurantConfig(CoreData.getInstance().getRestaurantConfigs());
+					App.instance.initKdsAndPrinters();
+					MainPosInfo mps = Store.getObject(context, Store.MAINPOSINFO, MainPosInfo.class);
+					checkAndUpdateMainPOS(mps);
+					clearNoActivePaymentSettlement();
+					context.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							UIHelp.startLogin(context);
+							context.finish();
+						}
+					});
+				}
+			}).start();
+		}
+	
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+	}
 
     private void startSubPosNextActivity() {
         App.instance.bindSyncService();
@@ -302,44 +317,50 @@ public class Welcome extends BaseActivity {
     };
 
 
-    @Override
-    public void handlerClickEvent(View v) {
-        super.handlerClickEvent(v);
-    }
+	@Override
+	public void handlerClickEvent(View v) {
+		super.handlerClickEvent(v);
+	}
 
-    @Override
-    protected void onDestroy() {
-        unregisterReceiver(downReceiver);
-        unregisterReceiver(receiver);
-        super.onDestroy();
-    }
+	@Override
+	protected void onResume() {
+		FloatActionController.getInstance().stopMonkServer(this);
+		super.onResume();
+	}
 
-    private void checkAndUpdateMainPOS(MainPosInfo oldPosSetting) {
-        String ip = CommonUtil.getLocalIpAddress();
-        if (!ip.equals(oldPosSetting.getIP())) {
-            oldPosSetting.setIP(ip);
-            Store.saveObject(context, Store.MAINPOSINFO, oldPosSetting);
-        }
-        App.instance.setMainPosInfo(oldPosSetting);
-    }
-
-    private void clearNoActivePaymentSettlement() {
-        Long businessDate = (Long) Store.getLong(this, Store.BUSINESS_DATE);
-        if (businessDate != null && businessDate != Store.DEFAULT_LONG_TYPE) {
-            List<Payment> payments = PaymentSQL.getPaymentFromNoActivePaymentSettlement(businessDate);
-            if (!payments.isEmpty()) {
-                for (Payment payment : payments) {
-                    PaymentSettlementSQL.regainPaymentSettlementByPayment(payment);
-                    CardsSettlementSQL.regainCardsSettlementByPayment(payment);
-                    BohHoldSettlementSQL.regainBohHoldSettlementByPayment(payment);
-                    VoidSettlementSQL.regainVoidSettlementByPayment(payment);
-                    NonChargableSettlementSQL.regainNonChargableSettlementByPayment(payment);
-                    NetsSettlementSQL.regainNetsSettlementByPayment(payment);
-                }
-            }
-        }
-
-    }
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(downReceiver);
+		unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+	
+	private void checkAndUpdateMainPOS(MainPosInfo oldPosSetting) {
+		String ip = CommonUtil.getLocalIpAddress();	
+		if (!ip.equals(oldPosSetting.getIP())) {
+			oldPosSetting.setIP(ip);
+			Store.saveObject(context, Store.MAINPOSINFO, oldPosSetting);
+		} 
+	    App.instance.setMainPosInfo(oldPosSetting);
+	}
+	
+	private void clearNoActivePaymentSettlement(){
+		Long businessDate = (Long) Store.getLong(this, Store.BUSINESS_DATE);
+		if(businessDate != null && businessDate != Store.DEFAULT_LONG_TYPE){
+			List<Payment> payments = PaymentSQL.getPaymentFromNoActivePaymentSettlement(businessDate);
+			if(!payments.isEmpty()){
+				for(Payment payment : payments){
+					PaymentSettlementSQL.regainPaymentSettlementByPayment(payment);
+					CardsSettlementSQL.regainCardsSettlementByPayment(payment);
+					BohHoldSettlementSQL.regainBohHoldSettlementByPayment(payment);
+					VoidSettlementSQL.regainVoidSettlementByPayment(payment);
+					NonChargableSettlementSQL.regainNonChargableSettlementByPayment(payment);
+					NetsSettlementSQL.regainNetsSettlementByPayment(payment);
+				}
+			}
+		}
+		
+	}
 
     private void check() {
         String value = MobclickAgent.getConfigParams(this, "version_check");

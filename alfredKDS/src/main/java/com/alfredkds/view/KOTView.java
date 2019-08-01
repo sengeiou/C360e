@@ -31,6 +31,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.model.MainPosInfo;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -124,7 +125,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		tv_progress = (Chronometer) kotView.findViewById(R.id.tv_progress);
 		lv_dishes = (ListView) kotView.findViewById(R.id.lv_dishes);
 		tv_kiosk_order_id = (TextView) kotView.findViewById(R.id.tv_kiosk_order_id);
-		tv_kiosk_app_order_id=(TextView)kotView.findViewById(R.id.tv_kiosk_app_order_id) ;
+ 		tv_kiosk_app_order_id=(TextView)kotView.findViewById(R.id.tv_kiosk_app_order_id) ;
 		tv_order_type=(TextView)kotView.findViewById(R.id.tv_order_type);
 		tv_orderremark = (TextView) kotView.findViewById(R.id.tv_orderremark);
 		ll_orderRemark = (LinearLayout) kotView.findViewById(R.id.ll_orderRemark);
@@ -137,12 +138,14 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		adapter = new KotItemDetailAdapter();
 //		initTextTypeFace();
 		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-			tv_kiosk_order_id.setVisibility(View.VISIBLE);
-			orderId.setVisibility(View.GONE);
-		}else {
-			tv_kiosk_order_id.setVisibility(View.GONE);
-			orderId.setVisibility(View.VISIBLE);
-		}
+            tv_kiosk_order_id.setVisibility(View.GONE);
+            orderId.setVisibility(View.GONE);
+            time.setVisibility(GONE);
+        }else {
+            tv_kiosk_order_id.setVisibility(View.GONE);
+            orderId.setVisibility(View.VISIBLE);
+            time.setVisibility(VISIBLE);
+        }
 
 	}
 
@@ -231,6 +234,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
 		this.kotItemModifiers.clear();
 		this.kotItemModifiers.addAll(kot.getKotItemModifiers());
 		kotId.setText(kot.getKotSummary().getId() + "");
+		int trainType= Store.getInt(context,Store.TRAIN_TYPE);
+
+
 		String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo();
 
 		if(!TextUtils.isEmpty(kot.getKotSummary().getEmpName())){
@@ -241,6 +247,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away)+ ")";
 		}
+
 		if(kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.DINE_IN){
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.dine_in)+ ")";
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.dine_in)+ ")";
@@ -248,9 +255,13 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.app_delivery)+ ")";
 			kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.app_delivery)+ ")";
 		}
+		String trainString="";
 
+		if(trainType==1){
+			trainString=".Training";
+		}
 		if(TextUtils.isEmpty(kot.getKotSummary().getTableName())){
-            table.setText(kioskOrderNoStr);
+            table.setText(kioskOrderNoStr+trainString);
 			if(kot.getKotSummary().getAppOrderId()>0) {
                    if(kot.getKotSummary().getEatType()==3){
 					   orderId.setText("Online App No:" + kot.getKotSummary().getAppOrderId()+"\n" +TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
@@ -267,7 +278,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 			}
             ll_type.setVisibility(GONE);
         }else {
-            table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
+            table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName()+trainString);
             orderId.setText(orderNoStr);
             tv_kiosk_order_id.setText(kioskOrderNoStr);
             if(kot.getKotSummary().getAppOrderId()>0){
@@ -311,8 +322,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
 		}
 
-		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
-		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
+		date.setText(TimeUtil.getPrintDateTime(kot.getKotSummary().getCreateTime()));
+		//time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
 
 //		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 //		long currentTime = System.currentTimeMillis();

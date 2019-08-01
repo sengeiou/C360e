@@ -114,4 +114,27 @@
         <item name="android:layout_marginBottom">10dp</item>
     </style>
 
+
+    <!--<style name="AnimationUpPopup">-->
+        <!--<item name="android:windowEnterAnimation">@anim/grow_fade_in_from_bottom</item>-->
+        <!--<item name="android:windowExitAnimation">@anim/shrink_fade_out_from_bottom</item>-->
+    <!--</style>-->
+
+    <!--<style name="AnimationFromButtom" >-->
+        <!--<item name="android:windowEnterAnimation">@anim/popup_form_bottom</item>-->
+        <!--<item name="android:windowExitAnimation">@anim/drop_down_to_bottom</item>-->
+    <!--</style>-->
+
+    <!--<style name="AnimationFromTop" >-->
+        <!--<item name="android:windowEnterAnimation">@anim/drop_down_from_top</item>-->
+        <!--<item name="android:windowExitAnimation">@anim/hide_to_top</item>-->
+    <!--</style>-->
+
+    <!--<style name="main_menu_animstyle">-->
+        <!--<item name="android:windowEnterAnimation">@anim/photo_dialog_in_anim</item>-->
+        <!--<item name="android:windowExitAnimation">@anim/photo_dialog_out_anim</item>-->
+    <!--</style>-->
+    <!--<style name="transparentFrameWindowStyle" parent="android:style/Theme.Dialog">-->
+        <!--<item name="android:windowBackground">@drawable/photo_choose_bg</item>-->
+    <!--</style>-->
 </resources>

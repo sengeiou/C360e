@@ -22,6 +22,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
@@ -216,6 +217,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        BugseeHelper.init(this, "5cc128ed-939d-428a-9060-2813a324b2f2");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         update15to16();
         //HTTPServer.start();

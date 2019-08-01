@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.model.AlipayPushMsgDto;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.ThirdpartyPayPushMsgDto;
@@ -70,9 +71,11 @@ public class PushListenerClient implements XMPP.PushListener {
                 return;
             }
         } else {
+
+          int  trainType= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
             if (msg.getRevenueId() == 0 || msg.getRevenueId() == App.instance.getRevenueCenter().getId().intValue()) {
                 if (msg != null && PushMessage.PUSH_ORDER.equals(msg.getMsg())
-                        && !TextUtils.isEmpty(msg.getContent())) {
+                        && !TextUtils.isEmpty(msg.getContent())&&trainType!=1) {
                     try {
                         JSONObject jsonObject = new JSONObject(msg.getContent());
                         int type = 0;

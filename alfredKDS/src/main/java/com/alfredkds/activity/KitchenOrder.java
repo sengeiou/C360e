@@ -56,6 +56,7 @@ import com.alfredkds.view.PopItemListView;
 import com.alfredkds.view.PopItemListView.RemoveDirection;
 import com.alfredkds.view.PopItemListView.RemoveListener;
 import com.alfredkds.view.SwipeItemLayout;
+import com.alfredkds.view.SwipeMenuRecyclerView;
 import com.alfredkds.view.TopBarView;
 import com.alfredkds.view.Type;
 import com.google.android.gms.appindexing.Action;
@@ -67,6 +68,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class KitchenOrder extends BaseActivity {
     public static final int HANDLER_TRANSFER_KOT = 3;
@@ -177,7 +180,12 @@ public class KitchenOrder extends BaseActivity {
                     break;
                 case App.HANDLER_SEND_FAILURE:
                     loadingDialog.dismiss();
-                    adapter.notifyDataSetChanged();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.notifyDataSetChanged();
+                    }else {
+                        adapter.notifyDataSetChanged();
+                    }
+                  //  adapter.notifyDataSetChanged();
                     refresh();
                     break;
                 case App.HANDLER_RETURN_ERROR:
@@ -210,8 +218,14 @@ public class KitchenOrder extends BaseActivity {
                     UIHelp.showToast(context, context.getResources().getString(R.string.order_discarded));
                     //kots = App.instance.getRefreshKots();
                     List<Kot> kots = App.instance.getRefreshKots();
-                    adapter.setKots(kots);
-                    adapter.notifyDataSetChanged();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.notifyDataSetChanged();
+                    }else {
+                        adapter.setKots(kots);
+                        adapter.notifyDataSetChanged();
+                    }
+
                     if (kots.isEmpty()) {
                         itemPopupWindow.dismiss();
                     }
@@ -236,8 +250,16 @@ public class KitchenOrder extends BaseActivity {
                         kots = App.instance.getRefreshKots();
                         //kots = App.instance.getInitKots();
                         loadingDialog.dismiss();
-                        madapter.setKots(getKotItem(kots));
-                        madapter.notifyDataSetChanged();
+
+                        if (App.instance.getSystemSettings().isKdsLan()) {
+                            madapter.setKots(getKotItem(kots));
+                            madapter.notifyDataSetChanged();
+                        }else {
+                            adapter.setKots(kots);
+                            adapter.notifyDataSetChanged();
+                        }
+//                        madapter.setKots(getKotItem(kots));
+//                        madapter.notifyDataSetChanged();
                         tv_order_qyt.setText(kotItems.size() + "");
 
                     }
@@ -363,8 +385,14 @@ public class KitchenOrder extends BaseActivity {
             loadingDialog.dismiss();
         }
         List<Kot> kots = App.instance.getRefreshKots();
-        adapter.setKots(kots);
-        adapter.notifyDataSetChanged();
+        if (App.instance.getSystemSettings().isKdsLan())  {
+            madapter.setKots(getKotItem(kots));
+            madapter.notifyDataSetChanged();
+        }else {
+            adapter.setKots(kots);
+            adapter.notifyDataSetChanged();
+        }
+
         tv_order_qyt.setText(kots.size() + "");
         if (kots.isEmpty()) {
 //			itemPopupWindow.dismiss();
@@ -574,7 +602,12 @@ public class KitchenOrder extends BaseActivity {
                 break;
             case R.id.iv_back:
                 if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-                    adapter.notifyDataSetChanged();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.notifyDataSetChanged();
+                    }else {
+                        adapter.notifyDataSetChanged();
+                    }
+
                     itemPopupWindow.dismiss();
                 }
                 break;
@@ -702,12 +735,12 @@ public class KitchenOrder extends BaseActivity {
         popItemAdapter = new PopItemAdapter(context);
         popItemAdapter.setKot(kot);
         popItemListView.setAdapter(popItemAdapter);
-        reKot=(RecyclerView)view.findViewById(R.id.re_kot);
+        reKot=(SwipeMenuRecyclerView)view.findViewById(R.id.re_kot);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         reKot.setLayoutManager(linearLayoutManager);
-        DividerItemDecoration dividerItemDecoration =
-                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        reKot.addItemDecoration(dividerItemDecoration);
+//        DividerItemDecoration dividerItemDecoration =
+//                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+//        reKot.addItemDecoration(dividerItemDecoration);
 
          kadapter = new KotAdapter( mItemTouchListener);
         kadapter.setKot(kot);
@@ -933,14 +966,52 @@ public class KitchenOrder extends BaseActivity {
                 KotItemDetailSQL.update(kotItemDetail);
                 List<KotItemDetail> itemDetails = new ArrayList<KotItemDetail>();
                 itemDetails.add(kotItemDetail);
-                Map<String, Object> parameters = new HashMap<String, Object>();
+                final Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("kotSummary", popKot.getKotSummary());
                 parameters.put("kotItemDetails", itemDetails);
-                SyncCentre.getInstance().kotComplete(context,
-                        App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+
+                new Handler().postDelayed(new Runnable(){
+
+                    public void run() {
+
+                        SyncCentre.getInstance().kotComplete(context,
+                                App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+
+                    }
+
+                }, 300);
+
+
+//                    public void run(){
+//
+//                        SyncCentre.getInstance().kotComplete(context,
+//                                App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+//
+//
+//                    }
+//
+//                };
+//                new Thread() {
+//                    public void run() {
+//                        try {
+//                            Thread.sleep(3000);
+//                            SyncCentre.getInstance().kotComplete(context,
+//                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+//
+//                        } catch (InterruptedException e) {
+//                            // TODO Auto-generated catch block
+//                            e.printStackTrace();
+//                        }
+//
+//                    }}
+
             }
         }
     };
+
+
+
+
 
     private static class KotAdapter extends RecyclerView.Adapter<SimpleViewHolder> {
 
@@ -1033,6 +1104,7 @@ public class KitchenOrder extends BaseActivity {
                     holder.mContent.getPaint().setFlags(0);
                 }
             }
+
             /*---kotModifier显示---*/
             StringBuffer sBuffer = new StringBuffer();;
             for (int j = 0; j < kot.getKotItemModifiers().size(); j++) {
@@ -1052,13 +1124,13 @@ public class KitchenOrder extends BaseActivity {
             }else {
                 holder.modifiers.setText("");
             }
-
+            holder.mSwipeItemLayout.close();
             if (mItemTouchListener != null) {
               //  holder.itemView.setOnClickListener(v -> mItemTouchListener.onItemClick(holder.mContent.getText().toString()));
 holder.itemView.setOnClickListener(new OnClickListener() {
     @Override
     public void onClick(View v) {
-        mItemTouchListener.onItemClick(holder.mContent.getText().toString());
+     //   mItemTouchListener.onItemClick(holder.mContent.getText().toString());
 
     }
 });
@@ -1066,8 +1138,22 @@ holder.itemView.setOnClickListener(new OnClickListener() {
                    holder.mLeftMenu.setOnClickListener(new OnClickListener() {
                        @Override
                        public void onClick(View v) {
-                           mItemTouchListener.onLeftMenuClick("" + holder.getAdapterPosition());
                            holder.mSwipeItemLayout.close();
+//                           new Thread() {
+//                               public void run() {
+//                                   try {
+//                                       Thread.sleep(3000);
+//
+//                                   } catch (InterruptedException e) {
+//                                       // TODO Auto-generated catch block
+//                                       e.printStackTrace();
+//                                   }
+//
+//
+//                               }};
+                           mItemTouchListener.onLeftMenuClick("" + holder.getAdapterPosition());
+
+
                        }
                    });
                 }
@@ -1076,8 +1162,12 @@ holder.itemView.setOnClickListener(new OnClickListener() {
                     holder.mRightMenu.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mItemTouchListener.onRightMenuClick("" + holder.getAdapterPosition());
                             holder.mSwipeItemLayout.close();
+
+                                   mItemTouchListener.onRightMenuClick("" + holder.getAdapterPosition());
+
+
+
                         }
                     });
                 }

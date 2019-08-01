@@ -36,6 +36,7 @@ import com.alfredposclient.adapter.RevenueCentreListAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.floatwindow.float_lib.FloatActionController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -366,6 +367,7 @@ public class SyncData extends BaseActivity {
 	@Override
 	public void onBackPressed() {
 		 if (doubleBackToExitPressedOnce) {
+			 FloatActionController.getInstance().stopMonkServer(context);
 		        super.onBackPressed();
 		        return;
 		    }

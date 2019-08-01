@@ -19,7 +19,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,7 +39,6 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.EventLog;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.LoginResult;
@@ -48,7 +46,6 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MultiReportRelation;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
-import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.PromotionData;
@@ -70,7 +67,6 @@ import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.EventLogSQL;
 import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
@@ -82,7 +78,6 @@ import com.alfredbase.store.sql.MultiReportRelationSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PromotionSQL;
 import com.alfredbase.store.sql.ReportDayPaymentSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
@@ -121,6 +116,7 @@ import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.NetworkUtils;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
+import com.floatwindow.float_lib.FloatActionController;
 import com.google.gson.Gson;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.umeng.analytics.MobclickAgent;
@@ -138,64 +134,68 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 public class OpenRestaruant extends BaseActivity implements OnTouchListener {
-    private RelativeLayout rl_lunch_bg;
-    private ImageView iv_lunch_icon;
-    private RelativeLayout rl_breakfast_bg;
-    private ImageView iv_breakfast_icon;
-    private RelativeLayout rl_dinner_bg;
-    private ImageView iv_dinner_icon;
-
-    private RelativeLayout rl_center_bg;
-    private RelativeLayout rl_lunch_session_bg;
-    private ImageView iv_lunch_session_icon;
-    private RelativeLayout rl_breakfast_session_bg;
-    private ImageView iv_breakfast_session_icon;
-    private RelativeLayout rl_dinner_session_bg;
-    private ImageView iv_dinner_session_icon;
-    private RelativeLayout rl_supper_session_bg;
-    private ImageView iv_supper_session_icon;
-
-    private RelativeLayout rl_slideUnlockView;
-    private float rl_slideUnlockViewX = -1;
-    private float rl_slideUnlockViewY = -1;
-    private float iv_lunch_iconX = -1;
-    private float iv_lunch_iconY = -1;
-    private float iv_breakfast_iconX = -1;
-    private float iv_breakfast_iconY = -1;
-    private float iv_dinner_iconX = -1;
-    private float iv_dinner_iconY = -1;
-    private float iv_lunch_session_iconX = -1;
-    private float iv_lunch_session_iconY = -1;
-    private float iv_breakfast_session_iconX = -1;
-    private float iv_breakfast_session_iconY = -1;
-    private float iv_dinner_session_iconX = -1;
-    private float iv_dinner_session_iconY = -1;
-    private float iv_supper_session_iconX = -1;
-    private float iv_supper_session_iconY = -1;
-
-
-    private RelativeLayout rl_closerestbg;
-    private RelativeLayout rl_openbg;
-    private IntentFilter filter;
-    private ImageView iv_restaurant;
-    private float iv_restaurantX;
-    private float iv_restaurantY;
-    private TextView tv_msgnum;
-    private DrawerLayout mDrawerLayout;
-    private SettingView mSettingView;
-    private static final int CAN_CLOSE = 100;
-    private static final int CAN_NOT_CLOSE_SUB = 99;
-    private static final int CAN_NOT_CLOSE = 101;
-    private static final int OPEN_RESTAURANT = 102;
-    private static final int PRINTER_UNLINK = 103;
-    private static final int PROGRESS_PRINT_Z_START = 104;
-    private static final int PROGRESS_PRINT_Z_END = 105;
-    private PrinterLoadingDialog zPrinterLoadingDialog;
-    private boolean doubleBackToExitPressedOnce = false;
-    private int size;
-    private Observable<Integer> observable;
-    private Observable<Object> observable1;
-    private VerifyDialog verifyDialog;
+	private RelativeLayout rl_lunch_bg;
+	private ImageView iv_lunch_icon;
+	private RelativeLayout rl_breakfast_bg;
+	private ImageView iv_breakfast_icon;
+	private RelativeLayout rl_dinner_bg;
+	private ImageView iv_dinner_icon;
+	
+	private RelativeLayout rl_center_bg;
+	private RelativeLayout rl_lunch_session_bg;
+	private ImageView iv_lunch_session_icon;
+	private RelativeLayout rl_breakfast_session_bg;
+	private ImageView iv_breakfast_session_icon;
+	private RelativeLayout rl_dinner_session_bg;
+	private ImageView iv_dinner_session_icon;
+	private RelativeLayout rl_supper_session_bg;
+	private ImageView iv_supper_session_icon;
+	
+	private RelativeLayout rl_slideUnlockView;
+	private float rl_slideUnlockViewX = -1;
+	private float rl_slideUnlockViewY = -1;
+	private float iv_lunch_iconX = -1;
+	private float iv_lunch_iconY = -1;
+	private float iv_breakfast_iconX = -1;
+	private float iv_breakfast_iconY = -1;
+	private float iv_dinner_iconX = -1;
+	private float iv_dinner_iconY = -1;
+	private float iv_lunch_session_iconX = -1;
+	private float iv_lunch_session_iconY = -1;
+	private float iv_breakfast_session_iconX = -1;
+	private float iv_breakfast_session_iconY = -1;
+	private float iv_dinner_session_iconX = -1;
+	private float iv_dinner_session_iconY = -1;
+	private float iv_supper_session_iconX = -1;
+	private float iv_supper_session_iconY = -1;
+	
+	
+	private RelativeLayout rl_closerestbg;
+	private RelativeLayout rl_openbg;
+	private IntentFilter filter;
+	private ImageView iv_restaurant;
+	private float iv_restaurantX;
+	private float iv_restaurantY;
+	private TextView tv_msgnum;
+	private DrawerLayout mDrawerLayout;
+	private SettingView mSettingView;
+	private static final int CAN_CLOSE = 100;
+	private static final int CAN_NOT_CLOSE_SUB = 99;
+	private static final int CAN_NOT_CLOSE = 101;
+	private static final int OPEN_RESTAURANT = 102;
+	private static final int PRINTER_UNLINK = 103;
+	private static final int PROGRESS_PRINT_Z_START = 104;
+	private static final int PROGRESS_PRINT_Z_END = 105;
+	private PrinterLoadingDialog zPrinterLoadingDialog;
+	private boolean doubleBackToExitPressedOnce = false;
+	private int size;
+	private Observable<Integer> observable;
+	private Observable<Object> observable1;
+	private Observable<Object> observable2;
+	private VerifyDialog verifyDialog;
+	private static final int OVERLAY_PERMISSION_REQ_CODE = 0x001;
+	int train;
+	private Boolean isTrain=true;
 //	private RelativeLayout rl_view_bg1;
 //	private ImageView iv_view_icon1;
 //	private RelativeLayout rl_view_bg2;
@@ -253,50 +253,36 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         Store.putLong(context, "posUpdateId", posUpdateId);
     }
 
-    @Override
-    protected void initView() {
-        super.initView();
-        setContentView(R.layout.activity_open_restaruant);
-        if (App.instance.isRevenueKiosk()) {
-            PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
-            if (placeInfo == null) {
-                placeInfo = ObjectFactory.getInstance().addNewPlace(App.instance.getRevenueCenter().getRestaurantId().intValue(),
-                        App.instance.getRevenueCenter().getId().intValue(), "kiosk");
-                placeInfo.setIsKiosk(1);
-                PlaceInfoSQL.addPlaceInfo(placeInfo);
-            }
-            TableInfo tableInfo = TableInfoSQL.getKioskTable();
-            if (tableInfo == null) {
-                tableInfo = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480, 800);
-                tableInfo.setIsKiosk(1);
-                TableInfoSQL.updateTables(tableInfo);
-            }
-        }
-        ButtonClickTimer.canClick();
-        initDrawerLayout();
-        verifyDialog = new VerifyDialog(context, handler);
-        zPrinterLoadingDialog = new PrinterLoadingDialog(context);
-        rl_slideUnlockView = (RelativeLayout) findViewById(R.id.rl_slideUnlockView);
-        iv_restaurant = (ImageView) findViewById(R.id.iv_restaurant);
-        rl_closerestbg = (RelativeLayout) findViewById(R.id.rl_closerestbg);
-        rl_openbg = (RelativeLayout) findViewById(R.id.rl_openbg);
-        tv_msgnum = (TextView) findViewById(R.id.tv_msgnum);
-        TextTypeFace.getInstance().setTypeface(
-                (TextView) findViewById(R.id.tv_now_hour));
-        TextTypeFace.getInstance().setTypeface(
-                (TextView) findViewById(R.id.tv_now_min));
-        size = App.instance.getLocalRestaurantConfig().getSessionConfigType().size();
-        intSessionView();
-        setSessionIconStatus(size);
-        ((TextView) findViewById(R.id.tv_userName)).setText(App.instance
-                .getUser().getFirstName()
-                + "."
-                + App.instance.getUser().getLastName());
-        findViewById(R.id.iv_setting).setOnClickListener(this);
-        rl_closerestbg.setOnClickListener(this);
-        rl_openbg.setOnClickListener(this);
-        filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_TIME_TICK);
+	@Override
+	protected void initView() {
+		super.initView();
+		setContentView(R.layout.activity_open_restaruant);
+		 train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+		ButtonClickTimer.canClick();
+		initDrawerLayout();
+		verifyDialog = new VerifyDialog(context, handler);
+		zPrinterLoadingDialog = new PrinterLoadingDialog(context);
+		rl_slideUnlockView = (RelativeLayout) findViewById(R.id.rl_slideUnlockView);
+		iv_restaurant = (ImageView) findViewById(R.id.iv_restaurant);
+		rl_closerestbg = (RelativeLayout) findViewById(R.id.rl_closerestbg);
+		rl_openbg = (RelativeLayout) findViewById(R.id.rl_openbg);
+		tv_msgnum = (TextView) findViewById(R.id.tv_msgnum);
+		TextTypeFace.getInstance().setTypeface(
+				(TextView) findViewById(R.id.tv_now_hour));
+		TextTypeFace.getInstance().setTypeface(
+				(TextView) findViewById(R.id.tv_now_min));
+		size = App.instance.getLocalRestaurantConfig().getSessionConfigType().size();
+		intSessionView();
+		setSessionIconStatus(size);
+		((TextView) findViewById(R.id.tv_userName)).setText(App.instance
+				.getUser().getFirstName()
+				+ "."
+				+ App.instance.getUser().getLastName());
+		findViewById(R.id.iv_setting).setOnClickListener(this);
+		rl_closerestbg.setOnClickListener(this);
+		rl_openbg.setOnClickListener(this);
+		filter = new IntentFilter();
+		filter.addAction(Intent.ACTION_TIME_TICK);
 //		App.instance.startPushServer("B." + App.instance.getRevenueCenter().getRestaurantId().intValue());
         setDateView();
         try {
@@ -530,8 +516,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //		if (!App.instance.getXmppThread().isAlive()) {
 //			App.instance.getXmppThread().start();
 //		}
+        initBugseeModifier();
+    }
 
-
+    private void initBugseeModifier() {
         Restaurant restaurant = RestaurantSQL.getRestaurant();
         if (restaurant != null) {
             BugseeHelper.setEmail(restaurant.getEmail());
@@ -541,6 +529,11 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
             BugseeHelper.setAttribute("restaurant_country", restaurant.getCountry());
             BugseeHelper.setAttribute("restaurant_city", restaurant.getCity());
         }
+
+        String employeeId = Store.getString(context, Store.EMPLOYEE_ID);
+        BugseeHelper.setAttribute("employee_id", employeeId);
+
+//        throw new NullPointerException("Test Crash");
     }
 
     @Override
@@ -641,31 +634,31 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         ((TextView) findViewById(R.id.tv_now_hour)).setText(preciseTimeUtil
                 .getHour());
 
-        ((TextView) findViewById(R.id.tv_now_min)).setText(preciseTimeUtil
-                .getMin());
-    }
+		((TextView) findViewById(R.id.tv_now_min)).setText(preciseTimeUtil
+				.getMin());
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        App.instance.showWelcomeToSecondScreen();
-        if (mDrawerLayout.isDrawerOpen(mSettingView)) {
-            mDrawerLayout.closeDrawer(Gravity.END);
-        }
-        setDateView();
-        registerReceiver(receiver, filter);
-        Map<String, Integer> map = App.instance.getPushMsgMap();
-        if (!map.isEmpty()) {
-            int num = 0;
-            Set<String> key = map.keySet();
-            for (Iterator it = key.iterator(); it.hasNext(); ) {
-                String s = (String) it.next();
-                num = num + map.get(s);
-            }
-            if (num != 0) {
-                tv_msgnum.setVisibility(View.VISIBLE);
-                tv_msgnum.setText(num + "");
-            }
+	@Override
+	protected void onResume() {
+		super.onResume();
+		App.instance.showWelcomeToSecondScreen();
+		if (mDrawerLayout.isDrawerOpen(mSettingView)) {
+			mDrawerLayout.closeDrawer(Gravity.END);
+		}
+		setDateView();
+		registerReceiver(receiver, filter);
+		Map<String, Integer> map = App.instance.getPushMsgMap();
+		if (!map.isEmpty()) {
+			int num = 0;
+			Set<String> key = map.keySet();
+			for (Iterator it = key.iterator(); it.hasNext();) {
+				String s = (String) it.next();
+				num = num + map.get(s);
+			}
+			if (num != 0) {
+				tv_msgnum.setVisibility(View.VISIBLE);
+				tv_msgnum.setText(num + "");
+			}
 
         } else {
             tv_msgnum.setVisibility(View.GONE);
@@ -831,12 +824,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         view.setOnTouchListener(this);
     }
 
-    /* close session */
-    private void close(View v, final String actual) {
-        if (!ButtonClickTimer.canClick(v))
-            return;
-
-        if (!NetworkUtils.isNetworkAvailable(context)) {
+	/* close session */
+	private void close(final String actual) {
+		if(!NetworkUtils.isNetworkAvailable(context)){
 
             UIHelp.showShortToast(context, context.getResources().getString(R.string.network_connected));
 
@@ -995,209 +985,239 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
             }
         }).start();
 
-    }
+	}
+	String actual = "0.00";
+	private void closeAction(final View v) {
+		ObjectAnimator animator1 = null;
+		ObjectAnimator animator2 = null;
+		switch (v.getId()) {
+		case R.id.iv_lunch_icon:
+            BugseeHelper.event("Close lunch session");
+			animator1 = ObjectAnimator
+					.ofFloat(v, "x", v.getX(), iv_lunch_iconX).setDuration(300);
+			animator2 = ObjectAnimator
+					.ofFloat(v, "y", v.getY(), iv_lunch_iconY).setDuration(300);
+			rl_lunch_bg.setOnClickListener(null);
+			break;
+		case R.id.iv_breakfast_icon:
+            BugseeHelper.event("Close breakfast session");
+			animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
+					iv_breakfast_iconX).setDuration(200);
+			animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
+					iv_breakfast_iconY).setDuration(200);
+			rl_breakfast_bg.setOnClickListener(null);
+			break;
+		case R.id.iv_dinner_icon:
+            BugseeHelper.event("Close dinner session");
+			animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
+					iv_dinner_iconX).setDuration(200);
+			animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
+					iv_dinner_iconY).setDuration(200);
+			rl_dinner_bg.setOnClickListener(null);
+			break;
+		case R.id.iv_lunch_session_icon:
+			animator1 = ObjectAnimator
+			.ofFloat(v, "x", v.getX(), iv_lunch_session_iconX).setDuration(300);
+			animator2 = ObjectAnimator
+					.ofFloat(v, "y", v.getY(), iv_lunch_session_iconY).setDuration(300);
+			rl_lunch_session_bg.setOnClickListener(null);
+			break;
+		case R.id.iv_breakfast_session_icon:
+			animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
+					iv_breakfast_session_iconX).setDuration(200);
+			animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
+					iv_breakfast_session_iconY).setDuration(200);
+			rl_breakfast_session_bg.setOnClickListener(null);
+			break;
+		case R.id.iv_dinner_session_icon:
+			animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
+					iv_dinner_session_iconX).setDuration(200);
+			animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
+					iv_dinner_session_iconY).setDuration(200);
+			rl_dinner_session_bg.setOnClickListener(null);
+			break;
+		case R.id.iv_supper_session_icon:
+			animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
+					iv_supper_session_iconX).setDuration(200);
+			animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
+					iv_supper_session_iconY).setDuration(200);
+			rl_supper_session_bg.setOnClickListener(null);
+			break;
+		default:
+			break;
+		}
+		zPrinterLoadingDialog.setTitle(context.getResources().getString(R.string.save_print_sales));
+		zPrinterLoadingDialog.show();
+		AnimatorSet set = new AnimatorSet();
+		animator1.addListener(new AnimatorListenerImpl(){
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				super.onAnimationEnd(animation);
+				rl_closerestbg.setVisibility(View.VISIBLE);
+				if(!ButtonClickTimer.canClick(v))
+					return;
 
-    private void closeAction(final View v) {
-        ObjectAnimator animator1 = null;
-        ObjectAnimator animator2 = null;
-        switch (v.getId()) {
-            case R.id.iv_lunch_icon:
-                BugseeHelper.event("Close lunch session");
-                animator1 = ObjectAnimator
-                        .ofFloat(v, "x", v.getX(), iv_lunch_iconX).setDuration(300);
-                animator2 = ObjectAnimator
-                        .ofFloat(v, "y", v.getY(), iv_lunch_iconY).setDuration(300);
-                rl_lunch_bg.setOnClickListener(null);
-                break;
-            case R.id.iv_breakfast_icon:
-                BugseeHelper.event("Close breakfast session");
-                animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
-                        iv_breakfast_iconX).setDuration(200);
-                animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
-                        iv_breakfast_iconY).setDuration(200);
-                rl_breakfast_bg.setOnClickListener(null);
-                break;
-            case R.id.iv_dinner_icon:
-                BugseeHelper.event("Close dinner session");
-                animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
-                        iv_dinner_iconX).setDuration(200);
-                animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
-                        iv_dinner_iconY).setDuration(200);
-                rl_dinner_bg.setOnClickListener(null);
-                break;
-            case R.id.iv_lunch_session_icon:
-                animator1 = ObjectAnimator
-                        .ofFloat(v, "x", v.getX(), iv_lunch_session_iconX).setDuration(300);
-                animator2 = ObjectAnimator
-                        .ofFloat(v, "y", v.getY(), iv_lunch_session_iconY).setDuration(300);
-                rl_lunch_session_bg.setOnClickListener(null);
-                break;
-            case R.id.iv_breakfast_session_icon:
-                animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
-                        iv_breakfast_session_iconX).setDuration(200);
-                animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
-                        iv_breakfast_session_iconY).setDuration(200);
-                rl_breakfast_session_bg.setOnClickListener(null);
-                break;
-            case R.id.iv_dinner_session_icon:
-                animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
-                        iv_dinner_session_iconX).setDuration(200);
-                animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
-                        iv_dinner_session_iconY).setDuration(200);
-                rl_dinner_session_bg.setOnClickListener(null);
-                break;
-            case R.id.iv_supper_session_icon:
-                animator1 = ObjectAnimator.ofFloat(v, "x", v.getX(),
-                        iv_supper_session_iconX).setDuration(200);
-                animator2 = ObjectAnimator.ofFloat(v, "y", v.getY(),
-                        iv_supper_session_iconY).setDuration(200);
-                rl_supper_session_bg.setOnClickListener(null);
-                break;
-            default:
-                break;
-        }
-        zPrinterLoadingDialog.setTitle(context.getResources().getString(R.string.save_print_sales));
-        zPrinterLoadingDialog.show();
-        AnimatorSet set = new AnimatorSet();
-        animator1.addListener(new AnimatorListenerImpl() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                rl_closerestbg.setVisibility(View.VISIBLE);
+				if(!isShowingActualDialog) {
+					isShowingActualDialog = true;
+					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									actual = "0.00";
+									isShowingActualDialog = false;
+									closeSessionThread(v);
+								}
+							},
+							new OnClickListener() {
+								@Override
+								public void onClick(View view) {
+									EditText editText = (EditText) view;
+									actual = editText.getText().toString();
+									isShowingActualDialog = false;
+									closeSessionThread(v);
+								}
+							});
+				}
+			}
+		});
+		set.playTogether(animator1, animator2);
+		set.start();
+	}
 
-                new Thread(new Runnable() {
 
-                    @Override
-                    public void run() {
+	private void closeSessionThread(final View v){
+		new Thread(new Runnable() {
 
-                        SessionStatus sessionStatus = Store.getObject(
-                                context, Store.SESSION_STATUS, SessionStatus.class);
-                        if (sessionStatus == null) {
-                            dismissPrinterLoadingDialog();
-                            return;
-                        }
-                        int canClose = CAN_CLOSE;
-                        if (App.instance.getCahierPrinter() == null) {
-                            handler.sendMessage(handler.obtainMessage(PRINTER_UNLINK, v));
-                            return;
-                        }
-                        if (App.instance.isRevenueKiosk()) {
-                            long nowTime = System.currentTimeMillis();
-                            List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate(), nowTime);
-                            if (!orderList.isEmpty()) {
-                                for (final Order order : orderList) {
-                                    List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
-                                            .getOrderDetails(order.getId());
-                                    if (!orderDetailsUnIncludeVoid.isEmpty()) {
-                                        canClose = CAN_NOT_CLOSE;
-                                        break;
-                                    } else {
+			@Override
+			public void run() {
+
+				SessionStatus sessionStatus = Store.getObject(
+						context, Store.SESSION_STATUS, SessionStatus.class);
+				if(sessionStatus == null){
+					dismissPrinterLoadingDialog();
+					return;
+				}
+				int canClose = CAN_CLOSE;
+				if(App.instance.getCahierPrinter() == null){
+					handler.sendMessage(handler.obtainMessage(PRINTER_UNLINK, v));
+					return;
+				}
+				if (App.instance.isRevenueKiosk()) {
+					long nowTime = System.currentTimeMillis();
+					List<Order> orderList = OrderSQL.getUnpaidOrdersBySession(sessionStatus, App.instance.getBusinessDate(), nowTime);
+					if(!orderList.isEmpty()){
+						for (final Order order : orderList) {
+							List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+									.getOrderDetails(order.getId());
+							if (!orderDetailsUnIncludeVoid.isEmpty()){
+								canClose = CAN_NOT_CLOSE;
+								break;
+							} else {
 //										OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, order.getId().intValue());
 //										OrderSQL.deleteOrder(order);
-                                        GeneralSQL.deleteOrderAndInforByOrderId(order.getId());
-                                    }
-                                }
-                            }
-                            if (canClose == CAN_CLOSE) {
-                                List<SubPosBean> subPosBeans = SubPosBeanSQL.getAllOpenSubPosBean();
-                                if (subPosBeans != null && subPosBeans.size() > 0) {
-                                    canClose = CAN_NOT_CLOSE_SUB;
-                                }
-                            }
-                        } else {
-                            List<TableInfo> tables = TableInfoSQL.getAllUsedTables();
-                            for (TableInfo table : tables) {
-                                Order order = OrderSQL
-                                        .getLastOrderatTabel(table.getPosId().intValue());
-                                if (order != null
-                                        && order.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
-                                    List<OrderDetail> orderDetailsIncludeVoid = OrderDetailSQL
-                                            .getAllOrderDetailsByOrder(order);
-                                    if (orderDetailsIncludeVoid.isEmpty()) {
-                                        OrderSQL.deleteOrder(order);
-                                        OrderBillSQL
-                                                .deleteOrderBillByOrder(order);
-                                        table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+								GeneralSQL.deleteOrderAndInforByOrderId(order.getId());
+							}
+						}
+					}
+					if(canClose == CAN_CLOSE) {
+						List<SubPosBean> subPosBeans = SubPosBeanSQL.getAllOpenSubPosBean();
+						if (subPosBeans != null && subPosBeans.size() > 0){
+							canClose = CAN_NOT_CLOSE_SUB;
+						}
+					}
+				} else {
+					List<TableInfo> tables = TableInfoSQL.getAllUsedTables();
+					for (TableInfo table : tables) {
+						Order order = OrderSQL
+								.getLastOrderatTabel(table.getPosId().intValue());
+						if (order != null
+								&& order.getOrderStatus() != ParamConst.ORDER_STATUS_FINISHED) {
+							List<OrderDetail> orderDetailsIncludeVoid = OrderDetailSQL
+									.getAllOrderDetailsByOrder(order);
+							if (orderDetailsIncludeVoid.isEmpty()) {
+								OrderSQL.deleteOrder(order);
+								OrderBillSQL
+										.deleteOrderBillByOrder(order);
+								table.setStatus(ParamConst.TABLE_STATUS_IDLE);
 //										TablesSQL.updateTables(table);
-                                        TableInfoSQL.updateTables(table);
-                                    } else {
-                                        List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
-                                                .getOrderDetails(order.getId());
-                                        if (orderDetailsUnIncludeVoid.isEmpty()) {
-                                            order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
-                                            OrderSQL.update(order);
-                                            table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+								TableInfoSQL.updateTables(table);
+							} else {
+								List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
+										.getOrderDetails(order.getId());
+								if (orderDetailsUnIncludeVoid.isEmpty()) {
+									order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+									OrderSQL.update(order);
+									table.setStatus(ParamConst.TABLE_STATUS_IDLE);
 //											TablesSQL.updateTables(table);
-                                            TableInfoSQL.updateTables(table);
-                                        } else {
-                                            canClose = CAN_NOT_CLOSE;
-                                        }
-                                    }
-                                } else {
-                                    table.setStatus(ParamConst.TABLE_STATUS_IDLE);
+									TableInfoSQL.updateTables(table);
+								} else {
+									canClose = CAN_NOT_CLOSE;
+								}
+							}
+						} else {
+							table.setStatus(ParamConst.TABLE_STATUS_IDLE);
 //									TablesSQL.updateTables(table);
-                                    TableInfoSQL.updateTables(table);
-                                }
-                            }
-                        }
-                        handler.sendMessage(handler.obtainMessage(canClose, v));
-                    }
-                }).start();
-            }
-        });
-        set.playTogether(animator1, animator2);
-        set.start();
+							TableInfoSQL.updateTables(table);
+						}
+					}
+				}
+				if(canClose == CAN_CLOSE) {
+					handler.sendMessage(handler.obtainMessage(canClose, actual));
+				}else{
+					handler.sendMessage(handler.obtainMessage(canClose, v));
+				}
+			}
+		}).start();
+	}
 
-    }
+	private void sendXPrintData(Map<String, Object> xReport,long businessDate,
+								String reportType,
+								SessionStatus sessionStatus) {
+		ReportDaySales reportDaySales = (ReportDaySales) xReport.get("reportDaySales");
 
-    private void sendXPrintData(Map<String, Object> xReport, long businessDate,
-                                String reportType,
-                                SessionStatus sessionStatus) {
-        ReportDaySales reportDaySales = (ReportDaySales) xReport.get("reportDaySales");
-
-        if (reportDaySales == null) {
-            return;
-        }
-        String bizDate = TimeUtil.getPrintingDate(businessDate);
-        ArrayList<ReportDayTax> reportDayTaxs = (ArrayList<ReportDayTax>) xReport.get("reportDayTaxs");
-        List<ReportDayPayment> reportDayPayments = (List<ReportDayPayment>) xReport.get("reportDayPayments");
-        ArrayList<ReportPluDayItem> reportPluDayItems = (ArrayList<ReportPluDayItem>) xReport.get("reportPluDayItems");
-        ArrayList<PromotionData> reportOrderPromotions = (ArrayList<PromotionData>) xReport.get("reportOrderPromotions");
-        ArrayList<PromotionData> reportItemPromotions = (ArrayList<PromotionData>) xReport.get("reportItemPromotions");
-        ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
-        //add to filter ENT and VOID item in PLU items
+		if (reportDaySales == null) {
+			return;
+		}
+		String bizDate = TimeUtil.getPrintingDate(businessDate);
+		ArrayList<ReportDayTax> reportDayTaxs = (ArrayList<ReportDayTax>) xReport.get("reportDayTaxs");
+		List<ReportDayPayment> reportDayPayments = (List<ReportDayPayment>) xReport.get("reportDayPayments");
+		ArrayList<ReportPluDayItem> reportPluDayItems = (ArrayList<ReportPluDayItem>) xReport.get("reportPluDayItems");
+		ArrayList<PromotionData> reportOrderPromotions = (ArrayList<PromotionData>) xReport.get("reportOrderPromotions");
+		ArrayList<PromotionData> reportItemPromotions = (ArrayList<PromotionData>) xReport.get("reportItemPromotions");
+		ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
+		//add to filter ENT and VOID item in PLU items
 //		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
 //			.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
 
 
-        //	List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory.getInstance().loadReportSvgDayTax(businessDate,1);
+			//	List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory.getInstance().loadReportSvgDayTax(businessDate,1);
 //
-        ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) xReport.get("reportPluDayModifiers");
-        ArrayList<ReportHourly> reportHourlys = (ArrayList<ReportHourly>) xReport.get("reportHourlys");
-        ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
-                .getAllItemCategory();
-        ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
-                .getAllItemMainCategory();
-        List<Modifier> modifiers = ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue());
-        PrinterTitle title = ObjectFactory.getInstance()
-                .getPrinterTitleForReport(
-                        App.instance.getRevenueCenter().getId(),
-                        "X" + reportDaySales.getReportNoStr(),
-                        App.instance.getUser().getFirstName()
-                                + App.instance.getUser().getLastName(), null, bizDate);
+		ArrayList<ReportPluDayModifier> reportPluDayModifiers =  (ArrayList<ReportPluDayModifier>) xReport.get("reportPluDayModifiers");
+		ArrayList<ReportHourly> reportHourlys = (ArrayList<ReportHourly>) xReport.get("reportHourlys");
+		ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
+				.getAllItemCategory();
+		ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
+				.getAllItemMainCategory();
+		List<Modifier> modifiers = ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue());
+		PrinterTitle title = ObjectFactory.getInstance()
+				.getPrinterTitleForReport(
+						App.instance.getRevenueCenter().getId(),
+						"X"+reportDaySales.getReportNoStr(),
+						App.instance.getUser().getFirstName()
+								+ App.instance.getUser().getLastName(), null,bizDate,App.instance.getSystemSettings().getTrainType());
 
-        PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
+		PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
-        // Open Cash drawer
-        App.instance.kickOutCashDrawer(cashierPrinter);
+		// Open Cash drawer
+		App.instance.kickOutCashDrawer(cashierPrinter);
 
-        // sales report
-        App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-                title, reportDaySales, reportDayTaxs, reportDayPayments, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
+		// sales report
+		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
+				title, reportDaySales, reportDayTaxs,reportDayPayments,  ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
-        if (reportItemPromotions != null && reportItemPromotions.size() > 0) {
+        if(reportItemPromotions!=null&&reportItemPromotions.size()>0){
             App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-                    reportItemPromotions, reportOrderPromotions, promotions);
+                    reportItemPromotions,reportOrderPromotions,promotions);
         }
 
 //		try {
@@ -1276,17 +1296,17 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //				.getInstance().loadReportEntItem(businessDate);
 
 
-        ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
-                .getAllItemCategory();
-        ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
-                .getAllItemMainCategory();
-        List<ReportSessionSales> reportSessionSalesList = ReportSessionSalesSQL.getAllReportSessionSales(businessDate);
-        PrinterTitle title = ObjectFactory.getInstance()
-                .getPrinterTitleForReport(
-                        App.instance.getRevenueCenter().getId(),
-                        "Z" + reportDaySales.getReportNoStr(),
-                        App.instance.getUser().getFirstName()
-                                + App.instance.getUser().getLastName(), null, bizDate);
+		ArrayList<ItemCategory> itemCategorys = ItemCategorySQL
+				.getAllItemCategory();
+		ArrayList<ItemMainCategory> itemMainCategorys = ItemMainCategorySQL
+				.getAllItemMainCategory();
+		List<ReportSessionSales> reportSessionSalesList = ReportSessionSalesSQL.getAllReportSessionSales(businessDate);
+		PrinterTitle title = ObjectFactory.getInstance()
+				.getPrinterTitleForReport(
+						App.instance.getRevenueCenter().getId(),
+						"Z"+reportDaySales.getReportNoStr(),
+						App.instance.getUser().getFirstName()
+								+ App.instance.getUser().getLastName(), null,bizDate,App.instance.getSystemSettings().getTrainType());
 
         PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
@@ -1340,7 +1360,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //				cashierPrinter, title,
 //				reportPluDayModifiers, ModifierSQL.getModifierCategorys(App.instance.getRevenueCenter().getRestaurantId().intValue()));
 //		}
-
+		
 //		ArrayList<ReportPluDayModifier> reportPluDayComboModifiers = new ArrayList<ReportPluDayModifier>();
 //		for(ReportPluDayModifier reportPluDayModifier : reportPluDayModifiers){
 //			if(reportPluDayModifier.getComboItemId() != 0){
@@ -1353,16 +1373,16 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
     }
 
-    @Override
-    public void handlerClickEvent(View v) {
-        super.handlerClickEvent(v);
-
-        switch (v.getId()) {
-            //close restaurant
-            case R.id.rl_closerestbg: {
-                final View vv = v;
-                final long business_date = App.instance.getBusinessDate();
-                final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+	@Override
+	public void handlerClickEvent(View v) {
+		super.handlerClickEvent(v);
+		
+		switch (v.getId()) {
+		 //close restaurant 
+		case R.id.rl_closerestbg: {
+			final View vv = v;
+			final long business_date = App.instance.getBusinessDate();
+			final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 
                 BugseeHelper.buttonClicked("Close restaurant");
 
@@ -1564,67 +1584,16 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
                             @Override
                             public void onClick(View v) {
 //								SyncCentre.getInstance().downloadApk(updateInfo.getPosDownload());
-                                downloadPos(updateInfo);
-                            }
-                        }, null);
-                        return;
-                    }
-                }
-                final View vv = v;
-                final Long businessDate = TimeUtil.getNewBusinessDate();
-                App.instance.deleteOldPrinterMsg(businessDate);
-                String bizYmd = TimeUtil.getYMD(businessDate);
-                int train = SharedPreferencesHelper.getInt(context, SharedPreferencesHelper.TRAINING_MODE);
-                if (train == -2) {
-                    // 0  正常模式， 1 培训模式
-                    DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
-                            "开启培训模式？",
-                            context.getResources().getString(R.string.cancel),
-                            context.getResources().getString(R.string.ok),
-                            new OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
-                                }
-                            },
-                            new OnClickListener() {
-
-                                @Override
-                                public void onClick(View arg0) {
-
-                                    SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 1);
-                                    try {
-                                        AlfredRootCmdUtil.execute("cp -f /data/data/com.alfredposclient/databases/com.alfredposclient  /data/data/com.alfredposclient/databases/com.alfredposclient.train");
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    runOnUiThread(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            Intent intent = new Intent(App.instance, Welcome.class);
-                                            PendingIntent restartIntent = PendingIntent.getActivity(
-                                                    App.instance
-                                                            .getApplicationContext(),
-                                                    0, intent,
-                                                    Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            // 退出程序
-                                            AlarmManager mgr = (AlarmManager) App.instance
-                                                    .getSystemService(Context.ALARM_SERVICE);
-                                            mgr.set(AlarmManager.RTC,
-                                                    System.currentTimeMillis() + 1000,
-                                                    restartIntent); // 1秒钟后重启应用
-                                            ActivityManager am = (ActivityManager) App.instance
-                                                    .getSystemService(Context.ACTIVITY_SERVICE);
-                                            am.killBackgroundProcesses(getPackageName());
-                                            App.instance.finishAllActivity();
-                                        }
-                                    });
-                                }
-                            });
-                } else {
-
+							downloadPos(updateInfo);
+						}
+					}, null);
+					return;
+				}
+			}
+			final View vv = v;
+			final Long businessDate = TimeUtil.getNewBusinessDate();
+			App.instance.deleteOldPrinterMsg(businessDate);
+			String bizYmd = TimeUtil.getYMD(businessDate);
                     DialogFactory.commonTwoBtnDialog(context, context.getResources().getString(R.string.open_restaurant),
                             context.getResources().getString(R.string.operation_on) + bizYmd +
                                     context.getResources().getString(R.string.is_going_to_start),
@@ -1641,7 +1610,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
                                 }
                             });
                 }
-            }
+
             break;
             case R.id.iv_setting:
                 BugseeHelper.buttonClicked("Setting");
@@ -1873,37 +1842,39 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         }
     }
 
-    private boolean isShowingActualDialog = false;
-    private Handler handler = new Handler() {
-        public void handleMessage(final Message msg) {
-            switch (msg.what) {
-                case CAN_CLOSE: {
-                    if (!isShowingActualDialog) {
-                        isShowingActualDialog = true;
-                        final View msgView = (View) msg.obj;
-                        DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
-                                new OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        close(msgView, "0.00");
-                                        isShowingActualDialog = false;
-                                    }
-                                },
-                                new OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        EditText editText = (EditText) view;
-                                        String actual = editText.getText().toString();
-                                        close(msgView, actual);
-                                        isShowingActualDialog = false;
-                                    }
-                                });
-                    }
-                }
-                break;
-                case CAN_NOT_CLOSE: {
-                    final View view = (View) msg.obj;
-                    view.post(new Runnable() {
+	private boolean isShowingActualDialog = false;
+	private Handler handler = new Handler() {
+		public void handleMessage(final Message msg) {
+			switch (msg.what) {
+			case CAN_CLOSE: {
+				String actual = (String) msg.obj;
+				close(actual);
+//				if(!isShowingActualDialog) {
+//					isShowingActualDialog = true;
+//					final View msgView = (View) msg.obj;
+//					DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+//							new OnClickListener() {
+//								@Override
+//								public void onClick(View view) {
+//									close(msgView, "0.00");
+//									isShowingActualDialog = false;
+//								}
+//							},
+//							new OnClickListener() {
+//								@Override
+//								public void onClick(View view) {
+//									EditText editText = (EditText) view;
+//									String actual = editText.getText().toString();
+//									close(msgView, actual);
+//									isShowingActualDialog = false;
+//								}
+//							});
+//				}
+			}
+				break;
+			case CAN_NOT_CLOSE:{
+				final View view = (View) msg.obj;
+				view.post(new Runnable() {
 
                         @Override
                         public void run() {
@@ -2243,31 +2214,45 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        BaseApplication.postHandler.postDelayed(new Runnable() {
+	@Override
+	protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 
-            @Override
-            public void run() {
-                if (mDrawerLayout.isDrawerOpen(mSettingView)) {
-                    mDrawerLayout.closeDrawer(Gravity.END);
-                    if (resultCode == RESULT_OK) {
-                        if (data.getBooleanExtra("refreshSession", false))
-                            initView();
-                    }
-                }
-            }
-        }, 500);
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+				case OVERLAY_PERMISSION_REQ_CODE:
+//					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//						if (!Settings.canDrawOverlays(this)) {
+//							Toast.makeText(OpenRestaruant.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
+//						} else {
+//							// TODO: 18/1/7 已经授权
+//						}
+//					}
+					break;
+			}
+		}
+		BaseApplication.postHandler.postDelayed(new Runnable() {
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
+			@Override
+			public void run() {
+				if (mDrawerLayout.isDrawerOpen(mSettingView)) {
+					mDrawerLayout.closeDrawer(Gravity.END);
+					if(resultCode == RESULT_OK){
+						if(data.getBooleanExtra("refreshSession", false))
+							initView();
+					}
+				}
+			}
+		}, 500);
+		
+	}
+	@Override
+	public void onBackPressed() {
+	    if (doubleBackToExitPressedOnce) {
+			FloatActionController.getInstance().stopMonkServer(context);
+	        super.onBackPressed();
+	        return;
+	    }
 
         this.doubleBackToExitPressedOnce = true;
         UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
@@ -2275,16 +2260,19 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
         BaseApplication.postHandler.postDelayed(new Runnable() {
 
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
-    }
+	        @Override
+	        public void run() {
+	            doubleBackToExitPressedOnce=false;
 
-    private void dismissPrinterLoadingDialog() {
-        if (zPrinterLoadingDialog != null && zPrinterLoadingDialog.isShowing()) {
-            zPrinterLoadingDialog.dismiss();
-        }
-    }
+	        }
+	    }, 2000);
+	}
+
+	private void dismissPrinterLoadingDialog(){
+		if(zPrinterLoadingDialog != null && zPrinterLoadingDialog.isShowing()){
+			zPrinterLoadingDialog.dismiss();
+		}
+	}
+
+
 }
