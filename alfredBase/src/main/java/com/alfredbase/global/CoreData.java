@@ -65,6 +65,8 @@ import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -207,6 +209,7 @@ public class CoreData {
     }
 
     private Printer getPrinterById(int printerid) {
+        LogUtil.log("Printer -> " + new Gson().toJson(getPrinters()));
         for (Printer printer : getPrinters()) {
             if (printerid == printer.getId().intValue()) {
                 return printer;
@@ -270,12 +273,17 @@ public class CoreData {
 
     public ArrayList<Printer> getPrintersInGroup(int groupid) {
         ArrayList<Printer> result = new ArrayList<Printer>();
+        List<Printer> summaryPrinter = new ArrayList<>();
         for (PrinterGroup pg : this.printerGroups) {
             if (pg.getPrinterGroupId().intValue() == groupid) {
                 Printer pt = this.getPrinterById(pg.getPrinterId().intValue());
-                result.add(pt);
+                if (pt.getPrinterUsageType() == Printer.KDS_SUMMARY)
+                    summaryPrinter.add(pt);
+                else
+                    result.add(pt);
             }
         }
+        result.addAll(summaryPrinter);//add summary printer at last
         return result;
     }
 

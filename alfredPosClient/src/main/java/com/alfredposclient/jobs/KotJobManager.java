@@ -212,6 +212,7 @@ public class KotJobManager {
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
+                    kdsDevice.setKdsType(printer.getPrinterUsageType());
                     kotSummary.setOriginalId(kotSummary.getId());
                     KotJob kotjob = new KotJob(kdsDevice, kotSummary,
                             mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_TMP_KOT);
@@ -466,8 +467,8 @@ public class KotJobManager {
 
         if (printerGrougIds != null && printerGrougIds.size() > 0 && kotSummary != null) {
             KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
-//            int count = kotSummaryLocal != null ? kotSummaryLocal.getOrderDetailCount() + kot.size() : kot.size();
-            int count = kot.size();
+            int count = kotSummaryLocal != null ? kotSummaryLocal.getOrderDetailCount() + kot.size() : kot.size();
+//            int count = kot.size();
             kotSummary.setOrderDetailCount(count);
             KotSummarySQL.updateKotSummaryOrderCountById(count, kotSummary.getId().intValue());
 
@@ -497,7 +498,6 @@ public class KotJobManager {
                 }
                 if (kdsDevice != null && kotSummary != null) {
                     kdsDevice.setKdsType(printer.getPrinterUsageType());
-                    kotSummary.setKdsType(printer.getPrinterUsageType());
                     kotSummary.setOriginalId(kotSummary.getId());
 
                     KotJob kotjob;

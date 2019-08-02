@@ -679,7 +679,7 @@ public class App extends BaseApplication {
         String kotsumStr = gson.toJson(kotsummary);
 
         try {
-            mRemoteService.printKOT(prtStr, kotsumStr, details, mods, true, false, 2, false, 0);
+            mRemoteService.printKOT(prtStr, kotsumStr, details, mods, true, false, 2, false);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

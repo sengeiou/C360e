@@ -13,7 +13,7 @@ public class LogUtil {
     }
 
     public static void d(String tag, String msg) {
-        if (BaseApplication.isOpenLog) {
+        if (BaseApplication.isOpenLog || BaseApplication.isDebug) {
             Log.d(tag, msg);
         }
     }

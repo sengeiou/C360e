@@ -208,11 +208,20 @@ public class HttpAnalysis {
                     new TypeToken<ArrayList<Printer>>() {
                     }.getType());
 
+            //region sorting printer
+            LogUtil.log("Unsorted Printer -> " + object.getString("printerList"));
+            List<Printer> tmpPrinters = new ArrayList<>();
             for (Printer printer : printers) {
-                if ("Summary Printer".equalsIgnoreCase(printer.getPrinterName())) {
-                    printer.setPrinterUsageType(Printer.KDS_SUMMARY);
+                if (printer.getPrinterUsageType() == Printer.KDS_SUMMARY) {
+                    tmpPrinters.add(printer);
                 }
             }
+
+            printers.removeAll(tmpPrinters);
+            printers.addAll(tmpPrinters);
+
+            LogUtil.log("Sorted Printer -> " + new Gson().toJson(printers));
+            //endregion
 
             CoreData.getInstance().setPrinters(printers);
             PrinterSQL.deleteAllPrinter();

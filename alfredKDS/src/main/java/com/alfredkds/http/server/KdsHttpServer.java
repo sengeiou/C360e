@@ -489,7 +489,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
 
-                        kotSummary.setOrderDetailCount(kotItemDetails.size());
+//                        kotSummary.setOrderDetailCount(kotItemDetails.size());
                         KotSummarySQL.update(kotSummary);
                         if (kotItemDetails != null) {
                             KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -563,7 +563,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                             if (!isFire) {
                                 KotSummarySQL.deleteKotSummaryTmp(kotSummary);
                                 kotSummary.setId(fakeId);
-                                kotSummary.setOrderDetailCount(kotItemDetails.size());
+//                                kotSummary.setOrderDetailCount(kotItemDetails.size());
                                 KotSummarySQL.addKotSummary(kotSummary);
                             }
                         }
