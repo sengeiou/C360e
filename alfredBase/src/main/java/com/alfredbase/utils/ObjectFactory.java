@@ -35,7 +35,6 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionOrder;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -64,7 +63,6 @@ import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
-import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.AlipaySettlementSQL;
 import com.alfredbase.store.sql.BohHoldSettlementSQL;
@@ -137,6 +135,51 @@ public class ObjectFactory {
                           SessionStatus sessionStatus, long businessDate, int orderNOTitle,
                           int orderStatus, Tax inclusiveTax) {
         return getOrder(orderOriginId, subPosBeanId, tables, revenueCenter, user, sessionStatus, businessDate, orderNOTitle, orderStatus, inclusiveTax, 0);
+    }
+
+    public Order getOrderWaitingList(Integer orderOriginId, int subPosBeanId, TableInfo tables,
+                          RevenueCenter revenueCenter, User user,
+                          SessionStatus sessionStatus, long businessDate, int orderNOTitle,
+                          int orderStatus, Tax inclusiveTax) {
+        int appOrderId = 0;
+        Order order = null;
+        synchronized (lock_order) {
+            order = OrderSQL.getWaitingListOrder(tables.getPosId(), businessDate, sessionStatus);
+            if (order == null) {
+
+                order = new Order();
+                order.setId(CommonSQL.getNextSeq(TableNames.Order));
+                order.setOrderOriginId(orderOriginId);
+                order.setUserId(user.getId());
+                order.setPersons(tables.getPacks());
+                order.setOrderStatus(orderStatus);
+                order.setDiscountRate(ParamConst.DOUBLE_ZERO);
+                order.setSessionStatus(sessionStatus.getSession_status());
+                order.setRestId(CoreData.getInstance().getRestaurant().getId());
+                order.setRevenueId(revenueCenter.getId());
+                order.setPlaceId(tables.getPlacesId());
+                order.setTableId(tables.getPosId());
+                long time = System.currentTimeMillis();
+                order.setCreateTime(time);
+                order.setUpdateTime(time);
+                order.setBusinessDate(businessDate);
+//					order.setOrderNo(order.getId());
+                order.setOrderNo(OrderHelper.calculateOrderNo(businessDate));//流水号
+                order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_NULL);
+                order.setAppOrderId(appOrderId);
+                if (inclusiveTax != null) {
+                    order.setInclusiveTaxName(inclusiveTax.getTaxName());
+                    order.setInclusiveTaxPercentage(inclusiveTax.getTaxPercentage());
+                }
+                if (subPosBeanId > 0) {
+                    SubPosBean subPosBean = SubPosBeanSQL.getSubPosBeanById(subPosBeanId);
+                    order.setNumTag(subPosBean.getNumTag());
+                }
+                order.setSubPosBeanId(subPosBeanId);
+                OrderSQL.addOrder(order);
+            }
+        }
+        return order;
     }
 
     Object lock_cpOrderInfo = new Object();
@@ -869,6 +912,10 @@ public class ObjectFactory {
             PlaceInfoSQL.addPlaceInfo(placeInfo);
             return placeInfo;
         }
+    }
+
+    public TableInfo addNewWaitingList(String name, int restaurantId, int revenueId, int placeId) {
+        return new TableInfo(name, restaurantId, revenueId, placeId);
     }
 
     Object lock_getRoundAmount = new Object();

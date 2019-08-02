@@ -1,5 +1,7 @@
 package com.alfredbase.javabean;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;

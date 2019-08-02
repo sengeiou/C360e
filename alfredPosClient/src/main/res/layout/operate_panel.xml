@@ -8,15 +8,15 @@
         android:id="@+id/rl_pax"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:id="@+id/tv_pax_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
             android:layout_toLeftOf="@+id/tv_pax"
             android:text="@string/pax"
             android:textColor="@color/black"
@@ -27,8 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
             android:gravity="center"
             android:singleLine="true"
             android:text="0"
@@ -89,8 +89,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_bill_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="-15dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -174,8 +174,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_table_content"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="-15dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -202,6 +202,33 @@
             android:text="@string/transfer_table"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_s" />
+
+        <TextView
+            android:id="@+id/tv_cancel_waiting_list"
+            android:layout_width="@dimen/dp70"
+            android:layout_height="@dimen/dp80"
+            android:layout_below="@+id/tv_tables"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/box_bill_selector"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/text_color_selector"
+            android:textSize="@dimen/text_size_s"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_open_item_waiting_list"
+            android:layout_width="@dimen/dp70"
+            android:layout_height="@dimen/dp80"
+            android:layout_below="@+id/tv_transfer_table"
+            android:layout_toRightOf="@+id/tv_cancel_waiting_list"
+            android:background="@drawable/box_bill_selector"
+            android:gravity="center"
+            android:text="@string/open_item"
+            android:textColor="@color/text_color_selector"
+            android:textSize="@dimen/text_size_s"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <TextView
@@ -222,8 +249,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_misc"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="-15dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -266,11 +293,12 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_split_fire"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rl_misc"
-        android:layout_marginBottom="5dp"
         android:layout_marginTop="-15dp"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -278,8 +306,8 @@
             android:id="@+id/tv_split_by_pax"
             android:layout_width="@dimen/dp70"
             android:layout_height="@dimen/dp80"
-            android:layout_marginBottom="5dp"
             android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/box_bill_selector"
             android:gravity="center"
             android:text="Split by pax"
@@ -291,8 +319,8 @@
             android:layout_width="@dimen/dp70"
             android:layout_height="@dimen/dp80"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
             android:layout_toRightOf="@+id/tv_split_by_pax"
             android:background="@drawable/box_bill_selector"
             android:gravity="center"
@@ -300,5 +328,6 @@
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_s" />
     </RelativeLayout>
+
 
 </RelativeLayout>

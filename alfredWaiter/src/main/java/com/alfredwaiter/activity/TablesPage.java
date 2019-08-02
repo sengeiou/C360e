@@ -241,7 +241,7 @@ public class TablesPage extends BaseActivity {
 				 places.getId())
 				 */
 				TablesAdapter tablesAdapter = new TablesAdapter(context, TableInfoSQL
-						.getTableInfosBuyPlaces(places), places);
+						.getTableInfosByPlaces(places), places);
 				tablesAdapters.add(tablesAdapter);
 				gv_tables.setAdapter(tablesAdapter);
 				gv_tables.setOnItemClickListener(new OnItemClickListener() {

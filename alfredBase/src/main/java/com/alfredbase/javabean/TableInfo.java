@@ -1,5 +1,7 @@
 package com.alfredbase.javabean;
 
+import com.alfredbase.store.sql.TableInfoSQL;
+
 /**
  * Created by Alex on 16/9/22.
  */
@@ -29,7 +31,7 @@ public class TableInfo {
     private Integer packs;
     private Integer rotate;
     //calculate the total orders that table has currently.
-	private Integer orders = 0;
+    private Integer orders = 0;
 
     private Integer isKiosk = 0;
 
@@ -249,4 +251,27 @@ public class TableInfo {
                 ", resolutionY='" + resolutionHeight + '\'' +
                 '}';
     }
+
+    public TableInfo() {
+    }
+
+    public TableInfo(String name, int restaurantId, int revenueId, int placesId) {
+        long time = System.currentTimeMillis();
+        this.createTime = time;
+        this.updateTime = time;
+        TableInfo firstTable = TableInfoSQL.getFirstTables();
+        int id = -1;
+        if (firstTable != null) {
+            if (firstTable.getPosId() < 0) {
+                id = firstTable.getPosId() - 1;
+            }
+        }
+        this.posId = id;
+        this.name = name;
+        this.restaurantId = restaurantId;
+        this.revenueId = revenueId;
+        this.placesId = placesId;
+        this.unionId = restaurantId + "_" + revenueId + "_" + posId;
+    }
+
 }

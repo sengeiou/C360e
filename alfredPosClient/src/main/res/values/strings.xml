@@ -8,6 +8,7 @@
     <string name="home_page_info">The Way of Restaurants\nOutght to be Run</string>
     <string name="set_up">Setup</string>
     <string name="ok">OK</string>
+    <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     <string name="sign_in">Sign in</string>
     <string name="sync">Sync   </string>
@@ -437,4 +438,9 @@
     <string name="revenue_center">Revenue Center</string>
     <string name="ipaddr_tips">Device Pairing\nSet up POS IP Address</string>
     <string name="connect">Connect</string>
+
+    <string name="waiting_list">Waiting List</string>
+    <string name="queue">Queue</string>
+    <string name="assign_table">Assign\nTable</string>
+    <string name="summary">Summary</string>
 </resources>
