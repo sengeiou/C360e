@@ -949,7 +949,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                         for (PrintOrderItem item : map.values()) {
                             billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                                    item.getQty(), item.getAmount(), 1, item.getWeight(), currencySymbol);
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -957,9 +957,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     PrintOrderModifier om = orderModifiers.get(m);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
-                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol);
                                         } else {
-                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol);
                                         }
                                     }
                                 }
@@ -1092,7 +1092,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                                 for (PrintOrderItem item : map.values()) {
                                     billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                            item.getQty(), item.getAmount(), 1, item.getWeight());
+                                            item.getQty(), item.getAmount(), 1, item.getWeight(), currencySymbol);
                                     //getModifiersByDetailId()
                                     ////
                                     if (orderModifiers != null) {
@@ -1100,9 +1100,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                             PrintOrderModifier om = orderModifiers.get(m);
                                             if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                                 if (om.getQty() > 1) {
-                                                    billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+                                                    billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol);
                                                 } else {
-                                                    billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                                    billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol);
                                                 }
                                             }
                                         }
@@ -2162,7 +2162,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                         for (PrintOrderItem item : map.values()) {
                             billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                                    item.getQty(), item.getAmount(), 1, item.getWeight(), currencySymbol);
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -2170,9 +2170,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     PrintOrderModifier om = orderModifiers.get(m);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
-                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol);
                                         } else {
-                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol);
                                         }
                                     }
                                 }
@@ -2315,7 +2315,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                             for (PrintOrderItem item : map.values()) {
                                 billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                        item.getQty(), item.getAmount(), 1, item.getWeight());
+                                        item.getQty(), item.getAmount(), 1, item.getWeight(), currencySymbol);
                                 //getModifiersByDetailId()
                                 ////
                                 if (orderModifiers != null) {
@@ -2324,9 +2324,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                         om=ObjectFactory.getInstance().getPrintOrderModifier(om);
                                         if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                             if (om.getQty() > 1) {
-                                                billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+                                                billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol);
                                             } else {
-                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol);
                                             }
                                         }
                                     }
@@ -2663,7 +2663,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                         for (PrintOrderItem item : map.values()) {
                             billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                                    item.getQty(), item.getAmount(), 1, item.getWeight(), currencySymbol);
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -2671,9 +2671,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     PrintOrderModifier om = orderModifiers.get(m);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
-                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol);
                                         } else {
-                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol);
                                         }
                                     }
                                 }
@@ -2808,7 +2808,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                         for (PrintOrderItem item : map.values()) {
                             billPrint.AddOrderItem(item.getItemName(), item.getPrice(),
-                                    item.getQty(), item.getAmount(), 1, item.getWeight());
+                                    item.getQty(), item.getAmount(), 1, item.getWeight(), currencySymbol);
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -2816,9 +2816,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     PrintOrderModifier om = orderModifiers.get(m);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
-                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
+                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol);
                                         } else {
-                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
+                                            billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol);
                                         }
                                     }
                                 }

@@ -15,6 +15,8 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class BillPrint extends PrintJob {
@@ -701,25 +704,35 @@ public class BillPrint extends PrintJob {
         addHortionalLine(this.charSize);
     }
 
-    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight) {
+    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight, String currencySymbol) {
         PrintData order = new PrintData();
         order.setDataFormat(PrintData.FORMAT_TXT);
         order.setFontsize(scale);
         order.setLanguage(PrintData.LANG_CN);
         order.setMarginTop(20);
         order.setText(this.getFourColContent(itemName, price, qty, total, scale));
+        if(currencySymbol.equals("Rp"))
+        {
+            BigInteger priceValue = new BigInteger(price);
+            BigInteger totalValue = new BigInteger(total);
+            order.setText(this.getFourColContent(itemName, NumberFormat.getNumberInstance(Locale.US).format(priceValue), qty, NumberFormat.getNumberInstance(Locale.US).format(totalValue), scale));
+        }
         this.data.add(order);
         this.addWeight(weight);
     }
 
 
-    public void addOrderModifier(String itemName, int scale, String price) {
+    public void addOrderModifier(String itemName, int scale, String price, String currencySymbol) {
         BigDecimal bigDecimal = BH.getBD(price);
         PrintData orderMod = new PrintData();
         orderMod.setDataFormat(PrintData.FORMAT_TXT);
         orderMod.setFontsize(scale);
         orderMod.setLanguage(PrintData.LANG_CN);
         orderMod.setText(this.getFourColContent("  " + itemName + reNext, bigDecimal.toString(), "", "", scale));
+        if(currencySymbol.equals("Rp"))
+        {
+            orderMod.setText(this.getFourColContent("  " + itemName + reNext, NumberFormat.getNumberInstance(Locale.US).format(bigDecimal), "", "", scale));
+        }
         orderMod.setTextAlign(PrintData.ALIGN_LEFT);
         this.data.add(orderMod);
     }
@@ -738,6 +751,11 @@ public class BillPrint extends PrintJob {
         //subtotal
         PrintData subTotalPrint = new PrintData();
         String subTotal = StringUtil.padLeft(subtotal, this.FIXED_COL4_TOTAL);
+        if(currencySymbol.equals("Rp"))
+        {
+            BigInteger subtotalValue = new BigInteger(subtotal);
+            subTotal = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(subtotalValue), this.FIXED_COL4_TOTAL);
+        }
         String padSubtotal = PrintService.instance.getResources().getString(R.string.sub_total) + currencySymbol + subTotal + reNext;
         subTotalPrint.setDataFormat(PrintData.FORMAT_TXT);
         subTotalPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -748,6 +766,11 @@ public class BillPrint extends PrintJob {
         //discount
         PrintData discPrint = new PrintData();
         String discountStr = StringUtil.padLeft(discount, this.FIXED_COL4_TOTAL);
+        if(currencySymbol.equals("Rp"))
+        {
+            BigInteger discValue = new BigInteger(discount);
+            discountStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(discValue), this.FIXED_COL4_TOTAL);
+        }
         String padDiscount = PrintService.instance.getResources().getString(R.string.discount) + currencySymbol + discountStr + reNext;
         discPrint.setDataFormat(PrintData.FORMAT_TXT);
         discPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -762,6 +785,10 @@ public class BillPrint extends PrintJob {
             for (Map<String, String> map : taxes) {
                 PrintData taxPrint = new PrintData();
                 String taxvalue = StringUtil.padLeft(BH.formatMoney(map.get("taxPriceSum")).toString(), this.FIXED_COL4_TOTAL);
+                if(currencySymbol.equals("Rp"))
+                {
+                    taxvalue = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.formatMoney(map.get("taxPriceSum")).toBigInteger()), this.FIXED_COL4_TOTAL);
+                }
 
                 String padTax = map.get("taxName")
                         + "("
@@ -799,9 +826,18 @@ public class BillPrint extends PrintJob {
         PrintData totalPrint = new PrintData();
         String totalStr = StringUtil.padLeft(BH.getBD(roundMap.get("Total")).toString(),
                 this.FIXED_COL4_TOTAL);
-        if (splitByPax > 0) {
-            totalStr = StringUtil.padLeft(BH.getBD(total).toString(),
-                    this.FIXED_COL4_TOTAL);
+        if(currencySymbol.equals("Rp"))
+        {
+            totalStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(roundMap.get("Total"))), this.FIXED_COL4_TOTAL);
+            if (splitByPax > 0) {
+                totalStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(total)), this.FIXED_COL4_TOTAL);
+            }
+        }
+        else
+        {
+            if (splitByPax > 0) {
+                totalStr = StringUtil.padLeft(BH.getBD(total).toString(), this.FIXED_COL4_TOTAL);
+            }
         }
         String totaling = PrintService.instance.getResources().getString(R.string.total_) + currencySymbol + totalStr + reNext;
         totalPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -814,6 +850,11 @@ public class BillPrint extends PrintJob {
             PrintData promotionPrint = new PrintData();
             String promotionStr = StringUtil.padLeft(BH.getBD(promotion).toString(),
                     this.FIXED_COL4_TOTAL);
+            if(currencySymbol.equals("Rp"))
+            {
+                promotionStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(promotion)),
+                        this.FIXED_COL4_TOTAL);
+            }
             String promotiontTotal = PrintService.instance.getResources().getString(R.string.promotion_print) + currencySymbol + promotionStr + reNext;
             promotionPrint.setDataFormat(PrintData.FORMAT_TXT);
             promotionPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -835,8 +876,23 @@ public class BillPrint extends PrintJob {
         PrintData gtPrint = new PrintData();
         String gtotalStr = StringUtil.padLeft(grandTotal, this.FIXED_COL4_TOTAL);
         String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + " : " + currencySymbol + gtotalStr + reNext;
-        if (splitByPax > 0) {
-            padTotal = "Split By Pax " + PrintService.instance.getResources().getString(R.string.grand_total) + "/" + splitByPax + " : " + currencySymbol + gtotalStr + reNext;
+
+        if(currencySymbol.equals("Rp"))
+        {
+            BigInteger gTotalValue = new BigInteger(grandTotal);
+            gtotalStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(gTotalValue), this.FIXED_COL4_TOTAL);
+            padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + " : " + currencySymbol + gtotalStr + reNext;
+            if (splitByPax > 0)
+            {
+                padTotal = "Split By Pax " + PrintService.instance.getResources().getString(R.string.grand_total) + "/" + splitByPax + " : " + currencySymbol + NumberFormat.getNumberInstance(Locale.US).format(gTotalValue) + reNext;
+            }
+        }
+        else
+        {
+            if (splitByPax > 0)
+            {
+                padTotal = "Split By Pax " + PrintService.instance.getResources().getString(R.string.grand_total) + "/" + splitByPax + " : " + currencySymbol + gtotalStr + reNext;
+            }
         }
         gtPrint.setDataFormat(PrintData.FORMAT_TXT);
         gtPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -864,6 +920,10 @@ public class BillPrint extends PrintJob {
                     toPrintStr = entry.getKey() + " : " + lable + reNext;
                 } else {
                     lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
+                    if(currencySymbol.equals("Rp"))
+                    {
+                        lable = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(entry.getValue())), this.FIXED_COL4_TOTAL);
+                    }
                     toPrintStr = entry.getKey() + " : " + currencySymbol + lable + reNext;
                 }
                 toPrint.setDataFormat(PrintData.FORMAT_TXT);
