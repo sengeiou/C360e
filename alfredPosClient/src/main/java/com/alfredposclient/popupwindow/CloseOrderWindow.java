@@ -78,6 +78,7 @@ import com.alfredposclient.activity.StoredCardActivity;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.adapter.OrderDetailAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
@@ -667,7 +668,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BH.getBD(sumPaidamount), true);
             }
         }
-        ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
+        ((TextView) contentView.findViewById(R.id.tv_residue_total_num))
+                .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
 
 
 //		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
@@ -1514,8 +1516,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         showPaymentReminder();
                         return;
                     }
-                    String payHalalOrderId = order.getRestId()+""+order.getRevenueId()+""+orderBill.getBillNo();
-                    String url = String.format("https://payhalal.me/qr/%s/%s/%s","1001",BH.getBD(order.getTotal()).toString(),payHalalOrderId);
+                    String payHalalOrderId = order.getRestId() + "" + order.getRevenueId() + "" + orderBill.getBillNo();
+                    String url = String.format("https://payhalal.me/qr/%s/%s/%s", "1001", BH.getBD(order.getTotal()).toString(), payHalalOrderId);
                     DialogFactory.commonTwoBtnQRDialog(parent, url, "Back", "Paid", null, new OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1526,7 +1528,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                     });
                 }
-                    break;
+                break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
                         showPaymentReminder();
@@ -2604,7 +2606,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     newPaymentMapList.add(paymentMap);
                 }
             }
-                break;
+            break;
             default:
                 break;
         }
@@ -2966,8 +2968,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             verifyDialog.show("PAMENTMETHOD", null);
 
         } else {
-
-
             initPayment();
         }
     }

@@ -223,10 +223,10 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             @Override
             public void call(String data) {
                 try {
-                    if(detailAdapter != null){
+                    if (detailAdapter != null) {
                         refreshList();
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -235,7 +235,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 
     @Override
     protected void onDestroy() {
-        if(observable != null)
+        if (observable != null)
             RxBus.getInstance().unregister(RxBus.RX_REFRESH_STOCK, observable);
         super.onDestroy();
     }
@@ -373,15 +373,15 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
 //                        refreshList();
 //                    }
                     Map<String, Object> map = (Map<String, Object>) msg.obj;
-                    ItemDetail itemDetail=(ItemDetail) map.get("itemDetail");
+                    ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
 
                     int num = (int) map.get("count");
-                    RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
-                    if(remainingStock!=null) {
+                    RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
+                    if (remainingStock != null) {
 
                         int existedOrderDetailNum = OrderDetailSQL.getOrderAddDetailCountByOrderIdAndItemDetailId(currentOrder.getId(), itemDetail.getId());
-                        int reNum = remainingStock.getQty() - existedOrderDetailNum-num;
-                        if(reNum>=0){
+                        int reNum = remainingStock.getQty() - existedOrderDetailNum - num;
+                        if (reNum >= 0) {
                             updateOrderDetail(itemDetail,
                                     num);
                             refreshTotal();
@@ -390,12 +390,12 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                             if (isadd) {
                                 isShow((ItemDetail) map.get("itemDetail"));
                             }
-                        }else {
-                            UIHelp.showToast(MainPage.this,"out of stock");
-                          //  return;
+                        } else {
+                            UIHelp.showToast(MainPage.this, "out of stock");
+                            //  return;
                         }
 
-                    }else {
+                    } else {
                         updateOrderDetail(itemDetail,
                                 num);
                         refreshTotal();
@@ -405,8 +405,6 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                             isShow((ItemDetail) map.get("itemDetail"));
                         }
                     }
-
-
 
 
                     break;
@@ -841,7 +839,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             case R.id.iv_refresh:
                 HashMap<String, Object> map = new HashMap<String, Object>();
                 map.put("visibilityMap", View.VISIBLE);
-                UIHelp.startSetting(context, map,currentOrder);
+                UIHelp.startSetting(context, map, currentOrder);
                 break;
             case R.id.tv_more_detail: {
                 OrderDetail orderDetail = (OrderDetail) v.getTag();
@@ -860,7 +858,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
             OrderDetailSQL.updateOrderDetailStatusById(ParamConst.ORDERDETAIL_STATUS_WAITER_CREATE, orderDetail.getId().intValue());
         }
 
- //       RemainingStockHelper.updateRemainingStockNumByOrder(currentOrder);
+        //       RemainingStockHelper.updateRemainingStockNumByOrder(currentOrder);
         UIHelp.startOrderDetailsTotal(context, currentOrder);
 //		this.finish();
     }

@@ -11,6 +11,7 @@ import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.HappyHour;
 import com.alfredbase.javabean.HappyHourWeek;
+import com.alfredbase.javabean.Ipay88PaymentResult;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
@@ -116,164 +117,177 @@ import java.util.List;
 
 
 public class HttpAnalysis {
-	public static final String TAG = HttpAnalysis.class.getSimpleName();
-	public static LoginResult login(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		LoginResult result = null;
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			result = gson.fromJson(object.toString(), LoginResult.class);
-			Store.saveObject(App.instance, Store.LOGIN_RESULT, result);
-			CoreData.getInstance().setLoginResult(result);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
+    public static final String TAG = HttpAnalysis.class.getSimpleName();
 
-	public static List<User> getUsers(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		List<User> result = null;
-		List<UserRestaurant> urlist = null;
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			result = gson.fromJson(object.getString("userList"),
-					new TypeToken<ArrayList<User>>() {
-					}.getType());
-			CoreData.getInstance().setUsers(result);
-			UserSQL.deleteAllUser();
-			UserSQL.addUsers(result);
+    public static Ipay88PaymentResult requestIpay88Payment(int statusCode, Header[] headers,
+                                                           byte[] responseBody) {
+        Ipay88PaymentResult result = null;
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            result = gson.fromJson(object.toString(), Ipay88PaymentResult.class);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-			urlist = gson.fromJson(object.getString("userRestaurantList"),
-					new TypeToken<ArrayList<UserRestaurant>>() {
-					}.getType());
-			CoreData.getInstance().setUserRestaurant(urlist);
-			UserRestaurantSQL.deleteAllUserRestaurant();
-			UserRestaurantSQL.addUsers(urlist);
+    public static LoginResult login(int statusCode, Header[] headers,
+                                    byte[] responseBody) {
+        LoginResult result = null;
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            result = gson.fromJson(object.toString(), LoginResult.class);
+            Store.saveObject(App.instance, Store.LOGIN_RESULT, result);
+            CoreData.getInstance().setLoginResult(result);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
+    public static List<User> getUsers(int statusCode, Header[] headers,
+                                      byte[] responseBody) {
+        List<User> result = null;
+        List<UserRestaurant> urlist = null;
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            result = gson.fromJson(object.getString("userList"),
+                    new TypeToken<ArrayList<User>>() {
+                    }.getType());
+            CoreData.getInstance().setUsers(result);
+            UserSQL.deleteAllUser();
+            UserSQL.addUsers(result);
 
-	public static void getRestaurantInfo(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<RevenueCenter> revenueCenters = gson.fromJson(
-					object.getString("revenueList"),
-					new TypeToken<ArrayList<RevenueCenter>>() {
-					}.getType());
+            urlist = gson.fromJson(object.getString("userRestaurantList"),
+                    new TypeToken<ArrayList<UserRestaurant>>() {
+                    }.getType());
+            CoreData.getInstance().setUserRestaurant(urlist);
+            UserRestaurantSQL.deleteAllUserRestaurant();
+            UserRestaurantSQL.addUsers(urlist);
 
-			CoreData.getInstance().setRevenueCenters(revenueCenters);
-			RevenueCenter currentRevenueCenter = Store.getObject(App.instance, Store.CURRENT_REVENUE_CENTER,
-					RevenueCenter.class);
-			if(currentRevenueCenter != null){
-				for(RevenueCenter revenueCenter : revenueCenters){
-					if(revenueCenter.getId().intValue() == currentRevenueCenter.getId().intValue()){
-						App.instance.setRevenueCenter(revenueCenter);
-						Store.saveObject(App.instance, Store.CURRENT_REVENUE_CENTER,
-								revenueCenter);
-						MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
-						if (mainPosInfo != null) {
-							mainPosInfo.setIsKiosk(revenueCenter.getIsKiosk());
-							App.instance.setMainPosInfo(mainPosInfo);
-							Store.saveObject(App.instance, Store.MAINPOSINFO, mainPosInfo);
-						}
-					}
-				}
-			}
-			
-			RevenueCenterSQL.deleteAllRevenueCenter();
-			RevenueCenterSQL.addRevenueCenters(revenueCenters);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-			List<Printer> printers = gson.fromJson(
-					object.getString("printerList"),
-					new TypeToken<ArrayList<Printer>>() {
-					}.getType());
+    public static void getRestaurantInfo(int statusCode, Header[] headers,
+                                         byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<RevenueCenter> revenueCenters = gson.fromJson(
+                    object.getString("revenueList"),
+                    new TypeToken<ArrayList<RevenueCenter>>() {
+                    }.getType());
 
-			CoreData.getInstance().setPrinters(printers);
-			PrinterSQL.deleteAllPrinter();
-			PrinterSQL.addPrinters(printers);
+            CoreData.getInstance().setRevenueCenters(revenueCenters);
+            RevenueCenter currentRevenueCenter = Store.getObject(App.instance, Store.CURRENT_REVENUE_CENTER,
+                    RevenueCenter.class);
+            if (currentRevenueCenter != null) {
+                for (RevenueCenter revenueCenter : revenueCenters) {
+                    if (revenueCenter.getId().intValue() == currentRevenueCenter.getId().intValue()) {
+                        App.instance.setRevenueCenter(revenueCenter);
+                        Store.saveObject(App.instance, Store.CURRENT_REVENUE_CENTER,
+                                revenueCenter);
+                        MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
+                        if (mainPosInfo != null) {
+                            mainPosInfo.setIsKiosk(revenueCenter.getIsKiosk());
+                            App.instance.setMainPosInfo(mainPosInfo);
+                            Store.saveObject(App.instance, Store.MAINPOSINFO, mainPosInfo);
+                        }
+                    }
+                }
+            }
 
-			List<PrinterGroup> printerGroups = gson.fromJson(
-					object.getString("printerGroupList"),
-					new TypeToken<ArrayList<PrinterGroup>>() {
-					}.getType());
-			CoreData.getInstance().setPrinterGroups(printerGroups);
-			PrinterGroupSQL.deletePrinter();
-			PrinterGroupSQL.addPrinterGroups(printerGroups);
+            RevenueCenterSQL.deleteAllRevenueCenter();
+            RevenueCenterSQL.addRevenueCenters(revenueCenters);
 
-			final Restaurant restaurant = gson.fromJson(
-					object.getString("restaurant"), Restaurant.class);
-			if (restaurant.getLogoUrl() != null) {
-				new Thread(new Runnable() {
+            List<Printer> printers = gson.fromJson(
+                    object.getString("printerList"),
+                    new TypeToken<ArrayList<Printer>>() {
+                    }.getType());
 
-					@Override
-					public void run() {
-						ImageLoader imageLoader = ImageLoader.getInstance();
-						// encode bitmap by base64
-						Bitmap bmp = null;
-						try {
-							bmp = imageLoader.loadImageSync(restaurant
-									.getLogoUrl());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						if (bmp != null) {
-							Bitmap rzbmp = BitmapUtil.getResizedBitmap(bmp,
-									200, 200);
-							ByteArrayOutputStream baos = new ByteArrayOutputStream();
-							rzbmp.compress(CompressFormat.JPEG, 100, baos);
-							byte[] imgByte = baos.toByteArray();
-							String imgString = Base64.encodeToString(imgByte,
-									Base64.DEFAULT);
-							SettingData settingData = new SettingData();
-							settingData.setId(CommonSQL
-									.getNextSeq(TableNames.SettingData));
-							settingData.setLogoUrl(restaurant.getLogoUrl());
-							settingData.setLogoString(imgString);
-							SettingDataSQL.add(settingData);
-						}
-					}
-				}).start();
+            CoreData.getInstance().setPrinters(printers);
+            PrinterSQL.deleteAllPrinter();
+            PrinterSQL.addPrinters(printers);
 
-			}
+            List<PrinterGroup> printerGroups = gson.fromJson(
+                    object.getString("printerGroupList"),
+                    new TypeToken<ArrayList<PrinterGroup>>() {
+                    }.getType());
+            CoreData.getInstance().setPrinterGroups(printerGroups);
+            PrinterGroupSQL.deletePrinter();
+            PrinterGroupSQL.addPrinterGroups(printerGroups);
 
-			if(restaurant!=null)
-			{
-				Store.putInt(App.instance, Store.REPORT_ORDER_TIMELY, restaurant.getReportOrderTimely());
-			}
-			CoreData.getInstance().setRestaurant(restaurant);
-			RestaurantSQL.deleteAllRestaurant();
-			RestaurantSQL.addRestaurant(restaurant);
+            final Restaurant restaurant = gson.fromJson(
+                    object.getString("restaurant"), Restaurant.class);
+            if (restaurant.getLogoUrl() != null) {
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        ImageLoader imageLoader = ImageLoader.getInstance();
+                        // encode bitmap by base64
+                        Bitmap bmp = null;
+                        try {
+                            bmp = imageLoader.loadImageSync(restaurant
+                                    .getLogoUrl());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (bmp != null) {
+                            Bitmap rzbmp = BitmapUtil.getResizedBitmap(bmp,
+                                    200, 200);
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            rzbmp.compress(CompressFormat.JPEG, 100, baos);
+                            byte[] imgByte = baos.toByteArray();
+                            String imgString = Base64.encodeToString(imgByte,
+                                    Base64.DEFAULT);
+                            SettingData settingData = new SettingData();
+                            settingData.setId(CommonSQL
+                                    .getNextSeq(TableNames.SettingData));
+                            settingData.setLogoUrl(restaurant.getLogoUrl());
+                            settingData.setLogoString(imgString);
+                            SettingDataSQL.add(settingData);
+                        }
+                    }
+                }).start();
+
+            }
+
+            if (restaurant != null) {
+                Store.putInt(App.instance, Store.REPORT_ORDER_TIMELY, restaurant.getReportOrderTimely());
+            }
+            CoreData.getInstance().setRestaurant(restaurant);
+            RestaurantSQL.deleteAllRestaurant();
+            RestaurantSQL.addRestaurant(restaurant);
 
 //			RoundRule roundRule = gson.fromJson(object.getString("roundRule"),
 //					RoundRule.class);
 //			CoreData.getInstance().setRoundRule(roundRule);
 //			RoundRuleSQL.deleteAllRoundRule();
 //			RoundRuleSQL.update(roundRule);
-			
-			List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("configList"), 
-					new TypeToken<ArrayList<RestaurantConfig>>() {
-					}.getType());
-			CoreData.getInstance().setRestaurantConfigs(restaurantConfigs);
-			RestaurantConfigSQL.deleteAllRestaurantConfig();
-			RestaurantConfigSQL.addRestaurantConfigs(restaurantConfigs);
-			App.instance.setLocalRestaurantConfig(restaurantConfigs);
+
+            List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("configList"),
+                    new TypeToken<ArrayList<RestaurantConfig>>() {
+                    }.getType());
+            CoreData.getInstance().setRestaurantConfigs(restaurantConfigs);
+            RestaurantConfigSQL.deleteAllRestaurantConfig();
+            RestaurantConfigSQL.addRestaurantConfigs(restaurantConfigs);
+            App.instance.setLocalRestaurantConfig(restaurantConfigs);
 //			App.instance.setSessionConfigType(CoreData.getInstance().getRestaurantConfigs());
 //			App.instance.setRoundType(restaurantConfigs);
 //			App.instance.setCurrencySymbol(restaurantConfigs);
-			LogUtil.i(TAG, restaurantConfigs+"");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-	
+            LogUtil.i(TAG, restaurantConfigs + "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 //	public static void getPlaceInfo(int statusCode, Header[] headers,
 //			byte[] responseBody) {
@@ -300,217 +314,217 @@ public class HttpAnalysis {
 //		}
 //	}
 
-	public static void getItemCategory(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<ItemCategory> itemCategoryList = gson.fromJson(
-					object.getString("subCategoryList"),
-					new TypeToken<ArrayList<ItemCategory>>() {
-					}.getType());
-			CoreData.getInstance().setItemCategories(itemCategoryList);
-			ItemCategorySQL.deleteAllItemCategory();
-			ItemCategorySQL.addItemCategoryList(itemCategoryList);
+    public static void getItemCategory(int statusCode, Header[] headers,
+                                       byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<ItemCategory> itemCategoryList = gson.fromJson(
+                    object.getString("subCategoryList"),
+                    new TypeToken<ArrayList<ItemCategory>>() {
+                    }.getType());
+            CoreData.getInstance().setItemCategories(itemCategoryList);
+            ItemCategorySQL.deleteAllItemCategory();
+            ItemCategorySQL.addItemCategoryList(itemCategoryList);
 
-			List<ItemMainCategory> itemMainCategories = gson.fromJson(
-					object.getString("mainCategoryList"),
-					new TypeToken<ArrayList<ItemMainCategory>>() {
-					}.getType());
-			ItemMainCategorySQL.deleteAllItemMainCategory();
-			ItemMainCategorySQL.addItemMainCategory(itemMainCategories);
-			//CoreData.getInstance().setItemMainCategories(ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenter());
-			CoreData.getInstance().setItemMainCategories(ItemMainCategorySQL.getAllItemMainCategory());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+            List<ItemMainCategory> itemMainCategories = gson.fromJson(
+                    object.getString("mainCategoryList"),
+                    new TypeToken<ArrayList<ItemMainCategory>>() {
+                    }.getType());
+            ItemMainCategorySQL.deleteAllItemMainCategory();
+            ItemMainCategorySQL.addItemMainCategory(itemMainCategories);
+            //CoreData.getInstance().setItemMainCategories(ItemMainCategorySQL.getAllAvaiableItemMainCategoryInRevenueCenter());
+            CoreData.getInstance().setItemMainCategories(ItemMainCategorySQL.getAllItemMainCategory());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static void getItemDetail(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<ItemDetail> itemDetailList = gson.fromJson(
-					object.getString("itemList"),
-					new TypeToken<ArrayList<ItemDetail>>() {
-					}.getType());
-			ItemDetailSQL.deleteAllItemDetail();
-			ItemDetailSQL.addItemDetailList(itemDetailList);
-			CoreData.getInstance().setItemDetails(
-					ItemDetailSQL.getAllItemDetail());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+    public static void getItemDetail(int statusCode, Header[] headers,
+                                     byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<ItemDetail> itemDetailList = gson.fromJson(
+                    object.getString("itemList"),
+                    new TypeToken<ArrayList<ItemDetail>>() {
+                    }.getType());
+            ItemDetailSQL.deleteAllItemDetail();
+            ItemDetailSQL.addItemDetailList(itemDetailList);
+            CoreData.getInstance().setItemDetails(
+                    ItemDetailSQL.getAllItemDetail());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static void getAllModifier(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<ItemModifier> itemModifierlList = gson.fromJson(
-					object.getString("itemModifierList"),
-					new TypeToken<ArrayList<ItemModifier>>() {
-					}.getType());
-
-
-			ItemModifierSQL.deleteAllItemModifier();
-			ItemModifierSQL.addItemModifierList(itemModifierlList);
-			List<ItemModifier> itemModifiers =  ItemModifierSQL.getAllItemModifier();
-
-			CoreData.getInstance().setItemModifiers(ItemModifierSQL.getAllItemModifier());
-			List<Modifier> modifierList = gson.fromJson(
-					object.getString("modifierList"),
-					new TypeToken<ArrayList<Modifier>>() {
-					}.getType());
-
-			ModifierSQL.deleteAllModifier();
-			ModifierSQL.addModifierList(modifierList);
-			CoreData.getInstance().setModifierList(ModifierSQL.getAllModifier());
-
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void getTax(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<TaxCategory> taxCategories = gson.fromJson(
-					object.getString("taxCategoryList"),
-					new TypeToken<ArrayList<TaxCategory>>() {
-					}.getType());
-			CoreData.getInstance().setTaxCategories(taxCategories);
-			TaxCategorySQL.deleteAllTaxCategory();
-			TaxCategorySQL.addTaxCategorys(taxCategories);
-
-			List<Tax> taxs = gson.fromJson(object.getString("taxList"),
-					new TypeToken<ArrayList<Tax>>() {
-					}.getType());
-			CoreData.getInstance().setTaxs(taxs);
-			TaxSQL.deleteAllTax();
-			TaxSQL.addTaxs(taxs);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void getOther(int statusCode, Header[] headers,
-							  byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<PaymentMethod> pamentMethodList = gson.fromJson(
-					object.getString("pamentMethodList"),
-					new TypeToken<ArrayList<PaymentMethod>>() {
-					}.getType());
-			CoreData.getInstance().setPamentMethodList(pamentMethodList == null ? new ArrayList<PaymentMethod> () : pamentMethodList);
-			PaymentMethodSQL.deleteAllPaymentMethod();
-			PaymentMethodSQL.addPaymentMethod(pamentMethodList);
+    public static void getAllModifier(int statusCode, Header[] headers,
+                                      byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<ItemModifier> itemModifierlList = gson.fromJson(
+                    object.getString("itemModifierList"),
+                    new TypeToken<ArrayList<ItemModifier>>() {
+                    }.getType());
 
 
-			List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurants"),
-					new TypeToken<ArrayList<SettlementRestaurant>>() {
-					}.getType());
-			CoreData.getInstance().setSettlementRestaurant(settlementRestaurant);
-      SettlementRestaurantSQL.deleteAllSettlementRestaurant();
-      SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurant);
+            ItemModifierSQL.deleteAllItemModifier();
+            ItemModifierSQL.addItemModifierList(itemModifierlList);
+            List<ItemModifier> itemModifiers = ItemModifierSQL.getAllItemModifier();
 
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+            CoreData.getInstance().setItemModifiers(ItemModifierSQL.getAllItemModifier());
+            List<Modifier> modifierList = gson.fromJson(
+                    object.getString("modifierList"),
+                    new TypeToken<ArrayList<Modifier>>() {
+                    }.getType());
+
+            ModifierSQL.deleteAllModifier();
+            ModifierSQL.addModifierList(modifierList);
+            CoreData.getInstance().setModifierList(ModifierSQL.getAllModifier());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getTax(int statusCode, Header[] headers,
+                              byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<TaxCategory> taxCategories = gson.fromJson(
+                    object.getString("taxCategoryList"),
+                    new TypeToken<ArrayList<TaxCategory>>() {
+                    }.getType());
+            CoreData.getInstance().setTaxCategories(taxCategories);
+            TaxCategorySQL.deleteAllTaxCategory();
+            TaxCategorySQL.addTaxCategorys(taxCategories);
+
+            List<Tax> taxs = gson.fromJson(object.getString("taxList"),
+                    new TypeToken<ArrayList<Tax>>() {
+                    }.getType());
+            CoreData.getInstance().setTaxs(taxs);
+            TaxSQL.deleteAllTax();
+            TaxSQL.addTaxs(taxs);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getOther(int statusCode, Header[] headers,
+                                byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<PaymentMethod> pamentMethodList = gson.fromJson(
+                    object.getString("pamentMethodList"),
+                    new TypeToken<ArrayList<PaymentMethod>>() {
+                    }.getType());
+            CoreData.getInstance().setPamentMethodList(pamentMethodList == null ? new ArrayList<PaymentMethod>() : pamentMethodList);
+            PaymentMethodSQL.deleteAllPaymentMethod();
+            PaymentMethodSQL.addPaymentMethod(pamentMethodList);
 
 
-	public static void getHappyHour(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<ItemHappyHour> itemHappyHours = gson.fromJson(
-					object.getString("itemHappyHourList"),
-					new TypeToken<ArrayList<ItemHappyHour>>() {
-					}.getType());
+            List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurants"),
+                    new TypeToken<ArrayList<SettlementRestaurant>>() {
+                    }.getType());
+            CoreData.getInstance().setSettlementRestaurant(settlementRestaurant);
+            SettlementRestaurantSQL.deleteAllSettlementRestaurant();
+            SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurant);
 
-			CoreData.getInstance().setItemHappyHours(itemHappyHours);
-			ItemHappyHourSQL.deleteAllItemHappyHour();
-			ItemHappyHourSQL.addItemHappyHourList(itemHappyHours);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-			List<HappyHourWeek> happyHourWeeks = gson.fromJson(
-					object.getString("happyHourWeekList"),
-					new TypeToken<ArrayList<HappyHourWeek>>() {
-					}.getType());
-			CoreData.getInstance().setHappyHourWeeks(happyHourWeeks);
-			HappyHourWeekSQL.deleteAllHappyHourWeek();
-			HappyHourWeekSQL.addHappyHourWeekList(happyHourWeeks);
 
-			List<HappyHour> happyHours = gson.fromJson(
-					object.getString("happyHourList"),
-					new TypeToken<ArrayList<HappyHour>>() {
-					}.getType());
-			CoreData.getInstance().setHappyHours(happyHours);
-			HappyHourSQL.deleteAllHappyHour();
-			HappyHourSQL.addHappyHourList(happyHours);
+    public static void getHappyHour(int statusCode, Header[] headers,
+                                    byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<ItemHappyHour> itemHappyHours = gson.fromJson(
+                    object.getString("itemHappyHourList"),
+                    new TypeToken<ArrayList<ItemHappyHour>>() {
+                    }.getType());
 
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+            CoreData.getInstance().setItemHappyHours(itemHappyHours);
+            ItemHappyHourSQL.deleteAllItemHappyHour();
+            ItemHappyHourSQL.addItemHappyHourList(itemHappyHours);
 
-	public static void getPromotionInfo(int statusCode, Header[] headers,
-									byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<Promotion> promotionList = gson.fromJson(
-					object.getString("promotionInfoList"),
-					new TypeToken<ArrayList<Promotion>>() {
-					}.getType());
-			List<PromotionWeek> promotionWeekTimeList = gson.fromJson(
-					object.getString("promotionWeekTimeList"),
-					new TypeToken<ArrayList<PromotionWeek>>() {
-					}.getType());
-			PromotionSQL.deleteAllPromotion();
-		    PromotionSQL.addPromotion(promotionList);
-		    PromotionWeekSQL.deleteAllPromotionWeek();
-		    PromotionWeekSQL.addPromotionWeek(promotionWeekTimeList);
+            List<HappyHourWeek> happyHourWeeks = gson.fromJson(
+                    object.getString("happyHourWeekList"),
+                    new TypeToken<ArrayList<HappyHourWeek>>() {
+                    }.getType());
+            CoreData.getInstance().setHappyHourWeeks(happyHourWeeks);
+            HappyHourWeekSQL.deleteAllHappyHourWeek();
+            HappyHourWeekSQL.addHappyHourWeekList(happyHourWeeks);
 
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+            List<HappyHour> happyHours = gson.fromJson(
+                    object.getString("happyHourList"),
+                    new TypeToken<ArrayList<HappyHour>>() {
+                    }.getType());
+            CoreData.getInstance().setHappyHours(happyHours);
+            HappyHourSQL.deleteAllHappyHour();
+            HappyHourSQL.addHappyHourList(happyHours);
 
-	public static void getPromotionData(int statusCode, Header[] headers,
-										byte[] responseBody) {
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<PromotionWeek> promotionWeekList = gson.fromJson(
-					object.getString("promotionWeekList"),
-					new TypeToken<ArrayList<PromotionWeek>>() {
-					}.getType());
-			List<ItemPromotion> itemPromotionList = gson.fromJson(
-					object.getString("itemPromotionList"),
-					new TypeToken<ArrayList<ItemPromotion>>() {
-					}.getType());
-			List<PromotionOrder> orderPromotionList = gson.fromJson(
-					object.getString("orderPromotionList"),
-					new TypeToken<ArrayList<PromotionOrder>>() {
-					}.getType());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-        PromotionWeekSQL.deleteAllPromotionWeek();
-        PromotionWeekSQL.addPromotionWeek(promotionWeekList);
-			PromotionItemSQL.deleteAllPromotionItem();
-			PromotionOrderSQL.deleteAllpromotionOrder();
-			PromotionOrderSQL.addPromotionOrder(orderPromotionList);
-			PromotionItemSQL.addPromotionItem(itemPromotionList);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+    public static void getPromotionInfo(int statusCode, Header[] headers,
+                                        byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<Promotion> promotionList = gson.fromJson(
+                    object.getString("promotionInfoList"),
+                    new TypeToken<ArrayList<Promotion>>() {
+                    }.getType());
+            List<PromotionWeek> promotionWeekTimeList = gson.fromJson(
+                    object.getString("promotionWeekTimeList"),
+                    new TypeToken<ArrayList<PromotionWeek>>() {
+                    }.getType());
+            PromotionSQL.deleteAllPromotion();
+            PromotionSQL.addPromotion(promotionList);
+            PromotionWeekSQL.deleteAllPromotionWeek();
+            PromotionWeekSQL.addPromotionWeek(promotionWeekTimeList);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getPromotionData(int statusCode, Header[] headers,
+                                        byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<PromotionWeek> promotionWeekList = gson.fromJson(
+                    object.getString("promotionWeekList"),
+                    new TypeToken<ArrayList<PromotionWeek>>() {
+                    }.getType());
+            List<ItemPromotion> itemPromotionList = gson.fromJson(
+                    object.getString("itemPromotionList"),
+                    new TypeToken<ArrayList<ItemPromotion>>() {
+                    }.getType());
+            List<PromotionOrder> orderPromotionList = gson.fromJson(
+                    object.getString("orderPromotionList"),
+                    new TypeToken<ArrayList<PromotionOrder>>() {
+                    }.getType());
+
+            PromotionWeekSQL.deleteAllPromotionWeek();
+            PromotionWeekSQL.addPromotionWeek(promotionWeekList);
+            PromotionItemSQL.deleteAllPromotionItem();
+            PromotionOrderSQL.deleteAllpromotionOrder();
+            PromotionOrderSQL.addPromotionOrder(orderPromotionList);
+            PromotionItemSQL.addPromotionItem(itemPromotionList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 //	public static void getPromotionData(int statusCode, Header[] headers,
 //											byte[] responseBody) {
 //		try {
@@ -528,364 +542,384 @@ public class HttpAnalysis {
 //	}
 
 
+    public static List<BohHoldSettlement> getBOHSettlement(int statusCode, Header[] headers,
+                                                           byte[] responseBody) {
+        String str = null;
+        List<BohHoldSettlement> bohHoldSettlementList = new ArrayList<BohHoldSettlement>();
+        try {
+            Gson gson = new Gson();
+            JSONObject object = new JSONObject(new String(responseBody));
+            bohHoldSettlementList = gson.fromJson(object.getString("bohUnpaidList"),
+                    new TypeToken<List<BohHoldSettlement>>() {
+                    }.getType());
+            str = object.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return bohHoldSettlementList;
+    }
 
+    /**
+     * KDS为服务器的时候的操作
+     */
 
-	public static List<BohHoldSettlement> getBOHSettlement(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		String str = null;
-		List<BohHoldSettlement> bohHoldSettlementList = new ArrayList<BohHoldSettlement>();
-		try {
-			Gson gson = new Gson();
-			JSONObject object = new JSONObject(new String(responseBody));
-			bohHoldSettlementList = gson.fromJson(object.getString("bohUnpaidList"),
-					new TypeToken<List<BohHoldSettlement>>(){}.getType());
-			str = object.toString();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return bohHoldSettlementList;
-	}
+    // public static void submitKot1(int statusCode, Header[] headers,
+    // byte[] responseBody) {
+    // Gson gson = new Gson();
+    // try {
+    // JSONObject object = new JSONObject(new String(responseBody));
+    // String method = object.optString("method");
+    // if (!TextUtils.isEmpty(method)) {
+    // KotSummary kotSummary = gson.fromJson(
+    // object.optString("kotSummary"), KotSummary.class);
+    // if (method.equals(ParamConst.JOB_NEW_KOT)) {
+    // int orderId = kotSummary.getOrderId();
+    // ArrayList<OrderDetail> orderDetails = OrderDetailSQL
+    // .getOrderDetails(orderId);
+    // ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+    // for (int i = 0; i < orderDetails.size(); i++) {
+    // OrderDetail orderDetail = orderDetails.get(i);
+    // orderDetail
+    // .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
+    // KotItemDetail kotItemDetail = KotItemDetailSQL
+    // .getKotItemDetailByOrderDetailId(orderDetail
+    // .getId());
+    // kotItemDetail
+    // .setKotStatus(ParamConst.KOT_STATUS_UNDONE);
+    // kotItemDetails.add(kotItemDetail);
+    // }
+    // OrderDetailSQL.addOrderDetailList(orderDetails);
+    // KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+    // } else if (method.equals(ParamConst.JOB_UPDATE_KOT)) {
+    // ArrayList<Integer> orderDetailIds = new ArrayList<Integer>();
+    // orderDetailIds = gson.fromJson(
+    // object.optString("orderDetailIds"),
+    // new TypeToken<ArrayList<Integer>>() {
+    // }.getType());
+    // if (orderDetailIds.isEmpty()) {
+    // return;
+    // }
+    // ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+    // ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+    // for (int i = 0; i < orderDetailIds.size(); i++) {
+    // OrderDetail orderDetail = OrderDetailSQL
+    // .getOrderDetail(orderDetailIds.get(i));
+    // orderDetail
+    // .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
+    // KotItemDetail kotItemDetail = KotItemDetailSQL
+    // .getKotItemDetailByOrderDetailId(orderDetailIds
+    // .get(i));
+    // kotItemDetail
+    // .setKotStatus(ParamConst.KOT_STATUS_UNDONE);
+    // orderDetails.add(orderDetail);
+    // kotItemDetails.add(kotItemDetail);
+    // }
+    // OrderDetailSQL.addOrderDetailList(orderDetails);
+    // KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
+    // }
+    // Order order = OrderSQL.getOrder(kotSummary.getOrderId());
+    // order.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
+    // OrderSQL.update(order);
+    // // App.instance.getTopActivity().httpRequestAction(
+    // // MainPage.VIEW_EVENT_SET_DATA, kotSummary.getOrderId());
+    // }
+    //
+    // } catch (JSONException e) {
+    // e.printStackTrace();
+    // }
+    // }
+    public static String getReportDayFromCloud(int statusCode, Header[] headers,
+                                               byte[] responseBody) {
+        String nettSales = null;
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
 
-	/**
-	 * KDS为服务器的时候的操作
-	 */
-
-	// public static void submitKot1(int statusCode, Header[] headers,
-	// byte[] responseBody) {
-	// Gson gson = new Gson();
-	// try {
-	// JSONObject object = new JSONObject(new String(responseBody));
-	// String method = object.optString("method");
-	// if (!TextUtils.isEmpty(method)) {
-	// KotSummary kotSummary = gson.fromJson(
-	// object.optString("kotSummary"), KotSummary.class);
-	// if (method.equals(ParamConst.JOB_NEW_KOT)) {
-	// int orderId = kotSummary.getOrderId();
-	// ArrayList<OrderDetail> orderDetails = OrderDetailSQL
-	// .getOrderDetails(orderId);
-	// ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
-	// for (int i = 0; i < orderDetails.size(); i++) {
-	// OrderDetail orderDetail = orderDetails.get(i);
-	// orderDetail
-	// .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
-	// KotItemDetail kotItemDetail = KotItemDetailSQL
-	// .getKotItemDetailByOrderDetailId(orderDetail
-	// .getId());
-	// kotItemDetail
-	// .setKotStatus(ParamConst.KOT_STATUS_UNDONE);
-	// kotItemDetails.add(kotItemDetail);
-	// }
-	// OrderDetailSQL.addOrderDetailList(orderDetails);
-	// KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
-	// } else if (method.equals(ParamConst.JOB_UPDATE_KOT)) {
-	// ArrayList<Integer> orderDetailIds = new ArrayList<Integer>();
-	// orderDetailIds = gson.fromJson(
-	// object.optString("orderDetailIds"),
-	// new TypeToken<ArrayList<Integer>>() {
-	// }.getType());
-	// if (orderDetailIds.isEmpty()) {
-	// return;
-	// }
-	// ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
-	// ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
-	// for (int i = 0; i < orderDetailIds.size(); i++) {
-	// OrderDetail orderDetail = OrderDetailSQL
-	// .getOrderDetail(orderDetailIds.get(i));
-	// orderDetail
-	// .setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD);
-	// KotItemDetail kotItemDetail = KotItemDetailSQL
-	// .getKotItemDetailByOrderDetailId(orderDetailIds
-	// .get(i));
-	// kotItemDetail
-	// .setKotStatus(ParamConst.KOT_STATUS_UNDONE);
-	// orderDetails.add(orderDetail);
-	// kotItemDetails.add(kotItemDetail);
-	// }
-	// OrderDetailSQL.addOrderDetailList(orderDetails);
-	// KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
-	// }
-	// Order order = OrderSQL.getOrder(kotSummary.getOrderId());
-	// order.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
-	// OrderSQL.update(order);
-	// // App.instance.getTopActivity().httpRequestAction(
-	// // MainPage.VIEW_EVENT_SET_DATA, kotSummary.getOrderId());
-	// }
-	//
-	// } catch (JSONException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	public static String getReportDayFromCloud(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		String nettSales = null;
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			
-			//Parse remote DaySales Report
-			ReportDaySales daySales = gson.fromJson(
-					object.getString("reportDaySales"),ReportDaySales.class);
-			if (daySales != null) {
-				GeneralSQL.deleteReportDataByBusinessDate(daySales.getBusinessDate().longValue());
-				ReportDaySalesSQL.addReportDaySalesFromCloud(daySales);
-				nettSales = daySales.getNettSales();
-			}
-			//Parse remote PLU Day Report
-			List<ReportPluDayItem> reportPluDayItems = gson.fromJson(
-					object.getString("reportPluDayItems"),new TypeToken<ArrayList<ReportPluDayItem>>() {
-					}.getType());
-            if (reportPluDayItems!=null && reportPluDayItems.size() > 0) {
-            	ReportPluDayItemSQL.addReportPluDayItemsFromCloud(reportPluDayItems);
+            //Parse remote DaySales Report
+            ReportDaySales daySales = gson.fromJson(
+                    object.getString("reportDaySales"), ReportDaySales.class);
+            if (daySales != null) {
+                GeneralSQL.deleteReportDataByBusinessDate(daySales.getBusinessDate().longValue());
+                ReportDaySalesSQL.addReportDaySalesFromCloud(daySales);
+                nettSales = daySales.getNettSales();
             }
-			//Parse remote PLU Day combModifidier Report
-			List<ReportPluDayComboModifier> reportPluDayComboModifiers = gson.fromJson(
-					object.getString("reportPluDayComboModifiers"),new TypeToken<ArrayList<ReportPluDayComboModifier>>() {
-					}.getType());
-            if (reportPluDayComboModifiers!=null && reportPluDayComboModifiers.size() > 0) {
-            	ReportPluDayComboModifierSQL.addReportPluDayModifierFromCloud(reportPluDayComboModifiers);
+            //Parse remote PLU Day Report
+            List<ReportPluDayItem> reportPluDayItems = gson.fromJson(
+                    object.getString("reportPluDayItems"), new TypeToken<ArrayList<ReportPluDayItem>>() {
+                    }.getType());
+            if (reportPluDayItems != null && reportPluDayItems.size() > 0) {
+                ReportPluDayItemSQL.addReportPluDayItemsFromCloud(reportPluDayItems);
+            }
+            //Parse remote PLU Day combModifidier Report
+            List<ReportPluDayComboModifier> reportPluDayComboModifiers = gson.fromJson(
+                    object.getString("reportPluDayComboModifiers"), new TypeToken<ArrayList<ReportPluDayComboModifier>>() {
+                    }.getType());
+            if (reportPluDayComboModifiers != null && reportPluDayComboModifiers.size() > 0) {
+                ReportPluDayComboModifierSQL.addReportPluDayModifierFromCloud(reportPluDayComboModifiers);
             }
             //Parse remote Day Tax report
-			List<ReportDayTax> reportDayTax = gson.fromJson(
-					object.getString("reportDayTax"),new TypeToken<ArrayList<ReportDayTax>>() {
-					}.getType());
-			if (reportDayTax!=null && reportDayTax.size() > 0) {
-				ReportDayTaxSQL.saveReportDayTaxListFromCloud(reportDayTax);
-			}
+            List<ReportDayTax> reportDayTax = gson.fromJson(
+                    object.getString("reportDayTax"), new TypeToken<ArrayList<ReportDayTax>>() {
+                    }.getType());
+            if (reportDayTax != null && reportDayTax.size() > 0) {
+                ReportDayTaxSQL.saveReportDayTaxListFromCloud(reportDayTax);
+            }
 
-			//Parse remote Hourly Sales
-			List<ReportHourly> reportHourlys = gson.fromJson(
-					object.getString("reportHourlys"),new TypeToken<ArrayList<ReportHourly>>() {
-					}.getType());
-			if (reportHourlys!=null && reportHourlys.size() > 0) {
-				ReportHourlySQL.addReportHourlyFromCloud(reportHourlys);
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return nettSales;
-	}
+            //Parse remote Hourly Sales
+            List<ReportHourly> reportHourlys = gson.fromJson(
+                    object.getString("reportHourlys"), new TypeToken<ArrayList<ReportHourly>>() {
+                    }.getType());
+            if (reportHourlys != null && reportHourlys.size() > 0) {
+                ReportHourlySQL.addReportHourlyFromCloud(reportHourlys);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return nettSales;
+    }
 
-	//monthly sale report
-	public static List<MonthlySalesReport> getReportMonthlySaleFromCloud(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		List<MonthlySalesReport> data = new ArrayList<MonthlySalesReport>();
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			MonthlySalesReport monthlySalesReport  = new MonthlySalesReport();
-			Gson gson = new Gson();
-			data = gson.fromJson(object.getString("reportDaySalesList"), new TypeToken<ArrayList<MonthlySalesReport>>(){}.getType());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
-	//monthly PLU report
-	public static List<MonthlyPLUReport> getReportMonthlyPLUFromCloud(int statusCode, Header[] headers,
-			byte[] responseBody) {
-		List<MonthlyPLUReport> data = new ArrayList<MonthlyPLUReport>();
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			MonthlyPLUReport monthlyPLUReport  = new MonthlyPLUReport();
-			Gson gson = new Gson();
-			data = gson.fromJson(object.getString("reportPluDayItemList"), new TypeToken<ArrayList<MonthlyPLUReport>>(){}.getType());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return data;
-	}
-	
-	public static void getOrderFromApp(int statusCode, Header[] headers,
-			byte[] responseBody){
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			TempOrder tempOrder = new TempOrder();
-			tempOrder.setCustId(object.getInt("custId"));
-			tempOrder.setTotal(object.getString("total"));
-			tempOrder.setAppOrderId(object.getInt("appOrderId"));
-			tempOrder.setPlaceOrderTime(object.getLong("placeOrderTime"));
-			tempOrder.setStatus(ParamConst.TEMP_ORDER_NORMAL);
-			List<TempOrderDetail> tempOrderDetails = gson.fromJson(object.getString("orderDetailList"), new TypeToken<ArrayList<TempOrderDetail>>(){}.getType());
-			for(TempOrderDetail tempOrderDetail : tempOrderDetails){
-				tempOrderDetail.setAppOrderId(tempOrder.getAppOrderId());
-			}
-			List<TempModifierDetail> tempModifierDetails = gson.fromJson(object.getString("modifierList"), new TypeToken<ArrayList<TempModifierDetail>>(){}.getType());
-			TempOrderSQL.addTempOrder(tempOrder);
-			TempOrderDetailSQL.addTempOrderDetailList(tempOrder,tempOrderDetails);
-			TempModifierDetailSQL.addTempModifierDetailList(tempModifierDetails);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-	}
+    //monthly sale report
+    public static List<MonthlySalesReport> getReportMonthlySaleFromCloud(int statusCode, Header[] headers,
+                                                                         byte[] responseBody) {
+        List<MonthlySalesReport> data = new ArrayList<MonthlySalesReport>();
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            MonthlySalesReport monthlySalesReport = new MonthlySalesReport();
+            Gson gson = new Gson();
+            data = gson.fromJson(object.getString("reportDaySalesList"), new TypeToken<ArrayList<MonthlySalesReport>>() {
+            }.getType());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
 
-	public static void getAppOrderById(int statusCode, Header[] headers,
-									   byte[] responseBody, boolean canCheck){
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			AppOrder appOrder = gson.fromJson(object.getString("appOrder"), AppOrder.class);
-			if(appOrder.getPayStatus() == 0 ){
-				return;
-			}
-			List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>(){}.getType());
-			List<AppOrderDetailTax> appOrderDetailTaxList = gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
+    //monthly PLU report
+    public static List<MonthlyPLUReport> getReportMonthlyPLUFromCloud(int statusCode, Header[] headers,
+                                                                      byte[] responseBody) {
+        List<MonthlyPLUReport> data = new ArrayList<MonthlyPLUReport>();
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            MonthlyPLUReport monthlyPLUReport = new MonthlyPLUReport();
+            Gson gson = new Gson();
+            data = gson.fromJson(object.getString("reportPluDayItemList"), new TypeToken<ArrayList<MonthlyPLUReport>>() {
+            }.getType());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    public static void getOrderFromApp(int statusCode, Header[] headers,
+                                       byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            TempOrder tempOrder = new TempOrder();
+            tempOrder.setCustId(object.getInt("custId"));
+            tempOrder.setTotal(object.getString("total"));
+            tempOrder.setAppOrderId(object.getInt("appOrderId"));
+            tempOrder.setPlaceOrderTime(object.getLong("placeOrderTime"));
+            tempOrder.setStatus(ParamConst.TEMP_ORDER_NORMAL);
+            List<TempOrderDetail> tempOrderDetails = gson.fromJson(object.getString("orderDetailList"), new TypeToken<ArrayList<TempOrderDetail>>() {
+            }.getType());
+            for (TempOrderDetail tempOrderDetail : tempOrderDetails) {
+                tempOrderDetail.setAppOrderId(tempOrder.getAppOrderId());
+            }
+            List<TempModifierDetail> tempModifierDetails = gson.fromJson(object.getString("modifierList"), new TypeToken<ArrayList<TempModifierDetail>>() {
+            }.getType());
+            TempOrderSQL.addTempOrder(tempOrder);
+            TempOrderDetailSQL.addTempOrderDetailList(tempOrder, tempOrderDetails);
+            TempModifierDetailSQL.addTempModifierDetailList(tempModifierDetails);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getAppOrderById(int statusCode, Header[] headers,
+                                       byte[] responseBody, boolean canCheck) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            AppOrder appOrder = gson.fromJson(object.getString("appOrder"), AppOrder.class);
+            if (appOrder.getPayStatus() == 0) {
+                return;
+            }
+            List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>() {
+            }.getType());
+            List<AppOrderDetailTax> appOrderDetailTaxList = gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>() {
+            }.getType());
 //					gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
-			List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>(){}.getType());
-			int tableId = 0;
-			if(!TextUtils.isEmpty(appOrder.getTableNo())){
-				try {
-					tableId = Integer.parseInt(appOrder.getTableNo());
-				} catch (NumberFormatException e) {
+            List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>() {
+            }.getType());
+            int tableId = 0;
+            if (!TextUtils.isEmpty(appOrder.getTableNo())) {
+                try {
+                    tableId = Integer.parseInt(appOrder.getTableNo());
+                } catch (NumberFormatException e) {
 
-				}
-			}
-			appOrder.setTableId(tableId);
-			AppOrderSQL.addAppOrder(appOrder);
-			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
-			AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
-			AppOrderModifierSQL.addAppOrderModifierList(appOrderModifierList);
-			if(canCheck)
-			if(!App.instance.isRevenueKiosk()) {
-				App.instance.appOrderShowDialog(true, appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
-			}else{
-				if(App.instance.getSystemSettings().isAutoRecevingOnlineOrder())
-					App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
-			}
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public static void getAllAppOrder(int statusCode, Header[] headers,
-									   byte[] responseBody){
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<AppOrder> appOrderList = gson.fromJson(object.getString("appOrderList"), new TypeToken<ArrayList<AppOrder>>(){}.getType());
-			List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>(){}.getType());
-			List<AppOrderDetailTax> appOrderDetailTaxList = gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
+                }
+            }
+            appOrder.setTableId(tableId);
+            AppOrderSQL.addAppOrder(appOrder);
+            AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
+            AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
+            AppOrderModifierSQL.addAppOrderModifierList(appOrderModifierList);
+            if (canCheck)
+                if (!App.instance.isRevenueKiosk()) {
+                    App.instance.appOrderShowDialog(true, appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+                } else {
+                    if (App.instance.getSystemSettings().isAutoRecevingOnlineOrder())
+                        App.instance.appOrderTransforOrder(appOrder, appOrderDetailList, appOrderModifierList, appOrderDetailTaxList);
+                }
+            App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getAllAppOrder(int statusCode, Header[] headers,
+                                      byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<AppOrder> appOrderList = gson.fromJson(object.getString("appOrderList"), new TypeToken<ArrayList<AppOrder>>() {
+            }.getType());
+            List<AppOrderDetail> appOrderDetailList = gson.fromJson(object.getString("appOrderDetailList"), new TypeToken<ArrayList<AppOrderDetail>>() {
+            }.getType());
+            List<AppOrderDetailTax> appOrderDetailTaxList = gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>() {
+            }.getType());
 //					gson.fromJson(object.getString("appOrderDetailTaxList"), new TypeToken<ArrayList<AppOrderDetailTax>>(){}.getType());
-			List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>(){}.getType());
+            List<AppOrderModifier> appOrderModifierList = gson.fromJson(object.getString("appOrderModifierList"), new TypeToken<ArrayList<AppOrderModifier>>() {
+            }.getType());
 //			AppOrderDetailSQL.addAppOrderDetailList(appOrderDetailList);
 //			AppOrderDetailTaxSQL.addAppOrderDetailTaxList(appOrderDetailTaxList);
 //			AppOrderModifierSQL.addAppOrderModifierlList(appOrderModifierList);
-			for (AppOrder appOrder : appOrderList) {
-				if (AppOrderSQL
-						.getAppOrderById(appOrder
-								.getId().intValue()) != null) {
-					continue;
-				}
-				if(appOrder.getPayStatus() == 0 ){
-					continue;
-				}
-				int tableId = 0;
-				if(!TextUtils.isEmpty(appOrder.getTableNo())){
-					try {
-						tableId = Integer.parseInt(appOrder.getTableNo());
-					} catch (NumberFormatException e) {
+            for (AppOrder appOrder : appOrderList) {
+                if (AppOrderSQL
+                        .getAppOrderById(appOrder
+                                .getId().intValue()) != null) {
+                    continue;
+                }
+                if (appOrder.getPayStatus() == 0) {
+                    continue;
+                }
+                int tableId = 0;
+                if (!TextUtils.isEmpty(appOrder.getTableNo())) {
+                    try {
+                        tableId = Integer.parseInt(appOrder.getTableNo());
+                    } catch (NumberFormatException e) {
 
-					}
-				}
-				appOrder.setTableId(tableId);
-				AppOrderSQL.addAppOrder(appOrder);
-				List<AppOrderDetail> appOrderDetails = new ArrayList<AppOrderDetail>();
-				List<AppOrderModifier> appOrderModifiers = new ArrayList<AppOrderModifier>();
-				List<AppOrderDetailTax> appOrderDetailTaxes = new ArrayList<AppOrderDetailTax>();
-				for (AppOrderDetail appOrderDetail : appOrderDetailList) {
-					if (appOrderDetail.getOrderId().intValue() == appOrder
-							.getId().intValue()) {
-						AppOrderDetailSQL
-								.addAppOrderDetai(appOrderDetail);
-						appOrderDetails.add(appOrderDetail);
-						for (AppOrderModifier appOrderModifier : appOrderModifierList) {
-							if (appOrderModifier.getOrderDetailId()
-									.intValue() == appOrderDetail
-									.getId().intValue()) {
-								appOrderModifiers.add(appOrderModifier);
-								AppOrderModifierSQL
-										.addAppOrderModifier(appOrderModifier);
-							}
-						}
-						for (AppOrderDetailTax appOrderDetailTax : appOrderDetailTaxList) {
-							if(appOrderDetailTax.getOrderDetailId().intValue() == appOrderDetail.getId().intValue()){
-								appOrderDetailTaxes.add(appOrderDetailTax);
-								AppOrderDetailTaxSQL.addAppOrderDetailTax(appOrderDetailTax);
-							}
-						}
-					}
-				}
+                    }
+                }
+                appOrder.setTableId(tableId);
+                AppOrderSQL.addAppOrder(appOrder);
+                List<AppOrderDetail> appOrderDetails = new ArrayList<AppOrderDetail>();
+                List<AppOrderModifier> appOrderModifiers = new ArrayList<AppOrderModifier>();
+                List<AppOrderDetailTax> appOrderDetailTaxes = new ArrayList<AppOrderDetailTax>();
+                for (AppOrderDetail appOrderDetail : appOrderDetailList) {
+                    if (appOrderDetail.getOrderId().intValue() == appOrder
+                            .getId().intValue()) {
+                        AppOrderDetailSQL
+                                .addAppOrderDetai(appOrderDetail);
+                        appOrderDetails.add(appOrderDetail);
+                        for (AppOrderModifier appOrderModifier : appOrderModifierList) {
+                            if (appOrderModifier.getOrderDetailId()
+                                    .intValue() == appOrderDetail
+                                    .getId().intValue()) {
+                                appOrderModifiers.add(appOrderModifier);
+                                AppOrderModifierSQL
+                                        .addAppOrderModifier(appOrderModifier);
+                            }
+                        }
+                        for (AppOrderDetailTax appOrderDetailTax : appOrderDetailTaxList) {
+                            if (appOrderDetailTax.getOrderDetailId().intValue() == appOrderDetail.getId().intValue()) {
+                                appOrderDetailTaxes.add(appOrderDetailTax);
+                                AppOrderDetailTaxSQL.addAppOrderDetailTax(appOrderDetailTax);
+                            }
+                        }
+                    }
+                }
 //				App.instance.appOrderShowDialog(false, appOrder, appOrderDetails, appOrderModifiers, appOrderDetailTaxes);
-			}
-			App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            }
+            App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
-	public static void resetItemDetailStockNum(byte[] responseBody){
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<RemainingStock> remainingStockList = gson.fromJson(object.getString("remainingStockList"), new TypeToken<ArrayList<RemainingStock>>(){}.getType());
-			RemainingStockSQL.deleteAllRemainingStock();
-			RemainingStockSQL.addRemainingStock(remainingStockList);
+    public static void resetItemDetailStockNum(byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<RemainingStock> remainingStockList = gson.fromJson(object.getString("remainingStockList"), new TypeToken<ArrayList<RemainingStock>>() {
+            }.getType());
+            RemainingStockSQL.deleteAllRemainingStock();
+            RemainingStockSQL.addRemainingStock(remainingStockList);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static void getRemainingStock(byte[] responseBody){
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<RemainingStock> remainingStockList = gson.fromJson(object.getString("remainingStockList"), new TypeToken<ArrayList<RemainingStock>>(){}.getType());
-			RemainingStockSQL.deleteAllRemainingStock();
-			RemainingStockSQL.addRemainingStock(remainingStockList);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public static void getPlaceTable(byte[] responseBody){
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			List<PlaceInfo> placeInfoList = gson.fromJson(object.getString("placeList"), new TypeToken<ArrayList<PlaceInfo>>(){}.getType());
-			List<TableInfo> tableInfoList = gson.fromJson(object.getString("tableList"), new TypeToken<ArrayList<TableInfo>>(){}.getType());
-			PlaceInfoSQL.deleteAllPlaceInfo();
-			TableInfoSQL.deleteAllTableInfo();
-			PlaceInfoSQL.addPlaceInfoList(placeInfoList);
-			TableInfoSQL.addTablesList(tableInfoList);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public static void updateStoredCardValue(byte[] responseBody, int payTypeId){
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			String balance = object.getString("balance");
-			String consuming = object.getString("records");
-			ConsumingRecords consumingRecords = gson.fromJson(consuming, ConsumingRecords.class);
-			consumingRecords.setBusinessDate(App.instance.getBusinessDate());
-			consumingRecords.setPayTypeId(payTypeId);
-			ConsumingRecordsSQL.addConsumingRecords(consumingRecords);
-			App.instance.remoteStoredCard(App.instance.getCahierPrinter(), consumingRecords, balance);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public static List<UserTimeSheet> getClockInUserTimeSheet(byte[] responseBody){
-		List<UserTimeSheet> userTimeSheetList = new ArrayList<>();
-		try {
-			JSONObject object = new JSONObject(new String(responseBody));
-			Gson gson = new Gson();
-			userTimeSheetList = gson.fromJson(object.getString("userTimeSheetList"), new TypeToken<List<UserTimeSheet>>(){}.getType());
+    public static void getRemainingStock(byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<RemainingStock> remainingStockList = gson.fromJson(object.getString("remainingStockList"), new TypeToken<ArrayList<RemainingStock>>() {
+            }.getType());
+            RemainingStockSQL.deleteAllRemainingStock();
+            RemainingStockSQL.addRemainingStock(remainingStockList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return userTimeSheetList;
-	}
+    public static void getPlaceTable(byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<PlaceInfo> placeInfoList = gson.fromJson(object.getString("placeList"), new TypeToken<ArrayList<PlaceInfo>>() {
+            }.getType());
+            List<TableInfo> tableInfoList = gson.fromJson(object.getString("tableList"), new TypeToken<ArrayList<TableInfo>>() {
+            }.getType());
+            PlaceInfoSQL.deleteAllPlaceInfo();
+            TableInfoSQL.deleteAllTableInfo();
+            PlaceInfoSQL.addPlaceInfoList(placeInfoList);
+            TableInfoSQL.addTablesList(tableInfoList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateStoredCardValue(byte[] responseBody, int payTypeId) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            String balance = object.getString("balance");
+            String consuming = object.getString("records");
+            ConsumingRecords consumingRecords = gson.fromJson(consuming, ConsumingRecords.class);
+            consumingRecords.setBusinessDate(App.instance.getBusinessDate());
+            consumingRecords.setPayTypeId(payTypeId);
+            ConsumingRecordsSQL.addConsumingRecords(consumingRecords);
+            App.instance.remoteStoredCard(App.instance.getCahierPrinter(), consumingRecords, balance);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<UserTimeSheet> getClockInUserTimeSheet(byte[] responseBody) {
+        List<UserTimeSheet> userTimeSheetList = new ArrayList<>();
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            userTimeSheetList = gson.fromJson(object.getString("userTimeSheetList"), new TypeToken<List<UserTimeSheet>>() {
+            }.getType());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userTimeSheetList;
+    }
 }

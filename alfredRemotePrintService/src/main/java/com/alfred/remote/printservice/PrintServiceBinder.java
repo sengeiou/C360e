@@ -321,7 +321,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void printSummaryAnalysisReport(String xzType, String printer,
-                                           String title, String plu, String pluMod, String category, String items,boolean isPluVoid)
+                                           String title, String plu, String pluMod, String category, String items, boolean isPluVoid)
             throws RemoteException {
         Gson gson = new Gson();
 
@@ -406,7 +406,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
     }
 
-    public void printPromotionAnalysisReport(String xzType, String printer, String title, String orderPromotion,  String itemPromotion,String promotion)
+    public void printPromotionAnalysisReport(String xzType, String printer, String title, String orderPromotion, String itemPromotion, String promotion)
             throws RemoteException {
         Gson gson = new Gson();
 
@@ -419,8 +419,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }.getType());
         ArrayList<Promotion> promotions = gson.fromJson(promotion, new TypeToken<ArrayList<Promotion>>() {
         }.getType());
-
-
 
 
         PrintManager printMgr = this.service.getPrintMgr();
@@ -474,29 +472,28 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //                proPrint.AddHortionaDoublelLine();
 //            }
 //            addHortionaDoublelLine(this.charSize);
-            proPrint.AddContentListHeader( PrintService.instance.getResources().getString(R.string.promotion_name),
+            proPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.promotion_name),
                     PrintService.instance.getResources().getString(R.string.qty),
                     PrintService.instance.getResources().getString(R.string.amount));
             proPrint.setPrinterIp(prtDevice.getIP());
-            for (int i = 0; i <promotions.size() ; i++) {
-                int id=promotions.get(i).getId();
+            for (int i = 0; i < promotions.size(); i++) {
+                int id = promotions.get(i).getId();
                 int qty = 0;
-               String   promotionName=promotions.get(i).getPromotionName();
+                String promotionName = promotions.get(i).getPromotionName();
                 BigDecimal amount = BH.getBD(ParamConst.DOUBLE_ZERO);
-                for(int j = 0;j <itemPromotions.size();j++){
-                    PromotionData promotionData=itemPromotions.get(j);
-                    int promotionId=promotionData.getPromotionId();
+                for (int j = 0; j < itemPromotions.size(); j++) {
+                    PromotionData promotionData = itemPromotions.get(j);
+                    int promotionId = promotionData.getPromotionId();
 
-                    if(id==promotionId)
-                    {
-                        amount=BH.add(amount,BH.getBD(promotionData.getPromotionAmount()),false);
-                        qty=qty+1;
+                    if (id == promotionId) {
+                        amount = BH.add(amount, BH.getBD(promotionData.getPromotionAmount()), false);
+                        qty = qty + 1;
                     }
 
                 }
-                if(qty>0){
+                if (qty > 0) {
 
-                    proPrint.print(promotionName,qty,amount.toString());
+                    proPrint.print(promotionName, qty, amount.toString());
                 }
             }
             proPrint.AddFooter(prtTitle.getDate() + " " + prtTitle.getTime());
@@ -616,6 +613,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         kot.setCharSize(33);
                     } else if (this.service.isTM88(name)) {
                         kot.setCharSize(42);
+                    } else if (this.service.isV1sG(name)) {
+                        kot.setCharSize(32);
                     } else {
                         kot.setCharSize(48);
                     }
@@ -624,7 +623,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     if (!TextUtils.isEmpty(kotsummary.getDescription())) {
                         kot.addCenterLabel(kotsummary.getDescription(), kotFontSize);
                     }
-                    if (itemDetailsList.size() >= 0) {
+                    if (itemDetailsList.size() > 0) {
                         KotItemDetail kotitem = itemDetailsList.get(0);
                         if (kotitem.getKotStatus().intValue() == ParamConst.KOT_STATUS_VOID) {
                             kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
@@ -707,6 +706,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     kot.setCharSize(33);
                                 } else if (this.service.isTM88(name)) {
                                     kot.setCharSize(42);
+                                } else if (this.service.isV1sG(name)) {
+                                    kot.setCharSize(32);
                                 } else {
                                     kot.setCharSize(48);
                                 }
@@ -769,6 +770,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             //set page size
                             if (this.service.isTMU220(name)) {
                                 kot.setCharSize(33);
+                            } else if (this.service.isV1sG(name)) {
+                                kot.setCharSize(32);
                             } else if (this.service.isTM88(name)) {
                                 kot.setCharSize(42);
                             } else {
@@ -885,6 +888,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     } else {
                         if (this.service.isTM88(name)) {
                             billPrint.setCharSize(42);
+                        } else if (this.service.isV1sG(name)) {
+                            billPrint.setCharSize(32);
                         } else {
                             billPrint.setCharSize(48);
                         }
@@ -1027,6 +1032,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     } else {
                         if (this.service.isTM88(name)) {
                             billPrint.setCharSize(42);
+                        } else if (this.service.isV1sG(name)) {
+                            billPrint.setCharSize(32);
                         } else {
                             billPrint.setCharSize(48);
                         }
@@ -1252,7 +1259,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             printAddress(billPrint, appOrders, prtTitle.getOrderNo());
                         }
 
-
                         /////////
                         billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), false);
                         pqMgr.queuePrint(billPrint.getJobForQueue());
@@ -1332,13 +1338,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //
         ////
         Map<String, String> ret = new HashMap<String, String>();
-        if(MachineUtil.isHisense()){
+        if (MachineUtil.isHisense()) {
 //            SerialPortFinder serialPortFinder = new SerialPortFinder();
 //            String device = serialPortFinder.getHisensePrinterDevice();
 //            if(!TextUtils.isEmpty(device)) {
-                ret.put("127.0.0.1", "Local Print");
+            ret.put("127.0.0.1", "Local Print");
 //            }
-        }else if (mBluetoothAdapter != null) {
+        } else if (mBluetoothAdapter != null) {
             String innerprinter_address = "00:11:22:33:44:55";
             BluetoothDevice innerprinter_device = null;
             Set<BluetoothDevice> bluetoothDevices = mBluetoothAdapter.getBondedDevices();
@@ -2121,7 +2127,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         billPrint.AddOrderNo(orderNo);
                     billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                             theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
+                            prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
 
                     billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                             PrintService.instance.getResources().getString(R.string.price),
@@ -2133,11 +2139,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
-                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
+                            item = ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
+                                    om = ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;
@@ -2234,7 +2240,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     //set page size
                     if (this.service.isTMU220(name)) {
                         billPrint.setCharSize(33);
-                        if (appOrders==null||appOrders.size()<=0) {
+                        if (appOrders == null || appOrders.size() <= 0) {
                             billPrint.AddRestaurantInfo(null,
                                     prtTitle.getRestaurantName(),
                                     prtTitle.getAddressDetail(), null);
@@ -2247,14 +2253,14 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             billPrint.setCharSize(48);
                         }
 
-                        if (appOrders==null||appOrders.size()<=0) {
+                        if (appOrders == null || appOrders.size() <= 0) {
                             billPrint.AddRestaurantInfo(prtTitle.getLogo(),
                                     prtTitle.getRestaurantName(),
                                     prtTitle.getAddressDetail(), null);
                         }
 
                     }
-                    if (appOrders==null||appOrders.size()<=0) {
+                    if (appOrders == null || appOrders.size() <= 0) {
                         String orderNo1;
                         String trainString="";
                         if (prtTitle.getCopy() == 2) {
@@ -2273,7 +2279,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             billPrint.AddOrderNo(orderNo);
                         billPrint.AddKioskHeaderAddress(theOrder.getIsTakeAway(), theOrder.getTableName(), theOrder.getPersons(),
                                 theOrder.getNumTag() + prtTitle.getBill_NO(), prtTitle.getPos(),
-                                prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info,theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
+                                prtTitle.getOp(), prtTitle.getDate() + " " + prtTitle.getTime(), theOrder.getNumTag() + orderNo1, prtTitle.getGroupNum(), info, theOrder.getAppOrderId() == null ? 0 : theOrder.getAppOrderId());
 
                         billPrint.AddContentListHeader(PrintService.instance.getResources().getString(R.string.item),
                                 PrintService.instance.getResources().getString(R.string.price),
@@ -2286,11 +2292,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             for (int index = 0; index < printOrderItemList.size(); index++) {
                                 boolean canMerge = true;
                                 PrintOrderItem item = printOrderItemList.get(index).clone();
-                                item=ObjectFactory.getInstance().getPrintOrderItem(item);
+                                item = ObjectFactory.getInstance().getPrintOrderItem(item);
                                 if (orderModifiers != null) {
                                     for (int m = 0; m < orderModifiers.size(); m++) {
                                         PrintOrderModifier om = orderModifiers.get(m);
-                                        om=ObjectFactory.getInstance().getPrintOrderModifier(om);
+                                        om = ObjectFactory.getInstance().getPrintOrderModifier(om);
                                         if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                             canMerge = false;
                                             break;
@@ -2321,7 +2327,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 if (orderModifiers != null) {
                                     for (int m = 0; m < orderModifiers.size(); m++) {
                                         PrintOrderModifier om = orderModifiers.get(m);
-                                        om=ObjectFactory.getInstance().getPrintOrderModifier(om);
+                                        om = ObjectFactory.getInstance().getPrintOrderModifier(om);
                                         if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                             if (om.getQty() > 1) {
                                                 billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice());
@@ -2477,7 +2483,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     } else {
 
                         //  打印appOrder 地址列表
-                        printAddress(billPrint, appOrders,prtTitle.getOrderNo());
+                        printAddress(billPrint, appOrders, prtTitle.getOrderNo());
                     }
                     /////////
 
@@ -2495,7 +2501,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //
 //    }
 
-    private void printAddress(BillPrint billPrint, List<AppOrder> appOrders,String orderNo) {
+    private void printAddress(BillPrint billPrint, List<AppOrder> appOrders, String orderNo) {
         int size = appOrders.size();
         for (int j = 0; j < appOrders.size(); j++) {
             AppOrder appOrder = appOrders.get(j);
@@ -2520,7 +2526,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 //                            if (TextUtils.isEmpty(str.toString())) {
 //                                billPrint.printDeliveryList(appOrder.getOrderNo().toString(), appOrder.getAddress(), 1);
 
-            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_)+orderNo, PrintService.instance.getResources().getString(R.string.order_app_no_)+appOrder.getId().toString(),str.toString(), appOrder.getAddress().trim(),TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()),appOrder.getOrderRemark());
+            billPrint.printDeliveryList(PrintService.instance.getResources().getString(R.string.order_no_) + orderNo, PrintService.instance.getResources().getString(R.string.order_app_no_) + appOrder.getId().toString(), str.toString(), appOrder.getAddress().trim(), TimeUtil.getDeliveryDataTime(appOrder.getDeliveryTime()), appOrder.getOrderRemark());
             //  billPrint.printDeliveryList(" ", appOrder.getAddress().toString(), 1);
 //                                billPrint.AddAddress(appOrder.getAddress());
 //                            }
@@ -2779,11 +2785,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
-                            item=ObjectFactory.getInstance().getPrintOrderItem(item);
+                            item = ObjectFactory.getInstance().getPrintOrderItem(item);
                             if (orderModifiers != null) {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    om=ObjectFactory.getInstance().getPrintOrderModifier(om);
+                                    om = ObjectFactory.getInstance().getPrintOrderModifier(om);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         canMerge = false;
                                         break;

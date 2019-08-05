@@ -11,8 +11,8 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
@@ -34,7 +34,6 @@ import com.alfredwaiter.global.App;
 import com.alfredwaiter.global.SyncCentre;
 import com.alfredwaiter.global.UIHelp;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 
 import org.apache.http.Header;
@@ -196,10 +195,11 @@ public class HttpAPI {
         }
     }
 
-    public static void getRestaurantInfo(Context context,
-                                         Map<String, Object> parameters, String url,
+    public static void getRestaurantInfo(Context context, String url,
+                                         Map<String, Object> parameters,
                                          AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
+            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -213,6 +213,7 @@ public class HttpAPI {
                             if (resultCode == ResultCode.SUCCESS) {
                                 HttpAnalysis.getRestaurantInfo(statusCode,
                                         headers, responseBody);
+                                handler.sendEmptyMessage(Login.HANDLER_RESTAURANT_INFO_SUCCESS);
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
@@ -294,8 +295,9 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+
     public static void getStock(Context context, String url,
-                               Map<String, Object> parameters, AsyncHttpClient httpClient) {
+                                Map<String, Object> parameters, AsyncHttpClient httpClient) {
         // 除了登录接口，其他接口都要加这个
         // if (parameters != null) {
         // parameters.put("userKey", CoreData.getInstance().getUserKey());
@@ -436,7 +438,7 @@ public class HttpAPI {
 
 
     public static void getPrinters(Context context, String url,
-                                    Map<String, Object> parameters, AsyncHttpClient httpClient, final Handler handler) {
+                                   Map<String, Object> parameters, AsyncHttpClient httpClient, final Handler handler) {
         // 除了登录接口，其他接口都要加这个
         // if (parameters != null) {
         // parameters.put("userKey", CoreData.getInstance().getUserKey());
@@ -628,7 +630,7 @@ public class HttpAPI {
                                     e.printStackTrace();
                                 }
                                 handler.sendMessage(handler.obtainMessage(ResultCode.ORDER_SPLIT_IS_SETTLED, groupId));
-                            }else if(resultCode == ResultCode.WAITER_OUT_OF_STOCK){
+                            } else if (resultCode == ResultCode.WAITER_OUT_OF_STOCK) {
                                 String stockNum = null;
                                 try {
                                     JSONObject jsonObject = new JSONObject(new String(responseBody));
@@ -639,8 +641,7 @@ public class HttpAPI {
                                     e.printStackTrace();
                                 }
                                 handler.sendMessage(handler.obtainMessage(ResultCode.WAITER_OUT_OF_STOCK, stockNum));
-                            }
-                            else {
+                            } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
                         }
@@ -907,7 +908,7 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             error.printStackTrace();
                             //		handler.handleMessage(handler.obtainMessage(OrderDetailsTotal.VIEW_EVENT_GET_BILL_FAILED));
-							Toast.makeText(context,"Cannot get bill print at this moment: Network errors", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Cannot get bill print at this moment: Network errors", Toast.LENGTH_SHORT).show();
                         }
                     });
         } catch (Exception e) {
@@ -934,6 +935,7 @@ public class HttpAPI {
                                               final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.saveOrderBill(statusCode, headers, responseBody);
                                 handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_GET_BILL);
                             }
                             else if(resultCode==ResultCode.USER_POS_TYPE){
@@ -976,6 +978,7 @@ public class HttpAPI {
                                               final byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.saveOrderBill(statusCode, headers, responseBody);
                                 handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_BILL);
                             }
                             else if(resultCode==ResultCode.USER_POS_TYPE){
@@ -994,6 +997,85 @@ public class HttpAPI {
                             error.printStackTrace();
                             handler.handleMessage(handler.obtainMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_BILL_FAILED));
 //							Toast.makeText(context,"Cannot get bill print at this moment: Network errors", 1000).show();
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void rePrintKOT(final Context context,
+                                  Map<String, Object> parameters, String url,
+                                  AsyncHttpClient httpClient, final Handler handler) {
+        if (parameters != null) {
+            parameters.put("userKey", CoreData.getInstance().getUserKey());
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendEmptyMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_KOT_SUCCESS);
+                            } else if (resultCode == ResultCode.ORDER_FINISHED) {
+                                handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
+                            } else {
+                                elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            handler.handleMessage(handler.obtainMessage(OrderDetailsTotal.VIEW_EVENT_PRINT_KOT_FAILED));
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getPrintKOTData(final Context context,
+                                       Map<String, Object> parameters, String url,
+                                       AsyncHttpClient httpClient, final Handler handler) {
+        // 除了登录接口，其他接口都要加这个
+        if (parameters != null) {
+            parameters.put("userKey", CoreData.getInstance().getUserKey());
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"),
+                    HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode,
+                                              final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.saveKOTData(statusCode, headers, responseBody);
+
+                                handler.sendEmptyMessage(OrderDetailsTotal.GET_PRINT_KOT_DATA_SUCCESS);
+                            } else if (resultCode == ResultCode.ORDER_FINISHED) {
+                                handler.sendEmptyMessage(ResultCode.ORDER_FINISHED);
+                            } else {
+                                elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            handler.handleMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED));
                         }
                     });
         } catch (Exception e) {

@@ -17,6 +17,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredwaiter.activity.ConnectPOS;
+import com.alfredwaiter.activity.DevicesActivity;
 import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.activity.InstructionDetail;
 import com.alfredwaiter.activity.KOTNotification;
@@ -109,6 +110,11 @@ public class UIHelp {
     public static void startMainPage(BaseActivity context, Order order) {
         Intent intent = new Intent(context, MainPage.class);
         intent.putExtra("order", order);
+        context.startActivity(intent);
+    }
+
+    public static void startDevices(BaseActivity context){
+        Intent intent = new Intent(context, DevicesActivity.class);
         context.startActivity(intent);
     }
 

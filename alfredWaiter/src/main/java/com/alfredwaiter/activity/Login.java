@@ -32,6 +32,8 @@ import java.util.Map;
 public class Login extends BaseActivity implements KeyBoardClickListener {
     public static final int HANDLER_LOGIN = 0;
     public static final int HANDLER_ERROR_INFO = 1;
+    public static final int HANDLER_RESTAURANT_INFO_SUCCESS = 2;
+    public static final int HANDLER_RESTAURANT_INFO_ERROR = 3;
     private TextView tv_login_tips;
     private TextView tv_id_1;
     private TextView tv_id_2;
@@ -95,10 +97,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
             switch (msg.what) {
                 case HANDLER_LOGIN: {
                     initBugseeModifier();
-                    UIHelp.startTables(context);
-                    //UIHelp.startMenuPage(context);
-                    loadingDialog.dismiss();
-                    finish();
+                    SyncCentre.getInstance().getRestaurantInfo(context, new HashMap<String, Object>(), handler);
                     break;
                 }
 //			case HANDLER_ERROR_INFO:
@@ -109,6 +108,15 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
                     loadingDialog.dismiss();
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
                             context.getResources().getString(R.string.revenue_center)));
+                    break;
+                case HANDLER_RESTAURANT_INFO_SUCCESS:
+                    UIHelp.startTables(context);
+                    //UIHelp.startMenuPage(context);
+                    loadingDialog.dismiss();
+                    finish();
+                    break;
+                case HANDLER_RESTAURANT_INFO_ERROR:
+                    loadingDialog.dismiss();
                     break;
                 default:
                     break;

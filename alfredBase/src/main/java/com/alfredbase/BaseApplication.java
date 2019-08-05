@@ -47,8 +47,9 @@ public class BaseApplication extends Application {
     /**
      * 注意
      * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
-     * 当 isDebug == false， isOpenLog == true 为阿里云服务器
-     * 当 isDebug == true， isOpenLog == true 为本地的服务器
+     * (For the official server, the regional server is represented by the area code SINGAPORE Amazon CHINA Ali)
+     * 当 isDebug == false， isOpenLog == true 为阿里云服务器 (Alibaba Cloud Server)
+     * 当 isDebug == true， isOpenLog == true 为本地的服务器 (Local server)
      */
 
     public static boolean isDebug = false ;    //	Debug开关 release的时候设置为false
