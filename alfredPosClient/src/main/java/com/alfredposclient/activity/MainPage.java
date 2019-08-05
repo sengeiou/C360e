@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -413,6 +412,17 @@ public class MainPage extends BaseActivity {
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {
+            try {
+                if (currentTable != null) {
+                    if (currentTable.getPosId() < 0 && tableInfo.getStatus() > ParamConst.TABLE_STATUS_IDLE && tableShowAction.equals(TRANSFER_TABLE)) {
+                        UIHelp.showShortToast(context, "Can not assign because table is not empty");
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             if (TRANSFER_ITEM.equals(tableShowAction)) {
                 oldTable = currentTable;
                 handler.sendMessage(handler
@@ -420,6 +430,7 @@ public class MainPage extends BaseActivity {
                                 JavaConnectJS.ACTION_CLICK_TABLE_ITEM,
                                 tableInfo));
             } else if (TRANSFER_TABLE.equals(tableShowAction)) {
+                //TABLE_STATUS_IDLE
                 oldTable = currentTable;
                 handler.sendMessage(handler
                         .obtainMessage(

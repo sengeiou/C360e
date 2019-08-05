@@ -829,13 +829,15 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.place_item_layout, null);
-                holder.rl_place = (RelativeLayout) convertView.findViewById(R.id.rl_place);
+                holder.ll_place = (LinearLayout) convertView.findViewById(R.id.ll_place);
                 holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
                 holder.iv_place_edit = (ImageView) convertView.findViewById(R.id.iv_place_edit);
                 holder.iv_place_delete = (ImageView) convertView.findViewById(R.id.iv_place_delete);
+                holder.tv_place_number = (TextView) convertView.findViewById(R.id.tv_place_number);
+                holder.tv_place_number.setVisibility(View.GONE);
                 holder.tv_place_name = (TextView) convertView.findViewById(R.id.tv_place_name);
                 holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
-                holder.rl_add_edit = (RelativeLayout) convertView.findViewById(R.id.rl_add_edit);
+                holder.ll_add_edit = (LinearLayout) convertView.findViewById(R.id.ll_add_edit);
                 holder.iv_add_place = (ImageView) convertView.findViewById(R.id.iv_add_place);
                 holder.tv_add_place = (TextView) convertView.findViewById(R.id.tv_add_place);
                 holder.et_add_place = (EditText) convertView.findViewById(R.id.et_add_place);
@@ -891,7 +893,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         case R.id.rl_add_place: {
                             BugseeHelper.buttonClicked("Add Place");
                             v.setVisibility(View.GONE);
-                            holder.rl_add_edit.setVisibility(View.VISIBLE);
+                            holder.ll_add_edit.setVisibility(View.VISIBLE);
                             holder.et_add_place.setFocusable(true);
                             holder.et_add_place.requestFocus();
                             showSoftInput(holder.et_add_place);
@@ -900,11 +902,11 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         break;
                         case R.id.tv_add_place_cancel: {
                             BugseeHelper.buttonClicked("Add place cancel");
-                            holder.rl_add_edit.setVisibility(View.GONE);
+                            holder.ll_add_edit.setVisibility(View.GONE);
                             if (IntegerUtils.isEmptyOrZero(place.getId())) {
                                 holder.rl_add_place.setVisibility(View.VISIBLE);
                             } else {
-                                holder.rl_place.setVisibility(View.VISIBLE);
+                                holder.ll_place.setVisibility(View.VISIBLE);
                             }
                             hideInput(holder.et_add_place);
                         }
@@ -946,7 +948,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     }
                 }
             };
-            holder.rl_add_edit.setVisibility(View.GONE);
+            holder.ll_add_edit.setVisibility(View.GONE);
             holder.et_place_name.setVisibility(View.GONE);
             if (selectPlaceIndex == position) {
                 convertView.setBackgroundColor(getResources().getColor(R.color.brownness));
@@ -960,11 +962,11 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 holder.tv_place_name.setTextColor(getResources().getColor(R.color.black));
             }
             if (IntegerUtils.isEmptyOrZero(place.getId())) {
-                holder.rl_place.setVisibility(View.GONE);
+                holder.ll_place.setVisibility(View.GONE);
                 holder.rl_add_place.setVisibility(View.VISIBLE);
                 convertView.setBackgroundColor(getResources().getColor(R.color.white));
             } else {
-                holder.rl_place.setVisibility(View.VISIBLE);
+                holder.ll_place.setVisibility(View.VISIBLE);
                 holder.rl_add_place.setVisibility(View.GONE);
                 holder.tv_place_name.setText(place.getPlaceName());
             }
@@ -1020,16 +1022,17 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
 
         class ViewHolder {
-            RelativeLayout rl_place;
+            LinearLayout ll_place;
             ImageView iv_place_edit;
             ImageView iv_place_delete;
+            TextView tv_place_number;
             TextView tv_place_name;
             TextView tv_add_place;
             ImageView iv_add_place;
             EditText et_add_place;
             EditText et_place_name;
             RelativeLayout rl_add_place;
-            RelativeLayout rl_add_edit;
+            LinearLayout ll_add_edit;
         }
     }
 
@@ -1064,13 +1067,14 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.place_item_layout, null);
-                holder.rl_place = (RelativeLayout) convertView.findViewById(R.id.rl_place);
+                holder.ll_place = (LinearLayout) convertView.findViewById(R.id.ll_place);
                 holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
                 holder.iv_place_edit = (ImageView) convertView.findViewById(R.id.iv_place_edit);
                 holder.iv_place_delete = (ImageView) convertView.findViewById(R.id.iv_place_delete);
+                holder.tv_place_number = (TextView) convertView.findViewById(R.id.tv_place_number);
                 holder.tv_place_name = (TextView) convertView.findViewById(R.id.tv_place_name);
                 holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
-                holder.rl_add_edit = (RelativeLayout) convertView.findViewById(R.id.rl_add_edit);
+                holder.ll_add_edit = (LinearLayout) convertView.findViewById(R.id.ll_add_edit);
                 holder.iv_add_place = (ImageView) convertView.findViewById(R.id.iv_add_place);
                 holder.tv_add_place = (TextView) convertView.findViewById(R.id.tv_add_place);
                 holder.tv_add_place.setText("Add a new queue");
@@ -1109,6 +1113,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     }
                     switch (v.getId()) {
 
+                        case R.id.tv_place_number:
                         case R.id.tv_place_name:
                         case R.id.iv_place_edit: {
                             BugseeHelper.buttonClicked("WaitingList Edit");
@@ -1126,7 +1131,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         case R.id.rl_add_place: {
                             BugseeHelper.buttonClicked("Add WaitingList");
 //                            v.setVisibility(View.GONE);
-                            holder.rl_add_edit.setVisibility(View.VISIBLE);
+                            holder.ll_add_edit.setVisibility(View.VISIBLE);
                             holder.et_add_place.setFocusable(true);
                             holder.et_add_place.requestFocus();
                             showSoftInput(holder.et_add_place);
@@ -1135,11 +1140,11 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         break;
                         case R.id.tv_add_place_cancel: {
                             BugseeHelper.buttonClicked("Add WaitingList cancel");
-                            holder.rl_add_edit.setVisibility(View.GONE);
+                            holder.ll_add_edit.setVisibility(View.GONE);
                             if (IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
                                 holder.rl_add_place.setVisibility(View.VISIBLE);
                             } else {
-                                holder.rl_place.setVisibility(View.VISIBLE);
+                                holder.ll_place.setVisibility(View.VISIBLE);
                             }
                             hideInput(holder.et_add_place);
                         }
@@ -1155,10 +1160,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //                        break;
                         case R.id.iv_place_delete: {
                             BugseeHelper.buttonClicked("WaitingList delete");
-                            if (!canDelete()) {
-                                UIHelp.showShortToast(mainPage, mainPage.getResources().getString(R.string.bill_not_closed));
-                                return;
-                            }
+//                            if (!canDelete()) {
+//                                UIHelp.showShortToast(mainPage, mainPage.getResources().getString(R.string.bill_not_closed));
+//                                return;
+//                            }
                             DialogFactory.commonTwoBtnDialog(mainPage,
                                     mainPage.getResources().getString(R.string.warning),
                                     "Are you sure to delete this queue ?",
@@ -1184,25 +1189,37 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     }
                 }
             };
-            holder.rl_add_edit.setVisibility(View.GONE);
+            holder.ll_add_edit.setVisibility(View.GONE);
             holder.et_place_name.setVisibility(View.GONE);
             convertView.setBackgroundColor(getResources().getColor(R.color.white));
             holder.iv_place_delete.setImageDrawable(getResources().getDrawable(R.drawable.place_delete));
             holder.iv_place_edit.setImageDrawable(getResources().getDrawable(R.drawable.place_edit));
+            holder.tv_place_number.setTextColor(getResources().getColor(R.color.black));
             holder.tv_place_name.setTextColor(getResources().getColor(R.color.black));
             if (IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
-                holder.rl_place.setVisibility(View.GONE);
+                holder.tv_place_number.setVisibility(View.GONE);
+                holder.ll_place.setVisibility(View.GONE);
                 holder.rl_add_place.setVisibility(View.VISIBLE);
                 convertView.setBackgroundColor(getResources().getColor(R.color.white));
             } else {
-                holder.rl_place.setVisibility(View.VISIBLE);
+                holder.tv_place_number.setVisibility(View.VISIBLE);
+                holder.ll_place.setVisibility(View.VISIBLE);
                 holder.rl_add_place.setVisibility(View.GONE);
                 holder.tv_place_name.setText(tableInfo.getName());
+                String pos = (tableInfo.getPosId() * -1) + "";
+                if (pos.length() < 3) {
+                    for (int i = pos.length(); i < 3; i++) {
+                        pos = "0" + pos;
+                    }
+                }
+
+                holder.tv_place_number.setText(pos);
             }
             holder.rl_add_place.setOnClickListener(onClickListener);
 
 
             convertView.findViewById(R.id.tv_add_place_cancel).setOnClickListener(onClickListener);
+            holder.tv_place_number.setOnClickListener(onClickListener);
             holder.tv_place_name.setOnClickListener(onClickListener);
             holder.iv_place_edit.setOnClickListener(onClickListener);
             holder.iv_place_delete.setOnClickListener(onClickListener);
@@ -1236,18 +1253,25 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     }
                     if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
                         if (IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
-                            TableInfo newTableInfo = ObjectFactory.getInstance().addNewWaitingList(v.getText().toString(), App.instance.getRevenueCenter().getRestaurantId().intValue(), App.instance.getRevenueCenter().getId().intValue(), places.get(selectPlaceIndex).getId());
-                            TableInfoSQL.addTables(newTableInfo);
-                            waitingList = TableInfoSQL.getAllWaitingListTables();
-                            refreshWaitingList();
+                            TableInfo tableExist = TableInfoSQL.getTableByName(v.getText().toString());
+                            if (tableExist != null) {
+                                UIHelp.showShortToast(mainPage, "The name has already been used, try another");
+                                return false;
+                            } else {
+                                TableInfo newTableInfo = ObjectFactory.getInstance().addNewWaitingList(v.getText().toString(), App.instance.getRevenueCenter().getRestaurantId().intValue(), App.instance.getRevenueCenter().getId().intValue(), places.get(selectPlaceIndex).getId());
+                                TableInfoSQL.addTables(newTableInfo);
+                                waitingList = TableInfoSQL.getAllWaitingListTables();
+                                refreshWaitingList();
 
-                            if (getActivity() instanceof MainPage) {
-                                ((MainPage) mainPage).handler.sendMessage(handler.obtainMessage(
-                                        JavaConnectJS.ACTION_CLICK_TABLE, newTableInfo));
+                                if (getActivity() instanceof MainPage) {
+                                    ((MainPage) mainPage).handler.sendMessage(handler.obtainMessage(
+                                            JavaConnectJS.ACTION_CLICK_TABLE, newTableInfo));
+                                }
+                                holder.et_add_place.setText(null);
+                                hideInput(v);
+                                return true;
                             }
                         }
-                        hideInput(v);
-                        return true;
                     }
                     return false;
                 }
@@ -1259,16 +1283,17 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
 
         class ViewHolder {
-            RelativeLayout rl_place;
+            LinearLayout ll_place;
             ImageView iv_place_edit;
             ImageView iv_place_delete;
+            TextView tv_place_number;
             TextView tv_place_name;
             TextView tv_add_place;
             ImageView iv_add_place;
             EditText et_add_place;
             EditText et_place_name;
             RelativeLayout rl_add_place;
-            RelativeLayout rl_add_edit;
+            LinearLayout ll_add_edit;
         }
     }
 
