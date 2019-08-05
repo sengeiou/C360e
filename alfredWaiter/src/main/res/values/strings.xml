@@ -42,7 +42,9 @@
     <string name="place_succ">Place order successfully</string>
     <string name="place_failed">Failed to place order</string>
     <string name="print_bill_succ">Print bill successfully</string>
+    <string name="print_kot_succ">Print KOT successfully</string>
     <string name="print_bill_failed">Failed to print bill</string>
+    <string name="print_kot_failed">Failed to print KOT</string>
     <string name="network_errors">Cannot get bill print at this moment: Network errors</string>
     <string name="order_closed">Order is closed, please select table and replace order again.</string>
     <string name="order_not_edited">Order cannot be edited when under process. Please contact cashier to try again.</string>
@@ -114,4 +116,14 @@
     <string name="allow_delivery">Allow Delivery?</string>
     <string name="new_open_item" tools:ignore="MissingTranslation">New Open Item</string>
     <string name="edit" tools:ignore="ExtraTranslation">edit</string>
+    <string name="print_down">Print Service Down</string>
+    <string name="reconnect_print">Are you sure to reconnect Alfred Print Service?</string>
+    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="select_printer">Select Printer Information</string>
+    <string name="printer_thermal_type">80mm Thermal Printer</string>
+    <string name="printer_dotmatrix_type">80mm Dot Matrix Printer</string>
+    <string name="printer_ipaddr">Printer IP Address</string>
+    <string name="devices_bluetooth">Bluetooth</string>
+    <string name="devices_network">Network</string>
+    <string name="print_kot">Print KOT</string>
 </resources>

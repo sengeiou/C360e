@@ -18,87 +18,85 @@ import com.alfredposclient.adapter.PamentMethodAdapter;
 
 import java.util.List;
 
-public class MediaDialog extends Dialog  {
+public class MediaDialog extends Dialog {
 
-	private Handler handler;
-	private Context context;
-	private ListView listView;
-	private ListView listview;
-	VerifyDialog	verifyDialog;
-	List<PaymentMethod> plist;
+    private Handler handler;
+    private Context context;
+    private ListView listView;
+    private ListView listview;
+    VerifyDialog verifyDialog;
+    List<PaymentMethod> plist;
 
-	PamentMethodAdapter adapters;
+    PamentMethodAdapter adapters;
 
-	private TextView  title;
+    private TextView title;
 
-	private PaymentClickListener paymentClickListener;
-
-
-	TextTypeFace textTypeFace = TextTypeFace.getInstance();
-	public MediaDialog(Context context, Handler handler, List<PaymentMethod> pamentMethodslist) {
-		super(context, com.alfredbase.R.style.Dialog_verify);
-		this.handler = handler;
-		this.context = context;
-		plist=pamentMethodslist;
-		init();
-	}
-
-	private void init() {
-		final AlertDialog dlg = new AlertDialog.Builder(context).create();
-		dlg.show();
-		dlg.setCancelable(true);
-		dlg.setCanceledOnTouchOutside(false);
-
-		Window window = dlg.getWindow();
-		window.setContentView(R.layout.dialog_meadia_layout);
-		window.setBackgroundDrawableResource(android.R.color.transparent);
-
-		listview = (ListView) window.findViewById(R.id.
-				lv_media);
-
-		title=(TextView) window.findViewById(R.id.tv_pay_title);
+    private PaymentClickListener paymentClickListener;
 
 
-		textTypeFace.setTrajanProBlod((TextView) window
-				.findViewById(R.id.tv_pay_title));
-		adapters = new PamentMethodAdapter(context, plist);
+    TextTypeFace textTypeFace = TextTypeFace.getInstance();
 
-		listview.setAdapter(adapters);
+    public MediaDialog(Context context, Handler handler, List<PaymentMethod> pamentMethodslist) {
+        super(context, com.alfredbase.R.style.Dialog_verify);
+        this.handler = handler;
+        this.context = context;
+        plist = pamentMethodslist;
+        init();
+    }
+
+    private void init() {
+        final AlertDialog dlg = new AlertDialog.Builder(context).create();
+        dlg.show();
+        dlg.setCancelable(true);
+        dlg.setCanceledOnTouchOutside(false);
+
+        Window window = dlg.getWindow();
+        window.setContentView(R.layout.dialog_meadia_layout);
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+
+        listview = (ListView) window.findViewById(R.id.
+                lv_media);
+
+        title = (TextView) window.findViewById(R.id.tv_pay_title);
 
 
-		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        textTypeFace.setTrajanProBlod((TextView) window
+                .findViewById(R.id.tv_pay_title));
+        adapters = new PamentMethodAdapter(context, plist);
 
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        listview.setAdapter(adapters);
+
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //				handler.sendMessage(handler
 //						.obtainMessage(MainPage.VIEW_EVENT_SHOW_BILL_ON_HOLD));
-				PamentMethodAdapter.ViewHolder holder = (PamentMethodAdapter.ViewHolder) view.getTag();
+                PamentMethodAdapter.ViewHolder holder = (PamentMethodAdapter.ViewHolder) view.getTag();
 
+                if (plist.get(position).getIsverify() >= 0) {
 
-
-				if(plist.get(position).getIsverify()>=0)
-				{
-
-					if (paymentClickListener != null)
-						paymentClickListener.onPaymentClick(plist.get(position));
+                    if (paymentClickListener != null)
+                        paymentClickListener.onPaymentClick(plist.get(position));
 //					verifyDialog = new VerifyDialog(context, handler);
 ////					verifyDialog.show("111",null);
 
-				//	Toast.makeText()
-				}
-				//  pays = (String) list.get(position).get("id");
-				System.out.println("======y优惠券fangs======" + position);
+                    //	Toast.makeText()
+                }
+                //  pays = (String) list.get(position).get("id");
+                System.out.println("======y优惠券fangs======" + position);
 
-				dlg.cancel();
-			}
-		});
-	}
+                dlg.cancel();
+            }
+        });
+    }
 
-	public void setPaymentClickListener(
-			MediaDialog.PaymentClickListener otherClickListener) {
-		this.paymentClickListener = otherClickListener;
-	}
+    public void setPaymentClickListener(
+            MediaDialog.PaymentClickListener otherClickListener) {
+        this.paymentClickListener = otherClickListener;
+    }
 
-	public interface PaymentClickListener {
-		void onPaymentClick(PaymentMethod pa);
-	}
+    public interface PaymentClickListener {
+        void onPaymentClick(PaymentMethod pa);
+    }
 }

@@ -199,6 +199,14 @@ public class PrintService extends Service {
         return false;
     }
 
+    public boolean isV1sG(String model) {
+        if (model != null && model.length() > 0) {
+            if (model.toLowerCase().contains("v1s-g"))
+                return true;
+        }
+        return false;
+    }
+
     public String getDollarSignStr() {
         String sign = "$";
         Integer dollarSign = Store.getInt(this, PrintService.PRINT_DOLLAR_SIGN_SETTING);

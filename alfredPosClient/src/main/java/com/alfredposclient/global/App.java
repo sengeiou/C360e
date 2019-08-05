@@ -203,7 +203,7 @@ public class App extends BaseApplication {
 
     private SystemSettings settings;
     private MainPosInfo mainPosInfo;
-    public String VERSION = "1.0.8";
+    public String VERSION = "1.0.9";
     private static final String DATABASE_NAME = "com.alfredposclient";
     private static final String DATABASE_NAME_TRAIN = "com.alfredposclient.train";
     private String callAppIp;

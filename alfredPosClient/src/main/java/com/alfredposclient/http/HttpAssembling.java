@@ -23,288 +23,324 @@ import java.util.List;
 import java.util.Map;
 
 public class HttpAssembling {
-	public static final String CONTENT_TYPE = "text/plain;charset=UTF-8";
+    public static final String CONTENT_TYPE = "text/plain;charset=UTF-8";
 
-	public static StringEntity getLoginParam(int userID, String password,
-			String bizID) throws UnsupportedEncodingException {
-		StringEntity entity = new StringEntity("{empId:" + userID
-				+ ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" +CommonUtil.getLocalMacAddress(App.instance) + "'}");
-		return entity;
-	}
+    public static StringEntity getIpay88PaymentParam(
+            Double amount,
+            String backendURL,
+            Integer barcodeNo,
+            String currency,
+            String merchantCode,
+            Integer paymentId,
+            String prodDesc,
+            String refNo,
+            String remark,
+            String signature,
+            String signatureType,
+            String terminalID,
+            String userContact,
+            String userEmail,
+            String userName,
+            String lang
+    ) throws UnsupportedEncodingException {
+        StringEntity entity = new StringEntity("{amount:" + amount
+                + ",backendURL:'" + backendURL + "',barcodeNo:'" + barcodeNo +
+                "', currency:'" + currency + "', merchantCode:'" + merchantCode +
+                "', paymentId : " + paymentId + "', prodDesc : " + prodDesc +
+                "', refNo : " + refNo + "', remark : " + remark +
+                "', signature : " + signature + "', signatureType : " + signatureType +
+                "', terminalID : " + terminalID + "', userContact : " + userContact +
+                "', userEmail : " + userEmail + "', userEmail : " + userEmail +
+                "', userName : " + userName + "', lang : " + lang + "}"
+        );
 
-	public static StringEntity getLoginParam(int userID, String password,
-											 String bizID, int machineType) throws UnsupportedEncodingException {
-		StringEntity entity = new StringEntity("{empId:" + userID
-				+ ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" +CommonUtil.getLocalMacAddress(App.instance) + "', machineType : " + machineType + "}");
-		if(App.instance.isSUNMIShow()){
-			entity = new StringEntity("{empId:" + userID
-					+ ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" +CommonUtil.getLocalMacAddress(App.instance) + "', snCode:'" + Build.SERIAL + "', machineType : " + machineType + "}");
-		}
-		return entity;
-	}
+        if (App.instance.isSUNMIShow()) {
+        }
+        return entity;
+    }
 
-	public static StringEntity getTokenParam()
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-			LoginResult loginResult = CoreData.getInstance().getLoginResult();
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("userKey", loginResult.getUserKey());
-			map.put("restaurantKey", loginResult.getRestaurantKey());
-			map.put("version", App.instance.VERSION );
-			map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-			if(App.instance.isSUNMIShow()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map));
-		return entity;
-	}
+    public static StringEntity getLoginParam(int userID, String password,
+                                             String bizID) throws UnsupportedEncodingException {
+        StringEntity entity = new StringEntity("{empId:" + userID
+                + ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" + CommonUtil.getLocalMacAddress(App.instance) + "'}");
+        return entity;
+    }
 
-	public static StringEntity getParam()
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		LoginResult loginResult = CoreData.getInstance().getLoginResult();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userKey", loginResult.getUserKey());
-		map.put("restaurantKey", loginResult.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map));
-		return entity;
-	}
+    public static StringEntity getLoginParam(int userID, String password,
+                                             String bizID, int machineType) throws UnsupportedEncodingException {
+        StringEntity entity = new StringEntity("{empId:" + userID
+                + ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" + CommonUtil.getLocalMacAddress(App.instance) + "', machineType : " + machineType + "}");
+        if (App.instance.isSUNMIShow()) {
+            entity = new StringEntity("{empId:" + userID
+                    + ",password:'" + password + "',restaurantKey:'" + bizID + "', version:'" + App.instance.VERSION + "', deviceId:'" + CommonUtil.getLocalMacAddress(App.instance) + "', snCode:'" + Build.SERIAL + "', machineType : " + machineType + "}");
+        }
+        return entity;
+    }
 
-	//  	ReportDaySales reportDaySales;
-	////	List<ReportDayTax> reportDayTaxs;
-	public static StringEntity getSendemailParam(ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs, List<ReportDayPayment> reportDayPayments)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		LoginResult loginResult = CoreData.getInstance().getLoginResult();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userKey", loginResult.getUserKey());
-		map.put("restaurantKey", loginResult.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		map.put("reportDaySales", reportDaySales);
-		map.put("reportDayTaxs", reportDayTaxs);
-		map.put("reportDayPayments", reportDayPayments);
-		StringEntity entity = new StringEntity(gson.toJson(map));
-		return entity;
-	}
+    public static StringEntity getTokenParam()
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        LoginResult loginResult = CoreData.getInstance().getLoginResult();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", loginResult.getUserKey());
+        map.put("restaurantKey", loginResult.getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map));
+        return entity;
+    }
+
+    public static StringEntity getParam()
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        LoginResult loginResult = CoreData.getInstance().getLoginResult();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", loginResult.getUserKey());
+        map.put("restaurantKey", loginResult.getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map));
+        return entity;
+    }
+
+    //  	ReportDaySales reportDaySales;
+    ////	List<ReportDayTax> reportDayTaxs;
+    public static StringEntity getSendemailParam(ReportDaySales reportDaySales, List<ReportDayTax> reportDayTaxs, List<ReportDayPayment> reportDayPayments)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        LoginResult loginResult = CoreData.getInstance().getLoginResult();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", loginResult.getUserKey());
+        map.put("restaurantKey", loginResult.getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        map.put("reportDaySales", reportDaySales);
+        map.put("reportDayTaxs", reportDayTaxs);
+        map.put("reportDayPayments", reportDayPayments);
+        StringEntity entity = new StringEntity(gson.toJson(map));
+        return entity;
+    }
 
 
-	public static StringEntity getMediaParam()
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		LoginResult loginResult = CoreData.getInstance().getLoginResult();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userKey", loginResult.getUserKey());
-		map.put("restaurantKey", loginResult.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map));
-		return entity;
-	}
-	public static StringEntity getUploadOrderInfoParam(String  syncMsg,String s)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("syncMsg", syncMsg);
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}
-	
-	public static StringEntity getRestaurantParam()
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		LoginResult loginResult = CoreData.getInstance().getLoginResult();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userKey", loginResult.getUserKey());
-		map.put("restaurantKey", loginResult.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		int id = 0;
-		if(App.instance.getRevenueCenter() != null){
-			id = App.instance.getRevenueCenter().getId();
-		}
-		RevenueCenter revenueCenter = RevenueCenterSQL.getRevenueCenterById(id);
-		map.put("revenueCenter", revenueCenter);
-		StringEntity entity = new StringEntity(gson.toJson(map));
-		return entity;
-	}
+    public static StringEntity getMediaParam()
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        LoginResult loginResult = CoreData.getInstance().getLoginResult();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", loginResult.getUserKey());
+        map.put("restaurantKey", loginResult.getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map));
+        return entity;
+    }
 
-	public static StringEntity getPlaceParam(RevenueCenter revenueCenter)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("revenueId", revenueCenter.getId());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}
+    public static StringEntity getUploadOrderInfoParam(String syncMsg, String s)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("syncMsg", syncMsg);
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
 
-	public static StringEntity getPlaceParam(Map<String, Object> map)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}
+    public static StringEntity getRestaurantParam()
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        LoginResult loginResult = CoreData.getInstance().getLoginResult();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", loginResult.getUserKey());
+        map.put("restaurantKey", loginResult.getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        int id = 0;
+        if (App.instance.getRevenueCenter() != null) {
+            id = App.instance.getRevenueCenter().getId();
+        }
+        RevenueCenter revenueCenter = RevenueCenterSQL.getRevenueCenterById(id);
+        map.put("revenueCenter", revenueCenter);
+        StringEntity entity = new StringEntity(gson.toJson(map));
+        return entity;
+    }
 
-	public static StringEntity getItemParam(RevenueCenter revenueCenter) throws UnsupportedEncodingException{
-		return getPlaceParam(revenueCenter);
-	}
+    public static StringEntity getPlaceParam(RevenueCenter revenueCenter)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("revenueId", revenueCenter.getId());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
 
-	public static StringEntity getUploadOrderInfoParam(SyncMsg syncMsg)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("syncMsg", syncMsg);
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}
-	
-	public static StringEntity getuploadBOHPaidInfo(Map<String, Object> map)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}
-	
-	public static StringEntity getBindDeviceIdInfo(RevenueCenter revenueCenter)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("revenueId", revenueCenter.getId());
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow() || MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		map.put("version", App.instance.VERSION );
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}
+    public static StringEntity getPlaceParam(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
 
-	public static StringEntity getloadReportInfo(Map<String, Object> map)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}	
+    public static StringEntity getItemParam(RevenueCenter revenueCenter) throws UnsupportedEncodingException {
+        return getPlaceParam(revenueCenter);
+    }
 
-	public static StringEntity getloadMonthlySalesReportInfo(Map<String, Object> map)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}	
-	
-	public static StringEntity getloadMonthlyPLUReportInfo(Map<String, Object> map)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}	
-	
-	public static StringEntity encapsulateBaseInfo(Map<String, Object> map)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
-		map.put("restaurantKey", CoreData.getInstance().getLoginResult()
-				.getRestaurantKey());
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}	
-	public static StringEntity getAppVersion(Map<String, Object> map)
-			throws UnsupportedEncodingException {
-		Gson gson = new Gson();
-		map.put("userKey", "118v4v8");
-		map.put("restaurantKey", "19yyrpy");
-		map.put("version", App.instance.VERSION );
-		map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
-		if(App.instance.isSUNMIShow()|| MachineUtil.isHisense()){
-			map.put("snCode", Build.SERIAL);
-		}
-		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
-		return entity;
-	}
+    public static StringEntity getUploadOrderInfoParam(SyncMsg syncMsg)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("syncMsg", syncMsg);
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
+
+    public static StringEntity getuploadBOHPaidInfo(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
+
+    public static StringEntity getBindDeviceIdInfo(RevenueCenter revenueCenter)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("revenueId", revenueCenter.getId());
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        map.put("version", App.instance.VERSION);
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
+
+    public static StringEntity getloadReportInfo(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
+
+    public static StringEntity getloadMonthlySalesReportInfo(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
+
+    public static StringEntity getloadMonthlyPLUReportInfo(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
+
+    public static StringEntity encapsulateBaseInfo(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
+
+    public static StringEntity getAppVersion(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        map.put("userKey", "118v4v8");
+        map.put("restaurantKey", "19yyrpy");
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
 
 
 //
@@ -325,5 +361,5 @@ public class HttpAssembling {
 //		StringEntity entity = new StringEntity(gson.toJson(map),"UTF-8");
 //		return entity;
 //	}
-	
+
 }

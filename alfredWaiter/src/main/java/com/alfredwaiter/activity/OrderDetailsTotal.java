@@ -3,6 +3,7 @@ package com.alfredwaiter.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -27,29 +28,39 @@ import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
+import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.model.PrintOrderItem;
+import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.store.sql.CommonSQL;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
+import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
-import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.VibrationUtil;
 import com.alfredwaiter.R;
@@ -84,6 +95,10 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     public static final int VIEW_EVENT_PRINT_BILL_FAILED = 5;
     public static final int VIEW_EVENT_GET_PRINT_LIST = 6;
     public static final int VIEW_EVENT_GET_PRINT_LIST_FAILED = 7;
+    public static final int GET_PRINT_KOT_DATA_SUCCESS = 8;
+    public static final int GET_PRINT_KOT_DATA_FAILED = 9;
+    public static final int VIEW_EVENT_PRINT_KOT_SUCCESS = 10;
+    public static final int VIEW_EVENT_PRINT_KOT_FAILED = 11;
 
     private static final int DURATION_1 = 300;
     private ListView lv_dishes;
@@ -95,6 +110,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private TextView tv_place_order;
     private Button btn_get_bill;
     private Button btn_print_bill;
+    private Button btn_reprint_kot;
     private SelectGroupWindow selectGroupWindow;
     private int groupId = -1;
     private OrderDetailListAdapter adapter;
@@ -112,6 +128,10 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private WaiterModifierCPWindow modifierWindow;
     private Observable<String> observable;
     private OrderDetail selectedOrderDetail;
+    private PrinterDevice selectedPrinter;
+    private boolean isOpenScreen;
+    private boolean isRePrintKOT;
+    private boolean isPrintLocal;
 
     @Override
     protected void initView() {
@@ -123,6 +143,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         tv_place_order = (TextView) findViewById(R.id.tv_place_order);
         btn_get_bill = (Button) findViewById(R.id.btn_get_bill);
         btn_print_bill = (Button) findViewById(R.id.btn_print_bill);
+        btn_reprint_kot = (Button) findViewById(R.id.btn_reprint_kot);
         loadingDialog = new LoadingDialog(context);
         adapter = new OrderDetailListAdapter(context);
         lv_dishes.setAdapter(adapter);
@@ -146,6 +167,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         tv_place_order.setOnClickListener(this);
         btn_get_bill.setOnClickListener(this);
         btn_print_bill.setOnClickListener(this);
+        btn_reprint_kot.setOnClickListener(this);
         ll_bill_action = (LinearLayout) findViewById(R.id.ll_bill_action);
         selectGroupWindow = new SelectGroupWindow(context, tv_group, handler);
         ((TextView) findViewById(R.id.tv_tables_name)).setText(TableInfoSQL.getTableById(currentOrder.getTableId())
@@ -179,10 +201,15 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         });
     }
 
-
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
+                case GET_PRINT_KOT_DATA_SUCCESS:
+                    printKOT(isRePrintKOT, isPrintLocal);
+                    break;
+                case GET_PRINT_KOT_DATA_FAILED:
+                    //get data kot failed
+                    break;
                 case TablesPage.VIEW_EVENT_SELECT_TABLES:
                     dismissLoadingDialog();
                     currentOrder = (Order) msg.obj;
@@ -215,6 +242,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     // }
                     orderDetails = OrderDetailSQL.getCreatedOrderDetails(currentOrder.getId());
 
+                    getPrintKOTData();
                     refreshList();
                     UIHelp.showToast(context, context.getResources().getString(R.string.place_succ));
 
@@ -225,7 +253,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     break;
                 case VIEW_EVENT_GET_BILL:
                     loadingDialog.dismiss();
-                    UIHelp.startOrderReceiptDetails(context, currentOrder);
+
+                    if (!isOpenScreen)
+                        printBill();
+                    else
+                        UIHelp.startOrderReceiptDetails(context, currentOrder);
                     break;
                 case VIEW_EVENT_GET_BILL_FAILED:
                     loadingDialog.dismiss();
@@ -270,7 +302,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 case ResultCode.WAITER_OUT_OF_STOCK:
                     loadingDialog.dismiss();
                     String stockNum = (String) msg.obj;
-                    UIHelp.showToast(OrderDetailsTotal.this,stockNum);
+                    UIHelp.showToast(OrderDetailsTotal.this, stockNum);
 
                     break;
                 case VIEW_EVENT_PRINT_BILL:
@@ -278,6 +310,12 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                     break;
                 case VIEW_EVENT_PRINT_BILL_FAILED:
                     UIHelp.showToast(context, context.getResources().getString(R.string.print_bill_failed));
+                    break;
+                case VIEW_EVENT_PRINT_KOT_SUCCESS:
+                    UIHelp.showToast(context, context.getResources().getString(R.string.print_kot_succ));
+                    break;
+                case VIEW_EVENT_PRINT_KOT_FAILED:
+                    UIHelp.showToast(context, context.getResources().getString(R.string.print_kot_failed));
                     break;
                 case MainPage.VIEW_EVENT_ADD_ORDER_DETAIL_AND_MODIFIER:
                     if (selectedOrderDetail == null)
@@ -420,6 +458,15 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 // VibrationUtil.init(context);
                 // VibrationUtil.playVibratorTwice();
 
+                isRePrintKOT = false;
+
+                String deviceName = Build.MODEL;
+                if ("V1s-G".equalsIgnoreCase(deviceName)) {
+                    isPrintLocal = true;
+                } else {
+                    isPrintLocal = false;
+                }
+
                 List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(currentOrder.getId());
 
                 Map<Integer, String> categorMap = new HashMap<Integer, String>();
@@ -481,42 +528,74 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 //	commitOrderToPOS();
                 break;
             case R.id.btn_get_bill: {
+                isOpenScreen = true;
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters
                         .put("table",
                                 TableInfoSQL.getTableById(
                                         currentOrder.getTableId()));
+                parameters.put("order", currentOrder);
                 SyncCentre.getInstance().getBillPrint(context, parameters, handler);
             }
             break;
+            case R.id.btn_reprint_kot:
             case R.id.btn_print_bill: {
                 final PrinterDevice printerDevice = Store.getObject(context, Store.WAITER_PRINTER_DEVICE, PrinterDevice.class);
                 String str = "Use the default Cashier Printer ?";
                 if (printerDevice != null) {
                     str = "Use the \"" + (TextUtils.isEmpty(printerDevice.getPrinterName()) ? printerDevice.getName() : printerDevice.getPrinterName()) + "\" Printer ?\nIP:" + printerDevice.getIP();
                 }
+
+                isOpenScreen = false;
+                isRePrintKOT = v.getId() == R.id.btn_reprint_kot;
+
                 DialogFactory.commonTwoBtnDialog(context, "Warning", str, "Other", "OK",
                         new OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                Map<Integer, PrinterDevice> printerDeviceMap = App.instance.getPrinterDevices();
+
                                 DialogFactory.showSelectPrinterDialog(context, new DialogFactory.DialogCallBack() {
                                     @Override
                                     public void callBack(PrinterDevice printerDevice) {
-                                        printBill(printerDevice.getDevice_id());
+                                        selectedPrinter = printerDevice;
+                                        if ("V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {//print local
+                                            isPrintLocal = true;
+                                            if (isRePrintKOT)
+                                                getPrintKOTData();
+                                            else
+                                                getPrintBillData();
+                                        } else {//print remote
+                                            isPrintLocal = false;
+                                            if (isRePrintKOT)
+                                                printKOT(isRePrintKOT, isPrintLocal);
+                                            else
+                                                printBill();
+                                        }
+
                                         Store.saveObject(context, Store.WAITER_PRINTER_DEVICE, printerDevice);
                                     }
-                                }, App.instance.getPrinterDevices());
+                                }, printerDeviceMap);
                             }
                         },
                         new OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (printerDevice != null) {
-                                    printBill(printerDevice.getDevice_id());
-                                } else {
-                                    printBill(0);
+                                selectedPrinter = printerDevice;
+                                if (selectedPrinter != null &&
+                                        "V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {//print local
+                                    isPrintLocal = true;
+                                    if (isRePrintKOT)
+                                        getPrintKOTData();
+                                    else
+                                        getPrintBillData();
+                                } else {//print remote
+                                    isPrintLocal = false;
+                                    if (isRePrintKOT)
+                                        printKOT(isRePrintKOT, isPrintLocal);
+                                    else
+                                        printBill();
                                 }
-
                             }
                         }, true);
             }
@@ -529,15 +608,115 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         }
     }
 
-    private void printBill(int printerDeviceId) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("orderId", currentOrder.getId().intValue());
-        parameters.put("tableName", TableInfoSQL.getTableById(
-                currentOrder.getTableId()).getName());
-        if (printerDeviceId > 0) {
-            parameters.put("deviceId", printerDeviceId);
+    private void getPrintBillData() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("table",
+                TableInfoSQL.getTableById(
+                        currentOrder.getTableId()));
+        parameters.put("order", currentOrder);
+        SyncCentre.getInstance().getBillPrint(context, parameters, handler);
+    }
+
+    private void printBill() {
+        if (currentOrder == null) return;
+        if (selectedPrinter != null && "V1s-G".equalsIgnoreCase(selectedPrinter.getName())) {
+            String tableName = TableInfoSQL.getTableById(
+                    currentOrder.getTableId()).getName();
+
+            RevenueCenter rvc = App.instance.getRevenueCenter();
+            User user = App.instance.getUser();
+            String firstName = user != null ? user.getFirstName() : "";
+            String lastName = user != null ? user.getLastName() : "";
+
+            PrinterTitle title = ObjectFactory.getInstance()
+                    .getPrinterTitle(
+                            rvc,
+                            currentOrder,
+                            firstName
+                                    + lastName,
+                            tableName, 1, 0);
+
+            ArrayList<PrintOrderItem> orderItems = ObjectFactory
+                    .getInstance().getItemList(
+                            OrderDetailSQL.getOrderDetails(currentOrder
+                                    .getId()));
+
+            ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                    .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
+                            .getId()));
+
+            List<Map<String, String>> taxMap = OrderDetailTaxSQL
+                    .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
+
+            App.instance.printBill(selectedPrinter, title, currentOrder, orderItems, orderModifiers, taxMap, null, null, false);
+
+        } else {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("orderId", currentOrder.getId().intValue());
+            parameters.put("tableName", TableInfoSQL.getTableById(
+                    currentOrder.getTableId()).getName());
+
+            if (selectedPrinter != null && selectedPrinter.getDevice_id() > 0) {
+                parameters.put("deviceId", selectedPrinter.getDevice_id());
+            }
+            SyncCentre.getInstance().printBill(context, parameters, handler);
         }
-        SyncCentre.getInstance().printBill(context, parameters, handler);
+
+    }
+
+    private void printKOT(boolean isRePrintKOT, boolean isPrintLocal) {
+        if (currentOrder == null) return;
+
+        if (isPrintLocal) {
+            KotSummary kotsummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
+
+            if (kotsummary == null) return;
+
+            PrinterDevice printerDevice = App.instance.getLocalPrinterDevice();
+            ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotsummary.getOrderId());
+            ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
+            ArrayList<KotItemDetail> kotItemDetailsNonVoid = new ArrayList<>();
+            ArrayList<KotItemDetail> printKOTItemDetails = new ArrayList<>();
+
+            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                if (kotItemDetail.getKotStatus() != ParamConst.KOT_STATUS_VOID) {
+                    kotItemDetailsNonVoid.add(kotItemDetail);
+                }
+            }
+
+            if (isRePrintKOT) {
+                printKOTItemDetails.addAll(kotItemDetailsNonVoid);
+            } else {
+                if (App.instance.getNewOrderDetail() != null) {
+
+                    for (OrderDetail orderDetail : App.instance.getNewOrderDetail()) {
+                        for (KotItemDetail kotItemDetail : kotItemDetailsNonVoid) {
+                            int orderDetailId = kotItemDetail.getOrderDetailId();
+
+                            if (orderDetailId == orderDetail.getId()) {
+                                printKOTItemDetails.add(kotItemDetail);
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    printKOTItemDetails.addAll(kotItemDetailsNonVoid);
+                }
+            }
+
+            App.instance.getNewOrderDetail().clear();
+            App.instance.printKOT(printerDevice, kotsummary, printKOTItemDetails, kotItemModifiers);
+        } else {//print remote
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("orderId", currentOrder.getId().intValue());
+            SyncCentre.getInstance().rePrintKOT(context, parameters, handler);
+        }
+    }
+
+    private void getPrintKOTData() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("order", currentOrder);
+        SyncCentre.getInstance().getPrintKOTData(context, parameters, handler);
     }
 
     @Override
@@ -573,6 +752,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         if (newOrderDetails == null || newOrderDetails.isEmpty()) {
             return;
         }
+
         Map<String, Object> parameters = new HashMap<String, Object>();
         List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
         List<OrderModifier> orderModifiers = OrderModifierSQL
@@ -740,21 +920,21 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                                     R.color.white));
                                     final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
                                     final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
-                                    int  detailNum=OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(),tag.getItemId());
-                                if(remainingStock!=null) {
-                                    if (remainingStock.getQty() >= detailNum) {
-                                        int newNum = remainingStock.getQty() - detailNum + tag.getItemNum();
-                                        if (num <= newNum) {
-                                            updateOrderDetail(tag, num);
+                                    int detailNum = OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(), tag.getItemId());
+                                    if (remainingStock != null) {
+                                        if (remainingStock.getQty() >= detailNum) {
+                                            int newNum = remainingStock.getQty() - detailNum + tag.getItemNum();
+                                            if (num <= newNum) {
+                                                updateOrderDetail(tag, num);
+                                            } else {
+                                                UIHelp.showToast(OrderDetailsTotal.this, "out of stock");
+                                            }
                                         } else {
-                                            UIHelp.showToast(OrderDetailsTotal.this, "out of stock");
+                                            textView.setText(tag.getItemName() + "");
                                         }
                                     } else {
-                                        textView.setText(tag.getItemName() + "");
+                                        updateOrderDetail(tag, num);
                                     }
-                                }else {
-                                    updateOrderDetail(tag, num);
-                                }
 
                                     if (num == 0) {
                                         updateOrderDetail(tag, num);

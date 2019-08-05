@@ -91,6 +91,60 @@ public class HttpAPI {
      */
     public static final int NETWORK_ORDER_STATUS_UPDATE = 1001;
 
+    public static void requestIpay88Payment(Context context, Map<String, Object> parameters,
+                                            String url, AsyncHttpClient httpClient, final Handler handler) {
+        try {
+            StringEntity entity = HttpAssembling.getIpay88PaymentParam(
+                    (Double) parameters.get("amount"),
+                    (String) parameters.get("backendURL"),
+                    (Integer) parameters.get("barcodeNo"),
+                    (String) parameters.get("currency"),
+                    (String) parameters.get("merchantCode"),
+                    (Integer) parameters.get("paymentId"),
+                    (String) parameters.get("prodDesc"),
+                    (String) parameters.get("refNo"),
+                    (String) parameters.get("remark"),
+                    (String) parameters.get("signature"),
+                    (String) parameters.get("signatureType"),
+                    (String) parameters.get("terminalID"),
+                    (String) parameters.get("userContact"),
+                    (String) parameters.get("userEmail"),
+                    (String) parameters.get("userName"),
+                    (String) parameters.get("lang")
+            );
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.requestIpay88Payment(statusCode, headers,
+                                        responseBody);
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_LOGIN));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(
+                                                SyncData.HANDLER_ERROR_INFO,
+                                                resultCode));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler.obtainMessage(
+                                    ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void login(Context context, Map<String, Object> parameters,
                              String url, AsyncHttpClient httpClient, final Handler handler) {
         try {
@@ -649,8 +703,8 @@ public class HttpAPI {
         }
     }
 
-    public static void getPromotionInfo (Context context, String url,
-                                    AsyncHttpClient httpClient, final Handler handler, final int mode) {
+    public static void getPromotionInfo(Context context, String url,
+                                        AsyncHttpClient httpClient, final Handler handler, final int mode) {
         try {
             httpClient.post(context, url, HttpAssembling.getParam(),
                     HttpAssembling.CONTENT_TYPE,
@@ -715,9 +769,8 @@ public class HttpAPI {
     }
 
 
-
-    public static void getPromotionData (Context context, String url,
-                                         AsyncHttpClient httpClient, final Handler handler, final int mode) {
+    public static void getPromotionData(Context context, String url,
+                                        AsyncHttpClient httpClient, final Handler handler, final int mode) {
         try {
             httpClient.post(context, url, HttpAssembling.getParam(),
                     HttpAssembling.CONTENT_TYPE,
@@ -782,9 +835,8 @@ public class HttpAPI {
     }
 
 
-
-    public static void getItemPromotionInfos (Context context, String url,
-                                         AsyncHttpClient httpClient, final Handler handler, final int mode) {
+    public static void getItemPromotionInfos(Context context, String url,
+                                             AsyncHttpClient httpClient, final Handler handler, final int mode) {
         try {
             httpClient.post(context, url, HttpAssembling.getParam(),
                     HttpAssembling.CONTENT_TYPE,
@@ -1711,7 +1763,7 @@ public class HttpAPI {
 
 
     public static void readyAppOrder(Context context, String url,
-                                        AsyncHttpClient httpClient, final int appOrderId, final Handler handler) {
+                                     AsyncHttpClient httpClient, final int appOrderId, final Handler handler) {
         try {
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("appOrderId", appOrderId);
@@ -1786,7 +1838,7 @@ public class HttpAPI {
 
 
     public static void updateReaminingStockByItemId(Context context, String url, AsyncHttpClient httpClient,
-                                            Map<String, Object> parameters, final Handler handler) {
+                                                    Map<String, Object> parameters, final Handler handler) {
         try {
             httpClient.post(context, url,
                     HttpAssembling.encapsulateBaseInfo(parameters),
@@ -1819,7 +1871,7 @@ public class HttpAPI {
     }
 
     public static void updateReaminingStock(Context context, String url, AsyncHttpClient httpClient,
-                                     Map<String, Object> parameters, final Handler handler) {
+                                            Map<String, Object> parameters, final Handler handler) {
         try {
             httpClient.post(context, url,
                     HttpAssembling.encapsulateBaseInfo(parameters),
@@ -1892,7 +1944,7 @@ public class HttpAPI {
 
 
     public static void getRemainingStock(Context context, String url, AsyncHttpClient httpClient,
-                                          final Handler handler, final int mode) {
+                                         final Handler handler, final int mode) {
         try {
             httpClient.post(context, url,
                     HttpAssembling.getTokenParam(),
@@ -1947,6 +1999,7 @@ public class HttpAPI {
 //                            }
 
                         }
+
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
@@ -2327,18 +2380,18 @@ public class HttpAPI {
                                  AsyncHttpClient httpClient, String tag, String num) {
         try {
             Map<String, Object> requestParams = new HashMap<>();
-            requestParams.put("callNumber",  num);
+            requestParams.put("callNumber", num);
             requestParams.put("callType", App.instance.getSystemSettings().getCallStyle());
-            if(Store.getBoolean(App.instance, Store.CALL_NUM_UPDATE, false)){
+            if (Store.getBoolean(App.instance, Store.CALL_NUM_UPDATE, false)) {
                 requestParams.put("header", Store.getString(App.instance, Store.CALL_NUM_HEADER));
                 requestParams.put("footer", Store.getString(App.instance, Store.CALL_NUM_FOOTER));
             }
-            if(TextUtils.isEmpty(tag)) {
+            if (TextUtils.isEmpty(tag)) {
                 //     byte t = (byte) tag.charAt(0);
                 requestParams.put("callTag", 0);
-            }else {
+            } else {
                 byte t = (byte) tag.charAt(0);
-                requestParams.put("callTag",t%64);
+                requestParams.put("callTag", t % 64);
             }
             StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
             httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE, new AsyncHttpResponseHandler() {
@@ -2358,8 +2411,9 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+
     public static void posCloseSession(final Context context, String url,
-                                 AsyncHttpClient httpClient) {
+                                       AsyncHttpClient httpClient) {
         try {
             Map<String, Object> requestParams = new HashMap<>();
             StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");

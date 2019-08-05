@@ -68,6 +68,8 @@ public class APIName {
     public static final String VOID_ITEM = "void_item";
     public static final String TEMPORARY_DISH = "temporary_dish";
     public static final String GET_PRINTER = "get_printer";
+    public static final String PRINT_KOT_DATA = "print_kot_data";
+    public static final String RE_PRINT_KOT = "re_print_kot";
 
     // 以下是KDS专用
     public static final String GET_PRINTERS = "get_printers";
