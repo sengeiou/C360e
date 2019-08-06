@@ -1059,18 +1059,21 @@ public class SystemSetting extends BaseActivity implements OnClickListener,MyTog
 
 
 	private void dialogChoice() {
-		final String items[] = {"1", "2", "4"};
+		final String items[] = {"1", "2", "4", "5"};
 		AlertDialog.Builder builder = new AlertDialog.Builder(this,3);
 
-		int postion;
+		int postion = 0;
 		if(settings.getCallStyle()==1)
 		{
 			postion=0;
 		}else if(settings.getCallStyle()==2){
 			postion=1;
-		}else {
+		}else if (settings.getCallStyle() == 4){
 			postion=2;
+		} else if (settings.getCallStyle() == 5) {
+			postion=3;
 		}
+
 		builder.setSingleChoiceItems(items, postion,
 				new DialogInterface.OnClickListener() {
 					@Override
