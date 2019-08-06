@@ -203,6 +203,9 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                                 } else {
                                     printId = prints.get(0).getId().intValue();
                                 }
+
+                                //TODO: assign printerGroupId not printerId
+                                printId = itemDetail.getPrinterId();
                             }
 
                             int max = modifier_type.getMaxNumber();
