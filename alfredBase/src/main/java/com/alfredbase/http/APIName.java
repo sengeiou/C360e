@@ -10,7 +10,7 @@ public class APIName {
     public static final String ITEM_GETMODIFIER = "item/getModifier";
     public static final String TAX_GETTAX = "tax/getTax";
     public static final String HAPPYHOUR_GETHAPPYHOUR = "happyHour/getHappyHour";
-    public static final String  PROMOTIONINFO_GETPROMOTIONINFO = "promotionPossInfo/getPromotionInfo";
+    public static final String PROMOTIONINFO_GETPROMOTIONINFO = "promotionPossInfo/getPromotionInfo";
     public static final String PROMOTIONPOSSINFO_GETPROMOTIONDATA = "promotionPossInfo/getPromotionData";
 
     public static final String RESTAURANT_GETPLACEINFO = "restaurant/getPlaceInfo";
@@ -21,6 +21,8 @@ public class APIName {
     public static final String SEND_EMAIL = "sendRealTimeReport/getDataSendEmail";
 
     public static final String SETTLEMENT_GETOTHERPAYMENT = "settlement/getOtherPayment";
+    public static final String SETTLEMENT_GETPAYMENT_METHOD = "settlement/getBaseMediaPayment";
+
     public static final String RESTAURANT_BINDDEVICEID = "restaurant/bindDeviceId";
     public static final String RESTAURANT_DAYSALES_REPORT = "reportDaySales/getReportDaySales";
     public static final String POSORDER_GETORDERBYQRCODE = "order/getOrderByQrcode";
@@ -34,6 +36,9 @@ public class APIName {
     public static final String USER_UPDATEPASSWORD = "user/updatePassword";
     public static final String RESTAURANT_CHANGEPLACE = "restaurant/changePlace";
     public static final String RESTAURANT_GETPLACEINFONEW = "restaurant/getPlaceInfoNew";
+
+
+
     public static final String MEMBERSHIP_ACTIVATECARD = "membership/activateCard";
     public static final String MEMBERSHIP_OPERATEBALANCE = "membership/operateBalance";
     public static final String MEMBERSHIP_REPORTCARD = "membership/reportCard";
@@ -50,6 +55,19 @@ public class APIName {
     public static final String GET_REMAINING_STOCK = "/item/getRemainingStock";
     //3rd-party Serivce
     public static final String REQUEST_ALIPAY = "alipay/getAlipayUrl";
+
+    //start pay88
+    public static final String REQUEST_IPAY88_LOGIN = "login/loginVerify";
+    public static final String REQUEST_IPAY88_QRCODE = "ipay88/generateQrCode";
+    public static final String REQUEST_IPAY88_CHECK_STATUS = "ipay88/checkPaymentStatus";
+    //end pay88
+
+    //start payhalal
+    public static final String REQUEST_PAYHALAL_QRCODE = "payhalal/generateQrCode";
+    public static final String REQUEST_PAYHALAL_CHECK_STATUS = "payhalal/getPaymentStatus";
+    //end payhalal
+
+
     /**
      * 以pos作为服务器
      */
@@ -112,7 +130,7 @@ public class APIName {
     public static final String KPMG_UPDATE_DATA = "kpmg/updateData";
     public static final String KPMG_COMMIT_ORDER = "kpmg/commitOrder";
     public static final String GET_REMAINING_STOCK_KPMG = "kpmg/getRemainingStock";
-    public static final String KPMG_CHECK_SOTCK_NUM= "kpmg/checkSotckNum";
+    public static final String KPMG_CHECK_SOTCK_NUM = "kpmg/checkSotckNum";
 
     // CallNum
     public static final String CALLNUM_ASSIGNREVENUE = "desktop/callNumassignRevenue";

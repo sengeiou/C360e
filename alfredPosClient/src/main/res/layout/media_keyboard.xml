@@ -1,163 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     android:gravity="top|center_horizontal"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/ll_all_card"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_settlement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:layout_margin="16dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_settlement" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingTop="-50dp">
-
-            <ImageView
-                android:id="@+id/iv_MasterCard"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/master_selector" />
-
-            <ImageView
-                android:id="@+id/iv_NETS"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/nets_selector" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iv_VISA"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/visa_selector" />
-
-            <ImageView
-                android:id="@+id/iv_JCB"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/jcb_selector" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iv_UnionPay"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/unionpay_selector" />
-
-            <ImageView
-                android:id="@+id/iv_AMERICAN"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:scaleType="centerInside"
-                android:src="@drawable/american_selector" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/iv_dinersclub"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/diners_selector" />
-
-        <Button
-            android:id="@+id/tv_other_media"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/box_number_selector"
-            android:gravity="center"
-            android:text="Custom"
-            android:textColor="@color/black"
-            android:textSize="15sp" />
-
-        <!--<ImageView-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_weight="1"-->
-        <!--android:layout_marginLeft="10dp"-->
-        <!--android:layout_marginRight="10dp"-->
-        <!--android:adjustViewBounds="true"-->
-        <!--android:scaleType="centerInside"-->
-        <!--android:src="@drawable/alipay_selector" -->
-        <!--android:visibility="invisible"/>-->
-
-        <ImageView
-            android:id="@+id/iv_halal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/payhalal_selector"
-            android:visibility="invisible" />
-    </LinearLayout>
 
 </LinearLayout>

@@ -89,7 +89,7 @@ public class PamentMethodAdapter extends BaseAdapter{
             PaymentMethod p = list.get(position);
 
             ImageLoader.getInstance().displayImage(p.getLogoSm(), holder.img, options);
-            holder.tv.setText(p.getNameOt().toString());
+            holder.tv.setText(""+p.getNameOt());
         holder.symbol.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol());
         if(p.getIsTax()==0)
         {

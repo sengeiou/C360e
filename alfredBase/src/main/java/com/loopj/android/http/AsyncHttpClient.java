@@ -71,8 +71,10 @@ import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
@@ -772,7 +774,7 @@ public class AsyncHttpClient {
      * @return RequestHandle of future request process
      */
     public RequestHandle get(Context context, String url, RequestParams params, ResponseHandlerInterface responseHandler) {
-        Log.i(LOG_TAG, "url:" + url);
+        Log.i(LOG_TAG, "x-url:" + url);
         if(params != null)
         Log.i(LOG_TAG, params != null ? params.getParamString(): "这个请求没有参数");
         return sendRequest(httpClient, httpContext, new HttpGet(getUrlWithQueryString(isUrlEncodingEnabled, url, params)), null, responseHandler, context);
@@ -850,8 +852,12 @@ public class AsyncHttpClient {
      */
     public RequestHandle post(Context context, String url, HttpEntity entity, String contentType, ResponseHandlerInterface responseHandler) {
     	try {
-            Log.i(LOG_TAG, "url:" + url);
-			Log.i(LOG_TAG, NetUtil.ConvertStreamToString(entity.getContent()));
+            Log.i(LOG_TAG, "y-url:" + url);
+            BufferedReader r = new BufferedReader(new InputStreamReader(entity.getContent()));
+            for (String line; (line = r.readLine()) != null; ) {
+                Log.i(LOG_TAG, "post :"+line);
+            }
+
 		} catch (IllegalStateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

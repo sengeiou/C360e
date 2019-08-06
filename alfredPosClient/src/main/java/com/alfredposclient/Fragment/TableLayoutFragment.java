@@ -975,9 +975,13 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
             return "http://139.224.17.126/" + relativeUrl;
         } else {
-
+            if(App.instance.isCartenzLog){
+                return "http://18.139.110.250/" + relativeUrl;
+            }else{
+                return "http://www.servedbyalfred.biz/" + relativeUrl;
+            }
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-            return "http://www.servedbyalfred.biz/" + relativeUrl;
+
         }
     }
 

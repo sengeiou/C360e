@@ -195,6 +195,10 @@ public static final String PATH_IMAGE = "IMAGE_PATH";
 	private static final int TYPE_LONG = 1;
 
 
+	//start pay88
+	public static final String LOGIN_QRPAYMENT = "LOGIN_QRPAYMENT";
+	//endpay88
+
 
 	public static final String DEFAULT_STRING_TYPE = "";
 	public static SharedPreferences getSharedPreferences(Context context) {

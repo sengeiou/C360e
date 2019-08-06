@@ -442,6 +442,10 @@ public class ESCPrinter implements WIFIPrintCallback {
                     BitMatrix matrix = writer.encode(qrCode, BarcodeFormat.QR_CODE, 500, 500, map);
                     Bitmap bitmap = BitmapUtil.bitMatrix2Bitmap(matrix);
                     this.printer.printQRBitmap(bitmap);
+                } else if (toPrint.getDataFormat() == PrintData.FORMAT_QR_BITMAP) {
+                    byte[] b =toPrint.getQrCodeBitmap();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(b , 0, b.length);
+                    this.printer.printQRBitmap(bitmap);
                 } else if (toPrint.getDataFormat() == PrintData.FORMAT_DRAWER) {
                     if (ip.equals(WifiCommunication.localIPAddress)) {
                         if(MachineUtil.isHisense()){

@@ -572,7 +572,7 @@ public class XZReportActivity extends BaseActivity {
                     ll_sales_total.addView(other);
                 }
                 ReportDaySalesItem totalOther = new ReportDaySalesItem(context);
-                totalOther.setData("OTAL CUSTOM PAYMENT", totalCustomPaymentQty + "",
+                totalOther.setData("TOTAL CUSTOM PAYMENT", totalCustomPaymentQty + "",
                         App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(totalCustomPayment.toString()), true);
                 ll_sales_total.addView(totalOther);
             }
