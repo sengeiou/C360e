@@ -364,7 +364,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         Button btn_table_small = (Button) selfView.findViewById(R.id.btn_table_small);
         Button btn_table_middle = (Button) selfView.findViewById(R.id.btn_table_middle);
         Button btn_table_large = (Button) selfView.findViewById(R.id.btn_table_large);
-        imageView.setImageBitmap(BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap));
+        Bitmap bmp = BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap);
+        if(bmp!=null) {
+            imageView.setImageBitmap(bmp);
+        }
         initTableName(tv_table_name, newTable);
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
