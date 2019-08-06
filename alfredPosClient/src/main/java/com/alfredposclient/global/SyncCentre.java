@@ -9,6 +9,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
+import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -25,6 +26,7 @@ import com.alfredposclient.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,6 +121,8 @@ public class SyncCentre {
 //
         HttpAPI.mediaSync(context,
                 getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.paymentMethodSync(context,
+                getAbsoluteUrl(APIName.SETTLEMENT_GETPAYMENT_METHOD), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getItemCategory(context,
                 getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
@@ -215,6 +219,8 @@ public class SyncCentre {
 
         HttpAPI.mediaSync(context,
                 getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), bigSyncHttpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.paymentMethodSync(context,
+                getAbsoluteUrl(APIName.SETTLEMENT_GETPAYMENT_METHOD), bigSyncHttpClient, handler, MODE_FIRST_SYNC);
 
     }
 
@@ -228,8 +234,8 @@ public class SyncCentre {
     public void cloudSyncUploadRealOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
-        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
-        if(timely==0) {
+        int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
+        if (timely == 0) {
             HttpAPI.cloudSync(context, syncMsg,
                     getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
         } else {
@@ -301,6 +307,8 @@ public class SyncCentre {
         if (type.equals(PushMessage.PAYMENT_METHOD)) {
             HttpAPI.mediaSync(context,
                     getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), httpClient, handler, MODE_PUSH_SYNC);
+            HttpAPI.paymentMethodSync(context,
+                    getAbsoluteUrl(APIName.SETTLEMENT_GETPAYMENT_METHOD), httpClient, handler, MODE_PUSH_SYNC);
         }
         if (type.equals(PushMessage.HAPPY_HOURS)) {
             HttpAPI.getHappyHour(context,
@@ -425,14 +433,19 @@ public class SyncCentre {
         if (App.instance.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-//            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
-            return "http://18.139.110.250/alfred-api/" + relativeUrl;
+            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
         } else if (App.instance.isOpenLog) {
 
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-            return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+            if (App.instance.isCartenzLog) {
+                return "http://18.139.110.250/alfred-api/" + relativeUrl;
+            } else {
+                return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+            }
+
+
         }
     }
 
@@ -591,7 +604,13 @@ public class SyncCentre {
             if (App.instance.countryCode == ParamConst.CHINA) {
                 url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
-                url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
+                if (App.instance.isCartenzLog) {
+                    url = "http://18.139.110.250/alfred-api/" + APIName.REQUEST_ALIPAY;
+                } else {
+                    url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
+                }
+
+
             }
             param.append("amount=" + parameters.get("amount") + "&");
         }
@@ -621,4 +640,81 @@ public class SyncCentre {
     public String getURLStart() {
         return getAbsoluteUrl("");
     }
+
+
+    public void loginQRPayment(Context context,
+                               Handler handler) {
+        User user = App.instance.getUser();
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String url = getAbsoluteUrl(APIName.REQUEST_IPAY88_LOGIN);
+        HttpAPI.loginQRPayment(context, url, user.getEmpId(), user.getPassword(), login.getRestaurantKey(), httpClient, handler);
+    }
+
+
+    //start pay88
+    public void qrcodePay88(Context context,
+                            Integer paymentTypeId, //alipay, grabpay
+                            BigDecimal amount,
+                            String currency,
+                            String productDesc,
+                            long billNo,
+                            String custContact,
+                            String custEmail,
+                            String custName,
+                            Handler handler) {
+
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String userkey = login.getUserKey();
+        String url = getAbsoluteUrl(APIName.REQUEST_IPAY88_QRCODE);
+
+        HttpAPI.qrcodePay88(context, url, login.getRestaurantKey(), userkey, paymentTypeId, amount, currency, productDesc, billNo, custContact, custEmail, custName, httpClient, handler);
+    }
+
+
+    public void checkStatusPay88(Context context,
+                                 long billNo,
+                                 BigDecimal amount,
+                                 Handler handler) {
+
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String userkey = login.getUserKey();
+        String url = getAbsoluteUrl(APIName.REQUEST_IPAY88_CHECK_STATUS);
+        HttpAPI.checkStatusPay88(context, url, login.getRestaurantKey(), userkey, billNo, amount, httpClient, handler);
+    }
+
+
+    //end pay88
+
+    //Start payhalal
+    public void qrcodePayHalal(Context context,
+                               Integer paymentTypeId,
+                               BigDecimal amount,
+                               String currency,
+                               String productDesc,
+                               long billNo,
+                               String custContact,
+                               String custEmail,
+                               String custName,
+                               Handler handler) {
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String userkey = login.getUserKey();
+        String url = getAbsoluteUrl(APIName.REQUEST_PAYHALAL_QRCODE);
+
+        HttpAPI.qrcodePayhalal(context, url, login.getRestaurantKey(), userkey, paymentTypeId, amount, currency, productDesc, billNo, custContact, custEmail, custName, httpClient, handler);
+    }
+
+
+    public void checkStatusPayHalal(Context context,
+                                    String currency,
+                                    long billNo,
+                                    String transactionId,
+                                    BigDecimal amount,
+                                    Handler handler) {
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String userkey = login.getUserKey();
+        String url = getAbsoluteUrl(APIName.REQUEST_PAYHALAL_CHECK_STATUS);
+        HttpAPI.checkStatusPayhalal(context, url, login.getRestaurantKey(), userkey, amount, currency, billNo, transactionId, httpClient, handler);
+    }
+    //end payhalal
+
 }

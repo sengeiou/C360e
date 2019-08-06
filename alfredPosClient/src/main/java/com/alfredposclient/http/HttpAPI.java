@@ -53,6 +53,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1131,7 +1132,6 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             LogUtil.d("mediaSync--", statusCode + "----" + resultCode);
 
-
                             if (resultCode == 1) {
                                 new Thread(new Runnable() {
                                     public void run() {
@@ -1190,6 +1190,82 @@ public class HttpAPI {
         }
 
     }
+
+    public static void paymentMethodSync(Context context, String url, AsyncHttpClient httpClient, final Handler handler, final int mode) {
+        // try {
+        Log.e("TAG", "-------------------strat");
+        StringEntity entity = null;
+        try {
+            entity = HttpAssembling.getPaymentMethodParam();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (entity != null) {
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == 1) {
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        Map<String, Integer> map = App.instance
+                                                .getPushMsgMap();
+                                        if (!map.isEmpty()) {
+                                            map.remove(PushMessage.PAYMENT_METHOD);
+                                            Store.saveObject(App.instance,
+                                                    Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
+                                        }
+                                        Log.e("TAG", "-------------------progress");
+                                        HttpAnalysis.getPaymentMethod(statusCode, headers, responseBody);
+
+                                        if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(
+                                                            SyncData.SYNC_DATA_TAG,
+                                                            SyncData.SYNC_SUCCEED));
+
+                                            Log.e("TAG", "-------------------end");
+                                        } else {
+                                            handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                        }
+
+                                    }
+                                }).start();
+                            } else {
+                                if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            if (mode == SyncCentre.MODE_PUSH_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        SyncData.SYNC_DATA_TAG,
+                                        SyncData.SYNC_FAILURE));
+                            }
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            throw new RuntimeException(error);
+                        }
+                    });
+        }
+
+    }
+
 
     /*
      * Sync order and XZReport data from POS to Cloud
@@ -2455,4 +2531,261 @@ public class HttpAPI {
 
 //    public static void mediaSync(Context context, String absoluteUrl, SyncHttpClient syncHttpClient, Handler handler) {
 //    }
+
+
+    public static void loginQRPayment(final Context context, String url, Integer empId, String password, String restaurantKey,
+                                      AsyncHttpClient httpClient, final Handler handler) {
+        try {
+
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("empId", empId);
+            requestParams.put("password", password);
+            requestParams.put("restaurantKey", restaurantKey);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.saveLoginQRPayment(responseBody);
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_LOGIN_QRPAYMENT, new String(responseBody)));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(
+                                                SyncData.HANDLER_LOGIN_QRPAYMENT,
+                                                null));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler.obtainMessage(
+                                    SyncData.HANDLER_LOGIN_QRPAYMENT,
+                                    null));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //start pay88
+    public static void qrcodePay88(final Context context,
+                                   String url,
+                                   String restaurantKey,
+                                   String userKey,
+                                   Integer paymentTypeId, //alipay, grabpay
+                                   BigDecimal amount,
+                                   String currency,
+                                   String productDesc,
+                                   long billNo,
+                                   String custContact,
+                                   String custEmail,
+                                   String custName,
+                                   AsyncHttpClient httpClient, final Handler handler) {
+        try {
+
+
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("restaurantKey", restaurantKey);
+            requestParams.put("userKey", userKey);
+            requestParams.put("amount", amount);
+
+
+            requestParams.put("paymentId", paymentTypeId);
+            requestParams.put("currency", currency);
+            requestParams.put("productDesc", productDesc);
+            requestParams.put("billNo", billNo);
+            requestParams.put("userContact", custContact);
+            requestParams.put("userEmail", custEmail);
+            requestParams.put("username", custName);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAY88, new String(responseBody)));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAY88, null));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void checkStatusPay88(final Context context,
+                                        String url,
+                                        String restaurantKey,
+                                        String userKey,
+                                        long billNo,
+                                        BigDecimal amount,
+                                        AsyncHttpClient httpClient, final Handler handler) {
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("restaurantKey", restaurantKey);
+            requestParams.put("userKey", userKey);
+            requestParams.put("amount", amount);
+
+            requestParams.put("billNo", billNo);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAY88, new String(responseBody)));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAY88, null));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler
+                                    .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAY88, null));
+                            handler.sendMessage(handler.obtainMessage(
+                                    ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //end pay88
+
+    //start payhalal
+    public static void qrcodePayhalal(final Context context,
+                                      String url,
+                                      String restaurantKey,
+                                      String userKey,
+                                      Integer paymentTypeId,
+                                      BigDecimal amount,
+                                      String currency,
+                                      String productDesc,
+                                      long billNo,
+                                      String custContact,
+                                      String custEmail,
+                                      String custName,
+                                      AsyncHttpClient httpClient, final Handler handler) {
+
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("restaurantKey", restaurantKey);
+            requestParams.put("userKey", userKey);
+            requestParams.put("amount", amount);
+            requestParams.put("paymentId", paymentTypeId);
+            requestParams.put("currency", currency);
+            requestParams.put("productDesc", productDesc);
+            requestParams.put("billNo", billNo);
+            requestParams.put("userContact", custContact);
+            requestParams.put("userEmail", custEmail);
+            requestParams.put("username", custName);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAYHALAL, new String(responseBody)));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAYHALAL, null));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void checkStatusPayhalal(final Context context,
+                                           String url,
+                                           String restaurantKey,
+                                           String userKey,
+                                           BigDecimal amount,
+                                           String currency,
+                                           long billNo,
+                                           String transactionId,
+                                           AsyncHttpClient httpClient, final Handler handler) {
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("restaurantKey", restaurantKey);
+            requestParams.put("userKey", userKey);
+            requestParams.put("amount", amount);
+            requestParams.put("currency", currency);
+            requestParams.put("billNo", billNo);
+            requestParams.put("transactionId", transactionId);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAYHALAL, new String(responseBody)));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAYHALAL, null));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler
+                                    .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAYHALAL, null));
+                            handler.sendMessage(handler.obtainMessage(
+                                    ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //end payhalal
 }

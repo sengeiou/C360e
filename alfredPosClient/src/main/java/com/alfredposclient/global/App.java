@@ -14,6 +14,11 @@ import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.hardware.display.DisplayManager;
 import android.net.Uri;
@@ -163,7 +168,9 @@ import com.zebra.scannercontrol.SDKHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -185,6 +192,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import sunmi.ds.DSKernel;
+import sunmi.ds.SF;
 import sunmi.ds.callback.IConnectionCallback;
 import sunmi.ds.callback.IReceiveCallback;
 import sunmi.ds.callback.ISendCallback;
@@ -390,6 +398,7 @@ public class App extends BaseApplication {
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
         strategy.setAppChannel(APPPATH);
         CrashReport.initCrashReport(getApplicationContext(), "900043720", isOpenLog, strategy);
+
         mDSKernel = DSKernel.newInstance();
         if (mDSKernel != null) {
             mDSKernel.init(instance, new IConnectionCallback() {
@@ -605,6 +614,7 @@ public class App extends BaseApplication {
                 mPresentation.show();
             }
         }
+
 
     }
 
@@ -1184,7 +1194,7 @@ public class App extends BaseApplication {
      * @param title
      * @param content
      */
-    private void showSunmiText(String title, String content) {
+    public void showSunmiText(String title, String content) {
         try {
             JSONObject json = new JSONObject();
             json.put("title", title);//title为上面一行的标题内容
@@ -1280,6 +1290,73 @@ public class App extends BaseApplication {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void showSunmiQrimg(Context context, String title, String content, Bitmap bitmap) {
+        String fileName = "ipay88.png";
+
+        File lateDir = new File(Environment.getExternalStorageDirectory(), fileName);
+        if (lateDir.exists()) {
+            lateDir.delete();
+        }
+
+        File file = new File(Environment.getExternalStorageDirectory(), fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        showSunmiQrimg(context, title, content, file.getAbsolutePath());
+
+    }
+
+    public void showSunmiQrimg(final Context context, String title, String content, final String path) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("title", title);
+            json.put("content", content);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+//        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/welcome.png";
+//        Environment.getExternalStorageDirectory().getPath() + "/qrcode.png"
+        mDSKernel.sendFile(DSKernel.getDSDPackageName(), json.toString(), path, new ISendCallback() {
+            @Override
+            public void onSendSuccess(long l) {
+//display image
+                try {
+                    JSONObject json = new JSONObject();
+                    json.put("dataModel", "QRCODE");
+                    json.put("data", "default");
+                    mDSKernel.sendCMD(SF.DSD_PACKNAME, json.toString(), l, null);
+
+
+                    File file = new File(path);
+                    file.delete();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onSendFail(int i, String s) {
+
+            }
+
+            @Override
+            public void onSendProcess(long l, long l1) {
+
+            }
+        });
+
     }
 
 
@@ -1638,9 +1715,7 @@ public class App extends BaseApplication {
         for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
             Integer key = dev.getKey();
             PrinterDevice devPrinter = dev.getValue();
-            if (devPrinter.getIsCahierPrinter() > 0)
-
-            {
+            if (devPrinter.getIsCahierPrinter() > 0) {
                 return devPrinter;
             }
 
@@ -2048,7 +2123,11 @@ public class App extends BaseApplication {
                                 List<Map<String, String>> taxes,
                                 List<PaymentSettlement> settlement, RoundAmount roundAmount) {
 
-        remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
+        try {
+            remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
@@ -2057,7 +2136,6 @@ public class App extends BaseApplication {
                                 List<Map<String, String>> taxes,
                                 List<PaymentSettlement> settlement, RoundAmount roundAmount,
                                 boolean openDrawer) {
-
         boolean isCashSettlement = false;
         List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
         if (settlement != null) {
@@ -2347,6 +2425,60 @@ public class App extends BaseApplication {
             String prtTitle = gson.toJson(title);
             try {
                 mRemoteService.printTableQRCode(prtStr, tableId + "", prtTitle, qrCodeText);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void printQrByBitmap(PrinterDevice printer, PrinterTitle printerTitle, String paymentMethod, String id, String amount, Bitmap bmp) {
+        Bitmap bitmap = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), bmp.getConfig());
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.WHITE);
+        canvas.drawBitmap(bmp, 0, 0, null);
+
+        Bitmap bmpMonochrome = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas1 = new Canvas(bmpMonochrome);
+        ColorMatrix ma = new ColorMatrix();
+        ma.setSaturation(0);
+        Paint paint1 = new Paint();
+        paint1.setColorFilter(new ColorMatrixColorFilter(ma));
+        canvas1.drawBitmap(bitmap, 0, 0, paint1);
+
+        int width2 = bmpMonochrome.getWidth();
+        int height2 = bmpMonochrome.getHeight();
+
+        int[] pixels = new int[width2 * height2];
+        bmpMonochrome.getPixels(pixels, 0, width2, 0, 0, width2, height2);
+
+        for (int y = 0; y < height2; y++) {
+            for (int x = 0; x < width2; x++) {
+                int pixel = bmpMonochrome.getPixel(x, y);
+                int lowestBit = pixel & 0xff;
+                if(lowestBit<128)
+                    bmpMonochrome.setPixel(x,y,Color.BLACK);
+                else
+                    bmpMonochrome.setPixel(x,y,Color.WHITE);
+            }
+        }
+
+        Bitmap qrcode = bmpMonochrome;
+        if (!TextUtils.isEmpty(amount) && qrcode != null) {
+            if (mRemoteService == null) {
+                printerDialog();
+                return;
+            }
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            String prtTitle = gson.toJson(printerTitle);
+            try {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                qrcode.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+
+                byte[] byteArray = stream.toByteArray();
+                mRemoteService.printIpay88Qrcode(prtStr, id, prtTitle,paymentMethod, amount, byteArray);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

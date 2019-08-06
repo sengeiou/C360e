@@ -24,40 +24,7 @@ import java.util.Map;
 
 public class HttpAssembling {
     public static final String CONTENT_TYPE = "text/plain;charset=UTF-8";
-
-    public static StringEntity getIpay88PaymentParam(
-            Double amount,
-            String backendURL,
-            Integer barcodeNo,
-            String currency,
-            String merchantCode,
-            Integer paymentId,
-            String prodDesc,
-            String refNo,
-            String remark,
-            String signature,
-            String signatureType,
-            String terminalID,
-            String userContact,
-            String userEmail,
-            String userName,
-            String lang
-    ) throws UnsupportedEncodingException {
-        StringEntity entity = new StringEntity("{amount:" + amount
-                + ",backendURL:'" + backendURL + "',barcodeNo:'" + barcodeNo +
-                "', currency:'" + currency + "', merchantCode:'" + merchantCode +
-                "', paymentId : " + paymentId + "', prodDesc : " + prodDesc +
-                "', refNo : " + refNo + "', remark : " + remark +
-                "', signature : " + signature + "', signatureType : " + signatureType +
-                "', terminalID : " + terminalID + "', userContact : " + userContact +
-                "', userEmail : " + userEmail + "', userEmail : " + userEmail +
-                "', userName : " + userName + "', lang : " + lang + "}"
-        );
-
-        if (App.instance.isSUNMIShow()) {
-        }
-        return entity;
-    }
+    public static final String CONTENT_TYPE_JSON = "application/json;charset=UTF-8";
 
     public static StringEntity getLoginParam(int userID, String password,
                                              String bizID) throws UnsupportedEncodingException {
@@ -140,6 +107,18 @@ public class HttpAssembling {
         if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
             map.put("snCode", Build.SERIAL);
         }
+        StringEntity entity = new StringEntity(gson.toJson(map));
+        return entity;
+    }
+
+
+    public static StringEntity getPaymentMethodParam()
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        LoginResult loginResult = CoreData.getInstance().getLoginResult();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", loginResult.getUserKey());
+        map.put("restaurantKey", loginResult.getRestaurantKey());
         StringEntity entity = new StringEntity(gson.toJson(map));
         return entity;
     }
@@ -327,6 +306,7 @@ public class HttpAssembling {
         StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
         return entity;
     }
+
 
     public static StringEntity getAppVersion(Map<String, Object> map)
             throws UnsupportedEncodingException {

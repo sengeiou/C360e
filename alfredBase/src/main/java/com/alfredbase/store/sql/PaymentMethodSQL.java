@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
@@ -281,4 +282,42 @@ public class PaymentMethodSQL {
             e.printStackTrace();
         }
     }
+
+    public static void deleteAllPaymentMethodCustom() {
+        String sql = "delete from " + TableNames.PaymentMethod+" where paymentTypeId < ? AND paymentTypeId > ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{ParamConst.SETTLEMENT_TYPE_IPAY88, ParamConst.SETTLEMENT_TYPE_PAYHALAL});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteAllPaymentMethodIpay88Halal() {
+        String sql = "delete from " + TableNames.PaymentMethod+" where paymentTypeId >= ? AND paymentTypeId < ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{ParamConst.SETTLEMENT_TYPE_IPAY88, ParamConst.SETTLEMENT_TYPE_PAYHALAL});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+//    public static void deleteAllSettlementRestaurantCustom() {
+//        String sql = "delete from " + TableNames.SettlementRestaurant + " where otherPaymentId IS NOT NULL and id != ?";
+//        try {
+//            SQLExe.getDB().execSQL(sql, new Object[]{ParamConst.SETTLEMENT_TYPE_IPAY88});
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    public static void deleteAllSettlementRestaurantIpay88HalalPayment() {
+//        String sql = "delete from " + TableNames.SettlementRestaurant + " where otherPaymentId IS NULL  or id = ?";
+//        try {
+//            SQLExe.getDB().execSQL(sql, new Object[]{ParamConst.SETTLEMENT_TYPE_IPAY88});
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
 }

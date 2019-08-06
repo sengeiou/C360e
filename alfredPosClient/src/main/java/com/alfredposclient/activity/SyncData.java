@@ -2,6 +2,7 @@ package com.alfredposclient.activity;
 
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -52,6 +53,15 @@ public class SyncData extends BaseActivity {
 	public static final int SYNC_DATA_TAG = 8;
 	public static final int SYNC_SUCCEED = 1;
 	public static final int SYNC_FAILURE = 0;
+
+	public static final int HANDLER_LOGIN_QRPAYMENT = 80;
+
+	public static final int HANDLER_QRCODE_PAY88 = 81;
+	public static final int HANDLER_CHECK_STATUS_PAY88 = 82;
+
+	public static final int HANDLER_QRCODE_PAYHALAL = 83;
+	public static final int HANDLER_CHECK_STATUS_PAYHALAL = 84;
+
 	public static final String UNKNOW_ERROR = "Unknow error";
 	public static final String CONN_TIMEOUT = "Connection timeout";
 	private int syncDataCount = 0;
@@ -209,7 +219,7 @@ public class SyncData extends BaseActivity {
 							if(warn.length() != 0){
 								warn.append(",");
 							}
-							warn.append(context.getResources().getString(R.string.printers));
+							warn.append(context.getResources().getString(R.string.printer));
 						}else{
 							boolean isPrinter = false;
 							boolean isPrinterGroup = false;
@@ -229,7 +239,7 @@ public class SyncData extends BaseActivity {
 							if(warn.length() != 0){
 								warn.append(",");
 							}
-							warn.append(context.getResources().getString(R.string.item_));
+							warn.append(context.getResources().getString(R.string.item));
 						}
 						if(itemCategories.isEmpty() || itemMainCategories.isEmpty()){
 							if(warn.length() != 0){
@@ -256,7 +266,7 @@ public class SyncData extends BaseActivity {
 										}
 									});
 						}else{
-							DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.item_), 
+							DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.item),
 									context.getResources().getString(R.string.sync_date_warning_tips) + warn.toString(), null);
 						}
 					}
@@ -342,6 +352,8 @@ public class SyncData extends BaseActivity {
 			}
 		});
 	}
+
+
 
 	private void login() {
 		String userID = ((EditText) findViewById(R.id.et_user_id)).getText()

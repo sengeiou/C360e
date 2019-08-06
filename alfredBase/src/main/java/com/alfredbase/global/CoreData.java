@@ -2,6 +2,7 @@ package com.alfredbase.global;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.HappyHour;
@@ -218,8 +219,8 @@ public class CoreData {
 		}
 		return result;
 	}
-	
-	
+
+
 	public OrderModifier getOrderModifier(List<OrderModifier> orderModifiers,
 			Modifier modifier) {
 		for (OrderModifier orderModifier : orderModifiers) {
@@ -349,7 +350,7 @@ public class CoreData {
 		}
 		return result;
 	}
-	
+
 
 	public ItemDetail getItemDetailById(Integer id) {
 		if (id == null)
@@ -582,7 +583,7 @@ public class CoreData {
 //		}
 //		return result;
 //	}
-	
+
 //	public List<Tables> getTableList(Integer revenueId) {
 //		if (tableList == null)
 //			return Collections.emptyList();
@@ -616,7 +617,7 @@ public class CoreData {
 //		}
 //		return null;
 //	}
-	
+
 	public User getUser(String employee_ID, String password) {
 		if (CommonUtil.isNull(employee_ID) || CommonUtil.isNull(password))
 			return null;
@@ -933,7 +934,6 @@ public class CoreData {
 		this.loginResult = loginResult;
 	}
 
-
 	public List<PaymentMethod> getPamentMethodList() {
 		return pamentMethodList;
 	}
@@ -1164,7 +1164,7 @@ public class CoreData {
 	public void setRestaurantConfigs(List<RestaurantConfig> restaurantConfigs) {
 		this.restaurantConfigs = restaurantConfigs;
 	}
-	
+
 	public List<TaxCategory> getTaxCategoryGroup() {
 		List<TaxCategory> taxCategoryList = new ArrayList<TaxCategory>();
 		for(TaxCategory taxCategory : taxCategories){
@@ -1185,5 +1185,7 @@ public class CoreData {
 		}
 		return newTables;
 	}
+
+
 
 }
