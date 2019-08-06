@@ -92,60 +92,6 @@ public class HttpAPI {
      */
     public static final int NETWORK_ORDER_STATUS_UPDATE = 1001;
 
-    public static void requestIpay88Payment(Context context, Map<String, Object> parameters,
-                                            String url, AsyncHttpClient httpClient, final Handler handler) {
-        try {
-            StringEntity entity = HttpAssembling.getIpay88PaymentParam(
-                    (Double) parameters.get("amount"),
-                    (String) parameters.get("backendURL"),
-                    (Integer) parameters.get("barcodeNo"),
-                    (String) parameters.get("currency"),
-                    (String) parameters.get("merchantCode"),
-                    (Integer) parameters.get("paymentId"),
-                    (String) parameters.get("prodDesc"),
-                    (String) parameters.get("refNo"),
-                    (String) parameters.get("remark"),
-                    (String) parameters.get("signature"),
-                    (String) parameters.get("signatureType"),
-                    (String) parameters.get("terminalID"),
-                    (String) parameters.get("userContact"),
-                    (String) parameters.get("userEmail"),
-                    (String) parameters.get("userName"),
-                    (String) parameters.get("lang")
-            );
-            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
-                    new AsyncHttpResponseHandlerEx() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers,
-                                              byte[] responseBody) {
-                            super.onSuccess(statusCode, headers, responseBody);
-                            if (resultCode == ResultCode.SUCCESS) {
-                                HttpAnalysis.requestIpay88Payment(statusCode, headers,
-                                        responseBody);
-                                handler.sendMessage(handler
-                                        .obtainMessage(SyncData.HANDLER_LOGIN));
-                            } else {
-                                handler.sendMessage(handler
-                                        .obtainMessage(
-                                                SyncData.HANDLER_ERROR_INFO,
-                                                resultCode));
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers,
-                                              byte[] responseBody, Throwable error) {
-                            handler.sendMessage(handler.obtainMessage(
-                                    ResultCode.CONNECTION_FAILED, error));
-                            super.onFailure(statusCode, headers, responseBody,
-                                    error);
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void login(Context context, Map<String, Object> parameters,
                              String url, AsyncHttpClient httpClient, final Handler handler) {
         try {
