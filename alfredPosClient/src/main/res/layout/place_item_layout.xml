@@ -85,7 +85,7 @@
                 android:layout_marginLeft="20dp"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:text="Add a new place"/>
+                android:text="@string/add_new_place"/>
 
         </LinearLayout>
     </RelativeLayout>

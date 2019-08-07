@@ -37,7 +37,7 @@
             android:gravity="center_horizontal"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Payment in progress..."
+            android:text="@string/payment_in_progress"
             android:textColor="@color/black1"
             android:textSize="45sp" />
 
@@ -61,7 +61,7 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/style_dialog_btn1"
             android:gravity="center"
-            android:text="Position the QR code at the sdanner"
+            android:text="@strnig/position_qrcode_at_scanner"
             android:textColor="@color/white"
             android:textSize="42dp"
             android:visibility="visible" />
@@ -85,7 +85,7 @@
             android:layout_marginLeft="5dp"
             android:background="@drawable/main_btn_b"
             android:gravity="center"
-            android:text="Back"
+            android:text="@string/back"
             android:textColor="@color/white"
             android:textSize="20sp" />
     </LinearLayout>

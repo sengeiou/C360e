@@ -21,12 +21,12 @@
             <Button
                 android:id="@+id/dialogActivity_sure"
                 android:onClick="doClick"
-                android:text="确定" />
+                android:text="@string/ok" />
 
             <Button
                 android:id="@+id/dialogActivity_cancle"
                 android:onClick="doClick"
-                android:text="取消" />
+                android:text="@string/cancel" />
         </TableRow>
     </TableLayout>
 

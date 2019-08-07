@@ -74,6 +74,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ReportObjectFactory {
@@ -1646,10 +1647,10 @@ public class ReportObjectFactory {
         long nowTime = System.currentTimeMillis();
         for (long i = businessDate; i < nowTime; i = TimeUtil
                 .getCalendarNextPoint(i)) {
-            // Calendar hourCal = Calendar.getInstance();
+			// Calendar hourCal = Calendar.getInstance(Locale.US);
             // hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
             // hourCal.set(Calendar.HOUR_OF_DAY, i);
-            // Calendar netHourCal = Calendar.getInstance();
+			// Calendar netHourCal = Calendar.getInstance(Locale.US);
             // netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
             // netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
             Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
@@ -1759,10 +1760,10 @@ public class ReportObjectFactory {
 //		long nowTime = System.currentTimeMillis();
 //		for (long i = businessDate; i < nowTime; i = TimeUtil
 //				.getCalendarNextPoint(i)) {
-//			// Calendar hourCal = Calendar.getInstance();
+//			// Calendar hourCal = Calendar.getInstance(Locale.US);
 //			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// hourCal.set(Calendar.HOUR_OF_DAY, i);
-//			// Calendar netHourCal = Calendar.getInstance();
+//			// Calendar netHourCal = Calendar.getInstance(Locale.US);
 //			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
 //			Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
@@ -3320,10 +3321,10 @@ public class ReportObjectFactory {
         long nowTime = System.currentTimeMillis();
         for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
                 .getCalendarNextPoint(i)) {
-            // Calendar hourCal = Calendar.getInstance();
+			// Calendar hourCal = Calendar.getInstance(Locale.US);
             // hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
             // hourCal.set(Calendar.HOUR_OF_DAY, i);
-            // Calendar netHourCal = Calendar.getInstance();
+			// Calendar netHourCal = Calendar.getInstance(Locale.US);
             // netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
             // netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
             Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
@@ -3363,10 +3364,10 @@ public class ReportObjectFactory {
         reportPromotions = PromotionDataSQL.getOrderPromotionData(businessDate, sessionStatus, nowTime, ParamConst.ORDER_PROMOTION);
 //		for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
 //				.getCalendarNextPoint(i)) {
-//			// Calendar hourCal = Calendar.getInstance();
+//			// Calendar hourCal = Calendar.getInstance(Locale.US);
 //			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// hourCal.set(Calendar.HOUR_OF_DAY, i);
-//			// Calendar netHourCal = Calendar.getInstance();
+//			// Calendar netHourCal = Calendar.getInstance(Locale.US);
 //			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
 //				reportPromotions.add(reportHourly);
@@ -3391,10 +3392,10 @@ public class ReportObjectFactory {
         reportPromotions = PromotionDataSQL.getItemPromotionData(businessDate, sessionStatus, nowTime, ParamConst.ITEM_PROMOTION);
 //		for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
 //				.getCalendarNextPoint(i)) {
-//			// Calendar hourCal = Calendar.getInstance();
+//			// Calendar hourCal = Calendar.getInstance(Locale.US);
 //			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// hourCal.set(Calendar.HOUR_OF_DAY, i);
-//			// Calendar netHourCal = Calendar.getInstance();
+//			// Calendar netHourCal = Calendar.getInstance(Locale.US);
 //			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
 //				reportPromotions.add(reportHourly);
@@ -3737,7 +3738,7 @@ public class ReportObjectFactory {
     public Map<String, Object> loadDaySalesXZReport(long bizDateNow, SessionStatus sessionStatus) {
         long oldtime = bizDateNow;
 
-        Calendar c = Calendar.getInstance();
+		Calendar c = Calendar.getInstance(Locale.US);
         Date dt = new Date(bizDateNow);
         c.setTime(dt);
         c.add(Calendar.DATE, -29); // Adding 5 days

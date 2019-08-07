@@ -109,7 +109,7 @@ public class FileDialog extends ListActivity {
 	private void fill(File[] files) {
 		if(files == null)
 		{
-			Toast.makeText(this, "拒绝访问", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, this.getString(R.string.access_denied), Toast.LENGTH_SHORT).show();
 			this.browseTo(this.currentDirectory.getParentFile());
 			return ;
 		}

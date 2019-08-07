@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:gravity="center" 
-    android:layout_margin="10dp">
+	android:layout_width="100dp"
+	android:layout_height="100dp"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:gravity="center"
+	android:layout_margin="10dp">
     
 	<ImageView
 	    android:id="@+id/iv_all_sub_menu" 
@@ -16,7 +17,7 @@
 	    android:id="@+id/tv_sub_menu_item" 
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:text="qqqq"
+	    tools:text="qqqq"
 	    android:gravity="center"
 	    android:textColor="@color/text_color_selector"
 	    android:textSize="@dimen/text_size_s"/>

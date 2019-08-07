@@ -83,7 +83,7 @@ public class KpmDialogFactory {
             @Override
             public void run() {
                 final Dialog dialog = new Dialog(activity, com.alfredbase.R.style.base_dialog);
-                Window window =  dialog.getWindow();
+                Window window = dialog.getWindow();
                 if (dialog != null && window != null) {
                     WindowManager.LayoutParams attr = window.getAttributes();
                     if (attr != null) {
@@ -169,15 +169,15 @@ public class KpmDialogFactory {
 
     // 两个按钮带 input的 只给时间用
     public static void commonTwoBtnTimeInputDialog(final BaseActivity activity, final String title, final String content,
-                                                 final String leftText, final String rightText,
-                                                 final View.OnClickListener leftListener,
-                                                 final View.OnClickListener rghtListener) {
+                                                   final String leftText, final String rightText,
+                                                   final View.OnClickListener leftListener,
+                                                   final View.OnClickListener rghtListener) {
         activity.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
                 final Dialog dialog = new Dialog(activity, com.alfredbase.R.style.base_dialog);
-                Window window =  dialog.getWindow();
+                Window window = dialog.getWindow();
                 if (dialog != null && window != null) {
                     WindowManager.LayoutParams attr = window.getAttributes();
                     if (attr != null) {
@@ -274,15 +274,15 @@ public class KpmDialogFactory {
 
     // 两个按钮带 input的 只给ImageURL用
     public static void commonTwoBtnImageURLInputDialog(final BaseActivity activity, final String title, final String content,
-                                                 final String leftText, final String rightText,
-                                                 final View.OnClickListener leftListener,
-                                                 final View.OnClickListener rghtListener) {
+                                                       final String leftText, final String rightText,
+                                                       final View.OnClickListener leftListener,
+                                                       final View.OnClickListener rghtListener) {
         activity.runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
                 final Dialog dialog = new Dialog(activity, com.alfredbase.R.style.base_dialog);
-                Window window =  dialog.getWindow();
+                Window window = dialog.getWindow();
                 if (dialog != null && window != null) {
                     WindowManager.LayoutParams attr = window.getAttributes();
                     if (attr != null) {
@@ -367,7 +367,7 @@ public class KpmDialogFactory {
             @Override
             public void run() {
                 final Dialog dialog = new Dialog(activity, R.style.base_dialog);
-                Window window =  dialog.getWindow();
+                Window window = dialog.getWindow();
                 if (dialog != null && window != null) {
                     WindowManager.LayoutParams attr = window.getAttributes();
                     if (attr != null) {
@@ -414,13 +414,14 @@ public class KpmDialogFactory {
         });
 
     }
-// 扫码弹框
+
+    // 扫码弹框
     public static Dialog qcDialog(final BaseActivity activity,
                                   final String title, final String content, int drawableId, final Boolean isqc,
 
                                   final OnClickListener backListener, final boolean canBack) {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
-        Window window =  dialog.getWindow();
+        Window window = dialog.getWindow();
         if (dialog != null && window != null) {
             WindowManager.LayoutParams attr = window.getAttributes();
             if (attr != null) {
@@ -440,9 +441,9 @@ public class KpmDialogFactory {
         textTypeFace.setUbuntuMedium((TextView) view.findViewById(R.id.tv_content));
         textTypeFace.setUbuntuMedium(tv_backs);
         textTypeFace.setUbuntuMedium(tv_qc_de);
-        if(canBack){
+        if (canBack) {
             tv_backs.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             tv_backs.setVisibility(View.GONE);
         }
         img.setImageResource(drawableId);
@@ -484,7 +485,7 @@ public class KpmDialogFactory {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
 
 
-        Window window =  dialog.getWindow();
+        Window window = dialog.getWindow();
         if (dialog != null && window != null) {
             WindowManager.LayoutParams attr = window.getAttributes();
             if (attr != null) {
@@ -588,13 +589,13 @@ public class KpmDialogFactory {
         return dialog;
     }
 
-       //错误提示消息弹框（back按钮）
+    //错误提示消息弹框（back按钮）
     public static Dialog kpmTipsDialog(final BaseActivity activity,
                                        final String title, String content, int drawableId,
 
                                        final OnClickListener backListener, final boolean canBack) {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
-        Window window =  dialog.getWindow();
+        Window window = dialog.getWindow();
         if (dialog != null && window != null) {
             WindowManager.LayoutParams attr = window.getAttributes();
             if (attr != null) {
@@ -633,13 +634,14 @@ public class KpmDialogFactory {
         dialog.setContentView(view);
         return dialog;
     }
+
     //out of stock弹框（back按钮）
     public static Dialog kpmOutStockDialog(final BaseActivity activity,
-                                       final String title, String content, int drawableId,
+                                           final String title, String content, int drawableId,
 
-                                       final OnClickListener backListener, final boolean canBack) {
+                                           final OnClickListener backListener, final boolean canBack) {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
-        Window window =  dialog.getWindow();
+        Window window = dialog.getWindow();
         if (dialog != null && window != null) {
             WindowManager.LayoutParams attr = window.getAttributes();
             if (attr != null) {
@@ -685,7 +687,7 @@ public class KpmDialogFactory {
 
                                            final boolean canBack) {
         final Dialog dialog = new Dialog(activity, R.style.kpm_dialog);
-        Window window =  dialog.getWindow();
+        Window window = dialog.getWindow();
         if (dialog != null && window != null) {
             WindowManager.LayoutParams attr = window.getAttributes();
             if (attr != null) {
@@ -972,11 +974,11 @@ public class KpmDialogFactory {
             dialog.setContentView(view);
             TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
             StringBuffer title = new StringBuffer(activity.getString(R.string.has_new_version));
-            ((TextView) view.findViewById(R.id.tv_version)).setText("New Version:" + versionUpdate.getVersionName());
+            ((TextView) view.findViewById(R.id.tv_version)).setText(activity.getString(com.alfredbase.R.string.new_version) + " : " + versionUpdate.getVersionName());
             ((TextView) view.findViewById(R.id.tv_description)).setText(versionUpdate.getDescription());
             view.findViewById(R.id.btn_update_now).setOnClickListener(onClickListener);
             if (versionUpdate.getForceUpdate() == 1) {
-                title.append("\nPlease update now");
+                title.append("\n"+activity.getResources().getString(com.alfredbase.R.string.please_update_now));
                 view.findViewById(R.id.btn_update_later).setVisibility(View.GONE);
             } else {
                 view.findViewById(R.id.btn_update_later).setVisibility(View.VISIBLE);
@@ -1146,7 +1148,7 @@ public class KpmDialogFactory {
                 dialog.setContentView(view);
                 dialog.setOwnerActivity(activity);
                 TextView tv_msg_info = (TextView) view.findViewById(R.id.tv_msg_info);
-                tv_msg_info.setText(activity.getResources().getString(R.string.num) + tempAppOrder.getOrderCount().intValue() + "，" + activity.getResources().getString(R.string.total) + "$" + BH.getBD(tempAppOrder.getTotal()).toString() + "");
+                tv_msg_info.setText(activity.getResources().getString(R.string.num) + tempAppOrder.getOrderCount().intValue() + "，" + activity.getResources().getString(R.string.total) + " : $" + BH.getBD(tempAppOrder.getTotal()).toString() + "");
                 view.findViewById(R.id.tv_left).setVisibility(View.INVISIBLE);
                 view.findViewById(R.id.tv_left).setOnClickListener(
                         new OnClickListener() {

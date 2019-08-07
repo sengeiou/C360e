@@ -1,6 +1,7 @@
  package com.alfredbase.javabean;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.javabean.model.PrintOrderItem;
 
@@ -163,6 +164,7 @@ public class PrinterTitle implements Serializable{
 		return bill_NO;
 	}
 	public void setBill_NO(String bill_NO) {
+		Log.wtf("Test_bill", bill_NO);
 		this.bill_NO = bill_NO;
 	}
 	public String getTime() {

@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -505,7 +506,7 @@ public class RequestParams {
                 if (nestedKey instanceof String) {
                     Object nestedValue = map.get(nestedKey);
                     if (nestedValue != null) {
-                        params.addAll(getParamsList(key == null ? (String) nestedKey : String.format("%s[%s]", key, nestedKey),
+                        params.addAll(getParamsList(key == null ? (String) nestedKey : String.format(Locale.US,"%s[%s]", key, nestedKey),
                                 nestedValue));
                     }
                 }
@@ -514,13 +515,13 @@ public class RequestParams {
             List list = (List) value;
             int listSize = list.size();
             for (int nestedValueIndex = 0; nestedValueIndex < listSize; nestedValueIndex++) {
-                params.addAll(getParamsList(String.format("%s[%d]", key, nestedValueIndex), list.get(nestedValueIndex)));
+                params.addAll(getParamsList(String.format(Locale.US,"%s[%d]", key, nestedValueIndex), list.get(nestedValueIndex)));
             }
         } else if (value instanceof Object[]) {
             Object[] array = (Object[]) value;
             int arrayLength = array.length;
             for (int nestedValueIndex = 0; nestedValueIndex < arrayLength; nestedValueIndex++) {
-                params.addAll(getParamsList(String.format("%s[%d]", key, nestedValueIndex), array[nestedValueIndex]));
+                params.addAll(getParamsList(String.format(Locale.US,"%s[%d]", key, nestedValueIndex), array[nestedValueIndex]));
             }
         } else if (value instanceof Set) {
             Set set = (Set) value;

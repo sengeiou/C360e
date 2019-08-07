@@ -116,7 +116,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/tv_sub_total_num"
-                            android:text="@string/sub_total_bill"
+                            android:text="@string/subtotal"
                             android:textColor="@color/black"
                             android:textSize="@dimen/text_size_m_smail" />
 
@@ -141,7 +141,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/tv_discount_num"
-                            android:text="@string/discount_"
+                            android:text="@string/discount"
                             android:textColor="@color/black"
                             android:textSize="@dimen/text_size_m_smail" />
 
@@ -167,7 +167,7 @@
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/tv_taxes_num"
                             android:gravity="center"
-                            android:text="@string/taxes_"
+                            android:text="@string/taxes"
                             android:textColor="@color/black"
                             android:textSize="@dimen/text_size_m_smail" />
 
@@ -1055,7 +1055,7 @@
                                         android:layout_centerHorizontal="true"
                                         android:layout_marginTop="5dp"
                                         android:layout_marginBottom="5dp"
-                                        android:text="@string/remarks_"
+                                        android:text="@string/remarks"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m_smail" />
 
@@ -1067,7 +1067,7 @@
                                         android:layout_alignParentRight="true"
                                         android:background="@drawable/bill_box_bg"
                                         android:gravity="top"
-                                        android:hint="@string/leaue_comments"
+                                        android:hint="@string/leave_comments"
                                         android:inputType="textNoSuggestions"
                                         android:lines="4"
                                         android:paddingLeft="5dp"
@@ -1373,7 +1373,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_alignParentLeft="true"
                                         android:paddingLeft="5dp"
-                                        android:text="付款码"
+                                        android:text="@string/payment_code"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m_smail"
                                         android:visibility="gone" />
@@ -1385,7 +1385,7 @@
                                         android:layout_centerVertical="true"
                                         android:layout_marginLeft="10dp"
                                         android:background="@color/white"
-                                        android:hint="扫描付款码"
+                                        android:hint="@string/scan_payment_code"
                                         android:maxLength="9"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m_smail" />
@@ -1745,7 +1745,7 @@
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
                                                 android:layout_marginLeft="5dp"
-                                                android:text="Delivery"
+                                                android:text="@string/delivery"
                                                 android:textColor="@color/white"
                                                 android:textSize="@dimen/text_size_s" />
                                         </LinearLayout>

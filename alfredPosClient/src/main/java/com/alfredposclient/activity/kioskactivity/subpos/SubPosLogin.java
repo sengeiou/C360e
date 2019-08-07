@@ -173,7 +173,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 							dismissLoadingDialog();
 						}else {
 							dismissLoadingDialog();
-							loadingDialog.setTitle("update all data");
+							loadingDialog.setTitle(context.getString(R.string.update_all_data));
 							loadingDialog.show();
 							SubPosSyncCentre.getInstance().updateAllData(context, handler);
 						}
@@ -193,10 +193,10 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 					break;
 				case ResultCode.SESSION_HAS_CHANGE:
 					dismissLoadingDialog();
-					DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), "Session has changed !", new View.OnClickListener() {
+					DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.session_change), new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							loadingDialog.setTitle("update all data");
+							loadingDialog.setTitle(context.getString(R.string.update_all_data));
 							loadingDialog.show();
 							SubPosSyncCentre.getInstance().updateAllData(context, handler);
 						}
@@ -242,7 +242,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 //		if(OrderSQL.getUnfinishedOrderAtTable(tableInfo.getPosId(), businessDate) != null) {
 //			UIHelp.startMainPageKiosk(context);
 //		}else{
-//			loadingDialog.setTitle("loading");
+//			loadingDialog.setTitle(context.getString(R.string.loading));
 //			loadingDialog.show();
 //			Map<String, Object> parameters = new HashMap<>();
 //			SubPosSyncCentre.getInstance().getOrder(context, parameters, handler);
@@ -288,7 +288,7 @@ public class SubPosLogin extends BaseActivity implements KeyBoardClickListener {
 				if(App.instance.getSessionStatus() != null){
 					parameters.put("sessionStatusTime", App.instance.getSessionStatus().getTime());
 				}
-				loadingDialog.setTitle("Loading");
+				loadingDialog.setTitle(context.getString(R.string.loading));
 				loadingDialog.show();
 				SubPosSyncCentre.getInstance().login(context, parameters, handler);
 			}

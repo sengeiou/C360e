@@ -33,7 +33,7 @@ public class TableSummaryActivity extends BaseActivity {
         super.initView();
         setContentView(R.layout.activity_table_summary);
         loadingDialog = new LoadingDialog(context);
-        loadingDialog.setTitle("Loading");
+        loadingDialog.setTitle(context.getString(R.string.loading));
         lv_table_summary = (ListView) findViewById(R.id.lv_table_summary);
         findViewById(R.id.btn_back).setOnClickListener(this);
         tv_total_amount = (TextView) findViewById(R.id.tv_total_amount);
@@ -71,7 +71,7 @@ public class TableSummaryActivity extends BaseActivity {
         }
         TableSummaryAdapter tableSummaryAdapter = new TableSummaryAdapter(tableSummaries);
         lv_table_summary.setAdapter(tableSummaryAdapter);
-        tv_total_amount.setText("Amount("+App.instance.getLocalRestaurantConfig().getCurrencySymbol()+total+")");
+        tv_total_amount.setText(getString(R.string.amount)+" ("+App.instance.getLocalRestaurantConfig().getCurrencySymbol()+total+")");
     }
 
 

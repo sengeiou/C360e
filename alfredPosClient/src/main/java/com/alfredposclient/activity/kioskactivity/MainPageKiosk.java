@@ -141,6 +141,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import rx.Observable;
@@ -311,9 +312,9 @@ public class MainPageKiosk extends BaseActivity {
         ScreenSizeUtil.initScreenScale(context);
         verifyDialog = new VerifyDialog(context, handler);
         loadingDialog = new LoadingDialog(context);
-        loadingDialog.setTitle("Loading");
+        loadingDialog.setTitle(context.getString(R.string.loading));
         printerLoadingDialog = new PrinterLoadingDialog(context);
-        printerLoadingDialog.setTitle("Sending to Kitchen");
+        printerLoadingDialog.setTitle(context.getString(R.string.sending_to_kitchen));
         selectOrderSplitDialog = new SelectOrderSplitDialog(context, handler);
 
         topMenuView = (TopMenuViewKiosk) findViewById(R.id.topMenuView);
@@ -397,7 +398,7 @@ public class MainPageKiosk extends BaseActivity {
         long nowTime = System.currentTimeMillis();
         int count = OrderSQL.getKioskHoldCount(App.instance.getBusinessDate(), App.instance.getSessionStatus(), nowTime);
         App.instance.setKioskHoldNum(count);
-        App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()),2);
+        App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
         XMPP.getInstance().setCanCheckAppOrder(true);
 
 
@@ -543,8 +544,8 @@ public class MainPageKiosk extends BaseActivity {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case REFRESH_STOCK_NUM:
-                    if(mainPageMenuView != null){
-                        mainPageMenuView.setParam(currentOrder,handler);
+                    if (mainPageMenuView != null) {
+                        mainPageMenuView.setParam(currentOrder, handler);
                     }
                     break;
 //			case REFRESH_TABLES_STATUS:
@@ -617,20 +618,20 @@ public class MainPageKiosk extends BaseActivity {
                 // Open settlement window
                 case VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW:
 
-                  if (IntegerUtils.isEmptyOrZero(currentOrder.getAppOrderId())) {
-                      currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
-                      OrderSQL.update(currentOrder);
-                      showCloseBillWindow();
-                  } else {
-                      TempOrder tempOrder = TempOrderSQL.getTempOrderByAppOrderId(currentOrder.getAppOrderId());
-                      if (tempOrder != null && tempOrder.getPaied() == ParamConst.TEMPORDER_PAIED) {
-                          TempOrderISPaied();
-                      } else {
-                          currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
-                          OrderSQL.update(currentOrder);
-                          showCloseBillWindow();
-                      }
-                  }
+                    if (IntegerUtils.isEmptyOrZero(currentOrder.getAppOrderId())) {
+                        currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
+                        OrderSQL.update(currentOrder);
+                        showCloseBillWindow();
+                    } else {
+                        TempOrder tempOrder = TempOrderSQL.getTempOrderByAppOrderId(currentOrder.getAppOrderId());
+                        if (tempOrder != null && tempOrder.getPaied() == ParamConst.TEMPORDER_PAIED) {
+                            TempOrderISPaied();
+                        } else {
+                            currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
+                            OrderSQL.update(currentOrder);
+                            showCloseBillWindow();
+                        }
+                    }
 
 
                     break;
@@ -809,15 +810,15 @@ public class MainPageKiosk extends BaseActivity {
 //                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
 //
 //                            } else {
-                                if (!App.instance.isRevenueKiosk()) {
+                            if (!App.instance.isRevenueKiosk()) {
+                                App.instance.remoteBillPrint(printer, title, paidOrder,
+                                        orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                            } else {
+                                if (printer.getIsLablePrinter() == 0) {
                                     App.instance.remoteBillPrint(printer, title, paidOrder,
                                             orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                                } else {
-                                    if (printer.getIsLablePrinter() == 0) {
-                                        App.instance.remoteBillPrint(printer, title, paidOrder,
-                                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
-                                    }
                                 }
+                            }
 //                            }
                         }
 //
@@ -831,7 +832,7 @@ public class MainPageKiosk extends BaseActivity {
                             App.instance.kickOutCashDrawer(printer);
                         }
                     }
-                    if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+                    if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
 
                         //Sent to Kitchen after close bill in kiosk mode
                         String kotCommitStatus = ParamConst.JOB_NEW_KOT;
@@ -920,7 +921,7 @@ public class MainPageKiosk extends BaseActivity {
 
                         @Override
                         public void run() {
-                            if(App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
+                            if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
                                 CloudSyncJobManager cloudSync = App.instance.getSyncJob();
                                 if (cloudSync != null) {
 
@@ -928,9 +929,9 @@ public class MainPageKiosk extends BaseActivity {
                                             App.instance.getRevenueCenter().getId(),
                                             App.instance.getBusinessDate(), 1);
                                 }
-                            }else{
+                            } else {
                                 SubPosCloudSyncJobManager subPosCloudSyncJobManager = App.instance.getSubPosSyncJob();
-                                if(subPosCloudSyncJobManager != null){
+                                if (subPosCloudSyncJobManager != null) {
                                     subPosCloudSyncJobManager.syncOrderInfo(paidOrder.getId(),
                                             App.instance.getRevenueCenter().getId(),
                                             App.instance.getBusinessDate());
@@ -998,7 +999,7 @@ public class MainPageKiosk extends BaseActivity {
                     temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
                     temporaryOrder.setTotal(paidOrderSplit.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
-                    if(App.instance.getPosType() == ParamConst.POS_TYPE_SUB && App.instance.getSubPosBean() != null) {
+                    if (App.instance.getPosType() == ParamConst.POS_TYPE_SUB && App.instance.getSubPosBean() != null) {
                         temporaryOrder.setNumTag(App.instance.getSubPosBean().getNumTag());
                     }
 
@@ -1017,8 +1018,8 @@ public class MainPageKiosk extends BaseActivity {
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
 //                        if (App.instance.getSystemSettings().isPrintBill()) {
-                            App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                        App.instance.remoteBillPrint(printer, title, temporaryOrder,
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 //                        }
                     }
 //
@@ -1052,7 +1053,7 @@ public class MainPageKiosk extends BaseActivity {
 ////					App.instance.remoteBillPrint(printer, title, temporaryOrder,
 ////							orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
 //				}
-                    if(App.instance.getPosType() == 0) {
+                    if (App.instance.getPosType() == 0) {
                         //Sent to Kitchen after close bill in kiosk mode
                         String kotCommitStatus = ParamConst.JOB_NEW_KOT;
                         List<OrderDetail> placedOrderDetails = OrderDetailSQL.getOrderDetailsByOrderAndOrderSplit(paidOrderSplit);
@@ -1091,7 +1092,7 @@ public class MainPageKiosk extends BaseActivity {
                     topMenuView.setGetBillNum(App.instance
                             .getGetTingBillNotifications().size());
                     final Order checkOrder = OrderSQL.getOrder(paidOrderSplit.getOrderId());
-                    if(checkOrder.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+                    if (checkOrder.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
                         /**
                          * 给后台发送log 信息
                          */
@@ -1118,7 +1119,7 @@ public class MainPageKiosk extends BaseActivity {
                                 }
                             }
                         }).start();
-                    }else{
+                    } else {
                         handler.sendEmptyMessage(VIEW_EVENT_SET_DATA);
                     }
                 }
@@ -1193,7 +1194,7 @@ public class MainPageKiosk extends BaseActivity {
                                     }
                                 }
                             }).start();
-                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
                         } else {
                             handler.sendMessage(handler
                                     .obtainMessage(MainPageKiosk.VIEW_EVENT_DISMISS_TABLES));
@@ -1215,7 +1216,7 @@ public class MainPageKiosk extends BaseActivity {
                                 .intValue()) {
                             currentTable = newTable;
                             if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
                             } else {
                                 handler.sendMessage(handler
                                         .obtainMessage(MainPageKiosk.VIEW_EVENT_DISMISS_TABLES));
@@ -1224,10 +1225,7 @@ public class MainPageKiosk extends BaseActivity {
                             DialogFactory.commonTwoBtnDialog(
                                     context,
                                     context.getResources().getString(R.string.table_transfer),
-                                    context.getResources().getString(R.string.transfer_) +
-                                            oldTable.getName() +
-                                            context.getResources().getString(R.string.to) +
-                                            newTable.getName() + "?",
+                                    context.getResources().getString(R.string.ask_transfer_table, oldTable.getName(), newTable.getName()),
                                     context.getResources().getString(R.string.no),
                                     context.getResources().getString(R.string.yes), null, new OnClickListener() {
                                         @Override
@@ -1587,7 +1585,7 @@ public class MainPageKiosk extends BaseActivity {
                         //	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
 
                     } else {
-                        UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+                        UIHelp.showToast(context, String.format(Locale.US,context.getResources().getString(R.string.no_set_item_print), itemName));
                     }
 
                 }
@@ -1637,7 +1635,7 @@ public class MainPageKiosk extends BaseActivity {
                     break;
                 case VIEW_EVENT_TANSFER_PAX:
                     String pax = (String) msg.obj;
-                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_pax));
+                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_of_pax));
                     break;
                 case VIEW_EVENT_VOID_OR_FREE:
                     verifyDialog.show(HANDLER_MSG_OBJECT_VOID_OR_FREE,
@@ -1668,18 +1666,18 @@ public class MainPageKiosk extends BaseActivity {
                     if (orderDetail.getIsTakeAway() != ParamConst.TAKE_AWAY) {
                         orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
                         if (orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " " + context.getResources().getString(R.string.app_take_away));
+                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " " + context.getResources().getString(R.string.takeaway));
                         } else {
-                            orderDetail.setSpecialInstractions(context.getResources().getString(R.string.app_take_away));
+                            orderDetail.setSpecialInstractions(context.getResources().getString(R.string.takeaway));
                         }
                     } else {
                         orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                         if (orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.take_away), "").replace(context.getResources().getString(R.string.app_take_away), ""));
+                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.takeaway), "").replace(context.getResources().getString(R.string.takeaway), ""));
                         }
                     }
                     OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
-                  //  OrderDetailSQL.updateOrderDetail(orderDetail);
+                    //  OrderDetailSQL.updateOrderDetail(orderDetail);
                     OrderDetailSQL.updateOrderDetailAndOrder(orderDetail);
                     if (orderDetail != null && orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                         handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
@@ -1827,7 +1825,7 @@ public class MainPageKiosk extends BaseActivity {
                 if (count == 0) {
                     selectOrderSplitDialog.show(orderSplits, currentOrder);
                 } else {
-                    UIHelp.showToast(context, context.getResources().getString(R.string.assign_items));
+                    UIHelp.showToast(context, context.getResources().getString(R.string.assign_items_to_group));
                 }
             }
         } else {
@@ -2060,7 +2058,7 @@ public class MainPageKiosk extends BaseActivity {
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
             case KOT_PRINT_FAILED:
-               handler.sendMessage(handler.obtainMessage(action));
+                handler.sendMessage(handler.obtainMessage(action));
                 break;
             case KOT_PRINT_SUCCEED:
                 handler.sendMessage(handler.obtainMessage(action, obj));
@@ -2160,7 +2158,7 @@ public class MainPageKiosk extends BaseActivity {
             if (appOrderId == 0)
                 return;
             if (orderDetails != null && orderDetails.size() != 0) {
-                DialogFactory.showOneButtonCompelDialog(context, "警告", "请先关闭或删除当前订单", null);
+                DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.close_the_last_order), null);
             } else {
                 loadingDialog.show();
                 initAppOrder(currentTable);
@@ -2199,17 +2197,17 @@ public class MainPageKiosk extends BaseActivity {
         }
     }
 
-    public void tryToCloseSession(){
+    public void tryToCloseSession() {
         boolean canClose;
         List<OrderDetail> orderDetailsUnIncludeVoid = OrderDetailSQL
                 .getOrderDetails(currentOrder.getId());
-        if (!orderDetailsUnIncludeVoid.isEmpty()){
+        if (!orderDetailsUnIncludeVoid.isEmpty()) {
             canClose = false;
         } else {
             canClose = true;
         }
-        if(canClose) {
-            DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+        if (canClose) {
+            DialogFactory.commonTwoBtnInputDialog(context, false, context.getString(R.string.start_drawer), context.getString(R.string.enter_amount_of_cash_in_drawer), context.getString(R.string.cancel), context.getString(R.string.done).toUpperCase(),
                     new OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -2224,7 +2222,7 @@ public class MainPageKiosk extends BaseActivity {
                             sendXReportToMainPos(actual);
                         }
                     });
-        }else{
+        } else {
             DialogFactory.showOneButtonCompelDialog(context, context.getResources().getString(R.string.warning),
                     context.getResources().getString(R.string.bill_not_closed), null);
         }
@@ -2232,19 +2230,19 @@ public class MainPageKiosk extends BaseActivity {
 
 
     // 只在副Pos中调用
-    private void sendXReportToMainPos(final String actualAmount){
-        printerLoadingDialog.setTitle("Printing X Report");
+    private void sendXReportToMainPos(final String actualAmount) {
+        printerLoadingDialog.setTitle(getString(R.string.printing_x_report));
         printerLoadingDialog.show();
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
-                if(cashierPrinter == null){
+                if (cashierPrinter == null) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                            if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
                                 printerLoadingDialog.dismiss();
                             }
                             UIHelp.showToast(
@@ -2267,13 +2265,13 @@ public class MainPageKiosk extends BaseActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                                    if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
                                         printerLoadingDialog.dismiss();
                                     }
                                     dismissLoadingDialog();
                                     Store.remove(context, Store.SESSION_STATUS);
                                     App.instance.setSessionStatus(null);
-                                    if(orderDetails.isEmpty()){
+                                    if (orderDetails.isEmpty()) {
                                         OrderSQL.deleteOrder(currentOrder);
                                     }
                                     MainPageKiosk.this.finish();
@@ -2283,7 +2281,7 @@ public class MainPageKiosk extends BaseActivity {
 
                         @Override
                         public void onError() {
-                            if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                            if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
                                 printerLoadingDialog.dismiss();
                             }
                         }
@@ -2300,7 +2298,7 @@ public class MainPageKiosk extends BaseActivity {
                 PrinterTitle title = ObjectFactory.getInstance()
                         .getPrinterTitleForReport(
                                 App.instance.getRevenueCenter().getId(),
-                                "X"+reportDaySales.getReportNoStr(),
+                                "X" + reportDaySales.getReportNoStr(),
                                 App.instance.getUser().getFirstName()
                                         + App.instance.getUser().getLastName(), null, bizDate,App.instance.getSystemSettings().getTrainType());
 
@@ -2342,10 +2340,10 @@ public class MainPageKiosk extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                        if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
                             printerLoadingDialog.dismiss();
                         }
-                        loadingDialog.setTitle("send data to main pos");
+                        loadingDialog.setTitle(getString(R.string.send_to_pos));
                         loadingDialog.show();
                     }
                 });
@@ -2376,7 +2374,7 @@ public class MainPageKiosk extends BaseActivity {
                                     dismissLoadingDialog();
                                     Store.remove(context, Store.SESSION_STATUS);
                                     App.instance.setSessionStatus(null);
-                                    if(orderDetails.isEmpty()){
+                                    if (orderDetails.isEmpty()) {
                                         OrderSQL.deleteOrder(currentOrder);
                                     }
                                     MainPageKiosk.this.finish();
@@ -2386,7 +2384,7 @@ public class MainPageKiosk extends BaseActivity {
 
                         @Override
                         public void onError() {
-                            if(printerLoadingDialog != null && printerLoadingDialog.isShowing()){
+                            if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
                                 printerLoadingDialog.dismiss();
                             }
                         }
@@ -2405,8 +2403,7 @@ public class MainPageKiosk extends BaseActivity {
 
      private StringBuffer inPutBarCode = new StringBuffer("");
 
-     @Override
-     public boolean dispatchKeyEvent(KeyEvent event) {
+     @Override public boolean dispatchKeyEvent(KeyEvent event) {
      boolean hasInputDevice = false;
      int[] devicesIds = InputDevice.getDeviceIds();
      if(devicesIds != null && devicesIds.length > 0){

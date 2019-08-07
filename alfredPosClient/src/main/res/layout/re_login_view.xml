@@ -121,5 +121,5 @@
         android:layout_alignLeft="@id/view_numerickeyboard"
         android:layout_alignRight="@id/view_numerickeyboard"
         android:layout_below="@+id/view_numerickeyboard"
-        android:text="Logout"/>
+        android:text="@string/logout"/>
 </RelativeLayout>

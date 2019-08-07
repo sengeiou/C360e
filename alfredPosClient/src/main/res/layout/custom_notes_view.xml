@@ -96,7 +96,7 @@
                         android:layout_centerInParent="true"
                         android:background="@null"
                         android:gravity="center_horizontal"
-                        android:hint="请输入人数"
+                        android:hint="@string/input_table_num"
                         android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLength="3"

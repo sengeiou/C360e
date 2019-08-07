@@ -38,7 +38,6 @@ import com.alfred.remote.printservice.IAlfredRemotePrintService;
 import com.alfred.remote.printservice.RemotePrintServiceCallback;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
-import com.alfredbase.BuildConfig;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.global.BugseeHelper;
@@ -407,7 +406,7 @@ public class App extends BaseApplication {
                     hasSecondScreen = false;
                     LogUtil.d(TAG, "副屏连接失败");
                     if (isOpenLog)
-                        UIHelp.showToast(getTopActivity(), "副屏连接失败");
+                        UIHelp.showToast(getTopActivity(), getTopActivity().getString(R.string.secondary_screen_connection_failed));
                 }
 
                 @Override
@@ -417,7 +416,7 @@ public class App extends BaseApplication {
                     LogUtil.d(TAG, "副屏连接成功,副屏状态:" + state);
                     if (getTopActivity() != null) {
                         if (isOpenLog)
-                            UIHelp.showToast(getTopActivity(), "副屏连接成功,副屏状态:" + state);
+                            UIHelp.showToast(getTopActivity(), getString(R.string.secondary_screen_connection_success_with_status) + state);
                     }
                 }
             });
@@ -883,10 +882,10 @@ public class App extends BaseApplication {
                 }
 
                 OrderModel orderModel = new OrderModel();
-                orderModel.setRestaurantName("Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName());
-                orderModel.setSubTotal(App.instance.getResources().getString(R.string.sub_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
+                orderModel.setRestaurantName(getString(R.string.welcome_to) + " " + CoreData.getInstance().getRestaurant().getRestaurantName());
+                orderModel.setSubTotal(App.instance.getResources().getString(R.string.subtotal) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
                 orderModel.setDiscount(App.instance.getResources().getString(R.string.discount) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString());
-                orderModel.setTaxes(App.instance.getResources().getString(R.string.taxes) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString());
+                orderModel.setTaxes(App.instance.getResources().getString(R.string.taxes) + " : " + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString());
                 orderModel.setGrandTotal(App.instance.getResources().getString(R.string.grand_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString());
                 orderModel.setGoodsModel(goodsModelTitle);
                 orderModel.setGoodsModelList(goodsModels);
@@ -906,7 +905,7 @@ public class App extends BaseApplication {
         } else {
             if (App.instance.isHasSecondScreen() && App.instance.getConnState() == IConnectionCallback.ConnState.VICE_APP_CONN) {
                 if (isDebug)
-                    UIHelp.showToast(App.getTopActivity(), "准备发送数据:" + App.instance.getConnState());
+                    UIHelp.showToast(App.getTopActivity(), getString(R.string.prepare_to_send_data) + App.instance.getConnState());
                 showWelcomeToSecondScreen();
             } else {
                 sendImageToSecondScreenByMoonearly();
@@ -1067,19 +1066,19 @@ public class App extends BaseApplication {
             @Override
             public void onSendSuccess(long taskId) {
                 if (isOpenLog)
-                    UIHelp.showToast(App.getTopActivity(), "发送数据:成功");
+                    UIHelp.showToast(App.getTopActivity(), getString(R.string.send_data_success));
             }
 
             @Override
             public void onSendFail(int errorId, String errorInfo) {
                 if (isOpenLog)
-                    UIHelp.showToast(App.getTopActivity(), "发送数据:失败,\n失败信息" + errorInfo);
+                    UIHelp.showToast(App.getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
             }
 
             @Override
             public void onSendProcess(long totle, long sended) {
                 if (isOpenLog)
-                    UIHelp.showToast(App.getTopActivity(), "发送数据:中" + jsonStr);
+                    UIHelp.showToast(App.getTopActivity(), getString(R.string.send_data_process) + jsonStr);
             }
         });
         App.instance.getmDSKernel().sendData(dsPacket);
@@ -1095,7 +1094,7 @@ public class App extends BaseApplication {
      */
     private String getSendData(Order order, List<OrderDetail> orderDetails, int type) {
 
-        String title = "Welcome to " + CoreData.getInstance().getRestaurant().getRestaurantName();
+        String title = getString(R.string.welcome_to) + " " + CoreData.getInstance().getRestaurant().getRestaurantName();
         SecondScreenBean secondScreenDataHead = new SecondScreenBean();
         List<SecondScreenBean> secondScreenBeans = new ArrayList<SecondScreenBean>();
         for (int i = 0; i < orderDetails.size(); i++) {
@@ -1109,7 +1108,7 @@ public class App extends BaseApplication {
                             getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getRealPrice()).toString()));
         }
         List<SecondScreenTotal> secondScreenTotals = new ArrayList<SecondScreenTotal>();
-        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.sub_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString()));
+        secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.subtotal), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString()));
         secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.discount), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString()));
         secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.taxes), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString()));
         secondScreenTotals.add(new SecondScreenTotal(App.instance.getResources().getString(R.string.grand_total), getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString()));
@@ -1141,7 +1140,7 @@ public class App extends BaseApplication {
                 @Override
                 public void onSendFail(int errorId, String errorInfo) {
                     if (isOpenLog) {
-                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                     }
                 }
 
@@ -1170,14 +1169,14 @@ public class App extends BaseApplication {
                 @Override
                 public void onSendFaile(int errorId, String errorInfo) {
                     if (isOpenLog) {
-                        UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                        UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                     }
                 }
 
                 @Override
                 public void onSendFileFaile(String path, int errorId, String errorInfo) {
                     if (isOpenLog) {
-                        UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                        UIHelp.showShortToast(getTopActivity(), path + getString(R.string.send_data_failed) + errorInfo);
                     }
                 }
 
@@ -1210,7 +1209,7 @@ public class App extends BaseApplication {
                         @Override
                         public void onSendFail(int errorId, String errorInfo) {
                             if (isOpenLog) {
-                                UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                                UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                             }
                         }
 
@@ -1248,7 +1247,7 @@ public class App extends BaseApplication {
                     @Override
                     public void onSendFail(int errorId, String errorInfo) {
                         if (isOpenLog) {
-                            UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                            UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                         }
                     }
 
@@ -1271,14 +1270,14 @@ public class App extends BaseApplication {
                     @Override
                     public void onSendFaile(int errorId, String errorInfo) {
                         if (isOpenLog) {
-                            UIHelp.showShortToast(getTopActivity(), "发送数据失败：" + errorInfo);
+                            UIHelp.showShortToast(getTopActivity(), getString(R.string.send_data_failed) + errorInfo);
                         }
                     }
 
                     @Override
                     public void onSendFileFaile(String path, int errorId, String errorInfo) {
                         if (isOpenLog) {
-                            UIHelp.showShortToast(getTopActivity(), path + "发送失败：" + errorInfo);
+                            UIHelp.showShortToast(getTopActivity(), path +getString(R.string.send_data_failed) + errorInfo);
                         }
                     }
 
@@ -2410,6 +2409,8 @@ public class App extends BaseApplication {
             mRemoteService.deleteOldPrinterMsg(businessDate + "");
         } catch (RemoteException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -2507,6 +2508,8 @@ public class App extends BaseApplication {
                     }
                     Log.d("discoverPrinter", "1860");
                 } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
             }
@@ -3414,7 +3417,6 @@ public class App extends BaseApplication {
                 if (TextUtils.isEmpty(appOrder.getAddress())) {
                     userinfo = "";
                 } else {
-                    // appOrderId="Online App No.:"+appOrder.getId()+"\r\n";
 
                     if (TextUtils.isEmpty(appOrder.getContact())) {
                         name = "";
@@ -3694,4 +3696,6 @@ public class App extends BaseApplication {
         }
     }
 
+
+    public static final int HANDLER_SET_LANGUAGE = 100;
 }

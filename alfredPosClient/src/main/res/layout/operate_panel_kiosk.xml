@@ -13,19 +13,19 @@
         android:layout_marginTop="10dp" >
 
         <TextView
-            android:id="@+id/tv_pax_title"
+            android:id="@+id/tv_pax"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="15dp"
             android:layout_marginTop="10dp"
-            android:layout_toLeftOf="@+id/tv_pax"
+            android:layout_toLeftOf="@+id/tv_pax_title"
             android:text="@string/pax"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_big" 
             android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/tv_pax"
+            android:id="@+id/tv_pax_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -116,7 +116,7 @@
             android:layout_height="@dimen/dp60"
             android:background="@drawable/box_bill_selector"
             android:gravity="center"
-            android:text="@string/print_bill"
+            android:text="@string/print"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_small"
             android:visibility="gone"/>
@@ -140,7 +140,7 @@
             android:background="@drawable/box_bill_selector"
             android:layout_marginLeft="5dp"
             android:gravity="center"
-            android:text="@string/colse_bill"
+            android:text="@string/close"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_small" 
             android:visibility="gone"/>
@@ -153,7 +153,7 @@
             android:layout_height="@dimen/dp60"
             android:background="@drawable/box_bill_selector"
             android:gravity="center"
-            android:text="@string/delete_order"
+            android:text="@string/delete"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_small" />
 
@@ -165,7 +165,7 @@
             android:layout_height="@dimen/dp60"
             android:background="@drawable/box_bill_selector"
             android:gravity="center"
-            android:text="@string/print_bill"
+            android:text="@string/print"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_small" />
     </LinearLayout>
@@ -259,7 +259,7 @@
                 android:layout_marginRight="5dp"
                 android:background="@drawable/box_bill_selector"
                 android:gravity="center"
-                android:text="@string/take_away"
+                android:text="@string/takeaway"
                 android:textColor="@color/text_color_selector"
                 android:textSize="@dimen/text_size_s" />
 
@@ -311,6 +311,7 @@
             android:background="@drawable/box_bill_selector"
             android:gravity="center"
             android:text="@string/open_drawer"
+            android:textAllCaps="true"
             android:textColor="@color/text_color_selector"
             android:visibility="gone"
             android:textSize="@dimen/text_size_small" />

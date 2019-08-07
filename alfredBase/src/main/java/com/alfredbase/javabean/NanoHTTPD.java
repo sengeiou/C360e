@@ -172,7 +172,7 @@ public abstract class NanoHTTPD {
             public void run() {
                 do {
                     try {
-                        System.out.println("准备接受请求");
+                        System.out.println("Ready to accept the request");
                         final Socket finalAccept = myServerSocket.accept();
                         registerConnection(finalAccept);
                         finalAccept.setSoTimeout(SOCKET_READ_TIMEOUT);
@@ -692,11 +692,11 @@ public abstract class NanoHTTPD {
             byte[] buff = new byte[BUFFER_SIZE];
             int read;
             while ((read = data.read(buff)) > 0) {
-                outputStream.write(String.format("%x\r\n", read).getBytes());
+                outputStream.write(String.format(Locale.US,"%x\r\n", read).getBytes());
                 outputStream.write(buff, 0, read);
                 outputStream.write(CRLF);
             }
-            outputStream.write(String.format("0\r\n\r\n").getBytes());
+            outputStream.write(String.format(Locale.US,"0\r\n\r\n").getBytes());
         }
 
         private void sendAsFixedLength(OutputStream outputStream, int pending) throws IOException {
@@ -1349,11 +1349,11 @@ public abstract class NanoHTTPD {
 
         public String getHTTPHeader() {
             String fmt = "%s=%s; expires=%s";
-            return String.format(fmt, n, v, e);
+            return String.format(Locale.US,fmt, n, v, e);
         }
 
         public static String getHTTPTime(int days) {
-            Calendar calendar = Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance(Locale.US);
             SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             calendar.add(Calendar.DAY_OF_MONTH, days);

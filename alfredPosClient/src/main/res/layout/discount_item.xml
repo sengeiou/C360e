@@ -12,7 +12,7 @@
         android:textColor="@color/black"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:text="item name"
+        android:text="@string/item_name"
         android:gravity="center"/>
 
     <CheckBox

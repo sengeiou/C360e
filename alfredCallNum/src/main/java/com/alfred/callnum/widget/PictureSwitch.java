@@ -20,6 +20,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PictureSwitch extends ImageSwitcher {
 	static Context mContext;
@@ -218,7 +219,7 @@ public class PictureSwitch extends ImageSwitcher {
 		BitmapFactory.decodeFile(filepath, newOpts);// 此时返回bm为空
 
 		if (mbLossMem && (newOpts.outWidth > 4000 || newOpts.outHeight > 4000)) {
-			LogUtil.d("LXX",String.format("%s,w=%d,h=%d,too big!", filepath, newOpts.outWidth, newOpts.outHeight));
+			LogUtil.d("LXX",String.format(Locale.US,"%s,w=%d,h=%d,too big!", filepath, newOpts.outWidth, newOpts.outHeight));
 			return false;
 		}
 

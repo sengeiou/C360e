@@ -1,6 +1,5 @@
 package com.alfredbase;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -19,8 +18,10 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
 import com.floatwindow.float_lib.FloatActionController;
@@ -44,6 +45,9 @@ public class BaseApplication extends Application {
     public static BaseApplication instance;
     public static List<BaseActivity> activitys;
     public static final int DATABASE_VERSION = 31;
+    public static final int DATABASE_VERSION = 30;
+    public static final int HANDLER_REFRESH_LANGUAGE = 772;
+
     /**
      * 注意
      * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
@@ -52,7 +56,7 @@ public class BaseApplication extends Application {
      * 当 isDebug == true， isOpenLog == true 为本地的服务器 (Local server)
      */
 
-    public static boolean isDebug = false ;    //	Debug开关 release的时候设置为false
+    public static boolean isDebug = false;    //	Debug开关 release的时候设置为false
     public static boolean isOpenLog = true;    //	release 时设置为false
     public static boolean isCartenzLog = false;
 
@@ -116,8 +120,14 @@ public class BaseApplication extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
+        super.attachBaseContext(LanguageManager.setLocale(base));
         MultiDex.install(this);
+    }
+
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LanguageManager.setLocale(this);
     }
 
     @Override
@@ -524,7 +534,7 @@ public class BaseApplication extends Application {
     }
 
     public void setTime(int time) {
-        if (time >= 30 * 1000  ) {
+        if (time >= 30 * 1000) {
             this.time = time;
         }
     }

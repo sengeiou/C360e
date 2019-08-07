@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,7 @@ public class StringUtil {
             ret = new StringBuilder(txt);
             if (len > length) {
                 int pad = len - length;
-                String padchars = String.format("%1$" + pad + "s", "");
+                String padchars = String.format(Locale.US,"%1$" + pad + "s", "");
                 ret.append(padchars);
             }
             return (ret.toString());
@@ -38,7 +39,7 @@ public class StringUtil {
             ret = new StringBuilder(txt);
             if (len > length) {
                 int pad = len - length;
-                String padchars = String.format("%1$" + pad + "s", "");
+                String padchars = String.format(Locale.US,"%1$" + pad + "s", "");
                 ret.insert(0, padchars);
             }
             return (ret.toString());
@@ -54,7 +55,7 @@ public class StringUtil {
         try {
             length = txt.getBytes("GBK").length;
             ret = new StringBuilder(txt);
-            String padchars = String.format("%1$" + len + "s", "");
+            String padchars = String.format(Locale.US,"%1$" + len + "s", "");
             ret.insert(0, padchars);
             ret.append(padchars);
             float mid = (length + len) / 2;
@@ -80,7 +81,7 @@ public class StringUtil {
             if (len > length) {
                 ret = new StringBuilder(txt);
                 int padlen = (len - length) / 2;
-                String padchars = String.format("%1$" + padlen + "s", "-");
+                String padchars = String.format(Locale.US,"%1$" + padlen + "s", "-");
                 padchars = padchars.replace(' ', '-');
                 ret.insert(0, padchars);
                 ret.append(padchars);

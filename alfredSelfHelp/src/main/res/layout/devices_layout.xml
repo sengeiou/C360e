@@ -51,7 +51,7 @@
                         android:paddingBottom="15dp"
                         android:paddingLeft="20dp"
                         android:paddingTop="15dp"
-                        android:text="Printer"
+                        android:text="@string/printer"
                         android:textColor="#3f3f3f"
                         android:textSize="20sp" />
                 </LinearLayout>
@@ -81,7 +81,7 @@
                         android:paddingBottom="15dp"
                         android:paddingLeft="20dp"
                         android:paddingTop="15dp"
-                        android:text="KDS"
+                        android:text="@string/kds"
                         android:textColor="#3f3f3f"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -112,7 +112,7 @@
                         android:paddingBottom="15dp"
                         android:paddingLeft="20dp"
                         android:paddingTop="15dp"
-                        android:text="Waiter"
+                        android:text="@string/waiter"
                         android:textColor="#3f3f3f"
                         android:textSize="18sp" />
                 </LinearLayout>

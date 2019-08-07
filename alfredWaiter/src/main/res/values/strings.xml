@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- com.alfredselfhelp.global -->
     <string name="app_name">AlfredWaiter</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="version">Version:</string>
-    <string name="exit_program">Please click BACK again to exit</string>
+    <string name="exit_program">Please click back again to exit</string>
     <string name="revenue_center">Revenue Center</string>
     <string name="warn">WARN</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
     <string name="loading">Loading</string>
 
     <!-- before login -->
@@ -18,33 +14,26 @@
     <string name="connect">Connect</string>
     <string name="invalid_ip">Invalid main POS IP or Devices are not in same network. Please check</string>
     <string name="invalid_ip_">An invalid IP address set by you</string>
-    <string name="access_denied">Sorry, access denied!</string>
     <string name="link">Must link the </string>
     <string name="select_revenue_center">Your are eligible to serve\nin those revenue centers</string>
     <string name="logining">Logining</string>
     <string name="waiter_login_tips1">Device paired\nEnter Waiter Employee ID</string>
-    <string name="waiter_login_tips2">\nEnter Password</string>
+    <string name="waiter_login_tips2">Enter Password</string>
 
     <!-- TablePage,MainPage,ModifierDetail,Instruction -->
-    <string name="table">Table</string>
     <string name="title">Title</string>
     <string name="menu">Menu</string>
     <string name="detail">Detail</string>
     <string name="add_item">Please add item before</string>
     <string name="item_name">Item Name</string>
     <string name="modifier">Modifier</string>
-    <string name="instruction">Instruction</string>
-    <string name="instruction_">instruction</string>
-    <string name="save">Save</string>
     <string name="add_modifier">Add Modifier</string>
 
     <!-- OrderDetailPage,OrderDetailTotal -->
     <string name="place_succ">Place order successfully</string>
     <string name="place_failed">Failed to place order</string>
     <string name="print_bill_succ">Print bill successfully</string>
-    <string name="print_kot_succ">Print KOT successfully</string>
     <string name="print_bill_failed">Failed to print bill</string>
-    <string name="print_kot_failed">Failed to print KOT</string>
     <string name="network_errors">Cannot get bill print at this moment: Network errors</string>
     <string name="order_closed">Order is closed, please select table and replace order again.</string>
     <string name="order_not_edited">Order cannot be edited when under process. Please contact cashier to try again.</string>
@@ -52,15 +41,9 @@
     <string name="order_split">The order split </string>
     <string name="settled"> is settled</string>
     <string name="item_count">Item Count:</string>
-    <string name="sub_total">Sub Total:</string>
     <string name="discount_">Discount:-</string>
-    <string name="taxes">Taxes:</string>
-    <string name="group_all">Group:All</string>
-    <string name="place_order">Place Order</string>
-    <string name="get_bill">Get Bill</string>
+    <string name="group_all">Group : All</string>
     <string name="print_bill">Print Bill</string>
-    <string name="notification">Notification</string>
-    <string name="grand_total">Grand Total</string>
 
     <!-- Setting -->
     <string name="system_reset">System Reset</string>
@@ -79,51 +62,26 @@
     <string name="lock_screen">Lock Screen</string>
 
     <!-- other -->
-    <string name="session_change">Session Change</string>
     <string name="relogin_pos">POS has closed the current session. \nPlease relogin when next session starts</string>
     <string name="pairing_failed">Pairing failed: Network errors</string>
-    <string name="all">All</string>
     <string name="empty_invalid">Empty value is invalid</string>
     <string name="number_people">Please Enter Number Of People</string>
     <string name="note">NOTE</string>
-    <string name="table_">Table:</string>
     <string name="transfer_">  has been transfered to Table:</string>
     <string name="order_belong">Select whom the order\nbelongs to</string>
-    <string name="name">Name</string>
-    <string name="no_of_pax">No. of Pax</string>
     <string name="clear">Clear</string>
     <string name="enter">Enter</string>
     <string name="cancel">Cancel</string>
-    <string name="search_item">Search menu item</string>
     <string name="check">Check</string>
 
     <string name="At_least">choose LEAST  </string>
     <string name="items"> modifier</string>
     <string name="at_only">choose ONLY  </string>
-    <string name="open_items">Open items</string>
-    <string name="name_not_empty" tools:ignore="MissingTranslation">Name cannot be empty</string>
+    <string name="name_not_empty">Name cannot be empty</string>
     <string name="price_not_empty">Price cannot be empty</string>
 
-    <string name="new_" tools:ignore="MissingTranslation">New</string>
 
-    <string name="main_category">Main Category</string>
-    <string name="tax_group">Tax Group</string>
-    <string name="allow_takeaways">Allow Takeaways?</string>
-    <string name="discoutable">Discountable?</string>
-    <string name="sub_category">Sub Category</string>
-    <string name="kitchen">Kitchen</string>
-    <string name="price">Price</string>
-    <string name="allow_delivery">Allow Delivery?</string>
-    <string name="new_open_item" tools:ignore="MissingTranslation">New Open Item</string>
-    <string name="edit" tools:ignore="ExtraTranslation">edit</string>
-    <string name="print_down">Print Service Down</string>
-    <string name="reconnect_print">Are you sure to reconnect Alfred Print Service?</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
-    <string name="select_printer">Select Printer Information</string>
-    <string name="printer_thermal_type">80mm Thermal Printer</string>
-    <string name="printer_dotmatrix_type">80mm Dot Matrix Printer</string>
-    <string name="printer_ipaddr">Printer IP Address</string>
-    <string name="devices_bluetooth">Bluetooth</string>
-    <string name="devices_network">Network</string>
-    <string name="print_kot">Print KOT</string>
+    <string name="edit">edit</string>
+    <string name="ip_changed_relogin">Your IP has changed.\nPlease ReLogin</string>
+
 </resources>

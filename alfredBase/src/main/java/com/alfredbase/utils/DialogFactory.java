@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
-
 import com.alfredbase.R;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.model.PrinterDevice;
@@ -251,7 +250,7 @@ public class DialogFactory {
                                     LayoutInflater inflater = activity.getLayoutInflater();
                                     View view = inflater.inflate(R.layout.toast_view, null);
                                     TextView tv_toast_view = (TextView) view.findViewById(R.id.tv_toast_view);
-                                    tv_toast_view.setText("Please key in Reference number");
+                                    tv_toast_view.setText(activity.getResources().getString(R.string.please_key_in_reference_number));
                                     TextTypeFace textTypeFace = TextTypeFace.getInstance();
                                     textTypeFace.setTrajanProRegular(tv_toast_view);
                                     toast.setGravity(Gravity.CENTER, 0, 10);
@@ -802,11 +801,11 @@ public class DialogFactory {
             dialog.setContentView(view);
             TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
             StringBuffer title = new StringBuffer(activity.getString(R.string.has_new_version));
-            ((TextView) view.findViewById(R.id.tv_version)).setText("New Version:" + versionUpdate.getVersionName());
+            ((TextView) view.findViewById(R.id.tv_version)).setText(activity.getString(R.string.new_version)+" : " + versionUpdate.getVersionName());
             ((TextView) view.findViewById(R.id.tv_description)).setText(versionUpdate.getDescription());
             view.findViewById(R.id.btn_update_now).setOnClickListener(onClickListener);
             if (versionUpdate.getForceUpdate() == 1) {
-                title.append("\nPlease update now");
+                title.append("\n"+activity.getResources().getString(R.string.please_update_now));
                 view.findViewById(R.id.btn_update_later).setVisibility(View.GONE);
             } else {
                 view.findViewById(R.id.btn_update_later).setVisibility(View.VISIBLE);

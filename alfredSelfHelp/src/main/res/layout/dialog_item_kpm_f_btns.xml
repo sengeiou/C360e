@@ -47,7 +47,7 @@
                 android:layout_marginRight="280dp"
                 android:background="@drawable/btn_main_g"
                 android:gravity="center"
-                android:text="Cancel"
+                android:text="@string/cancel"
                  android:textColor="@color/white"
                 android:textSize="20sp"></TextView>
 

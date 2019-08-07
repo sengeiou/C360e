@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Fire"
+                android:text="@string/fire"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_m" />
         </RelativeLayout>
@@ -117,7 +117,7 @@
             android:layout_centerInParent="true"
             android:layout_marginTop="10dp"
             android:singleLine="true"
-            android:text="Customers require to split bill"
+            android:text="@string/customers_require_to_split_bill"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_m"
             android:visibility="invisible" />
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/print_btn_selector"
                     android:gravity="center"
-                    android:text="OK"
+                    android:text="@string/ok"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s" />
             </LinearLayout>

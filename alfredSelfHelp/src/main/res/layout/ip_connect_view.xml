@@ -110,7 +110,7 @@
                     android:layout_height="120dp"
                     android:background="@drawable/btn_main_g"
                     android:gravity="center"
-                    android:text="Cancel"
+                    android:text="@string/cancel"
                     android:textColor="@color/white"
                     android:textSize="42sp"
 
@@ -126,7 +126,7 @@
                     android:layout_height="120dp"
                     android:background="@drawable/btn_main_g"
                     android:gravity="center"
-                    android:text="Save"
+                    android:text="@string/save"
                     android:textColor="@color/white"
                     android:textSize="42sp"
 

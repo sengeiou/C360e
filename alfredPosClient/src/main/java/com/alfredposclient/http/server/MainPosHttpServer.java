@@ -1323,10 +1323,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
             return handlerPairingComplete(body);
         } else if (apiName.equals(APIName.TEMPORARY_DISH)) {//waiter 端添加临时菜通知pos端
             return handlerTemporaryDish(body);
+        } else if (apiName.equals(APIName.SET_LANGUAGE)) {// 注销
+            return handlerLanguage(body);
         } else {
             String userKey = jsonObject.optString("userKey");
-            if (TextUtils.isEmpty(userKey)
-                    || App.instance.getUserByKey(userKey) == null) {
+            if (TextUtils.isEmpty(userKey) || App.instance.getUserByKey(userKey) == null) {
                 Map<String, Object> result = new HashMap<String, Object>();
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
                 return this.getJsonResponse(new Gson().toJson(result));
@@ -1633,8 +1634,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                     kdsDevice.getDevice_id(),
                                     kdsDevice.getIP(), kdsDevice.getMac(), "", 0);
                     CoreData.getInstance().addLocalDevice(localDevice);
-                    final String kdsStr = kdsDevice == null ? "空的" : kdsDevice.toString();
-                    final String localStr = localDevice == null ? "空的" : localDevice.toString();
+//                    final String kdsStr = kdsDevice == null ? "空的" : kdsDevice.toString();
+//                    final String localStr = localDevice == null ? "空的" : localDevice.toString();
 
                     // Notify KDS pairing complete
                     final KDSDevice finalKdsDevice = kdsDevice;
@@ -2695,7 +2696,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
                         if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
-                            String orderNo = kotSummary.getNumTag() + IntegerUtils.fromat(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
+                            String orderNo = kotSummary.getNumTag() + IntegerUtils.formatLocale(App.instance.getRevenueCenter().getIndexId(), kotSummary.getOrderNo().toString());
                             SyncCentre.getInstance().callAppNo(App.instance, kotSummary.getNumTag(), orderNo);
 
                         }
@@ -3420,4 +3421,23 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         return resp;
     }
+
+    private Response handlerLanguage(final String params) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        Response resp;
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final String language = jsonObject.getString("language");
+            final String version = jsonObject.getString("appVersion");
+            SyncCentre.getInstance().setClientLanguage(App.getTopActivity(), version, language);
+            result.put("resultCode", ResultCode.SUCCESS);
+            resp = this.getJsonResponse(new Gson().toJson(result));
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+        }
+
+        return resp;
+    }
+
 }

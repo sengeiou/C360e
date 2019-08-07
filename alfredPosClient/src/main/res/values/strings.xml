@@ -2,32 +2,93 @@
 <resources>
 
     <string name="app_name">AlfredPosClient</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="home_page_info">The Way of Restaurants\nOutght to be Run</string>
+    <!--translate-->
+    <string name="open_rest_tips">Before open restaurant,please make sure all devices are connected to this device.</string>
+    <string name="sync_tips">This device is not yet initialized with your restaurant data at Alfred Cloud. Please provide the following account information to sync with Alfred Cloud</string>
+    <string name="select_revenue_centre_info1">Select One of Revenue Centre to Sync</string>
+    <string name="select_revenue_centre_info2">Sync will be taking around 1 minute</string>
+    <string name="sync_complete">Sync completes. The POS is ready for Dining Room 1. Please login POS with a cashier account</string>
+    <string name="home_page_info">The Way of Restaurants Outght to be Run</string>
+    <string name="cashier_login_tips1">Enter Cashier Employee ID</string>
+    <string name="bill_manage">Bill Manage</string>
+    <string name="boh_settlement">BOH Settlement</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="report">Report</string>
+    <string name="system">System</string>
+    <string name="clock_in_out">Clock In/Out</string>
+    <string name="cash_in_out">Cash in/out</string>
+    <string name="place">Place</string>
+    <string name="name_of_the_place">Name of the Place</string>
+    <string name="small">Small</string>
+    <string name="middle">Middle</string>
+    <string name="large">Large</string>
+    <string name="table_number">Table Number</string>
+    <string name="staff">Staff</string>
+    <string name="misc">Misc</string>
+    <string name="free">Free</string>
+    <string name="transfer">Transfer</string>
+    <string name="weight">Weight</string>
+    <string name="weight_kg">Weight(KG)</string>
+    <string name="discount_item">Discount Item</string>
+    <string name="discount_w_category">Discount by category\n(can only be applied once)</string>
+    <string name="cannot_unseat">Cannot unseat this table. \nSome menu has been ordered.</string>
+    <string name="ask_transfer_table">Are you sure to transfer the %1$s to %2$s?</string>
+    <string name="adjustment">Adjustment</string>
+    <string name="custom_payment">Custom Payment</string>
+    <string name="amount_due">Amount Due</string>
+    <string name="authorize_by">Authorize By</string>
+    <string name="leave_comments">Leave Comments</string>
+    <string name="guest_phone_number">Guest Phone Number</string>
+    <string name="bill_number">Bill Number</string>
+    <string name="boh_amount">BOH Amount</string>
+    <string name="bill_date">Bill Date</string>
+    <string name="payment_type">Payment Type</string>
+    <string name="due_days">Due Days</string>
+    <string name="please_scan_stored_qrcode">Please scan the stored-card QRcode</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="address">Address</string>
+    <string name="binding">Binding</string>
+    <string name="change_card">Change Card</string>
+    <string name="query_balance">Balance</string>
+    <string name="please_scan_new_old_stored_qrcode">Please scan the new Stored-Card and the old Stored-Card number or user phone number</string>
+    <string name="please_enter_old_stored_number">Please enter the old Stored-Card number</string>
+    <string name="please_enter_user_phone_number">Please enter the user phone number</string>
+    <string name="please_scan_card_or_phone">Please scan the Stored-Card or fill in user phone number</string>
+    <string name="kot_print">KOT Print</string>
+    <string name="kot_print_together">KOT Print Together</string>
+    <string name="double_kot_print">Double KOT Print</string>
+    <string name="double_bill_prints">Double Bill Prints</string>
+    <string name="double_close_bill_prints">Double Close Bill Prints</string>
+    <string name="print_order_summary">Print Order Summary</string>
+    <string name="print_direction_up">Print Label Direction UP</string>
+    <string name="credit_card_rounding">Credit Card Rounding</string>
+    <string name="auto_go_to_table">Auto go to Table</string>
+    <string name="sync_data">Sync Data</string>
+    <string name="number_calling_setting_one_style">Number Calling Setting 1 Style</string>
+    <string name="calling_header">Calling Header</string>
+    <string name="calling_footer">Calling Footer</string>
+    <string name="cancel_instead_of_void">Cancel instead of Void</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <!--untranslate-->
     <string name="set_up">Setup</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="sign_in">Sign in</string>
-    <string name="sync">Sync   </string>
     <string name="user_id_style">Employee ID</string>
     <string name="user_id">Employee ID</string>
     <string name="password">Password</string>
     <string name="biz_id_style">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Biz ID</string>
     <string name="biz_id">Biz ID</string>
-    <string name="select_revenue_centre_info1">Select One of Revenue Centre to Sync</string>
-    <string name="select_revenue_centre_info2">Sync will be taking around 1 minute</string>
-    <string name="sync_complete">Sync Completes\nThe POS is ready for Dining Room 1\n\nPlease login POS with a\ncashier account</string>
-    <string name="resync">Resync</string>
-    <string name="cashier_login_tips1">Enter Cashier Employee ID</string>
     <string name="cashier_login_tips2">Enter Cashier Password</string>
-    <string name="login">Login</string>
     <string name="logout">Logout</string>
-    <string name="sync_tips">This device is not yet initialized with your restaurant data at Alfred\ncloud.Please provide the following account information to sync\nwith Alfred cloud</string>
     <string name="category_select">select</string>
     <string name="enter_employee_id">Enter Employee ID</string>
-    <string name="open_rest_tips">Before open restaurant,please make sure all devices are connected tothis device.</string>
     <string name="version">Version:</string>
     <string name="warning">Warning</string>
     <string name="server">Server</string>
@@ -36,265 +97,122 @@
     <string name="drop_session_open">Drop session\nto start</string>
     <string name="drop_session_close">Drop back\nto close</string>
     <string name="manually_update">Not receive data update message.\nDo you need manually update data from backoffice?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string-array name="main_category">
-        <item>category1</item>
-        <item>category2</item>
-        <item>category2</item>
-        <item>category2</item>
-    </string-array>
-    <string-array name="week_array">
-        <item></item>
-        <item>Sun</item>
-        <item>Mon</item>
-        <item>Tues</item>
-        <item>Wed</item>
-        <item>Thur</item>
-        <item>Fri</item>
-        <item>Sat</item>
-    </string-array>
-    <string-array name="month_array">
-        <item>Jan</item>
-        <item>Feb</item>
-        <item>Mar</item>
-        <item>Apr</item>
-        <item>May</item>
-        <item>June</item>
-        <item>July</item>
-        <item>Aug</item>
-        <item>Sept</item>
-        <item>Oct</item>
-        <item>Nov</item>
-        <item>Dec</item>
-    </string-array>
     <string name="day_symbol">th</string>
-
     <!-- MainPage-TopMenuView -->
-    <string name="waiter">WAITER</string>
-    <string name="get_bill">GET BILL</string>
     <string name="alfred">ALFRED</string>
     <string name="number">0</string>
-
     <!-- MainPage-Operate  -->
-    <string name="print_bill">Print</string>
-    <string name="colse_bill">Close</string>
     <string name="transfer_table">Transfer\nTable</string>
     <string name="hold_bill">Hold\nBill</string>
     <string name="kiosk_hold">Kiosk and Hold</string>
     <string name="open_item">Open\nitem</string>
     <string name="edit_kot">Edit\nkot</string>
-    <string name="take_away">Take\naway</string>
-    <string name="open_drawer">Open\nDrawer</string>
-    <string name="instruction">Instruction</string>
-    <string name="remove">Remove</string>
-    <string name="void_">Void</string>
-    <string name="free">Free</string>
-    <string name="take_away_">Takeaway</string>
-    <string name="app_delivery">Delivery</string>
-
-    <string name="app_take_away">Take Away</string>
     <string name="app_dine_in">Dine In</string>
-    <string name="transfer">Transfer</string>
-    <string name="weight">Weight</string>
-    <string name="weight_">Weight(KG)</string>
-    <string name="pax">Pax:</string>
-    <string name="order_id">Order ID:</string>
-    <string name="order_no_">Order No.:</string>
-    <string name="discount">Discount</string>
-    <string name="unseat">Unseat</string>
-    <string name="bill">Bill</string>
-    <string name="table">Table</string>
-    <string name="misc">Misc</string>
-
-    <string name="delete_order">Delete</string>
-
     <!-- Close Bill -->
-    <string name="bill_summary">Bill Summary</string>
     <string name="print_receipt">Print Receipt</string>
-    <string name="total_bill"> Total Bill:</string>
-    <string name="sub_total_"> Sub Total:</string>
     <string name="settled"> Settled:</string>
-    <string name="change"> Change:</string>
     <string name="item_count">Item Count</string>
-    <string name="discount_">Discount:</string>
-    <string name="taxes_">Taxes:</string>
-    <string name="cash">Cash</string>
-    <string name="media">Media</string>
-    <string name="adjustment">Adjustment</string>
-    <string name="voucher">Voucher</string>
-    <string name="guest_name">Guest Name</string>
-    <string name="guest_phone_number">Guest Phone Number</string>
-    <string name="leaue_comments">Leave Comments</string>
-    <string name="total_due"> Total Due</string>
     <string name="rounding">Rounding</string>
-    <string name="sub_total_bill">Sub Total:</string>
     <string name="cash_other">Others</string>
     <string name="exact">Exact $</string>
-    <string name="settlement_void">VOID</string>
     <string name="void_all">Void all</string>
-
     <!-- MainPageOrderView -->
-    <string name="name">Name</string>
-    <string name="price">Price</string>
-    <string name="qty">Qty</string>
-    <string name="subtotal">Subtotal</string>
     <string name="disc">Disc</string>
-    <string name="total">Total</string>
-    <string name="item">Item</string>
-    <string name="sub_total">Sub Total</string>
-    <string name="taxes">Taxes</string>
-    <string name="grand_total">Grand Total</string>
     <string name="sent_to_kitchen">All items ordered have been sent to kitchen</string>
     <string name="remove_item">Remove this item?</string>
     <string name="item_complete">this item has complete</string>
-    <string name="sure_take_away">Are you sure take away?</string>
+    <string name="sure_take_away">Are you sure takeaway?</string>
     <string name="no_order_detail">Cannot place the empty order.</string>
     <string name="network_connected">Internet connection not available. Please connect for cloud sync..</string>
-
     <!-- setting-window -->
-    <string name="setting">Setting</string>
-    <string name="edit">Edit</string>
-    <string name="report">Report</string>
-    <string name="system">System</string>
     <string name="reprint_bill">Reprint Bill</string>
     <string name="edit_settlement">Edit Settlement</string>
-    <string name="boh_settlement">BOH Settlement</string>
-    <string name="stored_card">Stored-Card</string>
-    <string name="top_up">Top-up</string>
-    <string name="binding">Binding</string>
     <string name="card_loss">Report Lost</string>
-    <string name="change_card">Change Card</string>
-
     <string name="fill_card">Fill card</string>
-    <string name="scanner">Please scan the stored-card QRcode</string>
-    <string name="dashboard">Dashboard</string>
-    <string name="day_sales">Day Sales</string>
-    <string name="ent_plu">ENT PLU</string>
-    <string name="void_plu">Void PLU</string>
-    <string name="clock_inout">Clock\nIN/OUT</string>
     <string name="cash_inout">Cash\nIN/OUT</string>
-    <string name="devices">Devices</string>
-    <string name="close">Close</string>
     <string name="sunmi_screen">SUNMI Vice Screen</string>
-
     <!-- setting -->
-    <string name="kot_print">KOT Print</string>
-
-    <string name="of_pax">No. of Pax</string>
-    <string name="kot_print_together">KOT Print Together</string>
-    <string name="double_kot_print">Double KOT Print</string>
-    <string name="double_bill_prints">Double Bill Prints</string>
-    <string name="double_close_bill_prints">Double Close Bill Prints</string>
-    <string name="print_order_summary">Print Order Summary</string>
-    <string name="sync_data">Sync Data</string>
     <string name="update_msg">Please Update Message</string>
     <string name="receive">Receive</string>
     <string name="_message">Message</string>
     <string name="update_successful">Update is successful</string>
     <string name="no_update">No update</string>
     <string name="no_sync_date">Data cannot be synced when a session opens</string>
-    <string name="change_employee_password">Change Employee Password</string>
     <string name="print_report_when_session">X Report</string>
     <string name="print_cash_close">Cash W Close Print</string>
-    <string name="print_before_close_bill">Print Check</string>
     <string name="print_bill_set">Print Bill</string>
     <string name="print_lable">Print Label</string>
-
-    <string name="print_direction">Print Label Direction</string>
-    <string name="credit_card_rounding">Credit Card Rounding</string>
     <string name="include_plu_void">Include Plu Void</string>
     <string name="password_update_successfully">Password update successfully.</string>
     <string name="employee_no_exist">The employee does not exist at backoffice.</string>
     <string name="color_picker_tip">Tip: Touch the color ring or color bar to select a color value</string>
     <string name="color_select">Selection of color</string>
-
     <!-- syncdate -->
     <string name="binding_to_already">The revenue center has an another POS device attached. In order to use current device, please deattach existing device in Alfred Cloud BackOffice and try again.</string>
     <string name="be_bound_already">The device was attached to another revenue center. Please deattach it in Alfred Cloud BackOffice and try again.</string>
     <string name="sync_date_warning_tips">The revenue center setting is not complete. Please check the followings at Aflred Backoffice:</string>
     <string name="users">Users</string>
     <string name="tables">Tables</string>
-    <string name="printers">Printers</string>
     <string name="printer_printergroup">Printer or PrinterGroup</string>
-    <string name="item_">Item</string>
     <string name="product_categories">Product Categories</string>
     <string name="login_info_error">Employee ID, Password and Biz ID cannot be empty</string>
-
     <!-- login -->
     <string name="login_required">Only Cashier or Manager can login!</string>
     <string name="invalid_employee">Invalid employee!</string>
-
     <!-- openRestaruant -->
     <string name="session_time_out">The current Session is running over 12 hours !</string>
     <string name="save_print_sales">Saving and Printing Sales</string>
     <string name="whether_close_restaurant">Are you sure to close restaurant to stop service today?</string>
-    <string name="open_restaurant">Open Restaurant</string>
-    <string name="open_restaurant_label">Open</string>
-    <string name="close_restaurant_label">Close</string>
     <string name="operation_on">Operation on</string>
     <string name="is_going_to_start">is going to start!</string>
     <string name="bill_not_closed">There are some bills not closed yet.</string>
     <string name="cashier_printer">No printer is set for cashier.</string>
     <string name="printing_close_report">Printing close report</string>
-
     <!-- MainPage -->
-    <string name="send_kitchen">Sending to Kitchen</string>
+    <string name="sending_to_kitchen">Sending to Kitchen</string>
     <string name="place_before_print">Please place the order first!</string>
-    <string name="setting_printer">The printer is not ready, \n Please go to Setting > Devices > \n Printer to assign correct Cashier printer!</string>
+    <string name="setting_printer">The printer is not ready, \nPlease go to Setting > Devices > \nPrinter to assign correct Cashier printer!</string>
     <string name="bill_printing">Bill is Printing</string>
     <string name="no_items">No items in order list!</string>
     <string name="receipt_printing">Receipt is Printing</string>
     <string name="table_transfer">Table Transfer</string>
     <string name="table_transfer_from">*** Transferred from %s ***</string>
-    <string name="transfer_">Are you sure to transfer the </string>
     <string name="to">to</string>
     <string name="no_set_kds_printer">No KDS or Printer Devices are set for Kitchens</string>
     <string name="place_order_failed">Place Order Failed</string>
     <string name="no_set_item_print">Menu : *%s* not set printer</string>
     <string name="print_bill_">Please print bill</string>
-    <string name="assign_items">Please assign ? items to a group.</string>
+    <string name="assign_items_to_group">Please assign items to a group.</string>
     <string name="not_complete_order">Not complete the order.</string>
     <string name="the_table">The table  </string>
     <string name="occupied_time">  has been occupied for 2 hours at lease</string>
     <string name="pos_notification">Alfred POS Notification</string>
     <string name="alfred_pos">Alfred POS</string>
-    <string name="no_pax">No. of Pax</string>
     <string name="online_order">Online Order</string>
-    <string name="the_most_selections">%d selections at most</string>
+    <string name="the_most_selections">%1$d selections at most</string>
     <string name="table_dining">The table has been occupied</string>
-    <string name="name_of_the_place">Name of the Place</string>
-
-    <string name="At_least">choose LEAST  </string>
     <string name="items"> modifier</string>
     <string name="at_only">choose ONLY  </string>
-
     <!-- html -->
     <string name="no_sales_print">No sales data to print</string>
     <string name="no_printer_devices">No Printer Devices</string>
     <string name="cash_not_empty">Cash cannot be empty</string>
     <string name="save_success">Save Success</string>
-    <string name="clock_in">Clock In</string>
-    <string name="clock_out">Clock Out</string>
     <string name="id_error">ID error!!!</string>
     <string name="not_operations">Cannot perform operations</string>
     <string name="kds_paired">One KDS device paired</string>
     <string name="waiter_paired">One Waiter device paired</string>
     <string name="printing">Printing</string>
-
     <!-- App -->
     <string name="print_down">Print Service Down</string>
     <string name="reconnect_print">Are you sure to reconnect Alfred Print Service?</string>
-
     <!-- MainPosHttpServer -->
     <string name="internal_error">Internal Error</string>
     <string name="device_invalid">Device is invalid</string>
     <string name="login_failed">login failed</string>
     <string name="sync_data_failed">sync data failed</string>
-
     <!-- CloseOrderWindow -->
     <string name="ref_id_not_empty">Ref id not empty</string>
-
     <string name="close_payment_reminder">Chosen payment mode cannot be used with other payment mode</string>
     <string name="card_no_not_empty">Card No cannot be empty</string>
     <string name="card_no_for_four">Card No for four</string>
@@ -304,27 +222,18 @@
     <string name="exp_not_empty">Expiration Date cannot be empty</string>
     <string name="exp_format">Expiration Date Format for 00/00</string>
     <string name="cash_settlement">Cash Settlement</string>
-
     <string name="part_settlement">Part Settlement</string>
     <string name="totle_paid">Total Paid</string>
     <!--<string name="change">Change</string>-->
     <string name="visa_settlement">Visa Settlement</string>
-    <string name="amount_due">Amount Due</string>
     <string name="amount_paid">Amount Paid</string>
     <string name="card_no">Card No</string>
     <string name="exp_date">Expiration Date</string>
     <string name="cvv">CVV</string>
-    <string name="entertainment">Entertainment</string>
-    <string name="authorize_by">Authorize By</string>
-    <string name="remarks_">Remarks :</string>
     <string name="net_settlement">NET Settlement</string>
-    <string name="settlement_details">Settlement Details</string>
     <string name="wechat_settlement">WeChat Settlement</string>
     <string name="alipay_settlement">Alipay Settlement</string>
     <string name="amount_auth_by">Amount Auth by</string>
-    <string name="due_days">Due Days</string>
-    <string name="bill_date">Bill Date</string>
-
     <!-- other - window -->
     <string name="switch_account">Switch account</string>
     <string name="name_not_empty">Name cannot be empty</string>
@@ -333,40 +242,15 @@
     <string name="_settled">  is settled</string>
     <string name="invalid_ip">An invalid IP address!</string>
     <string name="enter_people">Please Enter Number Of People</string>
-    <string name="discount_item">Discount Item</string>
     <string name="active_five_hours">Active 5hours</string>
     <string name="switch_user">Switch User</string>
     <string name="lock_screen">Lock Screen</string>
-    <string name="quantity">quantity</string>
-    <string name="back">back</string>
     <string name="refresh">refresh</string>
-    <string name="open_item_">Open Item</string>
-    <string name="new_">New</string>
-    <string name="new_open_item">New Open Item</string>
-    <string name="save">Save</string>
-    <string name="main_category">Main Category</string>
-    <string name="tax_group">Tax Group</string>
-    <string name="allow_takeaways">Allow Takeaways?</string>
-    <string name="discoutable">Discountable?</string>
-    <string name="sub_category">Sub Category</string>
-    <string name="kitchen">Kitchen</string>
-    <string name="allow_delivery">Allow Delivery?</string>
     <string name="split_bill_win_title">Bill Details</string>
     <string name="split_print_all">Whole Bill Print</string>
     <string name="slipt_print">Split Print</string>
-    <string name="select_printer">Select Printer Information</string>
-    <string name="printer_ipaddr">Printer IP Address</string>
-
     <!-- REPORT PRINT -->
-    <string name="select_report_print">Select Report to Print</string>
-    <string name="sales_report_print">Sales Analysis</string>
-    <string name="detail_report_print">Detail Analysis</string>
-    <string name="summary_report_print">Summary Analysis</string>
-    <string name="all_report_print">All</string>
-
-
     <!-- other -->
-    <string name="clock_inout_">Clock In/Out</string>
     <string name="table_name">Table name</string>
     <string name="close_cash">Close w Cash</string>
     <string name="bill_on_hold">BILL on HOLD</string>
@@ -380,26 +264,15 @@
     <string name="no_cashier_printer">No Cashier Printer yet</string>
     <string name="discard_current_order">Are you sure to discard current order?</string>
     <string name="unseat_table">Are you sure to unseat table?\nVoid items will not be recorded into reports.</string>
-    <string name="cannot_unseat">Cannot unseat this table. \nSome menu has been ordered.</string>
-    <string name="cannot_delete">Cannot Delete. \nMenu has been Ordered.</string>
-    <string name="printer_thermal_type">80mm Thermal Printer</string>
-    <string name="printer_dotmatrix_type">80mm Dot Matrix Printer</string>
 
     <!-- Clock in/Out -->
-    <string name="clock_delete_btn">Delete</string>
-    <string name="clock_in_btn">Clock In</string>
     <string name="clock_out_btn">Clock Out</string>
 
     <!-- Online Order -->
-    <string name="online_order_no">Order No</string>
     <string name="online_order_type">Order Type</string>
     <string name="online_order_status">Order Status</string>
     <string name="online_order_time">Create Time</string>
     <string name="check">Check</string>
-    <string name="bill_num">Bill Number</string>
-    <string name="place_name">Place</string>
-    <string name="cashier_name">Cashier</string>
-    <string name="time">Time</string>
     <string name="paid">Paid</string>
     <string name="making">MAKING</string>
     <string name="confirmed">ACCEPTED</string>
@@ -414,21 +287,13 @@
 
     <string name="index">Index</string>
     <string name="welcome">Welcome</string>
-    <string name="bill_manage">Bill Manage</string>
     <string name="add_table_num">Add Table Number</string>
     <string name="input_table_num">Please Input Table Number</string>
 
     <!--Zun-->
-    <string name="device_scan_tips">Scan the QR code to get Tablets paired with the POS</string>
-    <string name="unassign">Unassign</string>
     <string name="assign">Assign</string>
     <string name="manually_add">Manually Add</string>
-    <string name="or_manually">OR \n manually set POS IP in Tablet</string>
-    <string name="printer">Printer</string>
-    <string name="kds">KDS</string>
     <string name="waiter_">Waiter</string>
-    <string name="devices_">Devices</string>
-    <string name="day_sales_report">Day Sales Report</string>
 
 
     <string name="devices_network">Network</string>
@@ -438,4 +303,32 @@
     <string name="revenue_center">Revenue Center</string>
     <string name="ipaddr_tips">Device Pairing\nSet up POS IP Address</string>
     <string name="connect">Connect</string>
+
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <string name="welcome_to">Welcome to </string>
+    <string name="please_clock_in">Please Clock In</string>
+    <string name="ask_delete_place">Are you sure to delete this place ?</string>
+    <string name="printer_app_name">AlfredRemotePrintService</string>
+
+    <string name="days">Days</string>
+    <string name="day">Day</string>
+    <string name="split_pay">Split</string>
+    <string name="all_pay">All</string>
+    <string name="at_least">choose least</string>
+    <string name="please_input_amount">Please input amount!</string>
+    <string name="operation_irreversible">This operation is irreversible, Are you sure ?</string>
+    <string name="table_name_used">Table Name already in use. Please use another name.</string>
+    <string name="please_select_empty_table">Please select an empty table</string>
 </resources>

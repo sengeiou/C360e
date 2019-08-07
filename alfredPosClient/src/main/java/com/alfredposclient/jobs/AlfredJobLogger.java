@@ -4,6 +4,8 @@ import android.util.Log;
 import com.alfredposclient.global.App;
 import com.path.android.jobqueue.log.CustomLogger;
 
+import java.util.Locale;
+
 public class AlfredJobLogger implements CustomLogger {
 
 	private String TAG = "JOBS";
@@ -20,16 +22,16 @@ public class AlfredJobLogger implements CustomLogger {
 
     @Override
     public void d(String text, Object... args) {
-        Log.d(TAG, String.format(text, args));
+        Log.d(TAG, String.format(Locale.US,text, args));
     }
 
     @Override
     public void e(Throwable t, String text, Object... args) {
-        Log.e(TAG, String.format(text, args), t);
+        Log.e(TAG, String.format(Locale.US,text, args), t);
     }
 
     @Override
     public void e(String text, Object... args) {
-        Log.e(TAG, String.format(text, args));
+        Log.e(TAG, String.format(Locale.US,text, args));
     }
 }

@@ -123,9 +123,9 @@ public final class Intents {
     public static final String TYPE = "ENCODE_TYPE";
     
     /**
-     * The barcode format to be displayed. If this isn't specified or is blank, 
+     * The barcode format to be displayed. If this isn't specified or is blank,
      * it defaults to QR Code. Use Intent.putExtra(FORMAT, format), where
-     * format is one of Contents.Format. 
+     * format is one of Contents.Format.
      */
     public static final String FORMAT = "ENCODE_FORMAT";
 

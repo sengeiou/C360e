@@ -52,4 +52,16 @@ public class EditTextUtil {
 //			   }
 		}
 	}
+
+	public static String formatLocale(String num) {
+		String format = "%0" + num.length() + "d";
+		try {
+			return String.format(format, Integer.parseInt(num));
+		} catch (NumberFormatException e) {
+			return num;
+		} catch (Exception e) {
+			return num;
+		}
+	}
+
 }

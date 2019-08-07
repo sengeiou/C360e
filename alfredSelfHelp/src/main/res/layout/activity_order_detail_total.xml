@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="@string/sub_total"
+                android:text="@string/subtotal"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_m" />
 
@@ -144,7 +144,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_gravity="center_vertical"
-					android:text="@string/print_bill"
+					android:text="@string/print"
 					android:textColor="@color/black"
 					android:layout_marginRight="20dp"
 					android:textSize="@dimen/text_size_m"

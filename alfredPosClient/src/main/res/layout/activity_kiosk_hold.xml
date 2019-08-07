@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:hint="Order Number"
+                    android:hint="@string/order_no"
                     android:minEms="10"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"
@@ -120,7 +120,7 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="Hold W Kitchen"
+                    android:text="@string/hold_kitchen"
                     android:textColor="@color/text_light_black"
                     android:textSize="15sp" />
                 <TextView
@@ -131,7 +131,7 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="Kiosk Order"
+                    android:text="@string/kiosk_order"
                     android:textColor="@color/text_light_black"
                     android:textSize="15sp" />
 
@@ -143,7 +143,7 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:text="Hold Order"
+                    android:text="@string/hold_order"
                     android:textColor="@color/text_light_black"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -166,7 +166,7 @@
                     android:ellipsize="end"
                     android:gravity="left|center_vertical"
                     android:singleLine="true"
-                    android:text="@string/online_order_no"
+                    android:text="@string/order_no"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s_small" />
 
@@ -202,7 +202,7 @@
                     android:ellipsize="end"
                     android:gravity="left|center_vertical"
                     android:singleLine="true"
-                    android:text="Amount"
+                    android:text="@string/amount"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s_small" />
             </LinearLayout>
@@ -258,7 +258,7 @@
                     android:id="@+id/tv_remarks_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/remarks_"
+                    android:text="@string/remarks"
                     android:layout_marginLeft="5dp"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s_small"/>
@@ -266,7 +266,7 @@
                     android:id="@+id/tv_remarks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/remarks_"
+                    android:text="@string/remarks"
                     android:layout_marginLeft="5dp"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s_small"/>
@@ -341,7 +341,7 @@
                         android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:layout_margin="10dp"
-                        android:text="Close W Cash" />
+                        android:text="@string/close_cash" />
 
                     <Button
                         android:id="@+id/btn_get_order"
@@ -350,7 +350,7 @@
                         android:layout_marginLeft="5dp"
                         android:layout_weight="1"
                         android:layout_margin="10dp"
-                        android:text="Get Bill" />
+                        android:text="@string/get_bill" />
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>

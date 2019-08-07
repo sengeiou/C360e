@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class VideoResManager {
 	public static Context mCtx;
@@ -141,7 +142,7 @@ public class VideoResManager {
 			}*/
 			Fill(mExSdRoot, mFilePaths);
 			if (mFilePaths.size() == 0) {
-				Toast.makeText(mCtx, "在SD卡中未发现支持的视频", Toast.LENGTH_LONG).show();
+				Toast.makeText(mCtx, mCtx.getString(R.string.no_support_video_on_sdcard), Toast.LENGTH_LONG).show();
 			} else {
 				mbExSdUsed = true;
 			}
@@ -245,7 +246,7 @@ public class VideoResManager {
 			return;
 		}
 		for (int i = 0; i < files.size(); i++) {
-			String filename = String.format("%d%s", i + base, HD2_EXT);
+			String filename = String.format(Locale.US,"%d%s", i + base, HD2_EXT);
 			String path = parent + File.separator + filename;
 			File f = new File(path);
 			if (f.exists()) {
