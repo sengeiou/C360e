@@ -2,6 +2,7 @@ package com.alfredposclient.http;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -107,7 +108,7 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
-                                SharedPreferencesHelper.putInt(App.instance,SharedPreferencesHelper.TRAINING_MODE,0);
+                                SharedPreferencesHelper.putInt(App.instance, SharedPreferencesHelper.TRAINING_MODE, 0);
 
                                 HttpAnalysis.login(statusCode, headers,
                                         responseBody);
@@ -2477,6 +2478,92 @@ public class HttpAPI {
 
 //    public static void mediaSync(Context context, String absoluteUrl, SyncHttpClient syncHttpClient, Handler handler) {
 //    }
+
+    public static void setServerLanguage(Context context,
+                                         final Map<String, Object> parameters, final String url,
+                                         AsyncHttpClient httpClient, final Handler handler) {
+
+        parameters.put("appVersion", App.instance.VERSION);
+        final String language = (String) parameters.get("language");
+
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
+                                Message message = new Message();
+                                message.obj = language;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_REFRESH_LANGUAGE;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+                            } else {
+                                String body = new String(responseBody);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            String body = new String(responseBody);
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setClientLanguage(final Context context, String url,
+                                         AsyncHttpClient httpClient, String version, String language) {
+
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("version", version);
+            requestParams.put("language", language);
+            requestParams.put("callType", App.instance.getSystemSettings().getCallStyle());
+
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(requestParams), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            String body = new String(responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+
+                            } else {
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            String body = new String(responseBody);
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+                    });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public static void loginQRPayment(final Context context, String url, Integer empId, String password, String restaurantKey,

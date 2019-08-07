@@ -77,7 +77,7 @@
                         android:background="@color/red1"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:text="Printer Added"
+                        android:text="@string/printer_added"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:visibility="visible" />
@@ -142,7 +142,7 @@
                 android:background="@drawable/style_dialog_btn1"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="Add Printer"
+                android:text="@string/add_printer"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:visibility="visible" />

@@ -2,6 +2,7 @@ package com.alfredbase.javabean;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class KotSummary implements Serializable{
 
@@ -166,7 +167,7 @@ public class KotSummary implements Serializable{
 	}
 	
 	public String getCreateTimeString() {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US);
 		String dateString = formatter.format(this.createTime);	
 		return dateString;
 	}

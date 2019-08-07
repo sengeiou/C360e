@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -70,8 +71,8 @@ public class CCCentre {
 
         if (mExecutorService != null && !TextUtils.isEmpty(HOST)) {
             StringBuffer str = new StringBuffer(sales);
-            str.append(String.format(amount, Integer.parseInt(price)));
-            str.append(String.format(identifier, i++));
+            str.append(String.format(Locale.US,amount, Integer.parseInt(price)));
+            str.append(String.format(Locale.US,identifier, i++));
             send(str.toString(), timeOut);
             paymentMsg = str.toString();
         }
@@ -81,8 +82,8 @@ public class CCCentre {
 
         if (mExecutorService != null && !TextUtils.isEmpty(HOST)) {
             StringBuffer str = new StringBuffer(ntesSales);
-            str.append(String.format(amount, Integer.parseInt(price)));
-            str.append(String.format(identifier, i++));
+            str.append(String.format(Locale.US,amount, Integer.parseInt(price)));
+            str.append(String.format(Locale.US,identifier, i++));
             send(str.toString(), timeOut);
             paymentMsg = str.toString();
         }

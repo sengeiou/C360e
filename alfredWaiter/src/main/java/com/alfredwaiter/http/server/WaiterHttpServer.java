@@ -1,5 +1,6 @@
 package com.alfredwaiter.http.server;
 
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -54,7 +55,20 @@ public class WaiterHttpServer extends AlfredHttpServer {
 					resp = handlerSessionClose(body);
 				} else if (apiName.equals(APIName.TRANSFER_TABLE)) {
 					resp = handlerTransferTable(body);
-				} else {
+				}  else if (apiName.equals(APIName.POS_LANGUAGE)) {
+					Map<String, Object> map = new HashMap<>();
+					try {
+						JSONObject jsonObject = new JSONObject(body);
+						String version = jsonObject.optString("version");
+						String language = jsonObject.optString("language");
+						App.getTopActivity().changeLanguage(language);
+						map.put("resultCode", ResultCode.SUCCESS);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+
+					return getJsonResponse(new Gson().toJson(map));
+				}else {
 					resp = getNotFoundResponse();
 				}
 			}

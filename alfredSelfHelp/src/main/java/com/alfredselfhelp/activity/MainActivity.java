@@ -1,5 +1,6 @@
 package com.alfredselfhelp.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -22,9 +23,8 @@ import android.widget.VideoView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
-import com.alfredbase.http.ResultCode;
 import com.alfredbase.store.Store;
-import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.global.KpmDialogFactory;
@@ -44,7 +44,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements LanguageManager.LanguageDialogListener {
 
 
     Handler mPeriodEventHdr = new Handler();
@@ -88,6 +88,10 @@ public class MainActivity extends BaseActivity {
     private String imgUrl;
     private boolean doubleBackToExitPressedOnce = false;
 
+    private ImageView iv_language;
+    private LinearLayout ll_language_setting;
+    private AlertDialog alertLanguage;
+
     protected void initView() {
 
         super.initView();
@@ -98,14 +102,20 @@ public class MainActivity extends BaseActivity {
         btn_cc_ez = (Button) findViewById(R.id.btn_cc_ez);
         ll_main = (LinearLayout) findViewById(R.id.ll_main);
         int paymentType = Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1);
-        if(paymentType == 1){
+        if (paymentType == 1) {
             btn_cc_ez.setText("CC");
-        }else{
+        } else {
             btn_cc_ez.setText("EZ-Link");
         }
 
         re_main_select = (RelativeLayout) findViewById(R.id.re_main_select);
         btn_start.setOnClickListener(this);
+
+        ll_language_setting = (LinearLayout) findViewById(R.id.ll_language_setting);
+        ll_language_setting.setOnClickListener(this);
+
+        iv_language = (ImageView) findViewById(R.id.iv_language);
+        iv_language.setImageDrawable(LanguageManager.getLanguageFlag(this));
 
         videoView = (VideoView) findViewById(R.id.videoView);
         picSwitch = (PictureSwitch) findViewById(R.id.slImages);
@@ -171,6 +181,8 @@ public class MainActivity extends BaseActivity {
         });
 //        VtintApiCentre.getInstance().init(context);
 //        VtintApiCentre.getInstance().SearchUsb();
+
+//        throw new NullPointerException("Test crash");
     }
 
 
@@ -182,7 +194,7 @@ public class MainActivity extends BaseActivity {
 //                case ResultCode.SUCCESS: {
 ////					if (needSync) {
 //                    dismissLoadingDialog();
-//                    loadingDialog.setTitle("update all data");
+//                    loadingDialog.setTitle(context.getString(R.string.update_all_data));
 //                    loadingDialog.show();
 //                    SyncCentre.getInstance().updateAllData(context, handler);
 ////					}else{
@@ -308,10 +320,10 @@ public class MainActivity extends BaseActivity {
 
                 break;
             case R.id.btn_start:
-              //  dismissLoadingDialog();
-                    loadingDialog.setTitle("loding..");
-                    loadingDialog.show();
-                SyncCentre.getInstance().getRemainingStock(context,handler);
+                //  dismissLoadingDialog();
+                loadingDialog.setTitle(getString(R.string.loading));
+                loadingDialog.show();
+                SyncCentre.getInstance().getRemainingStock(context, handler);
 //
                 break;
 
@@ -321,11 +333,11 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.btn_cc_ez:
                 int paymentType = Store.getInt(context, Store.KPMG_PAYMENT_TYPE, 1);
-                if(paymentType == 1){
+                if (paymentType == 1) {
                     paymentType = 2;
                     Store.putInt(context, Store.KPMG_PAYMENT_TYPE, paymentType);
                     btn_cc_ez.setText("EZ-Link");
-                }else{
+                } else {
                     paymentType = 1;
                     Store.putInt(context, Store.KPMG_PAYMENT_TYPE, paymentType);
                     btn_cc_ez.setText("CC");
@@ -336,7 +348,7 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.btn_cc_ip:
                 KpmDialogFactory.commonTwoBtnIPInputDialog(MainActivity.this,
-                        "CC ip", "key in CC ip", "Cancel", "OK",
+                        "CC ip", "key in CC ip", this.getString(R.string.cancel), this.getString(R.string.ok),
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -353,6 +365,9 @@ public class MainActivity extends BaseActivity {
             case R.id.btn_print_setting:
                 UIHelp.startDevices(context);
                 break;
+            case R.id.ll_language_setting:
+                alertLanguage = LanguageManager.alertLanguage(this, this);
+            break;
 
         }
     }
@@ -385,7 +400,7 @@ public class MainActivity extends BaseActivity {
 
 
                 } else {
-                    Toast.makeText(MainActivity.this, "No Image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, this.getString(R.string.no_image), Toast.LENGTH_SHORT).show();
                 }
             } else if (requestCode == 2) {
                 if (selFile != null) {
@@ -402,7 +417,7 @@ public class MainActivity extends BaseActivity {
 
 
                 } else {
-                    Toast.makeText(MainActivity.this, "No Video", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, this.getString(R.string.no_video), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -662,7 +677,7 @@ public class MainActivity extends BaseActivity {
 //            inputServer.setText(imgUrl);
 //        }
         KpmDialogFactory.commonTwoBtnImageURLInputDialog(MainActivity.this,
-                "Background Image", "Please input URL for background image", "Cancel", "OK",
+                this.getString(R.string.background_image), this.getString(R.string.url_background_image), this.getString(R.string.cancel), this.getString(R.string.ok),
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -672,7 +687,7 @@ public class MainActivity extends BaseActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String input =  ((EditText)v).getText().toString();
+                        String input = ((EditText) v).getText().toString();
                         if (isCompleteUrl(input)) {
                             Store.putString(context, Store.MAIN_URL, input);
                             loadingDialog = new LoadingDialog(MainActivity.this);
@@ -686,7 +701,7 @@ public class MainActivity extends BaseActivity {
 
                         } else {
 //                            Toast.makeText(MainActivity.this, "输入的地址有误", Toast.LENGTH_LONG).show();
-                            UIHelp.showToast(MainActivity.this, "URL error. Please double check link");
+                            UIHelp.showToast(MainActivity.this, MainActivity.this.getString(R.string.url_error));
                         }
 
                         re_main_select.setVisibility(View.GONE);
@@ -771,7 +786,7 @@ public class MainActivity extends BaseActivity {
 //            timeServer.setSelection(time.length());
 //        }
         KpmDialogFactory.commonTwoBtnTimeInputDialog(MainActivity.this,
-                "Idle Time", "Please input idle waiting time (minutes)", "Cancel", "OK",
+                MainActivity.this.getString(R.string.idle_time), MainActivity.this.getString(R.string.input_idle_time), this.getString(R.string.cancel), this.getString(R.string.ok),
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -781,7 +796,7 @@ public class MainActivity extends BaseActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String input =  ((EditText)v).getText().toString();
+                        String input = ((EditText) v).getText().toString();
                         // String input = "http://139.224.17.126/upload/img/item/c1cfbf26-7310-4a6e-b5a4-15e89a82a9c3.png";
                         Store.putString(context, Store.KPM_TIME, input);
                         re_main_select.setVisibility(View.GONE);
@@ -867,4 +882,13 @@ public class MainActivity extends BaseActivity {
             }
         }, 2000);
     }
+
+    @Override
+    public void setLanguage(final String language) {
+        if (alertLanguage != null) {
+            alertLanguage.dismiss();
+        }
+        App.getTopActivity().changeLanguage(language);
+    }
+
 }

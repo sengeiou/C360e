@@ -17,6 +17,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredselfhelp.utils.UIHelp;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 public class VtintApiCentre {
     private static final byte STX = 0x02;
@@ -157,8 +158,8 @@ public class VtintApiCentre {
         if(mUsbDeviceConnection != null && usbEpOut != null && usbEpIn != null) {
             try {
                 StringBuffer str = new StringBuffer(sales);
-                str.append(String.format(amount, Integer.parseInt(msg)));
-                str.append(String.format(identifier, i++));
+                str.append(String.format(Locale.US,amount, Integer.parseInt(msg)));
+                str.append(String.format(Locale.US,identifier, i++));
                 msg = str.append(trace).toString();
                 byte[] msgB = msg.getBytes("UTF8");
                 byte LRC = getBCC(msgB);

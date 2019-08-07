@@ -6,20 +6,16 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alfredbase.VerifyDialog;
-import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
-import com.alfredposclient.activity.DeliveryDialogActivity;
 import com.alfredposclient.adapter.DeliveryApdater;
-import com.alfredposclient.adapter.PamentMethodAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,9 +89,9 @@ public class DeliveryDialog extends Dialog {
                     if (paymentClickListener != null)
                         paymentClickListener.onPaymentClick(plist);
                     dlg.cancel();
-                }else {
-                    Toast.makeText(context, "请选择打印的订单",
-                               Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, context.getString(R.string.please_select_order),
+                            Toast.LENGTH_SHORT).show();
                 }
 //
 

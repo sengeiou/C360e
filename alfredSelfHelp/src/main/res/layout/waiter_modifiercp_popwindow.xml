@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:text="Please Select Modifiers"
+                android:text="@string/please_select_modifiers"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 
@@ -60,7 +60,7 @@
             android:layout_marginBottom="5dp"
             android:singleLine="false"
             android:maxLines="3"
-            android:hint="Instructions/Comments"
+            android:hint="@string/instruction"
             android:drawablePadding="10dp"/>
 
     </LinearLayout>
@@ -91,7 +91,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="Save"
+                android:text="@string/save"
                 android:textSize="18sp" />
         </LinearLayout>
 

@@ -34,181 +34,183 @@ import java.util.List;
 import java.util.Map;
 
 public class SelectKitchen extends BaseActivity {
-	private ListView lv_kitchen_centre;
-	private List<Printer> printers = new ArrayList<Printer>();
+    private ListView lv_kitchen_centre;
+    private List<Printer> printers = new ArrayList<Printer>();
 
-//	public static final int PAIRING_COMPLETE = 3;
-	public static final int HANDLER_ERROR = 4;
-	
-	private boolean doubleBackToExitPressedOnce = false;
-	private TextTypeFace textTypeFace;
+    //	public static final int PAIRING_COMPLETE = 3;
+    public static final int HANDLER_ERROR = 4;
 
-	@Override
-	protected void initView() {
-		super.initView();
-		setContentView(R.layout.activity_select_kitchen);
-		lv_kitchen_centre = (ListView) findViewById(R.id.lv_kitchen_centre);
-		loadingDialog = new LoadingDialog(context);
-		Intent intent = getIntent();
-		printers = (List<Printer>) intent.getSerializableExtra("printers");
-		if (printers == null || printers.isEmpty()) {
-			UIHelp.showToast(context, "POS has no Kitchen Printer Configured. Kindly check Backend Settings if a Printer is Configured for the Kitchen.");
-			finish();
-		}
-		lv_kitchen_centre.setAdapter(new KitchenListAdapter(context, printers));
+    private boolean doubleBackToExitPressedOnce = false;
+    private TextTypeFace textTypeFace;
 
-		lv_kitchen_centre.setOnItemClickListener(new OnItemClickListener() {
+    @Override
+    protected void initView() {
+        super.initView();
+        setContentView(R.layout.activity_select_kitchen);
+        lv_kitchen_centre = (ListView) findViewById(R.id.lv_kitchen_centre);
+        loadingDialog = new LoadingDialog(context);
+        Intent intent = getIntent();
+        printers = (List<Printer>) intent.getSerializableExtra("printers");
+        if (printers == null || printers.isEmpty()) {
+            UIHelp.showToast(context, context.getString(R.string.pos_not_connect_to_kitchen));
+            finish();
+        }
+        lv_kitchen_centre.setAdapter(new KitchenListAdapter(context, printers));
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Printer printer = printers.get(position);
-				KDSDevice kdsDevice = new KDSDevice();
-				kdsDevice.setDevice_id(printer.getId());
-				kdsDevice.setName(printer.getPrinterName());
-				kdsDevice.setIP(CommonUtil.getLocalIpAddress());
-				kdsDevice.setMac(CommonUtil.getLocalMacAddress(context));
-				App.instance.setPrinter(printer);
-				App.instance.setKdsDevice(kdsDevice);
-				Map<String, Object> parameters = new HashMap<String, Object>();
-				parameters.put("device", kdsDevice);
-				parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
-				SyncCentre.getInstance().pairingComplete(context, App.instance.getPairingIp(), parameters,
-						handler);
-			}
-		});
-		
-		((TextView)findViewById(R.id.tv_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
-		initTextTypeFace();
-	}
+        lv_kitchen_centre.setOnItemClickListener(new OnItemClickListener() {
 
-	private void initTextTypeFace() {
-		textTypeFace = TextTypeFace.getInstance();
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_version));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_kitchen_tips));
-	}
-	
-	@Override
-	public void handlerClickEvent(View v) {
-		super.handlerClickEvent(v);
-	}
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Printer printer = printers.get(position);
+                KDSDevice kdsDevice = new KDSDevice();
+                kdsDevice.setDevice_id(printer.getId());
+                kdsDevice.setName(printer.getPrinterName());
+                kdsDevice.setIP(CommonUtil.getLocalIpAddress());
+                kdsDevice.setMac(CommonUtil.getLocalMacAddress(context));
+                App.instance.setPrinter(printer);
+                App.instance.setKdsDevice(kdsDevice);
+                Map<String, Object> parameters = new HashMap<String, Object>();
+                parameters.put("device", kdsDevice);
+                parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
+                SyncCentre.getInstance().pairingComplete(context, App.instance.getPairingIp(), parameters,
+                        handler);
+            }
+        });
 
-	private Handler handler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			// case UIHelp.GET_PRINTER_OK:
-			// load.dismiss();
-			// printers = (List<Printer>) msg.obj;
-			//
-			// lv_kitchen_centre.setAdapter(new KitchenListAdapter(context,
-			// kitchens));
-			//
-			// lv_kitchen_centre.setOnItemClickListener(new
-			// OnItemClickListener() {
-			//
-			// @Override
-			// public void onItemClick(AdapterView<?> parent, View view,
-			// int position, long id) {
-			// //UIHelp.startLogin(context);
-			// //finish();
-			// SyncCentre.getInstance().pairingComplete(context,
-			// App.instance.getKds(), handler);
-			// }
-			// });
-			// break;
-			case ResultCode.SUCCESS:
-				// Store POS device Info once pairing success
-				loadingDialog.dismiss();
-				UIHelp.startLogin(context);
-				finish();
-				break;
-			case HANDLER_ERROR:
-				loadingDialog.dismiss();
-				//remove KDS info
-				Store.remove(context, Store.KDS_DEVICE);
-				break;
-			case ResultCode.CONNECTION_FAILED:
-				loadingDialog.dismiss();
-				UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable)msg.obj, 
-						context.getResources().getString(R.string.revenue_center)));
-				break;
-			default:
-				break;
-			}
-		};
-	};
+        ((TextView) findViewById(R.id.tv_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
+        initTextTypeFace();
+    }
 
-	class KitchenListAdapter extends BaseAdapter {
-		private Context context;
+    private void initTextTypeFace() {
+        textTypeFace = TextTypeFace.getInstance();
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_app_version));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_kitchen_tips));
+    }
 
-		private List<Printer> kdsPrinters;
+    @Override
+    public void handlerClickEvent(View v) {
+        super.handlerClickEvent(v);
+    }
 
-		private LayoutInflater inflater;
+    private Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                // case UIHelp.GET_PRINTER_OK:
+                // load.dismiss();
+                // printers = (List<Printer>) msg.obj;
+                //
+                // lv_kitchen_centre.setAdapter(new KitchenListAdapter(context,
+                // kitchens));
+                //
+                // lv_kitchen_centre.setOnItemClickListener(new
+                // OnItemClickListener() {
+                //
+                // @Override
+                // public void onItemClick(AdapterView<?> parent, View view,
+                // int position, long id) {
+                // //UIHelp.startLogin(context);
+                // //finish();
+                // SyncCentre.getInstance().pairingComplete(context,
+                // App.instance.getKds(), handler);
+                // }
+                // });
+                // break;
+                case ResultCode.SUCCESS:
+                    // Store POS device Info once pairing success
+                    loadingDialog.dismiss();
+                    UIHelp.startLogin(context);
+                    finish();
+                    break;
+                case HANDLER_ERROR:
+                    loadingDialog.dismiss();
+                    //remove KDS info
+                    Store.remove(context, Store.KDS_DEVICE);
+                    break;
+                case ResultCode.CONNECTION_FAILED:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
+                            context.getResources().getString(R.string.revenue_center)));
+                    break;
+                default:
+                    break;
+            }
+        }
 
-		public KitchenListAdapter() {
+        ;
+    };
 
-		}
+    class KitchenListAdapter extends BaseAdapter {
+        private Context context;
 
-		public KitchenListAdapter(Context context, List<Printer> printers) {
-			this.context = context;
-			if (printers == null)
-				printers = Collections.emptyList();
-			this.kdsPrinters = printers;
-			inflater = LayoutInflater.from(context);
-		}
+        private List<Printer> kdsPrinters;
 
-		@Override
-		public int getCount() {
-			return kdsPrinters.size();
-		}
+        private LayoutInflater inflater;
 
-		@Override
-		public Object getItem(int arg0) {
-			return kdsPrinters.get(arg0);
-		}
+        public KitchenListAdapter() {
 
-		@Override
-		public long getItemId(int arg0) {
-			return arg0;
-		}
+        }
 
-		@Override
-		public View getView(int arg0, View arg1, ViewGroup arg2) {
-			ViewHolder holder = null;
-			if (arg1 == null) {
-				arg1 = inflater.inflate(R.layout.item_pos, null);
-				holder = new ViewHolder();
-				holder.tv_text = (TextView) arg1.findViewById(R.id.tv_text);
-				arg1.setTag(holder);
-			} else {
-				holder = (ViewHolder) arg1.getTag();
-			}
-			holder.tv_text.setText(kdsPrinters.get(arg0).getPrinterName());
-			textTypeFace.setTrajanProRegular(holder.tv_text);
-			return arg1;
-		}
+        public KitchenListAdapter(Context context, List<Printer> printers) {
+            this.context = context;
+            if (printers == null)
+                printers = Collections.emptyList();
+            this.kdsPrinters = printers;
+            inflater = LayoutInflater.from(context);
+        }
 
-		class ViewHolder {
-			public TextView tv_text;
-		}
-	}
+        @Override
+        public int getCount() {
+            return kdsPrinters.size();
+        }
 
-	@Override
-	public void onBackPressed() {
-		 if (doubleBackToExitPressedOnce) {
-		        super.onBackPressed();
-		        return;
-		    }
+        @Override
+        public Object getItem(int arg0) {
+            return kdsPrinters.get(arg0);
+        }
 
-		    this.doubleBackToExitPressedOnce = true;
-		    UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
+        @Override
+        public long getItemId(int arg0) {
+            return arg0;
+        }
 
-		BaseApplication.postHandler.postDelayed(new Runnable() {
+        @Override
+        public View getView(int arg0, View arg1, ViewGroup arg2) {
+            ViewHolder holder = null;
+            if (arg1 == null) {
+                arg1 = inflater.inflate(R.layout.item_pos, null);
+                holder = new ViewHolder();
+                holder.tv_text = (TextView) arg1.findViewById(R.id.tv_text);
+                arg1.setTag(holder);
+            } else {
+                holder = (ViewHolder) arg1.getTag();
+            }
+            holder.tv_text.setText(kdsPrinters.get(arg0).getPrinterName());
+            textTypeFace.setTrajanProRegular(holder.tv_text);
+            return arg1;
+        }
 
-		        @Override
-		        public void run() {
-		            doubleBackToExitPressedOnce=false;                       
-		        }
-		    }, 2000);
-	}
+        class ViewHolder {
+            public TextView tv_text;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
+
+        BaseApplication.postHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+    }
 }

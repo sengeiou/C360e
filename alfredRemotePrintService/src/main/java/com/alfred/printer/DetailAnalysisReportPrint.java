@@ -127,7 +127,7 @@ public class DetailAnalysisReportPrint extends ReportBasePrint{
 				String.valueOf(BH.add(BH.getBD(reportDaySales.getDiscountPer()),
 						BH.getBD(reportDaySales.getDiscount()), true));
 		PrintData discPrint = new PrintData();
-		String discLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.total_disc), this.FIXED_COL3_TOTAL);
+		String discLabel = StringUtil.padRight(PrintService.instance.getResources().getString(R.string.total_discount), this.FIXED_COL3_TOTAL);
 		String discvStr = discLabel+":"+totalDisc+reNext;
 		discPrint.setDataFormat(PrintData.FORMAT_TXT);
 		discPrint.setTextAlign(PrintData.ALIGN_LEFT);

@@ -257,7 +257,7 @@ public class App extends BaseApplication {
                     return;
                 }
                 if (!object.equals(CommonUtil.getLocalIpAddress())) {
-                    DialogFactory.showOneButtonCompelDialog(getTopActivity(), "Warning", "Your IP has changed.\nPlease ReLogin", new View.OnClickListener() {
+                    DialogFactory.showOneButtonCompelDialog(getTopActivity(), getString(R.string.warning), getString(R.string.ip_changed_relogin), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             SyncCentre.getInstance().cancelAllRequests();

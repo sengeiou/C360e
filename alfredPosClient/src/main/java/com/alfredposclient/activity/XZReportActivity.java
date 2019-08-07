@@ -63,6 +63,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class XZReportActivity extends BaseActivity {
@@ -140,7 +141,7 @@ public class XZReportActivity extends BaseActivity {
                     if (loadingDialog != null && loadingDialog.isShowing()) {
                         loadingDialog.dismiss();
                     }
-                    UIHelp.showShortToast(XZReportActivity.this, "No Data");
+                    UIHelp.showShortToast(XZReportActivity.this, XZReportActivity.this.getString(R.string.no_data));
                     break;
             }
         }
@@ -274,11 +275,11 @@ public class XZReportActivity extends BaseActivity {
         btn_back = (ImageButton) findViewById(R.id.btn_back);
         ll_xz_analsis = (LinearLayout) findViewById(R.id.ll_xz_analsis);
         lv_hourly_analsis = (ListView) findViewById(R.id.lv_hourly_analsis);
-        tv_title_name.setText(getString(R.string.day_sales_report));
+        tv_title_name.setText(getString(R.string.report_day_sale));
         ll_print.setVisibility(View.INVISIBLE);
         loadingDialog = new LoadingDialog(this);
 
-        calendar = Calendar.getInstance();
+        calendar = Calendar.getInstance(Locale.US);
         businessDate = App.instance.getBusinessDate();
         Date date = new Date(businessDate);
         curStr = yearMonthDayFormater.format(date);
@@ -733,7 +734,7 @@ public class XZReportActivity extends BaseActivity {
 
            // float f4 = Float.parseFloat(reportDaySales.getTotalTax()) + Float.parseFloat(reportDaySales.getInclusiveTaxAmt());
             ReportDaySalesItem totalTaxView = new ReportDaySalesItem(context);
-            totalTaxView.setData("Total TAX/SVC", "",
+            totalTaxView.setData(getString(R.string.total_tax_tvc), "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(f4 + ""), true);
             ll_sales_total.addView(totalTaxView);
             // Start Drawer
@@ -762,7 +763,7 @@ public class XZReportActivity extends BaseActivity {
             } else {
                 start = reportDaySales.getStartDrawerAmount();
             }
-            startDrawer.setData("Start DRAWER", "",
+            startDrawer.setData(getString(R.string.start_drawer), "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(start), true);
             ll_sales_total.addView(startDrawer);
             // TOTAL CASH
@@ -792,7 +793,7 @@ public class XZReportActivity extends BaseActivity {
             ll_sales_total.addView(expected);
             // Actual In Drawer
             ReportDaySalesItem actual = new ReportDaySalesItem(context);
-            actual.setData("Actual in Drawer", "",
+            actual.setData(context.getString(R.string.start_drawer), "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(reportDaySales.getWaiterAmount()), true);
             ll_sales_total.addView(actual);
             // Difference
@@ -820,7 +821,7 @@ public class XZReportActivity extends BaseActivity {
                 ((ListView) findViewById(R.id.lv_summary_sales)).setAdapter(xzReportSumaryAdapter);
             }
         } else {
-            UIHelp.showShortToast(XZReportActivity.this, "No Data");
+            UIHelp.showShortToast(XZReportActivity.this, XZReportActivity.this.getString(R.string.no_data));
             calendarCard.setVisibility(View.VISIBLE);
             ll_xz_analsis.setVisibility(View.GONE);
             ll_print.setVisibility(View.GONE);
@@ -839,7 +840,7 @@ public class XZReportActivity extends BaseActivity {
                         ll_xz_analsis.setVisibility(View.GONE);
                         calendarCard.setVisibility(View.VISIBLE);
                         ll_print.setVisibility(View.INVISIBLE);
-                        tv_title_name.setText(getString(R.string.day_sales_report));
+                        tv_title_name.setText(getString(R.string.report_day_sale));
                     }
                     break;
                 case R.id.ll_print:
@@ -856,7 +857,7 @@ public class XZReportActivity extends BaseActivity {
             Date date1 = new Date(item.getDate().getTimeInMillis());
             SimpleDateFormat yearMonthDayFormater = new SimpleDateFormat("yyyy年MM月dd日");
             String str = yearMonthDayFormater.format(date1);
-            loadingDialog.setTitle("Loading");
+            loadingDialog.setTitle(context.getString(R.string.loading));
             loadingDialog.show();
             if (str.equals(curStr)) {
                 date = businessDate;
@@ -1060,7 +1061,7 @@ public class XZReportActivity extends BaseActivity {
                 calendarCard.setVisibility(View.VISIBLE);
                 ll_xz_analsis.setVisibility(View.GONE);
                 ll_print.setVisibility(View.INVISIBLE);
-                tv_title_name.setText(getString(R.string.day_sales_report));
+                tv_title_name.setText(getString(R.string.report_day_sale));
             } else {
                 this.finish();
             }

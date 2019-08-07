@@ -1,8 +1,6 @@
 package com.alfred.callnum.fragment;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -18,9 +16,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,7 +36,8 @@ import com.alfred.callnum.utils.TvPref;
 import com.alfred.callnum.utils.VideoResManager;
 import com.alfred.callnum.widget.PictureSwitch;
 import com.alfredbase.global.BugseeHelper;
-import com.alfredbase.utils.AnimatorListenerImpl;
+import com.alfredbase.utils.EditTextUtil;
+import com.alfredbase.utils.LanguageManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +52,7 @@ import java.util.Map;
  * Use the {@link TwoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TwoFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
+public class TwoFragment extends Fragment implements View.OnClickListener, View.OnTouchListener, LanguageManager.LanguageDialogListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -112,6 +111,9 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
     private Handler handlers;
 
+    private ImageView iv_language;
+    private LinearLayout ll_language_setting;
+    private AlertDialog alertLanguage;
 
     public static TwoFragment newInstance(String param1, String param2) {
         TwoFragment fragment = new TwoFragment();
@@ -161,6 +163,12 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
         picSwitch.setOutAnimation(getActivity(), android.R.anim.fade_out);
         li_select = (LinearLayout) getActivity().findViewById(R.id.li_select);
         re_video_pic = (RelativeLayout) getActivity().findViewById(R.id.re_video_pic);
+
+        ll_language_setting = (LinearLayout) getActivity().findViewById(R.id.ll_language_setting);
+        ll_language_setting.setOnClickListener(this);
+
+        iv_language = (ImageView) getActivity().findViewById(R.id.iv_language);
+        iv_language.setImageDrawable(LanguageManager.getLanguageFlag(getActivity()));
 
         call_big = (TextView) getActivity().findViewById(R.id.tv_call_big);
         line = (TextView) getActivity().findViewById(R.id.tv_line);
@@ -453,6 +461,9 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
 
 
                 break;
+            case R.id.ll_language_setting: {
+                alertLanguage = LanguageManager.alertLanguage(getActivity(), this);
+            }
         }
 
     }
@@ -488,7 +499,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                     call_big.setVisibility(View.GONE);
 
                 } else {
-                    Toast.makeText(getActivity(), "未选择图像文件", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getActivity().getString(R.string.image_file_not_selected), Toast.LENGTH_SHORT).show();
                 }
             } else if (requestCode == 2) {
                 if (selFile != null) {
@@ -505,7 +516,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
                     call_big.setVisibility(View.GONE);
 
                 } else {
-                    Toast.makeText(getActivity(), "未选择视频文件", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getActivity().getString(R.string.video_file_not_selected), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -810,7 +821,7 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
             videoView.pause();
         }
         if (videoView.getVisibility() == View.GONE && picSwitch.getVisibility() == View.GONE) {
-            call_big.setText(name);
+            call_big.setText(EditTextUtil.formatLocale(name));
             call_big.setVisibility(View.VISIBLE);
 //            scaleAnimation = (ScaleAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.scale);
 //            call_big.startAnimation(scaleAnimation);
@@ -884,4 +895,13 @@ public class TwoFragment extends Fragment implements View.OnClickListener, View.
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void setLanguage(final String language) {
+        if (alertLanguage != null) {
+            alertLanguage.dismiss();
+        }
+        App.getTopActivity().changeLanguage(language);
+    }
+
 }

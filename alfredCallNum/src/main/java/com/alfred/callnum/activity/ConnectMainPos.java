@@ -235,7 +235,7 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
                     if (loadingDialog == null) {
                         loadingDialog = new LoadingDialog(context);
                     }
-                    loadingDialog.setTitle("loading");
+                    loadingDialog.setTitle(getString(R.string.loading));
                     loadingDialog.show();
                     SyncCentre.getInstance().assignRevenue(context, App.instance.getPosIp(), handler);
 //                    App.instance.setPosIp(getInputedIP());

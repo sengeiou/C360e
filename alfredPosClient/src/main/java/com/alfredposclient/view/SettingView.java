@@ -83,10 +83,10 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 		this.context = parent;
 		this.mDrawerLayout = drawerLayout;
 	}
-	
+
 	private void init(final Context context) {
 		View.inflate(context, R.layout.setting_window, this);
-		
+
 
 		findViewById(R.id.ll_devices).setOnClickListener(this);
 		findViewById(R.id.ll_reprint_bill).setOnClickListener(this);
@@ -109,7 +109,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 
 		findViewById(R.id.ll_opendrawer).setOnClickListener(this);
 		findViewById(R.id.iv_setting_close).setOnClickListener(this);
-		findViewById(R.id.ll_setting_title).setOnClickListener(null);	
+		findViewById(R.id.ll_setting_title).setOnClickListener(null);
 		findViewById(R.id.ll_monthly_sale_report).setOnClickListener(this);
 		findViewById(R.id.ll_monthly_plu_report).setOnClickListener(this);
 		findViewById(R.id.ll_printer_qr_code).setOnClickListener(this);
@@ -248,7 +248,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 			}
 		};
 	}
-	
+
 	public void initOptionsNoSessionOpen() {
 		findViewById(R.id.ll_edit_settlement).setVisibility(
 				View.GONE);

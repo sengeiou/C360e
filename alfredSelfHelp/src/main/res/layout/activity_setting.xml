@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/rl_root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/rl_back"
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/iv_back"
             android:layout_centerInParent="true"
-            android:text="Setting"
+            android:text="@string/setting"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_b"/>
     </RelativeLayout>
@@ -213,7 +214,7 @@
 					android:layout_height="43dp"
 					android:gravity="left|center_vertical"
 					android:layout_marginLeft="10dp"
-					android:text="Enable Screen Lock"
+					android:text="@string/enable_screen_lock"
 					android:textColor="@color/black"
 					android:textSize="@dimen/text_size_m" />
 

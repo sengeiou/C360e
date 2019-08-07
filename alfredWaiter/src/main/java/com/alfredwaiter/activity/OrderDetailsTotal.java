@@ -218,11 +218,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 case VIEW_EVENT_SELECT_GROUP:
                     groupId = (Integer) msg.obj;
                     if (groupId < 0) {
-                        tv_group.setText("Group:All");
+                        tv_group.setText(getString(R.string.group_all));
                     } else if (groupId == 0) {
-                        tv_group.setText("Group:?");
+                        tv_group.setText(getString(R.string.group) + " ?");
                     } else {
-                        tv_group.setText("Group:" + groupId);
+                        tv_group.setText(getString(R.string.group) + " " + groupId);
                     }
 
                     refreshList();
@@ -281,7 +281,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 case ResultCode.ORDER_HAS_CLOSING:
                     DialogFactory.showOneButtonCompelDialog(context,
                             context.getResources().getString(R.string.warn),
-                            "Order is closing, please select table and replace order again.", null);
+                            context.getString(R.string.order_is_close_replace_new), null);
                     break;
                 case ResultCode.ORDER_SPLIT_IS_SETTLED:
                     loadingDialog.dismiss();
@@ -340,7 +340,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
     private void loadOrder(TableInfo tableInfo) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("tables", tableInfo);
-        loadingDialog.setTitle("updating...");
+        loadingDialog.setTitle(context.getString(R.string.updating));
         loadingDialog.show();
         SyncCentre.getInstance().selectTables(context, parameters,
                 handler);
@@ -418,11 +418,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             }
         }
         tv_item_count.setText(context.getResources().getString(R.string.item_count) + itemCount);
-        tv_sub_total.setText(context.getResources().getString(R.string.sub_total) + App.instance.getCurrencySymbol()
+        tv_sub_total.setText(context.getResources().getString(R.string.subtotal) + " : " + App.instance.getCurrencySymbol()
                 + BH.formatMoney(currentOrder.getSubTotal()));
         tv_discount.setText(context.getResources().getString(R.string.discount_) + App.instance.getCurrencySymbol()
                 + BH.formatMoney(currentOrder.getDiscountAmount()));
-        tv_taxes.setText(context.getResources().getString(R.string.taxes) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTaxAmount()));
+        tv_taxes.setText(context.getResources().getString(R.string.taxes) + " : " + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTaxAmount()));
         tv_grand_total.setText(context.getString(R.string.grand_total) + App.instance.getCurrencySymbol() + BH.formatMoney(currentOrder.getTotal()));
     }
 
@@ -541,15 +541,15 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             case R.id.btn_reprint_kot:
             case R.id.btn_print_bill: {
                 final PrinterDevice printerDevice = Store.getObject(context, Store.WAITER_PRINTER_DEVICE, PrinterDevice.class);
-                String str = "Use the default Cashier Printer ?";
+                String str = getString(R.string.use_default_cashier_printer);
                 if (printerDevice != null) {
-                    str = "Use the \"" + (TextUtils.isEmpty(printerDevice.getPrinterName()) ? printerDevice.getName() : printerDevice.getPrinterName()) + "\" Printer ?\nIP:" + printerDevice.getIP();
+                    str = getString(R.string.use_cashier_printer_ip, TextUtils.isEmpty(printerDevice.getPrinterName()) ? printerDevice.getName() : printerDevice.getPrinterName(), printerDevice.getIP());
                 }
 
                 isOpenScreen = false;
                 isRePrintKOT = v.getId() == R.id.btn_reprint_kot;
 
-                DialogFactory.commonTwoBtnDialog(context, "Warning", str, "Other", "OK",
+                DialogFactory.commonTwoBtnDialog(context, getString(R.string.warning), str, getString(R.string.other), getString(R.string.ok).toUpperCase(),
                         new OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -927,7 +927,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                             if (num <= newNum) {
                                                 updateOrderDetail(tag, num);
                                             } else {
-                                                UIHelp.showToast(OrderDetailsTotal.this, "out of stock");
+                                                UIHelp.showToast(OrderDetailsTotal.this, OrderDetailsTotal.this.getString(R.string.out_of_stock));
                                             }
                                         } else {
                                             textView.setText(tag.getItemName() + "");

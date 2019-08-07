@@ -39,7 +39,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="@string/take_away_"
+                android:text="@string/takeaway"
                 android:textColor="@color/text_light_black"
                 android:textSize="15sp" />
 
@@ -52,7 +52,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="Delivery"
+                android:text="@string/delivery"
                 android:textColor="@color/text_light_black"
                 android:textSize="15sp" />
 
@@ -90,7 +90,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="0dp"
             android:layout_toLeftOf="@id/btn_refresh"
-            android:text="delivery print" />
+            android:text="@string/delivery" />
     </RelativeLayout>
 
 
@@ -173,7 +173,7 @@
                     android:ellipsize="end"
                     android:gravity="left|center_vertical"
                     android:singleLine="true"
-                    android:text="@string/online_order_no"
+                    android:text="@string/order_no"
                     android:textColor="@color/black"
                     android:textSize="@dimen/text_size_s_small" />
 
@@ -396,7 +396,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
-                        android:text="@string/remarks_"
+                        android:text="@string/remarks"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_s_small" />
 
@@ -405,7 +405,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
-                        android:text="@string/remarks_"
+                        android:text="@string/remarks"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_s_small" />
                 </LinearLayout>

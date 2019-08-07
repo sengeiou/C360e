@@ -86,7 +86,7 @@ public class Welcome extends BaseActivity {
 				.setDuration(2000);
 		anim.start();
 		loadingDialog = new LoadingDialog(this);
-		loadingDialog.setTitle("Downloading");
+        loadingDialog.setTitle(context.getString(R.string.downloading));
 		TextTypeFace.getInstance().init(context);
 //		check();
 		BaseApplication.postHandler.postDelayed(new Runnable() {
@@ -127,7 +127,7 @@ public class Welcome extends BaseActivity {
 				AppVersion localVersion = new AppVersion(pi.versionName);
 				boolean updateData = Store.getBoolean(this, localVersion.getVersion(), false);
 				if(updateData){
-					DialogFactory.compulsoryUpdateDialog(context, "注意", "该版本需要餐厅数据更新，\n请保证同步时网络畅通！", new OnClickListener() {
+                DialogFactory.compulsoryUpdateDialog(context, this.getString(R.string.warning), this.getString(R.string.version_requires_update), new OnClickListener() {
 
 						@Override
 						public void onClick(View arg0) {
@@ -180,7 +180,7 @@ public class Welcome extends BaseActivity {
 				}
 			}).start();
 		}
-	
+
 	}
 
 	@Override
@@ -334,16 +334,16 @@ public class Welcome extends BaseActivity {
 		unregisterReceiver(receiver);
 		super.onDestroy();
 	}
-	
+
 	private void checkAndUpdateMainPOS(MainPosInfo oldPosSetting) {
-		String ip = CommonUtil.getLocalIpAddress();	
+		String ip = CommonUtil.getLocalIpAddress();
 		if (!ip.equals(oldPosSetting.getIP())) {
 			oldPosSetting.setIP(ip);
 			Store.saveObject(context, Store.MAINPOSINFO, oldPosSetting);
-		} 
+		}
 	    App.instance.setMainPosInfo(oldPosSetting);
 	}
-	
+
 	private void clearNoActivePaymentSettlement(){
 		Long businessDate = (Long) Store.getLong(this, Store.BUSINESS_DATE);
 		if(businessDate != null && businessDate != Store.DEFAULT_LONG_TYPE){
@@ -359,7 +359,7 @@ public class Welcome extends BaseActivity {
 				}
 			}
 		}
-		
+
 	}
 
     private void check() {
@@ -432,7 +432,7 @@ public class Welcome extends BaseActivity {
     }
 
     private void syncDataAction(Map<String, Integer> syncMap) {
-        loadingDialog.setTitle("数据更新中");
+        loadingDialog.setTitle(context.getString(R.string.update));
         loadingDialog.show();
         CoreData.getInstance().setLoginResult(Store
                 .getObject(context, Store.LOGIN_RESULT, LoginResult.class));

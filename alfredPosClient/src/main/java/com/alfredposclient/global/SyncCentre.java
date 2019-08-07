@@ -3,6 +3,7 @@ package com.alfredposclient.global;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -16,10 +17,12 @@ import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredposclient.R;
 import com.alfredposclient.http.HTTPKDSRequest;
 import com.alfredposclient.http.HTTPWaiterRequest;
 import com.alfredposclient.http.HttpAPI;
@@ -27,6 +30,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -444,8 +448,6 @@ public class SyncCentre {
             } else {
                 return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
             }
-
-
         }
     }
 
@@ -580,6 +582,62 @@ public class SyncCentre {
 
     }
 
+    //start language
+
+    public void setClientLanguage(final Context context, String version, String tag) {
+        ArrayList<String> urls = new ArrayList<String>();
+
+        Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
+        if (waiterDeviceMap != null && waiterDeviceMap.size() > 0) {
+            Set<Integer> key = waiterDeviceMap.keySet();
+            for (Integer index : key) {
+                WaiterDevice waiterDevice = waiterDeviceMap.get(index);
+                String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+                urls.add(url);
+            }
+        }
+
+        Map<Integer, KDSDevice> kdsDeviceMap = App.instance.getKDSDevices();
+        if (kdsDeviceMap != null && kdsDeviceMap.size() > 0) {
+            Set<Integer> key = kdsDeviceMap.keySet();
+            for (Integer index : key) {
+                KDSDevice kdsDevice = kdsDeviceMap.get(index);
+                String url = "http://" + kdsDevice.getIP() + ":" + APPConfig.KDS_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+                urls.add(url);
+            }
+        }
+
+        if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
+            String callNumApi = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+            urls.add(callNumApi);
+        }
+
+        for (int i = 0; i < urls.size(); i++) {
+            HttpAPI.setClientLanguage(context, urls.get(i), syncHttpClient, version, tag);
+        }
+    }
+
+
+    public void callServerLanguage(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
+                                   Handler handler) {
+        HttpAPI.setServerLanguage(context, parameters,
+                getAbsoluteUrl(mainPosInfo, APIName.SET_LANGUAGE), httpClient, handler);
+    }
+
+    private String getAbsoluteUrl(MainPosInfo mainPosInfo, String url) {
+        return "http://" + getIp(mainPosInfo) + ":" + APPConfig.HTTP_SERVER_PORT + "/" + url;
+    }
+
+    public String getIp(MainPosInfo mainPosInfo) {
+//		if (ip == null){
+        String ip = mainPosInfo.getIP();
+//		}
+        return ip;
+    }
+
+
+    //end language
+
     public void posCloseSession(final Context context) {
         if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
             String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_CLOSE_SESSION;
@@ -589,7 +647,7 @@ public class SyncCentre {
     }
 
     //3rd party services
-    public String requestAlipayUrl(final Map<String, Object> parameters) {
+    public String requestAlipayUrl(final Context context, final Map<String, Object> parameters) {
         //{restaurantKey:"h6s235",userKey:"19x6ljc",revenueId:27,orderId:123243,billNo:12312,amount:100}
         String url = null;
         StringBuffer param = new StringBuffer("userKey=" + CoreData.getInstance().getLoginResult().getUserKey() + "&");
@@ -609,10 +667,9 @@ public class SyncCentre {
                 } else {
                     url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
                 }
-
-
             }
-            param.append("amount=" + parameters.get("amount") + "&");
+            String amount = context.getString(R.string.amount);
+            param.append(amount + " =" + parameters.get("amount") + "&");
         }
 
         param.append("restaurantKey=" + CoreData.getInstance().getLoginResult()

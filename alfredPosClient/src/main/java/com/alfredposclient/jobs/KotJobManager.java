@@ -28,6 +28,7 @@ import com.path.android.jobqueue.config.Configuration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class KotJobManager {
@@ -574,7 +575,7 @@ public class KotJobManager {
                     if (prntd != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
-                        printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
+                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from)+" "+ fromTableName);
                         printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 
@@ -685,7 +686,7 @@ public class KotJobManager {
                     if (prntd != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
-                        printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
+                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from)+" "+ fromTableName);
                         printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 

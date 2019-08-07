@@ -99,7 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="right"
-                        android:text="@string/sub_total"
+                        android:text="@string/subtotal"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_m" />
 
@@ -159,9 +159,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="10dp"
-                        android:text="@string/print_kot"
+                        android:text="@string/reprint"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_m" />
+
 
                     <Button
                         android:id="@+id/btn_print_bill"
@@ -169,9 +170,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="10dp"
-                        android:text="@string/print_bill"
+                        android:text="@string/print"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_m" />
+
 
                     <Button
                         android:id="@+id/btn_get_bill"

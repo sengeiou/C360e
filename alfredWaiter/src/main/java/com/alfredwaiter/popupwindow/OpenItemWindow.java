@@ -696,7 +696,7 @@ public class OpenItemWindow implements OnClickListener, OnItemSelectedListener {
                 case TAX_CATEGORY_TYPE: {
                     TaxCategory taxCategory = (TaxCategory) object;
                     if (TextUtils.isEmpty(taxCategory.getTaxCategoryName())) {
-                        tv_name.setText("normal");
+                        tv_name.setText(parent.getResources().getString(R.string.normal));
                         taxCategory = null;
                     } else {
                         tv_name.setText(taxCategory.getTaxCategoryName());

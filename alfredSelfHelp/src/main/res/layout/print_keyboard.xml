@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:text="@string/select_printer"
+                android:text="@string/select_printer_information"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_b" />
             

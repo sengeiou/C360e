@@ -177,9 +177,9 @@ public class TrainToast {
                 View v = mToast.getView();
                 mNextViewField.set(mTN, v);
                 Method method = mTN.getClass().getDeclaredMethod("show", Collection.class);
-                method.invoke(mTN, null);
+                method.invoke(mTN, (Object) null);
             }
-            mShow.invoke(mTN, null);
+            mShow.invoke(mTN, (Object) null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -187,7 +187,7 @@ public class TrainToast {
 
     private void hide() {
         try {
-            mHide.invoke(mTN, null);
+            mHide.invoke(mTN, (Object) null);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {

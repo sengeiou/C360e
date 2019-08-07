@@ -110,6 +110,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener, SettlementAdapter.ClickListener, Ipay88SettlementAdapter.ClickListener {
@@ -989,7 +990,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 View.INVISIBLE);
         switch (type) {
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
-                tv_special_settlement_title.setText("ENTERTAINMENT");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.entertainment));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.VISIBLE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
@@ -1000,13 +1001,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 rl_special_settlement_phone.setVisibility(View.VISIBLE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_VOID:
-                tv_special_settlement_title.setText("VOID");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.void_));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_REFUND:
-                tv_special_settlement_title.setText("REFUND");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.refund));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
@@ -1039,7 +1040,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         }
         if (App.instance.countryCode == ParamConst.CHINA) {
             if (cardsName.equals("UNIONPAY"))
-                tv_cards_name.setText("银联");
+                tv_cards_name.setText("UNIONPAY");
             else if (cardsName.equals("MASTERCARD"))
                 tv_cards_name.setText("Master Card");
             else
@@ -1371,7 +1372,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
     public void voidItem(final OrderDetail orderDetail) {
-        DialogFactory.commonTwoBtnDialog(parent, "Warring", "This action is irreversible,\n Are you sure ?", "YES", "NO", new OnClickListener() {
+        DialogFactory.commonTwoBtnDialog(parent, parent.getString(R.string.warning), parent.getString(R.string.operation_irreversible), parent.getString(R.string.yes).toUpperCase(), parent.getString(R.string.no).toUpperCase(), new OnClickListener() {
             @Override
             public void onClick(View v) {
                 OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail, oldTotal);
@@ -2994,7 +2995,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 viewTag = ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE;
                 //备注
                 if (paymentMethod.getIsMsg() == 1) {
-                    tv_special_settlement_title.setText("CUSTOM");
+                    tv_special_settlement_title.setText(parent.getResources().getString(R.string.custom).toUpperCase());
                     rl_special_settlement_person.setVisibility(View.GONE);
                     rl_special_settlement_phone.setVisibility(View.GONE);
                     contentView.findViewById(R.id.ll_special_settlement).setVisibility(
@@ -3040,7 +3041,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             viewTag = ParamConst.SETTLEMENT_CUSTOM_ALL;
 //            ispart = paymentMethod.getIsPart();
             if (paymentMethod.getIsMsg() == 1) {
-                tv_special_settlement_title.setText("CUSTOM");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.custom).toUpperCase());
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(

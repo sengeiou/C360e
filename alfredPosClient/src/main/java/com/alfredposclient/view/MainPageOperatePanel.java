@@ -189,7 +189,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 				break;
 			case R.id.tv_transfer_table:
 				if(!IntegerUtils.isEmptyOrZero(order.getAppOrderId())){
-					UIHelp.showShortToast(parent, "Orders from Diner App Cannot be Transferred");
+					UIHelp.showShortToast(parent, parent.getString(R.string.order_from_dinner_app_cannot_transfrerred));
 					return;
 				}
 				handler.sendEmptyMessage(MainPage.VIEW_EVENT_TANSFER_TABLE);

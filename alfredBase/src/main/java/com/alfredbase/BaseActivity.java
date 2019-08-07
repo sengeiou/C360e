@@ -1,12 +1,19 @@
 package com.alfredbase;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,11 +23,13 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.ButtonClickTimer;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.RxBus;
 import com.floatwindow.float_lib.FloatActionController;
 import com.floatwindow.float_lib.OnTrainListener;
@@ -100,6 +109,12 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
     protected void initView(Bundle savedInstanceState) {
         displayTrain=ParamConst.DISABLE_POS_TRAINING;
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LanguageManager.setLocale(base));
+    }
+
 
     protected void initView() {
 
@@ -339,6 +354,27 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
             return;
         oneButtonCompelDialog.show();
 
+    }
+
+    public void changeLanguage(String language) {
+        if (!TextUtils.isEmpty(language)) {
+            LanguageManager.setNewLocale(context, language);
+
+            String packageName = context.getPackageName();
+            Intent mStartActivity = context.getPackageManager().getLaunchIntentForPackage(packageName);
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity,
+                    PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 300, mPendingIntent);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                this.finishAffinity();
+            }else{
+                ActivityCompat.finishAffinity(this);
+            }
+            System.exit(0);
+        }
     }
 
     @Override

@@ -569,7 +569,7 @@ public class DevicesActivity extends BaseActivity {
         ll_print.setVisibility(View.GONE);
 
         tv_title_name = (TextView) findViewById(R.id.tv_title_name);
-        tv_title_name.setText(getString(R.string.devices_));
+        tv_title_name.setText(getString(R.string.devices));
         hv_printer_group = (HorizontalListView) findViewById(R.id.hv_printer_group);
 
         device_code_img = (ImageView) findViewById(R.id.device_code_img);

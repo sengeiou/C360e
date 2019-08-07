@@ -379,7 +379,7 @@ public class Summary extends BaseActivity {
 				holder.send.setBackgroundColor(Color.GRAY);
 			}else if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_VOID) {
 				holder.send.setClickable(false);
-				holder.send.setText("void");
+				holder.send.setText(context.getResources().getString(R.string.void_));
 				holder.send.setBackgroundColor(Color.GRAY);
 			}else {
 				holder.send.setFocusable(true);
@@ -456,9 +456,9 @@ public class Summary extends BaseActivity {
 			orderId.setVisibility(View.VISIBLE);
 		}
 		kotId.setText(kot.getKotSummary().getId()+"");
-		orderId.setText(context.getResources().getString(R.string.order_id_)+kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo()+"");
-		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) +kot.getKotSummary().getNumTag()+ IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
-		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName()+"");
+		orderId.setText(context.getResources().getString(R.string.order_no)+kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo()+"");
+		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_no) +kot.getKotSummary().getNumTag()+ IntegerUtils.formatLocale(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
+		table.setText(context.getResources().getString(R.string.table) +" - "+ kot.getKotSummary().getTableName()+"");
 		posName.setText(kot.getKotSummary().getRevenueCenterName()+"");
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
 		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));

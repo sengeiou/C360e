@@ -2,9 +2,12 @@ package com.alfredbase.utils;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
+import com.alfredbase.R;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
@@ -111,9 +114,11 @@ import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ObjectFactory {
@@ -446,14 +451,14 @@ public class ObjectFactory {
         int posId = 0;
         int placesId = 0;
         int pack = 4;
-        if(tables != null){
-            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+        if (tables != null) {
+            if (!IntegerUtils.isEmptyOrZero(tables.getPosId())) {
                 posId = tables.getPosId();
             }
-            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+            if (!IntegerUtils.isEmptyOrZero(tables.getPlacesId())) {
                 placesId = tables.getPlacesId();
             }
-            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+            if (!IntegerUtils.isEmptyOrZero(tables.getPacks())) {
                 pack = tables.getPacks();
             }
         }
@@ -468,7 +473,11 @@ public class ObjectFactory {
                 order.setPersons(pack);
                 order.setOrderStatus(orderStatus);
                 order.setDiscountRate(ParamConst.DOUBLE_ZERO);
-                order.setSessionStatus(sessionStatus.getSession_status());
+                try {
+                    order.setSessionStatus(sessionStatus.getSession_status());
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
                 order.setPlaceId(placesId);
@@ -491,9 +500,9 @@ public class ObjectFactory {
                 }
                 order.setSubPosBeanId(subPosBeanId);
                 OrderSQL.addOrder(order);
-            }else if (order.getPersons().intValue() != pack){
+            } else if (order.getPersons().intValue() != pack) {
                 order.setPersons(pack);
-                OrderSQL.updateOrderPersions(pack,order.getId());
+                OrderSQL.updateOrderPersions(pack, order.getId());
             }
         }
         return order;
@@ -507,14 +516,14 @@ public class ObjectFactory {
         int posId = 0;
         int placesId = 0;
         int pack = 4;
-        if(tables != null){
-            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+        if (tables != null) {
+            if (!IntegerUtils.isEmptyOrZero(tables.getPosId())) {
                 posId = tables.getPosId();
             }
-            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+            if (!IntegerUtils.isEmptyOrZero(tables.getPlacesId())) {
                 placesId = tables.getPlacesId();
             }
-            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+            if (!IntegerUtils.isEmptyOrZero(tables.getPacks())) {
                 pack = tables.getPacks();
             }
         }
@@ -527,7 +536,11 @@ public class ObjectFactory {
                 order.setPersons(pack);
                 order.setOrderStatus(ParamConst.ORDER_STATUS_KIOSK);
                 order.setDiscountRate(ParamConst.DOUBLE_ZERO);
-                order.setSessionStatus(sessionStatus.getSession_status());
+                try {
+                    order.setSessionStatus(sessionStatus.getSession_status());
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
                 order.setPlaceId(placesId);
@@ -562,21 +575,25 @@ public class ObjectFactory {
         int posId = 0;
         int placesId = 0;
         int pack = 4;
-        if(tables != null){
-            if(!IntegerUtils.isEmptyOrZero(tables.getPosId())){
+        if (tables != null) {
+            if (!IntegerUtils.isEmptyOrZero(tables.getPosId())) {
                 posId = tables.getPosId();
             }
-            if(!IntegerUtils.isEmptyOrZero(tables.getPlacesId())){
+            if (!IntegerUtils.isEmptyOrZero(tables.getPlacesId())) {
                 placesId = tables.getPlacesId();
             }
-            if(!IntegerUtils.isEmptyOrZero(tables.getPacks())){
+            if (!IntegerUtils.isEmptyOrZero(tables.getPacks())) {
                 pack = tables.getPacks();
             }
         }
         if (appOrder != null) {
             synchronized (lock_order) {
-                order = OrderSQL.getOrderByAppOrderId(appOrder
-                        .getId().intValue());
+                try {
+                    order = OrderSQL.getOrderByAppOrderId(appOrder
+                            .getId().intValue());
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
                 if (order == null) {
                     order = new Order();
                     order.setId(CommonSQL.getNextSeq(TableNames.Order));
@@ -589,7 +606,11 @@ public class ObjectFactory {
                         order.setOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS);
                     order.setDiscountRate(ParamConst.DOUBLE_ZERO);
                     order.setTaxAmount(appOrder.getTaxAmount());
-                    order.setSessionStatus(sessionStatus.getSession_status());
+                    try {
+                        order.setSessionStatus(sessionStatus.getSession_status());
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
                     order.setRestId(restaurant.getId());
                     order.setRevenueId(revenueCenter.getId());
                     order.setPlaceId(placesId);
@@ -685,6 +706,7 @@ public class ObjectFactory {
         }
         return orderDetail;
     }
+
     // use in  transfer item feature
     public OrderDetail cpOrderDetail(OrderDetail cpOrderDetail) {
         OrderDetail orderDetail = new OrderDetail();
@@ -877,7 +899,7 @@ public class ObjectFactory {
             newTable.setResolution(width);
             newTable.setResolutionWidth(width);
             newTable.setResolutionHeight(height);
-            newTable.setName("table" + newTable.getPosId().intValue());
+            newTable.setName(BaseApplication.getTopActivity().getString(R.string.table) + " " + newTable.getPosId().intValue());
 //			if(imageName.startsWith("table_1"))
 //				newTable.setPacks(1);
 //			else if(imageName.startsWith("table_2"))
@@ -999,28 +1021,28 @@ public class ObjectFactory {
             return roundBeforePrice;
         }
         if (roundType.equalsIgnoreCase(ParamConst.ROUND_10CENTS)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0");
+            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("0.1"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
                     BH.getBD("0.1"), true);
         } else if (roundType.equalsIgnoreCase(
                 ParamConst.ROUND_1DOLLAR)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0");
+            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("1.0"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
                     BH.getBD("1.0"), true);
         } else if (roundType.equalsIgnoreCase(
                 ParamConst.ROUND_5CENTS)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0");
+            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("0.05"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
                     BH.getBD("0.05"), true);
         } else if (roundType.equalsIgnoreCase(
                 ParamConst.ROUND_10CENTS_DOWN)) {
-//			DecimalFormat doubleFormat = new DecimalFormat("0");
+//			DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("0.1"),
                     false);
             return BH.mul(BH.getBD(bigDecimal.setScale(0, BigDecimal.ROUND_DOWN).toString()),
@@ -1849,7 +1871,7 @@ public class ObjectFactory {
     }
 
     public PrinterTitle getPrinterTitle(RevenueCenter revenue, Order order,
-                                        String userName, String tableName, int copy,int trainType) {
+                                        String userName, String tableName, int copy, int trainType) {
         PrinterTitle printerTitle = new PrinterTitle();
         Restaurant restaurant = RestaurantSQL.getRestaurant();
         printerTitle.setRestaurantName(restaurant.getRestaurantPrint());
@@ -1873,11 +1895,11 @@ public class ObjectFactory {
         printerTitle.setIsKiosk(revenue.getIsKiosk());
         printerTitle.setCopy(copy);
         if (revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
-            printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
+            printerTitle.setOrderNo(IntegerUtils.formatLocale(revenue.getIndexId(), order.getOrderNo().toString()));
         } else {
             printerTitle.setOrderNo(order.getOrderNo().toString());
         }
-          printerTitle.setTrainType(trainType);
+        printerTitle.setTrainType(trainType);
 
         return printerTitle;
     }
@@ -1913,7 +1935,7 @@ public class ObjectFactory {
 //        }
 //		printerTitle.setOrderNo(orderSplit.getOrderId().toString());
         if (revenue.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
-            printerTitle.setOrderNo(IntegerUtils.fromat(revenue.getIndexId(), order.getOrderNo().toString()));
+            printerTitle.setOrderNo(IntegerUtils.formatLocale(revenue.getIndexId(), order.getOrderNo().toString()));
         } else {
             printerTitle.setOrderNo(order.getOrderNo().toString());
         }
@@ -1921,7 +1943,7 @@ public class ObjectFactory {
     }
 
     public PrinterTitle getPrinterTitleForReport(int revenueId, String billNo,
-                                                 String userName, String tableName, String businessDate,int trainType) {
+                                                 String userName, String tableName, String businessDate, int trainType) {
         PrinterTitle printerTitle = new PrinterTitle();
         Restaurant restaurant = new Restaurant();
         restaurant = RestaurantSQL.getRestaurant();

@@ -52,7 +52,7 @@ public class SelectRevenue extends BaseActivity {
         ((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
         initTextTypeFace();
         loadingDialog = new LoadingDialog(this);
-        loadingDialog.setTitle("Search Revenue ...");
+        loadingDialog.setTitle(this.getString(R.string.search_revenue));
         loadingDialog.showByTime(5000);
         observable = RxBus.getInstance().register("RECEIVE_IP_ACTION");
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
@@ -116,7 +116,7 @@ public class SelectRevenue extends BaseActivity {
                 UIHelp.startConnectPOS(context);
                 break;
             case R.id.iv_refresh:
-                loadingDialog.setTitle("Search Revenue ...");
+                loadingDialog.setTitle(this.getString(R.string.search_revenue));
                 loadingDialog.showByTime(5000);
                 App.instance.setPosIp("");
                 break;
@@ -165,7 +165,7 @@ public class SelectRevenue extends BaseActivity {
                 public void onClick(View v) {
                     BugseeHelper.buttonClicked(v);
                     App.instance.setPosIp(udpMsg.getIp());
-                    loadingDialog.setTitle("loading");
+                    loadingDialog.setTitle(context.getString(R.string.loading));
                     loadingDialog.show();
                     SyncCentre.getInstance().assignRevenue(context, App.instance.getPosIp(), handler);
                 }

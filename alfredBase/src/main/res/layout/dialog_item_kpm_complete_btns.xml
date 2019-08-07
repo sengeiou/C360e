@@ -38,7 +38,7 @@
             android:paddingLeft="5dp"
             android:textStyle="bold"
             android:paddingRight="5dp"
-            android:text="Thank You"
+            android:text="@string/thank_you"
             android:textColor="@color/black1"
 
             android:textSize="22sp" />
@@ -54,7 +54,7 @@
             android:paddingRight="30dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="Payment in progress..."
+            android:text="@string/payment_in_progress"
             android:textColor="@color/black1"
             android:textSize="18sp" />
 
@@ -68,7 +68,6 @@
             android:layout_marginTop="0dp"
 
             android:gravity="center"
-            android:text="Position the QR code at the sdanner"
             android:textColor="@color/black1"
             android:textSize="18dp"
             android:layout_marginRight="20dp"

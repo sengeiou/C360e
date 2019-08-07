@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Vector;
 
 public class SerialPortFinder
@@ -96,7 +97,7 @@ public class SerialPortFinder
 				while (itdev.hasNext())
 				{
 					String device = itdev.next().getName();
-					String value = String.format("%s (%s)", device,
+					String value = String.format(Locale.US,"%s (%s)", device,
 							driver.getName());
 					devices.add(value);
 				}
