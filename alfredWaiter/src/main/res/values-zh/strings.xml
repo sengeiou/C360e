@@ -84,4 +84,12 @@
     <string name="edit">编辑</string>
     <string name="ip_changed_relogin">您的IP已更改。\n请重新登录</string>
 
+    <string name="devices_network">网络</string>
+    <string name="devices_bluetooth">蓝牙</string>
+    <string name="print_kot_succ">打印KOT成功</string>
+    <string name="print_kot_failed">打印KOT失败</string>
+    <string name="print_down">打印服务</string>
+    <string name="reconnect_print">您确定要重新连接打印服务吗？</string>
+
+
 </resources>

@@ -332,4 +332,8 @@
     <string name="table_name_used">ชื่อตารางถูกใช้งานแล้ว กรุณาใช้ชื่ออื่น</string>
     <string name="please_select_empty_table">โปรดเลือกตารางที่ว่างเปล่า</string>
 
+    <string name="turning_on_training_mode">เปิดโหมดการฝึกอบรม</string>
+    <string name="turning_on_training_mode_desc">สำหรับผู้ใช้ครั้งแรกการตั้งค่าจะปรากฏขึ้นที่ด้านบน</string>
+
+
 </resources>

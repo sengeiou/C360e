@@ -332,4 +332,8 @@
     <string name="table_name_used">اسم الجدول قيد الاستخدام بالفعل. يرجى استخدام اسم آخر.</string>
     <string name="please_select_empty_table">يرجى اختيار جدول فارغ</string>
 
+    <string name="turning_on_training_mode">تشغيل وضع التدريب</string>
+    <string name="turning_on_training_mode_desc">لأول مرة للمستخدمين ، سوف تظهر الإعدادات في وضع التشغيل في الأعلى</string>
+
+
 </resources>

@@ -1174,8 +1174,9 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 
 
 				DialogFactory.commonTwoBtnDialog(context, SystemSetting.this.getResources().getString(
-						R.string.warning),
-						"Turning on Training Mode.\n For first time Users, Tablet Settings will pop up Switch on "+"Appear on top"+", and go back to App.",
+						R.string.turning_on_training_mode),
+                        SystemSetting.this.getResources().getString(
+                                R.string.turning_on_training_mode_desc),
 						context.getResources().getString(R.string.cancel),
 						context.getResources().getString(R.string.ok),
 						new OnClickListener() {

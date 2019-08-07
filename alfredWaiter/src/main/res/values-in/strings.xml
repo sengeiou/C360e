@@ -84,4 +84,11 @@
     <string name="edit">sunting</string>
     <string name="ip_changed_relogin">IP Anda telah berubah. \ Silakan Masuk Kembali</string>
 
+    <string name="devices_network">Jaringan</string>
+    <string name="devices_bluetooth">Bluetooth</string>
+    <string name="print_kot_succ">Cetak KOT success</string>
+    <string name="print_kot_failed">Cetak KOT failed</string>
+    <string name="print_down">Servis Printer Terkendala</string>
+    <string name="reconnect_print">Apakah kamu yakin untuk mengkoneksikan kembali servis printer ?</string>
+
 </resources>

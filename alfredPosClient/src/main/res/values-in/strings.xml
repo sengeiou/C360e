@@ -332,4 +332,7 @@
     <string name="table_name_used">Nama Tabel sudah digunakan. Silakan gunakan nama lain.</string>
     <string name="please_select_empty_table">Silakan pilih tabel kosong</string>
 
+    <string name="turning_on_training_mode">Mengaktifkan Mode Pelatihan</string>
+    <string name="turning_on_training_mode_desc">Untuk Pengguna pertama kali, Pengaturan akan muncul pada muncul di atas</string>
+
 </resources>

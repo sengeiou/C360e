@@ -84,4 +84,11 @@
     <string name="edit">แก้ไข</string>
     <string name="ip_changed_relogin">IP ของคุณมีการเปลี่ยนแปลง \nโปรดลงชื่อเข้าใช้อีกครั้ง</string>
 
+    <string name="devices_network">เครือข่าย</string>
+    <string name="devices_bluetooth">บลูทู ธ</string>
+    <string name="print_kot_succ">พิมพ์ KOT สำเร็จ</string>
+    <string name="print_kot_failed">พิมพ์ KOT ล้มเหลว</string>
+    <string name="print_down">พิมพ์บริการลง</string>
+    <string name="reconnect_print">คุณแน่ใจหรือไม่ว่าเชื่อมต่อบริการพิมพ์อีกครั้ง</string>
+
 </resources>

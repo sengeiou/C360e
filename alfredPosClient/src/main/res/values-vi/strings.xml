@@ -332,4 +332,8 @@
     <string name="table_name_used">Tên bảng đã được sử dụng. Vui lòng sử dụng tên khác.</string>
     <string name="please_select_empty_table">Vui lòng chọn một bảng trống</string>
 
+    <string name="turning_on_training_mode">Bật chế độ đào tạo</string>
+    <string name="turning_on_training_mode_desc">Đối với Người dùng lần đầu, cài đặt sẽ bật lên bật lên trên đầu</string>
+
+
 </resources>

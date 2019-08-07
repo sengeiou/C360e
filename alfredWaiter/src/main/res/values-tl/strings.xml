@@ -84,4 +84,11 @@
     <string name="edit">i-edit</string>
     <string name="ip_changed_relogin">Nagbago ang iyong IP. \nMangyaring ReLogin</string>
 
+    <string name="devices_network">Network</string>
+    <string name="devices_bluetooth">Bluetooth</string>
+    <string name="print_kot_succ">I-print ang tagumpay ng KOT</string>
+    <string name="print_kot_failed">Nabigo ang pag-print ng KOT</string>
+    <string name="print_down">I-print ang Paglabas ng Serbisyo</string>
+    <string name="reconnect_print">Sigurado ka bang muling maiugnay ang Serbisyo ng Pag-print?</string>
+
 </resources>

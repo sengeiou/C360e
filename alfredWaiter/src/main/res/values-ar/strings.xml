@@ -84,4 +84,11 @@
     <string name="edit">تصحيح</string>
     <string name="ip_changed_relogin">لقد تغير عنوان IP الخاص بك. \ الرجاء إعادة تسجيل الدخول</string>
 
+    <string name="devices_network">شبكة الاتصال</string>
+    <string name="devices_bluetooth">تقنية البلوتوث</string>
+    <string name="print_kot_succ">طباعة KOT النجاح</string>
+    <string name="print_kot_failed">فشل طباعة KOT</string>
+    <string name="print_down">خدمة الطباعة لأسفل</string>
+    <string name="reconnect_print">هل أنت متأكد من إعادة الاتصال بخدمة الطباعة؟</string>
+
 </resources>

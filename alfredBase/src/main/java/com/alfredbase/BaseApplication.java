@@ -1,5 +1,6 @@
 package com.alfredbase;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -45,7 +46,6 @@ public class BaseApplication extends Application {
     public static BaseApplication instance;
     public static List<BaseActivity> activitys;
     public static final int DATABASE_VERSION = 31;
-    public static final int DATABASE_VERSION = 30;
     public static final int HANDLER_REFRESH_LANGUAGE = 772;
 
     /**

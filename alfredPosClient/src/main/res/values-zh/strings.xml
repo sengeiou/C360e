@@ -332,4 +332,8 @@
     <string name="table_name_used">表名已在使用中。 请使用其他名称。</string>
     <string name="please_select_empty_table">请选择一张空表</string>
 
+    <string name="turning_on_training_mode">开启训练模式</string>
+    <string name="turning_on_training_mode_desc">对于初次使用的用户，设置将弹出开启显示在顶部</string>
+
+
 </resources>

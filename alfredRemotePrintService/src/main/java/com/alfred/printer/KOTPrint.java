@@ -52,13 +52,13 @@ public class KOTPrint extends PrintJob{
 	public void AddHeader(KotSummary kotsummary,String trainString) {
 		StringBuilder sbr = new StringBuilder();
 		if (kotsummary.getIsTakeAway()==1) {
-			sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
+			sbr.append(PrintService.instance.getResources().getString(R.string.order_no))
 					.append("\t")
 					.append(kotsummary.getNumTag() + kotsummary.getOrderNoString()+trainString)
 					.append(reNext)
 					.append(PrintService.instance.getResources().getString(R.string.takeaway)).append(reNext);
 		}else if(kotsummary.getIsTakeAway()==2){
-            sbr.append(PrintService.instance.getResources().getString(R.string.order_no_))
+            sbr.append(PrintService.instance.getResources().getString(R.string.order_no))
                     .append("\t")
                     .append(kotsummary.getNumTag() + kotsummary.getOrderNoString()+trainString)
                     .append(reNext)

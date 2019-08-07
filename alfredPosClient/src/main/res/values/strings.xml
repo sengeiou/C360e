@@ -331,4 +331,10 @@
     <string name="operation_irreversible">This operation is irreversible, Are you sure ?</string>
     <string name="table_name_used">Table Name already in use. Please use another name.</string>
     <string name="please_select_empty_table">Please select an empty table</string>
+
+    <!---->
+    <!--.-->
+    <string name="turning_on_training_mode">Turning on Training Mode</string>
+    <string name="turning_on_training_mode_desc">For first time Users, Settings will pop up switch on appear on top</string>
+
 </resources>

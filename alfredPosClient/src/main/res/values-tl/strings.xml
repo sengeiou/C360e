@@ -332,4 +332,9 @@
     <string name="table_name_used">Pangalan ng Table na ginagamit na. Mangyaring gamitin ang ibang pangalan.</string>
     <string name="please_select_empty_table">Mangyaring pumili ng isang walang laman na talahanayan</string>
 
+    <string name="turning_on_training_mode">Pag-on sa Mode ng Pagsasanay</string>
+    <string name="turning_on_training_mode_desc">Para sa mga unang beses na Gumagamit, ang mga setting ay pop up switch sa lilitaw sa tuktok</string>
+
+
+
 </resources>

@@ -66,7 +66,6 @@ public class Welcome extends BaseActivity {
 	private LoadingDialog loadingDialog;
 	private int size = 0;
 	private PackageInfo pi;
-    private PackageInfo pi;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
