@@ -441,8 +441,12 @@ public class KdsHttpServer extends AlfredHttpServer {
         try {
             JSONObject jsonObject = new JSONObject(params);
             Gson gson = new Gson();
+            KotSummary toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
+            KotSummary fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
             KotItemDetail kotItemDetail = gson.fromJson(jsonObject.optString("tansferKotItem"), KotItemDetail.class);
             KotItemDetailSQL.update(kotItemDetail);
+            KotSummarySQL.update(toKotSummary);
+            KotSummarySQL.update(fromKotSummary);
             App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
             result.put("resultCode", ResultCode.SUCCESS);
             resp = getJsonResponse(new Gson().toJson(result));
@@ -609,6 +613,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                             kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);//状态改变为void
                             KotItemDetailSQL.update(kotItemDetail);
                         }
+
+                        KotSummarySQL.update(kotSummary);
                         App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_KOT, null);
                     }
                 }).start();

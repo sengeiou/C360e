@@ -9,7 +9,8 @@ public class Printer implements Serializable {
      */
     private static final long serialVersionUID = -4652260147089403168L;
 
-    public static final int KDS_SUB = 0;
+    public static final int KDS_SUB = -1;
+    public static final int KDS_NORMAL = 0;
     public static final int KDS_EXPEDITER = 1;
     public static final int KDS_SUMMARY = 2;
 

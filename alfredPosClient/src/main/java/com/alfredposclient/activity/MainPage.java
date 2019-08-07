@@ -1874,6 +1874,13 @@ public class MainPage extends BaseActivity {
                 }
                 break;
                 case VIEW_EVENT_UNSEAT_ORDER:
+                    KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
+                    int kotSummaryId = kotSummary != null ? kotSummary.getId() : 0;
+                    List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummaryId);
+
+                    if (kotSummary != null && kotItemDetails != null)
+                        App.instance.getKdsJobManager().deleteKotSummary(kotSummary, kotItemDetails);
+
                     OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
                     KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
                     OrderBillSQL.deleteOrderBillByOrder(currentOrder);

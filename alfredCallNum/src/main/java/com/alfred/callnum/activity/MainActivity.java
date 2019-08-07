@@ -281,7 +281,7 @@ public class MainActivity extends BaseActivity {
 
     public void createFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (viewId == 4) {
+        if (viewId == 4 || viewId == 5) {
             oneFragment = new OneFragment();
             oneFragment.setViewId(viewId, handler);
             fragmentTransaction.add(R.id.one_fragment, oneFragment);

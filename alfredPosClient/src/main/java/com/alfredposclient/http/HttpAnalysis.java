@@ -208,19 +208,20 @@ public class HttpAnalysis {
                     new TypeToken<ArrayList<Printer>>() {
                     }.getType());
 
-            //region sorting printer
-            LogUtil.log("Unsorted Printer -> " + object.getString("printerList"));
-            List<Printer> tmpPrinters = new ArrayList<>();
+            //region set dummy data
             for (Printer printer : printers) {
-                if (printer.getPrinterUsageType() == Printer.KDS_SUMMARY) {
-                    tmpPrinters.add(printer);
+                if ("Kitchen 1".equalsIgnoreCase(printer.getPrinterName()) ||
+                        "Kitchen 2".equalsIgnoreCase(printer.getPrinterName()) ||
+                        "Bar".equalsIgnoreCase(printer.getPrinterName())) {
+                    printer.setPrinterUsageType(Printer.KDS_SUB);
+                } else if ("EX Kitchen".equalsIgnoreCase(printer.getPrinterName())) {
+                    printer.setPrinterUsageType(Printer.KDS_EXPEDITER);
+                } else if ("Summary Printer".equalsIgnoreCase(printer.getPrinterName())) {
+                    printer.setPrinterUsageType(Printer.KDS_SUMMARY);
+                } else {
+                    printer.setPrinterUsageType(Printer.KDS_NORMAL);
                 }
             }
-
-            printers.removeAll(tmpPrinters);
-            printers.addAll(tmpPrinters);
-
-            LogUtil.log("Sorted Printer -> " + new Gson().toJson(printers));
             //endregion
 
             CoreData.getInstance().setPrinters(printers);

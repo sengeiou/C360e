@@ -368,11 +368,12 @@ public class KOTView extends LinearLayout implements AnimationListener,
         } else {
             linear_progress.setVisibility(VISIBLE);
             if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUB) {
-//                if (kot.getKotSummary().getKdsType() == Printer.KDS_SUB) {
                 llAction.setVisibility(VISIBLE);
                 call_num_tv.setVisibility(GONE);
                 complete_all_tv.setVisibility(GONE);
                 tvNext.setVisibility(VISIBLE);
+            } else if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
+                llAction.setVisibility(VISIBLE);
             } else if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
                 llAction.setVisibility(GONE);
             } else {
@@ -380,7 +381,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 complete_all_tv.setVisibility(VISIBLE);
                 call_num_tv.setVisibility(VISIBLE);
 
-                //kds epediter
+                //kds expediter
                 if (kot.getKotItemDetails().size() >= kot.getKotSummary().getOrderDetailCount()) {
                     llAction.setVisibility(VISIBLE);
                 } else {

@@ -241,7 +241,7 @@ public class OneFragment extends Fragment {
 //
 //        callMap.put(call.getName(),call);
 
-        if (call.getCallTag() == 5) {//setting value from pos
+        if (call.getCallType() == 5) {//setting value from pos
             if (mAdapter1.getPrinterGroupId() <= 0 || mAdapter1.getPrinterGroupId() == call.getPrinterGroupId()) {
                 tvTitle1.setText(call.getPrinterGroupName());
                 addData(re_one, mAdapter1, mDatas1, call, position);
