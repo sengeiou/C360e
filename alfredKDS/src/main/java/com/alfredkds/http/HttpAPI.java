@@ -115,7 +115,7 @@ public class HttpAPI {
 							error.printStackTrace();
 							handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED,error));
 							super.onFailure(statusCode, headers, responseBody, error);
-						}
+						}						
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -151,19 +151,19 @@ public class HttpAPI {
 							error.printStackTrace();
 							handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED,error));
 							super.onFailure(statusCode, headers, responseBody, error);
-						}
+						}							
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/*Report KDS Dynamic IP change*/
 	public static void kdsIpChange(final Context context,
 			Map<String, Object> parameters, String url,
 			AsyncHttpClient httpClient, final Handler handler) {
 		if (parameters != null) {
-			parameters.put("userKey", CoreData.getInstance().getUserKey());
+			parameters.put("userKey", CoreData.getInstance().getUserKey());			
 			parameters.put("appVersion", App.instance.VERSION);
 		}
 		try {
@@ -184,13 +184,13 @@ public class HttpAPI {
 //								elseResultCodeAction(resultCode, statusCode, headers, responseBody);
 							}
 						}
-
+						
 						@Override
 						public void onFailure(int statusCode, Header[] headers,
 								byte[] responseBody, Throwable error) {
 							error.printStackTrace();
 //							UIHelp.showToast((BaseApplication)context, context.getResources().getString(R.string.network_error));
-						}
+						}						
 					});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -361,7 +361,7 @@ public class HttpAPI {
 								byte[] responseBody, Throwable error) {
 //							KotItemDetail kotItemDetail = (KotItemDetail) parameters.get("kotItemDetail");
 //							kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-//							KotItemDetailSQL.update(kotItemDetail);
+//							KotItemDetailSQL.update(kotItemDetail);	
 							handler.sendMessage(handler.obtainMessage(KotHistory.HANDLER_SEND_FAILURE));
 							handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED,error));
 							super.onFailure(statusCode, headers, responseBody, error);
@@ -454,11 +454,11 @@ public class HttpAPI {
 			e.printStackTrace();
 		}
 	}
-
+	
 	// 返回码不需要特殊处理的提醒
 	private static  void elseResultCodeAction(final int resultCode, int statusCode,Header[] headers, final byte[] responseBody){
 		App.getTopActivity().runOnUiThread(new Runnable() {
-
+			
 			@Override
 			public void run() {
 				String information = null;
