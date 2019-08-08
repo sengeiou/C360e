@@ -664,7 +664,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BH.getBD(sumPaidamount), true);
             }
         }
-        Log.wtf("Test_k0",""+BH.formatMoney(remainTotal.toString()));
         ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
 
 
@@ -672,6 +671,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //		tv_item_count_num.setText(getItemNumSum() + "");
         tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
         tv_discount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString());
+
         tv_taxes_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString());
         tv_total_bill_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString());
 //		tv_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(roundAmount.getRoundBalancePrice()).toString());
@@ -1023,7 +1023,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         if (!App.instance.getSystemSettings().isCardRounding()) {
 
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
-            Log.wtf("Test_k1",""+BH.formatMoney(remainTotal.toString()));
             cardAmountPaidNum = remainTotal;
             tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotal.toString()));
             tv_cards_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
@@ -1038,7 +1037,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
             tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()).toString());
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotalAfterRound.toString()).toString());
-            Log.wtf("Test_k2",""+BH.formatMoney(remainTotalAfterRound.toString()));
             cardAmountPaidNum = remainTotalAfterRound;
             tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotalAfterRound.toString()));
         }
@@ -1516,8 +1514,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         showPaymentReminder();
                         return;
                     }
-                    String payHalalOrderId = order.getRestId()+""+order.getRevenueId()+""+orderBill.getBillNo();
-                    String url = String.format("https://payhalal.me/qr/%s/%s/%s","1001",BH.getBD(order.getTotal()).toString(),payHalalOrderId);
+                    String payHalalOrderId = order.getRestId() + "" + order.getRevenueId() + "" + orderBill.getBillNo();
+                    String url = String.format("https://payhalal.me/qr/%s/%s/%s", "1001", BH.getBD(order.getTotal()).toString(), payHalalOrderId);
                     DialogFactory.commonTwoBtnQRDialog(parent, url, "Back", "Paid", null, new OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1528,7 +1526,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                     });
                 }
-                    break;
+                break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
                         showPaymentReminder();
@@ -2047,7 +2045,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         BigDecimal cashNum = BH.getBD(num);
         BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
 
-         remainTotalAfterRound=BH.getBD(BH.formatMoney(remainTotalAfterRound.toString()));
+        remainTotalAfterRound = BH.getBD(BH.formatMoney(remainTotalAfterRound.toString()));
         int change = cashNum.compareTo(remainTotalAfterRound);
         if (change >= 0) {
             BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
@@ -2084,7 +2082,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 String showStr = tv_total_amount_num.getText().toString();
                 BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getReplace(showStr));
                 BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
-               remainTotalAfterRound=BH.getReplace(BH.formatMoney(remainTotalAfterRound.toString()));
+                remainTotalAfterRound = BH.getReplace(BH.formatMoney(remainTotalAfterRound.toString()));
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
                     showStr = remainTotalAfterRound.toString();
                 } else {
@@ -2122,8 +2120,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                 if (paymentMethod.getIsTax() == 0) {
                     //不计税
-                   // deleteVoidOrEntTax();
-                    ToastUtils.showToast(parent,"setting error\n") ;
+                    // deleteVoidOrEntTax();
+                    ToastUtils.showToast(parent, "setting error\n");
 
                     return;
                 }
@@ -2613,7 +2611,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     newPaymentMapList.add(paymentMap);
                 }
             }
-                break;
+            break;
             default:
                 break;
         }

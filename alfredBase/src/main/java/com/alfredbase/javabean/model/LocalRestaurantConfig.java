@@ -1,6 +1,7 @@
 package com.alfredbase.javabean.model;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
@@ -119,7 +120,7 @@ public class LocalRestaurantConfig {
 
 	public void setFormatType(RestaurantConfig restaurantConfig) {
 		this.formatType = restaurantConfig.getParaValue3();
-		BH.initFormart(formatType);
+		BH.initFormart(formatType, getCurrencySymbol());
 	}
 
 	public int getCurrencySymbolType() {

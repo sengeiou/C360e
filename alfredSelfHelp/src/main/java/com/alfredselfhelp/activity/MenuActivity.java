@@ -316,9 +316,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     break;
                 case VIEW_CC_CONNECT_SUCCEED:
                     if(CCPaymentType == CC_TYPE_CC) {
-                        CCCentre.getInstance().startPay(new DecimalFormat("0", new DecimalFormatSymbols(Locale.US)).format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 90*1000);
+                        CCCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 90*1000);
                     }else{
-                        CCCentre.getInstance().startEZLinkPay(new DecimalFormat("0", new DecimalFormatSymbols(Locale.US)).format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 20*1000);
+                        CCCentre.getInstance().startEZLinkPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 20*1000);
                     }
                     break;
                 case VIEW_CC_CONNECT_FAILED:

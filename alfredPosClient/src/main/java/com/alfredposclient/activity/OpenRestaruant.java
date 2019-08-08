@@ -257,7 +257,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 		super.initView();
 		setContentView(R.layout.activity_open_restaruant);
 		 train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
-		BH.initFormart( App.instance.getLocalRestaurantConfig().getFormatType());
+		BH.initFormart( App.instance.getLocalRestaurantConfig().getFormatType(),App.instance.getLocalRestaurantConfig().getCurrencySymbol());
 		ButtonClickTimer.canClick();
 		initDrawerLayout();
 		verifyDialog = new VerifyDialog(context, handler);

@@ -317,6 +317,6 @@ public class App extends BaseApplication {
 
     public void setFormatType(String formatType) {
         this.formatType = formatType;
-        BH.initFormart(formatType);
+        BH.initFormart(formatType, getCurrencySymbol());
     }
 }

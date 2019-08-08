@@ -1042,21 +1042,21 @@ public class ObjectFactory {
             return roundBeforePrice;
         }
         if (roundType.equalsIgnoreCase(ParamConst.ROUND_10CENTS)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
+            DecimalFormat doubleFormat = new DecimalFormat("0");
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("0.1"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
                     BH.getBD("0.1"), true);
         } else if (roundType.equalsIgnoreCase(
                 ParamConst.ROUND_1DOLLAR)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
+            DecimalFormat doubleFormat = new DecimalFormat("0");
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("1.0"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
                     BH.getBD("1.0"), true);
         } else if (roundType.equalsIgnoreCase(
                 ParamConst.ROUND_5CENTS)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
+            DecimalFormat doubleFormat = new DecimalFormat("0");
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("0.05"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),

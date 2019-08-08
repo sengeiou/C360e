@@ -73,6 +73,7 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.NetworkUtils;
+import com.google.gson.Gson;
 import com.path.android.jobqueue.network.NetworkUtil;
 
 import java.math.BigDecimal;
@@ -422,6 +423,7 @@ public class MainPageOrderView extends LinearLayout {
             }
             subtotal = BH.sub(BH.getBD(order.getSubTotal()), subtotal, true);
             taxAmount = BH.sub(BH.getBD(order.getTaxAmount()), taxAmount, true);
+
             discountAmount = BH.sub(BH.getBD(order.getDiscountAmount()), discountAmount, true);
             total = BH.sub(BH.getBD(order.getTotal()), total, true);
             tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(subtotal.toString()).toString());

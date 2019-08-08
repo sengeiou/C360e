@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.alfredposclient.R;
 import com.alfredposclient.adapter.DiscountAdapter;
 import com.alfredposclient.view.DiscountMoneyKeyboard;
 import com.alfredposclient.view.DiscountMoneyKeyboard.KeyBoardClickListener;
+import com.google.gson.Gson;
 
 public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_1 = 300;
@@ -133,6 +135,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				}
 			}
 		} else {
+
 			contentView.findViewById(R.id.ll_discount_layout).setVisibility(View.GONE);
 			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
@@ -179,12 +182,12 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		textTypeFace.setTrajanProRegular(tv_percent_sign);
 		textTypeFace.setTrajanProRegular(discount_tv);
 	}
-	
+
 	/**
 	 * order不为空的时候，针对于整个订单打折，orderDetail不为空的时候，针对于每个菜打折
-	 * 
+	 *
 	 * 两个只能有一个为null，而且必须有一个为null
-	 * 
+	 *
 	 * @param order
 	 * @param orderDetail
 	 * @param resultCall
@@ -303,7 +306,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		if (order != null) {
 			if(TextUtils.isEmpty(discountByCategory))
 			tv_discount_count.setText(BH.mul(
-					BH.sub(BH.getBD(order.getSubTotal()), 
+					BH.sub(BH.getBD(order.getSubTotal()),
 					BH.getBD(sumRealPrice), false),
 					BH.div(BH.getBD(percent), BH.getBD(100), false),
 					true).toString());
@@ -366,27 +369,32 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				if (order != null) {
 					if(TextUtils.isEmpty(discountByCategory))
 					tv_discount_count.setText(BH.mul(
-							BH.sub(BH.getBD(order.getSubTotal()), 
+							BH.sub(BH.getBD(order.getSubTotal()),
 							BH.getBD(sumRealPrice), false),
 							BH.div(BH.getBD(percent), BH.getBD(100), false),
 							true).toString());
 				} else {
-					tv_discount_count.setText(BH.mul(
-							BH.getBD(orderDetail.getRealPrice()),
-							BH.div(BH.getBD(percent), BH.getBD(100), false),
-							true).toString());
+
+					tv_discount_count.setText(
+							BH.mul(BH.getBD(orderDetail.getRealPrice()),
+                                    BH.div(BH.getBD(percent), BH.getBD(100),false),
+                                    true
+                            )
+							.toString());
+
 				}
 			} else {
 				double count = BH.div(BH.getBD(keyBuffer.toString() + key),
 						BH.getBD(100), true).doubleValue();
 				if (order != null) {
-					if (count > Double.parseDouble(BH.sub(BH.getBD(order.getSubTotal()), 
+					if (count > Double.parseDouble(BH.sub(BH.getBD(order.getSubTotal()),
 							BH.getBD(sumRealPrice), false).toString()))
 						return;
 				} else {
 					if (count > Double.parseDouble(orderDetail.getRealPrice()))
 						return;
 				}
+				Log.wtf("Test_","n1 "+BH.getBD(count));
 				tv_discount_count.setText(BH.getBD(count).toString());
 				keyBuffer.append(key);
 
@@ -394,7 +402,7 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 					if(TextUtils.isEmpty(discountByCategory))
 					tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 							BH.div(BH.getBD(count + ""),
-									BH.sub(BH.getBD(order.getSubTotal()), 
+									BH.sub(BH.getBD(order.getSubTotal()),
 									BH.getBD(sumRealPrice), false), true),
 							BH.getBD(100), true)));
 				} else {
