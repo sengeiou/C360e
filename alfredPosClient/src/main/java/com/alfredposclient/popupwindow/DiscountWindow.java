@@ -394,7 +394,6 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 					if (count > Double.parseDouble(orderDetail.getRealPrice()))
 						return;
 				}
-				Log.wtf("Test_","n1 "+BH.getBD(count));
 				tv_discount_count.setText(BH.getBD(count).toString());
 				keyBuffer.append(key);
 

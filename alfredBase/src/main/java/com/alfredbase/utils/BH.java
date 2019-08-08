@@ -59,15 +59,18 @@ public class BH {
         }
 
         if (type.equals(defaultType)) {
-            format = intFormat;
+            format = new DecimalFormat(formatNarrow().toString());
+            if (!TextUtils.isEmpty(currencySymbol)) {
+                if (currencySymbol.equals("Rp")) {
+                    format = intFormat;
+                }
+            }
         } else {
             if (("" + formatNarrow()).equals("1")) {
                 format = doubleFormat;
             } else {
                 format = new DecimalFormat(formatNarrow().toString());
             }
-
-
         }
         format.setRoundingMode(RoundingMode.HALF_UP);
     }
