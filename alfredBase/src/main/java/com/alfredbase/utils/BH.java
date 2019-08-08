@@ -10,6 +10,8 @@ import com.google.zxing.common.StringUtils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
  * BigDecimal 辅助类
@@ -22,10 +24,10 @@ public class BH {
 	public static final int FORMAT_AFTER = 1;//小数点后两位四舍五入
 	public static final int FORMAT_FRONT = 2;//小数点前两位四舍五入
 
-	private static final DecimalFormat doubleFormat = new DecimalFormat("0.00");
-	private static final DecimalFormat threeFormat = new DecimalFormat("0.000");
-	private static final DecimalFormat fourFormat = new DecimalFormat("0.0000");// 运算工程中使用。
-	public static final DecimalFormat intFormat = new DecimalFormat("0");
+	private static final DecimalFormat doubleFormat = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+	private static final DecimalFormat threeFormat = new DecimalFormat("0.000", new DecimalFormatSymbols(Locale.US));
+	private static final DecimalFormat fourFormat = new DecimalFormat("0.0000", new DecimalFormatSymbols(Locale.US));// 运算工程中使用。
+	public static final DecimalFormat intFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
 	//private static DecimalFormat format = doubleFormat;
 	static DecimalFormat format;
     static DecimalFormat format1;
@@ -34,24 +36,24 @@ public class BH {
 	private static BigDecimal formatM;
 
 //	private static int operatingType=100;
-private static DecimalFormat decimalFormat = new DecimalFormat(",##0.00");//
+private static DecimalFormat decimalFormat = new DecimalFormat(",##0.00",new DecimalFormatSymbols(Locale.US));//
 
 	public static void initFormart(String  typeFormat){
 		if(!TextUtils.isEmpty(typeFormat)){
 			type=typeFormat;
 			if(Double.parseDouble(type)>=1){
-				decimalFormat=new DecimalFormat(",###");
+				decimalFormat=new DecimalFormat(",###",new DecimalFormatSymbols(Locale.US));
 				//decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
 			}else {
 				String sp=",##"+type;
-				decimalFormat=new DecimalFormat(sp);
+				decimalFormat=new DecimalFormat(sp,new DecimalFormatSymbols(Locale.US));
 				//decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
 
 			}
 		}else {
 			type="0.01";
 		}
-		format = new DecimalFormat(formatNarrow().toString());
+		format = new DecimalFormat(formatNarrow().toString(),new DecimalFormatSymbols(Locale.US));
 		format.setRoundingMode(RoundingMode.HALF_UP);
 	}
 
@@ -91,7 +93,7 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",##0.00");//
 		//	int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
 
 
-		format1=   new DecimalFormat(type);
+		format1=   new DecimalFormat(type,new DecimalFormatSymbols(Locale.US));
 			format1.setRoundingMode(RoundingMode.HALF_UP);
 		formatM = BigDecimal.ZERO;
 		if (CommonUtil.isNull(string)) {
@@ -119,7 +121,7 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",##0.00");//
 	//	int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
 
 
-		format1=   new DecimalFormat(type);
+		format1=   new DecimalFormat(type,new DecimalFormatSymbols(Locale.US));
 		format1.setRoundingMode(RoundingMode.HALF_UP);
 		formatM = BigDecimal.ZERO;
 		if (CommonUtil.isNull(string)) {
@@ -166,7 +168,7 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",##0.00");//
 	) {
 
 
-		format1=   new DecimalFormat(type);
+		format1=   new DecimalFormat(type,new DecimalFormatSymbols(Locale.US));
 		format1.setRoundingMode(RoundingMode.HALF_UP);
 		formatM = BigDecimal.ZERO;
 		if (CommonUtil.isNull(integer)) {
@@ -253,10 +255,10 @@ private static DecimalFormat decimalFormat = new DecimalFormat(",##0.00");//
 		value=	new BigDecimal(format.format(value));
 		}else
 		if(Double.valueOf(type)==10){
-			format=	new DecimalFormat("0.0");
+			format=	new DecimalFormat("0.0",new DecimalFormatSymbols(Locale.US));
 			value=	new BigDecimal(format.format(value));
 		}else {
-			format=	new DecimalFormat("0");
+			format=	new DecimalFormat("0",new DecimalFormatSymbols(Locale.US));
 			value=	new BigDecimal(format.format(value));
 		}
 		return value;

@@ -1,6 +1,7 @@
 package com.alfredposclient.jobs;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
@@ -22,6 +23,7 @@ import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
+import com.google.gson.Gson;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 
@@ -112,9 +114,11 @@ public class KotJobManager {
 
 //        List<Integer> doStockMap = new ArrayList<>();
         // add job to send it to KDS
+        Log.wtf("Test_printer_group", new Gson().toJson(printerGrougIds));
         for (Integer prgid : printerGrougIds) {
             ArrayList<Printer> printers = CoreData.getInstance()
                     .getPrintersInGroup(prgid.intValue());
+            Log.wtf("Test_printer_group_member", new Gson().toJson(printers));
             for (Printer prnt : printers) {
                 // KDS device
                 KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
@@ -631,7 +635,7 @@ public class KotJobManager {
                 .getKotItemModifiersByKotItemDetail(kotItemDetail
                         .getId()));
         List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
-        if(kotItemDetails == null || kotItemDetails.size() == 0) {
+        if (kotItemDetails == null || kotItemDetails.size() == 0) {
             KotSummarySQL.deleteKotSummary(fromKotSummary);
         }
         context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
