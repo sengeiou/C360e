@@ -111,9 +111,11 @@ import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ObjectFactory {
@@ -1040,21 +1042,21 @@ public class ObjectFactory {
             return roundBeforePrice;
         }
         if (roundType.equalsIgnoreCase(ParamConst.ROUND_10CENTS)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0");
+            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("0.1"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
                     BH.getBD("0.1"), true);
         } else if (roundType.equalsIgnoreCase(
                 ParamConst.ROUND_1DOLLAR)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0");
+            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("1.0"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
                     BH.getBD("1.0"), true);
         } else if (roundType.equalsIgnoreCase(
                 ParamConst.ROUND_5CENTS)) {
-            DecimalFormat doubleFormat = new DecimalFormat("0");
+            DecimalFormat doubleFormat = new DecimalFormat("0", new DecimalFormatSymbols(Locale.US));
             BigDecimal bigDecimal = BH.div(roundBeforePrice, BH.getBD("0.05"),
                     false);
             return BH.mul(BH.getBD(doubleFormat.format(bigDecimal)),
