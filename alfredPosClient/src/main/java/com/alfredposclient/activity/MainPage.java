@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -410,7 +409,7 @@ public class MainPage extends BaseActivity {
         });
 //		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
         XMPP.getInstance().setCanCheckAppOrder(true);
-        if (savedInstanceState != null) {
+        if(savedInstanceState != null){
             currentOrder = (Order) savedInstanceState.getSerializable("currentOrder");
             currentTable = (TableInfo) savedInstanceState.getSerializable("currentTable");
             setData();
@@ -420,8 +419,8 @@ public class MainPage extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("currentOrder", currentOrder);
-        outState.putSerializable("currentTable", currentTable);
+        outState.putSerializable("currentOrder",currentOrder);
+        outState.putSerializable("currentTable",currentTable);
     }
 
     public void tableAction(TableInfo tableInfo) {
@@ -526,7 +525,7 @@ public class MainPage extends BaseActivity {
                 App.instance.getIndexOfRevenueCenter(),
                 ParamConst.ORDER_STATUS_OPEN_IN_POS,
                 App.instance.getLocalRestaurantConfig()
-                        .getIncludedTax().getTax(), "");
+                        .getIncludedTax().getTax(),"");
     }
 
     private void getTableStatusInfo() {
@@ -571,10 +570,9 @@ public class MainPage extends BaseActivity {
         if (oldOrder == null) {
             return;
         }
-
         List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(oldOrder.getId().intValue());
         StringBuffer orderSplitIds = new StringBuffer();
-        if (orderSplits != null && orderSplits.size() > 0) {
+        if(orderSplits != null && orderSplits.size() > 0) {
             for (int i = 0; i < orderSplits.size(); i++) {
                 orderSplitIds.append(orderSplits.get(i).getId());
                 if (i < orderSplits.size() - 1) {
@@ -584,9 +582,9 @@ public class MainPage extends BaseActivity {
         }
         Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
         List<OrderDetail> orderDetails = new ArrayList<>();
-        if (orderSplitIds.length() > 0) {
-            orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(oldOrder, orderSplitIds.toString()));
-        } else {
+        if(orderSplitIds.length() > 0){
+            orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(oldOrder,orderSplitIds.toString()));
+        }else{
             orderDetails.addAll(OrderDetailSQL
                     .getUnFreeOrderDetails(oldOrder));
         }
@@ -617,20 +615,17 @@ public class MainPage extends BaseActivity {
             }
         }
 
-        if (orderSplitIds.length() > 0) {
+        if(orderSplitIds.length() > 0){
             OrderDetailSQL.deleteOrderDetailByOrderOutsideOrderSplit(oldOrder.getId(), orderSplitIds.toString());
             OrderModifierSQL.deleteOrderModifierByOrderOutsideOrderDetail(oldOrder);
             OrderSplitSQL.deleteBySpliteIdList(oldOrder.getId(), orderSplitIds.toString());
             OrderSQL.updateOrder(oldOrder);
             OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, oldOrder.getId());
-        } else {
+        }else {
             OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
             OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
             OrderSQL.deleteOrder(oldOrder);
         }
-
-        TableInfo oldTable = TableInfoSQL.getTableById(oldOrder.getTableId().intValue());
-        currentTable.setPacks(currentTable.getPacks() + oldTable.getPacks());
         initOrder(currentTable);
 
     }
@@ -643,8 +638,8 @@ public class MainPage extends BaseActivity {
 //				closeCloseOrderWindow();
 //				break;
                 case REFRESH_STOCK_NUM:
-                    if (mainPageMenuView != null) {
-                        mainPageMenuView.setParam(currentOrder, handler);
+                    if(mainPageMenuView != null){
+                        mainPageMenuView.setParam(currentOrder,handler);
                     }
                     break;
                 case StoredCardActivity.VIEW_EVENT_STORED_CARD_PAY: {
@@ -816,7 +811,7 @@ public class MainPage extends BaseActivity {
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser()
                                                     .getLastName(),
-                                            currentTable.getName(), 1, App.instance.getSystemSettings().getTrainType());
+                                            currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
                             currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
                             OrderSQL.update(currentOrder);
@@ -824,10 +819,10 @@ public class MainPage extends BaseActivity {
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
                                             .getId()));
 
-                            List<OrderPromotion> orderPromotions = PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+                            List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
 
-                            App.instance.remoteBillPrint(printer, title, currentOrder,
-                                    orderItems, orderModifiers, taxMap, null, null, orderPromotions);
+                            App.instance. remoteBillPrint(printer, title, currentOrder,
+                                    orderItems, orderModifiers, taxMap, null, null,orderPromotions);
 //						handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                         }
                     } else {
@@ -883,7 +878,7 @@ public class MainPage extends BaseActivity {
                                     paidOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    currentTable.getName(), 1, App.instance.getSystemSettings().getTrainType());
+                                    currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
 
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
@@ -903,13 +898,13 @@ public class MainPage extends BaseActivity {
                             paidOrder, App.instance.getRevenueCenter());
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderAndBill(currentOrder, orderBill);
                     if (orderItems.size() > 0 && printer != null) {
-                        List<OrderPromotion> orderPromotions = PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+                        List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
 
 
                         //  if (App.instance.getSystemSettings().isCashClosePrint()) {
 
                         App.instance.remoteBillPrint(printer, title, paidOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount, orderPromotions);
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,orderPromotions);
 //                        } else {
 //                            App.instance.kickOutCashDrawer(printer);
 //                        }
@@ -1025,10 +1020,10 @@ public class MainPage extends BaseActivity {
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
-                        //  List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+                      //  List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
 
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount, null);
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,null);
                     }
                     // remove get bill notification
                     removeNotificationTables();
@@ -1071,13 +1066,13 @@ public class MainPage extends BaseActivity {
                 }
                 case VIEW_EVENT_ADD_ORDER_DETAIL:
                     addOrderDetail((OrderDetail) msg.obj);
-                    if (msg.arg1 > 0) { // When need refresh Menu List
+                    if(msg.arg1 > 0){ // When need refresh Menu List
                         mainPageMenuView.refreshAllMenu();
                     }
                     break;
                 case VIEW_EVENT_SET_DATA:
                     setData();
-                    if (msg.arg1 > 0) { // When need refresh Menu List
+                    if(msg.arg1 > 0){ // When need refresh Menu List
                         mainPageMenuView.refreshAllMenu();
                     }
                     break;
@@ -2060,10 +2055,10 @@ public class MainPage extends BaseActivity {
                     temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
-                        // List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+                       // List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
 
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount, null);
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,null);
                     }
                     // remove get bill notification
                     removeNotificationTables();
@@ -2161,7 +2156,6 @@ public class MainPage extends BaseActivity {
             handler.sendMessage(msg);
             return;
         }
-
         if (!isShowTables) {
             activityRequestCode = 0;
             tableShowAction = SHOW_TABLES;
@@ -2260,19 +2254,12 @@ public class MainPage extends BaseActivity {
     }
 
     private void showOpenItemWindow() {
-        if (openItemWindow != null) {
-            openItemWindow.show(context, findViewById(R.id.rl_root), handler,
-                    currentOrder);
-        }
-        if(isShowTables){
-            dismissOpenItemWindow();
-        }
+        openItemWindow.show(context, findViewById(R.id.rl_root), handler,
+                currentOrder);
     }
 
     private void dismissOpenItemWindow() {
-        if (openItemWindow != null) {
-            openItemWindow.dismiss();
-        }
+        openItemWindow.dismiss();
     }
 
     private void showSearchView() {
@@ -2318,7 +2305,6 @@ public class MainPage extends BaseActivity {
     }
 
     private void showTables() {
-        dismissOpenItemWindow();
 //		getTables();
 //        ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
 //                web_tables.getY(), 0).setDuration(300);
@@ -2334,15 +2320,6 @@ public class MainPage extends BaseActivity {
         transaction.show(f_tables);
         transaction.commitAllowingStateLoss();
         App.instance.showWelcomeToSecondScreen();
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dismissOpenItemWindow();
-            }
-        }, 300);
-
     }
 
     private void closeTables() {
@@ -2371,7 +2348,7 @@ public class MainPage extends BaseActivity {
 
     private void setData() {
         initOrder(currentTable);
-        if (currentOrder == null) {
+        if(currentOrder == null){
             showTables();
             return;
         }
@@ -2388,7 +2365,7 @@ public class MainPage extends BaseActivity {
 
 //        DiffData data = new DiffData(this);//实例化data类
 //        data.updateData(orderDetails);//启动发送
-        //  DifferentDislay.setParam(orderDetails,currentOrder);
+      //  DifferentDislay.setParam(orderDetails,currentOrder);
         operatePanel.setParams(this, currentOrder, orderDetails,
                 handler);
         loadingDialog.dismiss();
@@ -2499,7 +2476,7 @@ public class MainPage extends BaseActivity {
                         App.instance.getIndexOfRevenueCenter(),
                         ParamConst.ORDER_STATUS_OPEN_IN_POS,
                         App.instance.getLocalRestaurantConfig()
-                                .getIncludedTax().getTax(), appOrderId, "");
+                                .getIncludedTax().getTax(), appOrderId,"");
                 List<TempOrderDetail> tempOrderDetails = TempOrderDetailSQL.getTempOrderDetailByAppOrderId(appOrderId);
                 for (TempOrderDetail tempOrderDetail : tempOrderDetails) {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId());
@@ -2584,13 +2561,13 @@ public class MainPage extends BaseActivity {
                         @Override
                         public void onClick(View arg0) {
                             final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
-                            RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
-                            if (remainingStock != null) {
-                                int num = tag.getItemNum();
+                            RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+                            if(remainingStock!=null){
+                                int num=tag.getItemNum();
                                 RemainingStockHelper.updateRemainingStockNum(remainingStock, num, true, new StockCallBack() {
                                     @Override
                                     public void onSuccess(Boolean isStock) {
-                                        if (isStock) {
+                                        if(isStock){
                                             App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
                                         }
 
@@ -2630,7 +2607,7 @@ public class MainPage extends BaseActivity {
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
             case KOT_PRINT_FAILED:
-                handler.sendMessage(handler.obtainMessage(action, obj));
+               handler.sendMessage(handler.obtainMessage(action, obj));
                 break;
             case KOT_PRINT_SUCCEED:
                 handler.sendMessage(handler.obtainMessage(action, obj));
@@ -2699,7 +2676,7 @@ public class MainPage extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_CANCELED) {
+        if(resultCode == RESULT_CANCELED){
             return;
         }
         setData();

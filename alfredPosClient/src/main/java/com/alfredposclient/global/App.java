@@ -33,6 +33,7 @@ import com.alfred.remote.printservice.IAlfredRemotePrintService;
 import com.alfred.remote.printservice.RemotePrintServiceCallback;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.BuildConfig;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
 import com.alfredbase.global.BugseeHelper;
@@ -356,9 +357,9 @@ public class App extends BaseApplication {
     //    private PushServer pushServer;
     private SDKHandler sdkHandler;
     private boolean isUsbScannerLink = false;
-    private boolean isTrain = true;
+    private boolean isTrain=true;
     private int train;
-    private Boolean trainDisplay;
+    private Boolean trainDisplay ;
 
     @Override
     public void onCreate() {
@@ -366,11 +367,11 @@ public class App extends BaseApplication {
 
         instance = this;
         BugseeHelper.init(this, "9290f896-1a2e-4b70-b1fa-46823bb4398c");
-        train = SharedPreferencesHelper.getInt(this, SharedPreferencesHelper.TRAINING_MODE);
-        if (train == 1) {
+        train= SharedPreferencesHelper.getInt(this,SharedPreferencesHelper.TRAINING_MODE);
+        if(train==1){
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
-            // setSessionStatus(null);
-        } else {
+           // setSessionStatus(null);
+        }else {
             SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         }
         systemSettings = new SystemSettings(this);
@@ -452,14 +453,15 @@ public class App extends BaseApplication {
         });
 
 
+
         observable2 = RxBus.getInstance().register(RxBus.RX_TRAIN);
         observable2.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
             @Override
             public void call(Object object) {
                 final BaseActivity context = App.getTopActivity();
-                train = SharedPreferencesHelper.getInt(context, SharedPreferencesHelper.TRAINING_MODE);
-                if (isTrain) {
-                    isTrain = false;
+                train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+                if(isTrain) {
+                    isTrain=false;
                     // 0  正常模式， 1 培训模式
                     DialogFactory.commonTwoBtnDialog(context, "",
                             "Disable Training Mode?",
@@ -469,7 +471,7 @@ public class App extends BaseApplication {
                                 @Override
                                 public void onClick(View v) {
                                     //SharedPreferencesHelper.putInt(context,SharedPreferencesHelper.TRAINING_MODE,0);
-                                    isTrain = true;
+                                    isTrain=true;
                                 }
                             },
                             new OnClickListener() {
@@ -477,7 +479,7 @@ public class App extends BaseApplication {
                                 @Override
                                 public void onClick(View arg0) {
 
-                                    isTrain = true;
+                                    isTrain=true;
 
                                     Map<String, Object> parameters = new HashMap<String, Object>();
                                     final SessionStatus sessionStatus = Store.getObject(
@@ -577,7 +579,7 @@ public class App extends BaseApplication {
                 e.printStackTrace();
             }
         }
-        if (!isOpenLog) {
+        if(!isOpenLog) {
             posType = Store.getInt(instance, Store.POS_TYPE, 0);
             if (posType == 0) {
                 xmppThread = new XmppThread();
@@ -1637,7 +1639,9 @@ public class App extends BaseApplication {
         for (Map.Entry<Integer, PrinterDevice> dev : printerDevices.entrySet()) {
             Integer key = dev.getKey();
             PrinterDevice devPrinter = dev.getValue();
-            if (devPrinter.getIsCahierPrinter() > 0) {
+            if (devPrinter.getIsCahierPrinter() > 0)
+
+            {
                 return devPrinter;
             }
 
@@ -1716,18 +1720,18 @@ public class App extends BaseApplication {
                 if (countryCode == ParamConst.CHINA)
                     mRemoteService.printKioskKOT(printstr, kotsumStr, kdlstr,
                             modstr, this.systemSettings.isKotPrintTogether(),
-                            this.systemSettings.isKotDoublePrint(), getPrintOrderNo(kotsummary.getOrderId().intValue()), 2, train);
+                            this.systemSettings.isKotDoublePrint(), getPrintOrderNo(kotsummary.getOrderId().intValue()), 2,train);
                 else
                     mRemoteService.printKioskKOT(printstr, kotsumStr, kdlstr,
                             modstr, this.systemSettings.isKotPrintTogether(),
-                            this.systemSettings.isKotDoublePrint(), null, 3, train);
+                            this.systemSettings.isKotDoublePrint(), null, 3,train);
             } else {
                 int size = 2;
                 if (countryCode == ParamConst.CHINA)
                     size = 2;
                 mRemoteService.printKOT(printstr, kotsumStr, kdlstr, modstr,
                         this.systemSettings.isKotPrintTogether(),
-                        this.systemSettings.isKotDoublePrint(), size, isFire, train);
+                        this.systemSettings.isKotDoublePrint(), size, isFire,train);
             }
             return true;
         } catch (RemoteException e) {
@@ -1996,7 +2000,7 @@ public class App extends BaseApplication {
 //            }
 
 //            }
-            List<OrderPromotion> promotionData = PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+          List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
             roundingMap.put("Total", BH.formatMoney(total));
             roundingMap.put("Rounding", BH.formatMoney(rounding).toString());
             Gson gson = new Gson();
@@ -2008,7 +2012,7 @@ public class App extends BaseApplication {
             String tax = gson.toJson(taxes);
             String payment = gson.toJson(printReceiptInfos);
             String roundStr = gson.toJson(roundingMap);
-            String proStr = gson.toJson(promotionData);
+            String proStr=gson.toJson(promotionData);
             if (appOrderlist == null) {
                 String apporders = gson.toJson("");
             }
@@ -2036,7 +2040,7 @@ public class App extends BaseApplication {
                         this.systemSettings.isDoubleBillPrint(),
                         this.systemSettings.isDoubleReceiptPrint(), roundStr,
                         getLocalRestaurantConfig().getCurrencySymbol(),
-                        openDrawer, BH.IsDouble(), info, apporders, proStr, getLocalRestaurantConfig().getFormatType(), App.instance.systemSettings.isPrintInstructions());
+                        openDrawer, BH.IsDouble(), info, apporders,proStr,getLocalRestaurantConfig().getFormatType(),App.instance.systemSettings.isPrintInstructions());
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -2047,9 +2051,9 @@ public class App extends BaseApplication {
                                 Order order, ArrayList<PrintOrderItem> orderItems,
                                 ArrayList<PrintOrderModifier> orderModifiers,
                                 List<Map<String, String>> taxes,
-                                List<PaymentSettlement> settlement, RoundAmount roundAmount, List<OrderPromotion> orderPromotions) {
+                                List<PaymentSettlement> settlement, RoundAmount roundAmount,List<OrderPromotion> orderPromotions) {
 
-        remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint(), orderPromotions);
+        remoteBillPrint(printer, title, order, orderItems, orderModifiers, taxes, settlement, roundAmount, App.instance.getSystemSettings().isCashClosePrint(),orderPromotions);
     }
 
     public void remoteBillPrint(PrinterDevice printer, PrinterTitle title,
@@ -2057,7 +2061,7 @@ public class App extends BaseApplication {
                                 ArrayList<PrintOrderModifier> orderModifiers,
                                 List<Map<String, String>> taxes,
                                 List<PaymentSettlement> settlement, RoundAmount roundAmount,
-                                boolean openDrawer, List<OrderPromotion> orderPromotions) {
+                                boolean openDrawer,List<OrderPromotion> orderPromotions) {
 
         boolean isCashSettlement = false;
         List<PrintReceiptInfo> printReceiptInfos = new ArrayList<PrintReceiptInfo>();
@@ -2133,7 +2137,7 @@ public class App extends BaseApplication {
 //                            .toString();
 //                }
 
-                //  List<OrderPromotion>  promotionData=null;
+              //  List<OrderPromotion>  promotionData=null;
                 roundingMap.put("Total", total);
                 roundingMap.put("Rounding", rounding);
                 Gson gson = new Gson();
@@ -2146,7 +2150,7 @@ public class App extends BaseApplication {
                 String payment = gson.toJson(printReceiptInfos);
                 String roundStr = gson.toJson(roundingMap);
                 String apporders = "";
-                String proStr = gson.toJson(orderPromotions);
+                String proStr=gson.toJson(orderPromotions);
                 // gson.toJson(roundingMap);
                 if (isRevenueKiosk()) {
                     if (countryCode == ParamConst.CHINA)
@@ -2155,14 +2159,14 @@ public class App extends BaseApplication {
                                 this.systemSettings.isDoubleBillPrint(),
                                 this.systemSettings.isDoubleReceiptPrint(), roundStr,
                                 getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-                                true, BH.IsDouble(), proStr, App.instance.getLocalRestaurantConfig().getFormatType());
+                                true, BH.IsDouble(),proStr,App.instance.getLocalRestaurantConfig().getFormatType());
                     else
                         mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                                 details, mods, tax, payment,
                                 this.systemSettings.isDoubleBillPrint(),
                                 this.systemSettings.isDoubleReceiptPrint(), roundStr,
                                 null, getLocalRestaurantConfig().getCurrencySymbol(),
-                                openDrawer, BH.IsDouble(), proStr, App.instance.getLocalRestaurantConfig().getFormatType());
+                                openDrawer, BH.IsDouble(),proStr,App.instance.getLocalRestaurantConfig().getFormatType());
 
                 } else {
                     mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
@@ -2170,7 +2174,7 @@ public class App extends BaseApplication {
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
                             getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(), "", apporders, proStr, App.instance.getLocalRestaurantConfig().getFormatType(), App.instance.systemSettings.isPrintInstructions());
+                            openDrawer, BH.IsDouble(),"",apporders,proStr,App.instance.getLocalRestaurantConfig().getFormatType(),App.instance.systemSettings.isPrintInstructions());
                 }
 
             } catch (RemoteException e) {
@@ -2240,61 +2244,61 @@ public class App extends BaseApplication {
                 printReceiptInfos.add(printReceiptInfo);
             }
         }
-        if (mRemoteService == null) {
-            printerDialog();
-            return;
-        }
-        try {
-            Map<String, String> roundingMap = new HashMap<String, String>();
-            String total = order.getTotal();
-            String rounding = "0.00";
-            if (roundAmount != null) {
-                total = BH.sub(BH.getBD(order.getTotal()),
-                        BH.getBD(roundAmount.getRoundBalancePrice()), true)
-                        .toString();
-                rounding = BH.getBD(roundAmount.getRoundBalancePrice())
-                        .toString();
+            if (mRemoteService == null) {
+                printerDialog();
+                return;
             }
-            ArrayList<OrderPromotion> promotionData = PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
+            try {
+                Map<String, String> roundingMap = new HashMap<String, String>();
+                String total = order.getTotal();
+                String rounding = "0.00";
+                if (roundAmount != null) {
+                    total = BH.sub(BH.getBD(order.getTotal()),
+                            BH.getBD(roundAmount.getRoundBalancePrice()), true)
+                            .toString();
+                    rounding = BH.getBD(roundAmount.getRoundBalancePrice())
+                            .toString();
+                }
+                ArrayList<OrderPromotion> promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
-            roundingMap.put("Total", total);
-            roundingMap.put("Rounding", rounding);
-            Gson gson = new Gson();
-            String prtStr = gson.toJson(printer);
-            String prtTitle = gson.toJson(title);
-            String orderStr = gson.toJson(order);
-            String details = gson.toJson(orderItems);
-            String mods = gson.toJson(orderModifiers);
-            String tax = gson.toJson(taxes);
-            String payment = gson.toJson(printReceiptInfos);
-            String roundStr = gson.toJson(roundingMap);
-            String apporders = "";
-            String proStr = gson.toJson(promotionData);
-            // gson.toJson(roundingMap);
-            if (isRevenueKiosk()) {
-                if (countryCode == ParamConst.CHINA)
-                    mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
-                            details, mods, tax, payment,
+                roundingMap.put("Total", total);
+                roundingMap.put("Rounding", rounding);
+                Gson gson = new Gson();
+                String prtStr = gson.toJson(printer);
+                String prtTitle = gson.toJson(title);
+                String orderStr = gson.toJson(order);
+                String details = gson.toJson(orderItems);
+                String mods = gson.toJson(orderModifiers);
+                String tax = gson.toJson(taxes);
+                String payment = gson.toJson(printReceiptInfos);
+                String roundStr = gson.toJson(roundingMap);
+                String apporders = "";
+                String proStr=gson.toJson(promotionData);
+                // gson.toJson(roundingMap);
+                if (isRevenueKiosk()) {
+                    if (countryCode == ParamConst.CHINA)
+                        mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                                details, mods, tax, payment,
+                                this.systemSettings.isDoubleBillPrint(),
+                                this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                                getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
+                                true, BH.IsDouble(),proStr,App.instance.getLocalRestaurantConfig().getFormatType());
+                    else
+                        mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
+                                details, mods, tax, payment,
+                                this.systemSettings.isDoubleBillPrint(),
+                                this.systemSettings.isDoubleReceiptPrint(), roundStr,
+                                null, getLocalRestaurantConfig().getCurrencySymbol(),
+                                openDrawer, BH.IsDouble(),proStr,App.instance.getLocalRestaurantConfig().getFormatType());
+
+                } else {
+                    mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
+                            mods, tax, payment,
                             this.systemSettings.isDoubleBillPrint(),
                             this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                            getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-                            true, BH.IsDouble(), proStr, App.instance.getLocalRestaurantConfig().getFormatType());
-                else
-                    mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
-                            details, mods, tax, payment,
-                            this.systemSettings.isDoubleBillPrint(),
-                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                            null, getLocalRestaurantConfig().getCurrencySymbol(),
-                            openDrawer, BH.IsDouble(), proStr, App.instance.getLocalRestaurantConfig().getFormatType());
-
-            } else {
-                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-                        mods, tax, payment,
-                        this.systemSettings.isDoubleBillPrint(),
-                        this.systemSettings.isDoubleReceiptPrint(), roundStr,
-                        getLocalRestaurantConfig().getCurrencySymbol(),
-                        openDrawer, BH.IsDouble(), "", apporders, proStr, App.instance.getLocalRestaurantConfig().getFormatType(), App.instance.systemSettings.isPrintInstructions());
-            }
+                            getLocalRestaurantConfig().getCurrencySymbol(),
+                            openDrawer, BH.IsDouble(),"",apporders,proStr,App.instance.getLocalRestaurantConfig().getFormatType(),App.instance.systemSettings.isPrintInstructions());
+                }
 
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -2513,13 +2517,12 @@ public class App extends BaseApplication {
             String reportPromotionStr = gson.toJson(reportDayPromotion);
 
             mRemoteService.printPromotionAnalysisReport(xzType, prtStr, prtTitle,
-                    reportPromotionStr, getLocalRestaurantConfig().getFormatType());
+                    reportPromotionStr,getLocalRestaurantConfig().getFormatType());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
     }
-
     public void remotePrintVoidItemReport(String xzType, PrinterDevice printer,
                                           PrinterTitle title, ArrayList<ReportVoidItem> reportVoidItems) {
         if (mRemoteService == null) {
@@ -3197,7 +3200,7 @@ public class App extends BaseApplication {
                                             paidOrder,
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser().getLastName(),
-                                            "", 1, App.instance.getSystemSettings().getTrainType());
+                                            "", 1,App.instance.getSystemSettings().getTrainType());
 
                             List<OrderDetail> placedOrderDetailss
                                     = OrderDetailSQL.getOrderDetailsForPrint(paidOrder.getId());
@@ -3265,7 +3268,7 @@ public class App extends BaseApplication {
                     paidOrder,
                     getUser().getFirstName()
                             + getUser().getLastName(),
-                    tableInfo.getName(), 1, App.instance.getSystemSettings().getTrainType());
+                    tableInfo.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
             ArrayList<PrintOrderItem> orderItems = ObjectFactory.getInstance()
                     .getItemList(
@@ -3464,6 +3467,7 @@ public class App extends BaseApplication {
         this.kioskHoldNum = kioskHoldNum;
         RxBus.getInstance().post(RxBus.RX_MSG_1, 3);
     }
+
 
 
     /**
