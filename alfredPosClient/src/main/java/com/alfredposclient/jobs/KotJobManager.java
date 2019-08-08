@@ -114,11 +114,10 @@ public class KotJobManager {
 
 //        List<Integer> doStockMap = new ArrayList<>();
         // add job to send it to KDS
-        Log.wtf("Test_printer_group", new Gson().toJson(printerGrougIds));
+
         for (Integer prgid : printerGrougIds) {
             ArrayList<Printer> printers = CoreData.getInstance()
                     .getPrintersInGroup(prgid.intValue());
-            Log.wtf("Test_printer_group_member", new Gson().toJson(printers));
             for (Printer prnt : printers) {
                 // KDS device
                 KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
@@ -184,6 +183,53 @@ public class KotJobManager {
 //
 //                    }
                 }
+            }
+
+        }
+    }
+
+    public void refreshAllKDS(ArrayList<KotItemDetail> kot, String method) {
+        LogUtil.d("开始时间", "时间");
+        ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
+        Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<Integer, ArrayList<KotItemDetail>>();
+        BaseActivity context = App.getTopActivity();
+        for (KotItemDetail items : kot) {
+            Integer pgid = items.getPrinterGroupId();
+            if (pgid.intValue() == 0) {
+                context.kotPrintStatus(MainPage.KOT_ITEM_PRINT_NULL,
+                        items.getItemName());
+                return;
+            }
+            // Get all Group ids that KOT blongs to
+            if (!printerGrougIds.contains(pgid))
+                printerGrougIds.add(pgid);
+
+            // kot
+            if (kots.containsKey(pgid)) {
+                ArrayList<KotItemDetail> tmp = kots.get(pgid);
+                tmp.add(items);
+            } else {
+                ArrayList<KotItemDetail> tmp = new ArrayList<KotItemDetail>();
+                tmp.add(items);
+                kots.put(pgid, tmp);
+            }
+
+        }
+
+//        List<Integer> doStockMap = new ArrayList<>();
+        // add job to send it to KDS
+
+        for (Integer prgid : printerGrougIds) {
+            ArrayList<Printer> printers = CoreData.getInstance()
+                    .getPrintersInGroup(prgid.intValue());
+            for (Printer prnt : printers) {
+                // KDS device
+                KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
+                if (kds1 != null) {
+                    KotJob kotjob = new KotJob(kds1, kots.get(prgid), method);
+                    kotJobManager.addJob(kotjob);
+                }
+
             }
 
         }

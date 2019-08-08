@@ -197,6 +197,7 @@ public class KitchenOrder extends BaseActivity {
                 case App.HANDLER_SEND_FAILURE_SHOW:
                     UIHelp.showToast(context, context.getResources().getString(R.string.send_failed));
                     break;
+
                 case App.HANDLER_REFRESH_KOT:
                     dismissLoadingDialog();
                     refresh();
@@ -368,6 +369,9 @@ public class KitchenOrder extends BaseActivity {
                             loadingDialog.show();
                         }
                     });
+                case App.HANDLER_RELOAD_KOT:
+                    App.instance.reload(context, handler);
+                    break;
                 default:
                     break;
             }

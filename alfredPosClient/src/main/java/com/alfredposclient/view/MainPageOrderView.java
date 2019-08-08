@@ -131,10 +131,10 @@ public class MainPageOrderView extends LinearLayout {
 		tv_discount = (TextView) findViewById(R.id.tv_discount);
 		tv_taxes = (TextView) findViewById(R.id.tv_taxes);
 		btn_place_order = (Button) findViewById(R.id.btn_place_order);
-		
+
 		if (App.countryCode == ParamConst.CHINA)
 		   btn_place_order.setBackgroundResource(R.drawable.box_place_order_selector_zh);
-		
+
 		tv_grand_total = (TextView) findViewById(R.id.tv_grand_total);
 		btn_place_order.setOnClickListener(new OnClickListener() {
 
@@ -143,7 +143,7 @@ public class MainPageOrderView extends LinearLayout {
 				if (!ButtonClickTimer.canClick(v)) {
 					return;
 				}
-				
+
 				if(orderDetails.isEmpty()){
 					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
 					return;
@@ -203,7 +203,7 @@ public class MainPageOrderView extends LinearLayout {
 				UIHelp.showToast((BaseActivity) context, checkbuf.toString());
 			}else {
 
-				//DON'T use reference 
+				//DON'T use reference
 				Order placedOrder = OrderSQL.getOrder(order.getId());
 				if (placedOrder.getOrderNo().intValue() == 0) {
 					order.setOrderNo(OrderHelper.calculateOrderNo(order.getBusinessDate()));

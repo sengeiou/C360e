@@ -1,6 +1,7 @@
 package com.alfredkds.http.server;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -40,12 +41,12 @@ public class KdsHttpServer extends AlfredHttpServer {
 	public KdsHttpServer() {
 		super(APPConfig.KDS_HTTP_SERVER_PORT);
 	}
-	
+
 	@Override
 	public Response doPost(String uri, Method mothod, Map<String, String> params, String body) {
 
     	Response resp;
-    	
+
     	if (uri == null) {
     		resp = getNotFoundResponse();
 		} else {
@@ -57,7 +58,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 				App.instance.ringUtil.playRingOnce();
 				resp = handlerSubmitNewKot(body);
 			}else if (uri.equals(APIName.TRANSFER_KOT)) {
-				App.instance.ringUtil.playRingOnce();				
+				App.instance.ringUtil.playRingOnce();
 				resp = handlerTransferKot(body);
 			}else if (uri.equals(APIName.TRANSFER_ITEM_KOT)) {
 				App.instance.ringUtil.playRingOnce();
@@ -65,15 +66,18 @@ public class KdsHttpServer extends AlfredHttpServer {
 			} else if (uri.equals(APIName.CLOSE_SESSION)){
 				App.instance.ringUtil.playRingOnce();
 				resp = handlerSessionClose(body);
+			}else if (uri.equals(APIName.REFRESH_KOT)){
+				App.instance.ringUtil.playRingOnce();
+				resp = handlerRefreshKot();
 			}
 			else{
 				resp = getNotFoundResponse();
 			}
 		}
-   	
+
     	return resp;
 	}
-	
+
 	private Response handlerTransferKot(String params) {
 		Response resp = null;
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -101,7 +105,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 				toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"),KotSummary.class);
 				fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"),KotSummary.class);
 				List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
-				KotSummarySQL.update(toKotSummary);	
+				KotSummarySQL.update(toKotSummary);
 				if (fromKotSummary != null) {
 					for (int i = 0; i < kotItemDetails.size(); i++) {
 						KotItemDetail kotItemDetail = kotItemDetails.get(i);
@@ -167,7 +171,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 					return resp;
 				}
 			}
-			
+
 			if (method.equals(ParamConst.JOB_NEW_KOT)) {
 				final List<KotItemDetail> kotItemDetails  = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>(){}.getType());
 				final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>(){}.getType());
@@ -193,7 +197,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 				result.put("orderId", kotSummary.getOrderId());
 				resp = getJsonResponse(new Gson().toJson(result));
 			}
-			
+
 			if (method.equals(ParamConst.JOB_UPDATE_KOT)) {
 //				kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
 				final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>(){}.getType());
@@ -240,7 +244,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 				result.put("orderDetailIds", orderDetailIds);
 				resp = getJsonResponse(new Gson().toJson(result));
 			}
-			
+
 			if (method.equals(ParamConst.JOB_DELETE_KOT)) {
 				final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>(){}.getType());
 				new Thread(new Runnable() {
@@ -273,8 +277,8 @@ public class KdsHttpServer extends AlfredHttpServer {
 			resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
 		}
 		return resp;
-	}   
-    
+	}
+
     private Response respond(Map<String, String> headers, IHTTPSession session, String uri) {
         // Remove URL arguments
         uri = uri.trim().replace(File.separatorChar, '/');
@@ -301,7 +305,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 
         return getNotFoundResponse();
     }
-    
+
     private boolean validMessageFromConnectedPOS(String params) {
     	boolean ret = false;
     	try {
@@ -310,7 +314,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 			MainPosInfo pos = gson.fromJson(
 					jsonObject.optString("mainpos"), MainPosInfo.class);
 			MainPosInfo connectedPos = App.instance.getCurrentConnectedMainPos();
-			
+
 			//old POS version(<1.0.1) POS dont have mainpos object in request
 			if (pos == null)
 				return true;
@@ -324,10 +328,10 @@ public class KdsHttpServer extends AlfredHttpServer {
 			e.printStackTrace();
 			ret = false;
 		}
-    	
+
     	return ret;
     }
-    
+
     private Response handlerSessionClose(String params){
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
@@ -335,13 +339,13 @@ public class KdsHttpServer extends AlfredHttpServer {
 			JSONObject jsonObject = new JSONObject(params);
 			SessionStatus sessionStatus = gson.fromJson(jsonObject.optString("session"), SessionStatus.class);
 			App.getTopActivity().runOnUiThread(new Runnable() {
-				
+
 				@Override
 				public void run() {
-					App.getTopActivity().showOneButtonCompelDialog(App.getTopActivity().getResources().getString(R.string.session_change), 
-							App.getTopActivity().getResources().getString(R.string.relogin_pos), 
+					App.getTopActivity().showOneButtonCompelDialog(App.getTopActivity().getResources().getString(R.string.session_change),
+							App.getTopActivity().getResources().getString(R.string.relogin_pos),
 						new OnClickListener() {
-						
+
 						@Override
 						public void onClick(View v) {
 							KotSummarySQL.deleteAllKotSummary();
@@ -355,6 +359,18 @@ public class KdsHttpServer extends AlfredHttpServer {
 
 					}
 			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		result.put("resultCode", ResultCode.SUCCESS);
+		Response resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
+
+	private Response handlerRefreshKot(){
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			App.getTopActivity().httpRequestAction(App.HANDLER_RELOAD_KOT, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

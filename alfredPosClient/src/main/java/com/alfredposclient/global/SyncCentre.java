@@ -3,6 +3,7 @@ package com.alfredposclient.global;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -126,34 +127,33 @@ public class SyncCentre {
         HttpAPI.getTax(context, getAbsoluteUrl(APIName.TAX_GETTAX), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getHappyHour(context,
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
-        HttpAPI.getPromotionInfo(context,
-                getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.getPromotionInfo (context,
+                getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_FIRST_SYNC);
 //        HttpAPI.getPromotionData(context,
 //                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
 
-        getRemainingStock(context, handler, MODE_FIRST_SYNC);
+        getRemainingStock(context,handler,MODE_FIRST_SYNC);
 
     }
 
-    //修改单个菜数量
-    public void updateReaminingStockByItemId(Context context, Map<String, Object> parameters, Handler handler
+//修改单个菜数量
+    public void updateReaminingStockByItemId(Context context, Map<String, Object> parameters,Handler handler
     ) {
 
-        HttpAPI.updateReaminingStockByItemId(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK_ITEMID), httpClient, parameters, handler);
+        HttpAPI.updateReaminingStockByItemId(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK_ITEMID), httpClient, parameters,handler);
     }
 
     // 下单时修改数量
-    public void updateReaminingStock(Context context, Map<String, Object> parameters, Handler handler
-    ) {
+    public void updateReaminingStock(Context context, Map<String, Object> parameters,Handler handler
+                        ) {
 
-        HttpAPI.updateReaminingStock(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK), bigSyncHttpClient, parameters, handler);
+        HttpAPI.updateReaminingStock(context, getAbsoluteUrl(APIName.UPDATE_REAMINING_STOCK), bigSyncHttpClient, parameters,handler);
     }
-
-    // 获取菜的数量
+       // 获取菜的数量
     public void getRemainingStock(Context context,
-                                  Handler handler, int mode) {
+                                          Handler handler,int mode) {
 
-        HttpAPI.getRemainingStock(context, getAbsoluteUrl(APIName.GET_REMAINING_STOCK), httpClient, handler, mode);
+        HttpAPI.getRemainingStock(context, getAbsoluteUrl(APIName.GET_REMAINING_STOCK), httpClient,  handler,mode);
     }
 
     public void resetItemDetailStockNum(Context context) {
@@ -221,18 +221,18 @@ public class SyncCentre {
     public void cloudSyncUploadOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
-        HttpAPI.cloudSync(context, syncMsg,
-                getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+            HttpAPI.cloudSync(context, syncMsg,
+                    getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
     }
 
     public void cloudSyncUploadRealOrderInfo(BaseActivity context,
-                                             SyncMsg syncMsg, Handler handler) {
+                                         SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
-        int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
-        if (timely == 0) {
+        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+        if(timely==0) {
             HttpAPI.cloudSync(context, syncMsg,
                     getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
-        } else {
+        }else {
 
             HttpAPI.cloudSync(context, syncMsg,
                     getAbsoluteUrl("receive/orderRealDateDataMsg"), bigSyncHttpClient);
@@ -246,11 +246,11 @@ public class SyncCentre {
                                           SyncMsg syncMsg, Handler handler) {
         //reportDataMsg
 
-        int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
-        if (timely == 0) {
+        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+        if(timely==0) {
             HttpAPI.cloudSync(context, syncMsg,
                     getAbsoluteUrl("receive/reportDataMsg"), bigSyncHttpClient);
-        } else {
+        }else {
 
             HttpAPI.cloudSync(context, syncMsg,
                     getAbsoluteUrl("receive/reportRealDateDataMsg"), bigSyncHttpClient);
@@ -294,8 +294,8 @@ public class SyncCentre {
             getRemainingStock(context, handler, MODE_PUSH_SYNC);
         }
         if (type.equals(PushMessage.PROMOTION)) {
-            HttpAPI.getPromotionInfo(context,
-                    getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler, MODE_PUSH_SYNC);
+            HttpAPI.getPromotionInfo (context,
+                    getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler,MODE_PUSH_SYNC);
         }
 
         if (type.equals(PushMessage.PAYMENT_METHOD)) {
@@ -372,7 +372,6 @@ public class SyncCentre {
     public void recevingAppOrderStatus(Context context, int appOrderId, Handler handler) {
         HttpAPI.recevingAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
     }
-
     public void readyAppOrderStatus(Context context, int appOrderId, Handler handler) {
         HttpAPI.readyAppOrder(context, getAbsoluteUrl(APIName.UPDATE_MANUALAPPORDERSTATUS), httpClient, appOrderId, handler);
     }
@@ -430,13 +429,8 @@ public class SyncCentre {
 
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
-            if (App.instance.isCartenzLog) {
-                return "http://18.139.110.250/alfred-api/" + relativeUrl;
-            } else {
-                return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
-            }
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-
+            return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
         }
     }
 
@@ -547,6 +541,13 @@ public class SyncCentre {
 
     }
 
+    public void refreshSameGroupKDS(KDSDevice kdsDevice, BaseActivity context,
+                                    Map<String, Object> parameters) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.REFRESH_KOT);
+        HTTPKDSRequest.refreshSameGroupKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient);
+
+    }
+
     public void syncTransferTable(KDSDevice kdsDevice, BaseActivity context,
                                   final Map<String, Object> parameters, Handler handler) {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_KOT);
@@ -592,15 +593,10 @@ public class SyncCentre {
             url = "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
             param.append("amount=0.01&");
         } else {
-            if (App.instance.isCartenzLog) {
-                return "http://18.139.110.250/alfred-api/" + APIName.REQUEST_ALIPAY;
+            if (App.instance.countryCode == ParamConst.CHINA) {
+                url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
-                if (App.instance.countryCode == ParamConst.CHINA) {
-                    url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
-                } else {
-                    url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
-                }
-
+                url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
             }
             param.append("amount=" + parameters.get("amount") + "&");
         }

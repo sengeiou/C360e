@@ -76,6 +76,7 @@ public class APIName {
     public static final String UPDATE_EXISTING_KOT = "update_existing_kot";
     public static final String TRANSFER_KOT = "transfer_kot";
     public static final String TRANSFER_ITEM_KOT = "transfer_item_kot";
+    public static final String REFRESH_KOT = "refresh_kot";
     public static final String KOT_ITEM_COMPLETE = "kot_item_complete";
     public static final String KOT_COMPLETE = "kot_complete";
     public static final String CANCEL_COMPLETE = "cancel_complete";
