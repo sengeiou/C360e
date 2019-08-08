@@ -5,6 +5,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -2702,6 +2703,26 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     }
                 }).start();
                 resp = this.getJsonResponse(new Gson().toJson(result));
+
+
+                Log.wtf("Test_kds_item_details", new Gson().toJson(kotItemDetails));
+                ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
+                for (KotItemDetail items : kotItemDetails) {
+                    Integer pgid = items.getPrinterGroupId();
+                    if (!printerGrougIds.contains(pgid))
+                        printerGrougIds.add(pgid);
+                }
+
+                for (Integer prgid : printerGrougIds) {
+                    ArrayList<Printer> printers = CoreData.getInstance()
+                            .getPrintersInGroup(prgid.intValue());
+                    Log.wtf("Test_kds_todo_here", new Gson().toJson(printerGrougIds));
+                }
+
+
+
+                //todo here
+
             } else {
                 result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);
                 resp = this.getJsonResponse(new Gson().toJson(result));

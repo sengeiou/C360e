@@ -374,7 +374,6 @@ public class DevicesActivity extends BaseActivity {
     }
 
 
-
     @Override
     public void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
@@ -579,7 +578,7 @@ public class DevicesActivity extends BaseActivity {
         devices_revenueCenter_tv = (TextView) findViewById(R.id.devices_revenueCenter_tv);
         if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
             MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
-            if(mainPosInfo != null) {
+            if (mainPosInfo != null) {
                 devices_revenueCenter_tv.setText(mainPosInfo.getName());
             }
         } else {
