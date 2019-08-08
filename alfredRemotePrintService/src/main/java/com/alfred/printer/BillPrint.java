@@ -15,6 +15,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class BillPrint extends PrintJob {
@@ -709,24 +713,33 @@ public class BillPrint extends PrintJob {
         addHortionalLine(this.charSize);
     }
 
-    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight) {
+    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight, String currencySymbol) {
         PrintData order = new PrintData();
         order.setDataFormat(PrintData.FORMAT_TXT);
         order.setFontsize(scale);
         order.setLanguage(PrintData.LANG_CN);
         order.setMarginTop(20);
+        if(currencySymbol.equals("Rp"))
+        {
+            price = NumberFormat.getNumberInstance(Locale.US).format(new Double(price.replace(",", "")).intValue());
+            total = NumberFormat.getNumberInstance(Locale.US).format(new Double(total.replace(",", "")).intValue());
+        }
         order.setText(this.getFourColContent(itemName, price, qty, total, scale));
         this.data.add(order);
         this.addWeight(weight);
     }
 
 
-    public void addOrderModifier(String itemName, int scale, String price) {
+    public void addOrderModifier(String itemName, int scale, String price, String currencySymbol) {
         String bigDecimal = BH.formatMoney(price);
         PrintData orderMod = new PrintData();
         orderMod.setDataFormat(PrintData.FORMAT_TXT);
         orderMod.setFontsize(scale);
         orderMod.setLanguage(PrintData.LANG_CN);
+        if(currencySymbol.equals("Rp"))
+        {
+            bigDecimal =  NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(price));
+        }
         orderMod.setText(this.getFourColContent("  " + itemName + reNext, bigDecimal, "", "", scale));
         orderMod.setTextAlign(PrintData.ALIGN_LEFT);
         this.data.add(orderMod);
@@ -745,6 +758,10 @@ public class BillPrint extends PrintJob {
         this.addHortionalLine(this.charSize);
         //subtotal
         PrintData subTotalPrint = new PrintData();
+        if(currencySymbol.equals("Rp"))
+        {
+            subtotal = NumberFormat.getNumberInstance(Locale.US).format(new Double(subtotal.replace(",", "")).intValue());
+        }
         String subTotal = StringUtil.padLeft(subtotal, this.FIXED_COL4_TOTAL);
         String padSubtotal = PrintService.instance.getResources().getString(R.string.sub_total) + currencySymbol + subTotal + reNext;
         subTotalPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -755,6 +772,10 @@ public class BillPrint extends PrintJob {
 
         //discount
         PrintData discPrint = new PrintData();
+        if(currencySymbol.equals("Rp"))
+        {
+            discount = NumberFormat.getNumberInstance(Locale.US).format(new Double(discount.replace(",", "")).intValue());
+        }
         String discountStr = StringUtil.padLeft(discount, this.FIXED_COL4_TOTAL);
         String padDiscount = PrintService.instance.getResources().getString(R.string.discount) + currencySymbol + discountStr + reNext;
         discPrint.setDataFormat(PrintData.FORMAT_TXT);
@@ -769,7 +790,11 @@ public class BillPrint extends PrintJob {
 //			ArrayList<String> taxPercentages = taxes.get("taxPercentages");
             for (Map<String, String> map : taxes) {
                 PrintData taxPrint = new PrintData();
-                String taxvalue = StringUtil.padLeft(BH.formatMoney(map.get("taxPriceSum")).toString(), this.FIXED_COL4_TOTAL);
+                String taxvalue = StringUtil.padLeft(BH.formatMoney(map.get("taxPriceSum")), this.FIXED_COL4_TOTAL);
+                if(currencySymbol.equals("Rp"))
+                {
+                    taxvalue = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(map.get("taxPriceSum"))), this.FIXED_COL4_TOTAL);
+                }
 
                 String padTax = map.get("taxName")
                         + "("
@@ -829,6 +854,15 @@ public class BillPrint extends PrintJob {
             totalStr = StringUtil.padLeft(BH.getBD(total).toString(),
                     this.FIXED_COL4_TOTAL);
         }
+        if(currencySymbol.equals("Rp"))
+        {
+            totalStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(roundMap.get("Total"))),
+                    this.FIXED_COL4_TOTAL);
+            if (splitByPax > 0) {
+                totalStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(total)),
+                        this.FIXED_COL4_TOTAL);
+            }
+        }
         String totaling = PrintService.instance.getResources().getString(R.string.total_) + currencySymbol + totalStr + reNext;
         totalPrint.setDataFormat(PrintData.FORMAT_TXT);
         totalPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -848,8 +882,12 @@ public class BillPrint extends PrintJob {
 //        }
         // rounding
         PrintData roundingPrint = new PrintData();
-        String roundingStr = StringUtil.padLeft(BH.formatMoney(BH.getBD(roundMap.get("Rounding")).toString()).toString(),
+        String roundingStr = StringUtil.padLeft(BH.formatMoney(BH.getBD(roundMap.get("Rounding")).toString()),
                 this.FIXED_COL4_TOTAL);
+        if(currencySymbol.equals("Rp"))
+        {
+            roundingStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(roundMap.get("Rounding"))), this.FIXED_COL4_TOTAL);
+        }
         String padRounding = PrintService.instance.getResources().getString(R.string.rounding_print) + currencySymbol + roundingStr + reNext;
         roundingPrint.setDataFormat(PrintData.FORMAT_TXT);
         roundingPrint.setTextAlign(PrintData.ALIGN_RIGHT);
@@ -859,6 +897,10 @@ public class BillPrint extends PrintJob {
 
         //grand total
         PrintData gtPrint = new PrintData();
+        if(currencySymbol.equals("Rp"))
+        {
+            grandTotal =  NumberFormat.getNumberInstance(Locale.US).format(new Double(grandTotal.replace(",", "")));
+        }
         String gtotalStr = StringUtil.padLeft(grandTotal, this.FIXED_COL4_TOTAL);
         String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + " : " + currencySymbol + gtotalStr + reNext;
         if (splitByPax > 0) {
@@ -885,11 +927,19 @@ public class BillPrint extends PrintJob {
                 PrintData toPrint = new PrintData();
                 String lable;
                 String toPrintStr;
+                if(currencySymbol.equals("Rp"))
+                {
+                    lable = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(Double.parseDouble(entry.getValue())), this.FIXED_COL4_TOTAL);
+                }
+                else
+                {
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    df.setRoundingMode(RoundingMode.HALF_UP);
+                    lable = StringUtil.padLeft(df.format(Double.parseDouble(entry.getValue())), this.FIXED_COL4_TOTAL);
+                }
                 if (PrintService.instance.getResources().getString(R.string.card_no).equals(entry.getKey())) {
-                    lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
                     toPrintStr = entry.getKey() + " : " + lable + reNext;
                 } else {
-                    lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
                     toPrintStr = entry.getKey() + " : " + currencySymbol + lable + reNext;
                 }
                 toPrint.setDataFormat(PrintData.FORMAT_TXT);
