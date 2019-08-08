@@ -2677,13 +2677,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     jsonObject.optString("kotItemDetails"),
                     new TypeToken<ArrayList<KotItemDetail>>() {
                     }.getType());
-
-            //region currently not used
-            final ArrayList<KotItemModifier> kotModifiers = gson.fromJson(
+            final ArrayList<KotItemModifier> kotItemModifiers = gson.fromJson(
                     jsonObject.optString("kotModifiers"),
                     new TypeToken<ArrayList<KotItemModifier>>() {
                     }.getType());
-            //endregion
 
             final Order order = OrderSQL.getOrder(kotSummary.getOrderId());
             if (order == null) return;
@@ -2709,11 +2706,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 orderDetailIds.add(orderDetail.getId());
             }
 
-            final ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
-
-            for (KotItemDetail kid : kotItemDetails) {
-                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kid.getId()));
-            }
+//            final ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
+//
+//            for (KotItemDetail kid : kotItemDetails) {
+//                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kid.getId()));
+//            }
 
             new Thread(new Runnable() {
                 @Override

@@ -444,6 +444,7 @@ public class KdsHttpServer extends AlfredHttpServer {
             KotSummary toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
             KotSummary fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
             KotItemDetail kotItemDetail = gson.fromJson(jsonObject.optString("tansferKotItem"), KotItemDetail.class);
+
             KotItemDetailSQL.update(kotItemDetail);
             KotSummarySQL.update(toKotSummary);
             KotSummarySQL.update(fromKotSummary);

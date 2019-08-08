@@ -11,6 +11,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
@@ -25,15 +26,20 @@ import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,14 +72,14 @@ public class KotJobManager {
                 .getPrintersInGroup(printerGroupId);
 
         //kdsType currently not used
-        int kdsType = Printer.KDS_EXPEDITER;//default is expediter;
+//        int kdsType = Printer.KDS_EXPEDITER;//default is expediter;
 
         isAssemblyLine = true;//dummy
 
         if (isAssemblyLine) {
             Printer printer = null;
 
-            int i = 0;
+//            int i = 0;
 
             if (kdsId > 0) {
                 boolean isPrinterFound = false;
@@ -83,33 +89,38 @@ public class KotJobManager {
                         isPrinterFound = true;
                     } else {
                         if (isPrinterFound) {
-                            if (i < printersData.size() - 1) {
-                                kdsType = Printer.KDS_SUB;
-                            }
+//                            if (i < printersData.size() - 1) {
+//                                kdsType = Printer.KDS_SUB;
+//                            }
 
                             printer = mPrinter;
                             break;
                         }
                     }
-                    i++;
+//                    i++;
                 }
             } else {
                 if (printersData.size() > 0) {
-                    if (printersData.size() > 1)
-                        kdsType = Printer.KDS_SUB;
+//                    if (printersData.size() > 1)
+//                        kdsType = Printer.KDS_SUB;
 
                     printer = printersData.get(0);
                 }
             }
 
             if (printer != null) {
-                printer.kdsType = kdsType;
-                printerResult.add(printer);
+//                printer.kdsType = kdsType;
+
+                if (printer.getPrinterUsageType() == Printer.KDS_EXPEDITER) {
+                    printerResult.addAll(getPrinterEx(printerGroupId));
+                } else {
+                    printerResult.add(printer);
+                }
             }
         } else {
-            for (Printer printer : printersData) {
-                printer.kdsType = kdsType;
-            }
+//            for (Printer printer : printersData) {
+//                printer.kdsType = kdsType;
+//            }
             printerResult.addAll(printersData);
         }
 
@@ -347,8 +358,8 @@ public class KotJobManager {
                                  String method, Map<String, Object> orderMap, int kdsId) {
 
         ArrayList<Integer> printerGroupIds = new ArrayList<>();
-        Map<Integer, ArrayList<KotItemDetail>> mapKOT = new HashMap<>();
-        Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<>();
+//        Map<Integer, ArrayList<KotItemDetail>> mapKOT = new HashMap<>();
+//        Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<>();
         Map<Integer, ArrayList<KotItemModifier>> modCombo = new HashMap<>();
 
         //region collect kotItem by printerGroupId
@@ -359,11 +370,10 @@ public class KotJobManager {
             OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(items.getOrderDetailId());
             ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
             if (itemDetail.getItemType() == 3) {//package item
-                modCombo = getComboModifiers(items, modifiers);
+                modCombo = getComboModifiers(items, modifiers, modCombo);
                 continue;
             } else {
-                if (pgid.intValue() == 0)
-                    return;
+                if (pgid.equals(0)) continue;
             }
 
             int kotItemDetailId = items.getId();
@@ -372,38 +382,64 @@ public class KotJobManager {
             if (!printerGroupIds.contains(pgid))
                 printerGroupIds.add(pgid);
 
-            // kot
-            if (mapKOT.containsKey(pgid)) {
-                ArrayList<KotItemDetail> tmp = mapKOT.get(pgid);
-                tmp.add(items);
-            } else {
-                ArrayList<KotItemDetail> tmp = new ArrayList<>();
-                tmp.add(items);
-                mapKOT.put(pgid, tmp);
-            }
-
-            // modifier
-            if (mods.containsKey(pgid)) {
-                ArrayList<KotItemModifier> tmp = mods.get(pgid);
-                for (KotItemModifier mof : modifiers) {
-                    if (mof.getKotItemDetailId().equals(kotItemDetailId)) {
-                        tmp.add(mof);
-                    }
-                }
-            } else {
-                ArrayList<KotItemModifier> tmp = new ArrayList<>();
-                for (KotItemModifier mof : modifiers) {
-                    if (mof.getKotItemDetailId().equals(kotItemDetailId)) {
-                        tmp.add(mof);
-                    }
-                }
-                mods.put(items.getPrinterGroupId(), tmp);
-            }
+//            // kot
+//            if (mapKOT.containsKey(pgid)) {
+//                ArrayList<KotItemDetail> tmp = mapKOT.get(pgid);
+//                tmp.add(items);
+//            } else {
+//                ArrayList<KotItemDetail> tmp = new ArrayList<>();
+//                tmp.add(items);
+//                mapKOT.put(pgid, tmp);
+//            }
+//
+//            // modifier
+//            if (mods.containsKey(pgid)) {
+//                ArrayList<KotItemModifier> tmp = mods.get(pgid);
+//                for (KotItemModifier mof : modifiers) {
+//                    if (mof.getKotItemDetailId().equals(kotItemDetailId)) {
+//                        tmp.add(mof);
+//                    }
+//                }
+//            } else {
+//                ArrayList<KotItemModifier> tmp = new ArrayList<>();
+//                for (KotItemModifier mof : modifiers) {
+//                    if (mof.getKotItemDetailId().equals(kotItemDetailId)) {
+//                        tmp.add(mof);
+//                    }
+//                }
+//                mods.put(items.getPrinterGroupId(), tmp);
+//            }
         }
         //endregion
 
-        if (modCombo.size() > 0)
-            sendModifierToKds(modCombo, kotSummary, method, orderMap, kdsId, APIName.SUBMIT_NEXT_KOT);
+        if (modCombo.size() > 0) {
+//            sendModifierToKds(modCombo, kotSummary, method, orderMap, kdsId, APIName.SUBMIT_NEXT_KOT);
+            printerGroupIds.addAll(modCombo.keySet());
+//            for (Integer printerGroupId : modCombo.keySet()) {
+//                ArrayList<Printer> printers = getPrinters(printerGroupId, kdsId, isAssemblyLine(printerGroupId));//if isAssemblyLine = true, will return 1 printer
+//
+//                for (Printer printer : printers) {
+//                    if (printer == null) continue;
+//
+//                    // KDS device
+//                    KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
+//                    // physical printer
+//                    PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer.getId());
+//
+//                    if (kdsDevice == null && printerDevice == null) {
+//                        continue;
+//                    }
+//
+//                    if (kdsDevice != null && kotSummary != null) {
+//                        kdsDevice.setKdsType(printer.getPrinterUsageType());
+//                        KotJob kotjob = new KotJob(kdsDevice, kotSummary,
+//                                kotItemDetails, modifiers, method, orderMap, APIName.SUBMIT_NEXT_KOT);
+//
+//                        kotJobManager.addJob(kotjob);
+//                    }
+//                }
+//            }
+        }
 
         //region add job to send it to KDS
         for (Integer prgid : printerGroupIds) {
@@ -423,9 +459,10 @@ public class KotJobManager {
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
-                    kdsDevice.setKdsType(printer.getPrinterUsageType());
+//                    KotJob kotjob = new KotJob(kdsDevice, kotSummary,
+//                            mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_NEXT_KOT);
                     KotJob kotjob = new KotJob(kdsDevice, kotSummary,
-                            mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_NEXT_KOT);
+                            kotItemDetails, modifiers, method, orderMap, APIName.SUBMIT_NEXT_KOT);
 
                     kotJobManager.addJob(kotjob);
                 }
@@ -434,9 +471,8 @@ public class KotJobManager {
         //endregion
     }
 
-    private Map<Integer, ArrayList<KotItemModifier>> getComboModifiers(KotItemDetail kotItemDetail, ArrayList<KotItemModifier> modifiers) {
-
-        Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<>();
+    private Map<Integer, ArrayList<KotItemModifier>> getComboModifiers(KotItemDetail kotItemDetail, ArrayList<KotItemModifier> modifiers,
+                                                                       Map<Integer, ArrayList<KotItemModifier>> modCombo) {
 
         int kotItemDetailId = kotItemDetail.getId();
 
@@ -446,30 +482,32 @@ public class KotJobManager {
             if (printerGroupId <= 0) continue;
 
             if (kotItemModifier.getKotItemDetailId() == kotItemDetailId) {
-                if (mods.containsKey(printerGroupId)) {
-                    ArrayList<KotItemModifier> tmp = mods.get(printerGroupId);
+                if (modCombo.containsKey(printerGroupId)) {
+                    ArrayList<KotItemModifier> tmp = modCombo.get(printerGroupId);
                     tmp.add(kotItemModifier);
                 } else {
                     ArrayList<KotItemModifier> tmp = new ArrayList<>();
                     tmp.add(kotItemModifier);
-                    mods.put(printerGroupId, tmp);
+                    modCombo.put(printerGroupId, tmp);
                 }
             }
         }
 
-        return mods;
+        return modCombo;
 
     }
 
     private void sendModifierToKds(Map<Integer, ArrayList<KotItemModifier>> modCombo,
                                    KotSummary kotSummary, String method, Map<String, Object> orderMap, int kdsId, String url) {
+
         for (Map.Entry<Integer, ArrayList<KotItemModifier>> entry : modCombo.entrySet()) {
             int printerGroupId = entry.getKey();
             ArrayList<KotItemModifier> kotItemModifiers = entry.getValue();
+            Map<Integer, KotItemDetail> mapKotItemDetail = new HashMap<>();
             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
 
             for (KotItemModifier kotItemModifier : kotItemModifiers) {
-                //parent packgae item
+                //parent package item
                 KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemModifier.getKotItemDetailId());
 //                Modifier modifier = ModifierSQL.getModifierById(kotItemModifier.getModifierId());
 //                if (modifier != null) {
@@ -477,9 +515,14 @@ public class KotJobManager {
 //                }
 
                 if (kotItemDetail != null) {
-                    kotItemDetails.add(kotItemDetail);
-                    break;
+                    if (!mapKotItemDetail.containsKey(kotItemDetail.getId())) {
+                        mapKotItemDetail.put(kotItemDetail.getId(), kotItemDetail);
+                    }
                 }
+            }
+
+            for (Map.Entry<Integer, KotItemDetail> map : mapKotItemDetail.entrySet()) {
+                kotItemDetails.add(map.getValue());
             }
 
             List<Printer> printers = getPrinters(printerGroupId, kdsId, isAssemblyLine(printerGroupId));
@@ -494,7 +537,8 @@ public class KotJobManager {
 
                 if (kdsDevice != null && kotSummary != null) {
                     kdsDevice.setKdsType(printer.getPrinterUsageType());
-                    kotSummary.setOriginalId(kotSummary.getId());
+                    int kotSummaryId = CommonSQL.isFakeId(kotSummary.getId()) ? kotSummary.getOriginalId() : kotSummary.getId();
+                    kotSummary.setOriginalId(kotSummaryId);
 
                     KotJob kotjob;
                     if (!TextUtils.isEmpty(url)) {
@@ -533,7 +577,7 @@ public class KotJobManager {
             OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(items.getOrderDetailId());
             ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
             if (itemDetail.getItemType() == 3) {//package item
-                modCombo = getComboModifiers(items, modifiers);
+                modCombo = getComboModifiers(items, modifiers, modCombo);
                 continue;
             } else {
                 if (pgid.intValue() == 0) {
@@ -579,7 +623,7 @@ public class KotJobManager {
             }
         }
 
-        if (printerGrougIds != null && printerGrougIds.size() > 0 && kotSummary != null) {
+        if (kotSummary != null) {
             KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
 
             int kotSize = 0;
@@ -591,6 +635,9 @@ public class KotJobManager {
                     kotSize++;
                 }
             }
+
+            kotSummary.setOriginalId(kotSummary.getId());
+            KotSummarySQL.update(kotSummary);
 
             int count = kotSummaryLocal != null ? kotSummaryLocal.getOrderDetailCount() - kotVoidSize + kotSize : kotSize;
 //            int count = kot.size();
@@ -611,7 +658,7 @@ public class KotJobManager {
 
             PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
             List<Printer> printers = getPrinters(printerGroup.getPrinterGroupId(), 0, isAssemblyLine(prgid));
-//            printers.addAll(getPrinterSummary(printerGroup.getPrinterGroupId()));
+//            printers.addAll(getPrinterEx(printerGroup.getPrinterGroupId()));
 
             for (Printer printer : printers) {
                 // KDS device
@@ -622,11 +669,11 @@ public class KotJobManager {
                 if (kdsDevice == null && printerDevice == null) {
                     if (context != null)
                         context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
-                    return;
+//                    return;
+                    continue;
                 }
                 if (kdsDevice != null && kotSummary != null) {
                     kdsDevice.setKdsType(printer.getPrinterUsageType());
-                    kotSummary.setOriginalId(kotSummary.getId());
 
                     KotJob kotjob;
 //                    if (printer.getPrinterUsageType() == Printer.KDS_SUMMARY) {
@@ -939,7 +986,7 @@ public class KotJobManager {
             OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(kotItemDetail.getOrderDetailId());
             ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
             if (itemDetail.getItemType() == 3) {//package item
-                modCombo = getComboModifiers(kotItemDetail, kotItemModifiers);
+                modCombo = getComboModifiers(kotItemDetail, kotItemModifiers, modCombo);
             } else {
                 if (kotItemDetail.getPrinterGroupId() > 0)
                     printerGroupIds.add(kotItemDetail.getPrinterGroupId());
@@ -1150,70 +1197,158 @@ public class KotJobManager {
 
         if (toKotSummary == null || fromKotSummary == null) return;
 
+        ArrayList<Printer> printers = new ArrayList<>();
+
         int count = toKotSummary.getOrderDetailCount() + 1;
         int countFrom = fromKotSummary.getOrderDetailCount() - 1;
 
         toKotSummary.setOrderDetailCount(count);
-        fromKotSummary.setOrderDetailCount(countFrom);
-
         toKotSummary.setOriginalId(toKotSummary.getId());
+        fromKotSummary.setOrderDetailCount(countFrom);
         fromKotSummary.setOriginalId(fromKotSummary.getId());
-        KotSummarySQL.update(toKotSummary);
-        KotSummarySQL.update(fromKotSummary);
+
+        List<KotSummaryLog> kotSummaryLogs = new Gson().fromJson(fromKotSummary.getKotSummaryLog(),
+                new TypeToken<List<KotSummaryLog>>() {
+                }.getType());
+        List<KotSummaryLog> unreverseKotSummaryLogs = new ArrayList<>(kotSummaryLogs);
+
+        Collections.reverse(kotSummaryLogs);
 
         OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(kotItemDetail.getOrderDetailId());
         ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
 
-        if (itemDetail.getItemType() == 3) {//package item
+        if (itemDetail.getItemType() == 3) {
+            //region Package item
             ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.
                     getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
-            Map<Integer, ArrayList<KotItemModifier>> modCombo = getComboModifiers(kotItemDetail, kotItemModifiers);
+            Map<Integer, ArrayList<KotItemModifier>> modCombo = getComboModifiers(kotItemDetail, kotItemModifiers,
+                    new HashMap<Integer, ArrayList<KotItemModifier>>());
 
-            for (Map.Entry<Integer, ArrayList<KotItemModifier>> entry : modCombo.entrySet()) {
-                int printerGroupId = entry.getKey();
+            List<KotSummaryLog> copyKotSummaryLogs = new ArrayList<>(kotSummaryLogs);
 
-                List<Printer> printers = getPrinters(printerGroupId, 0, isAssemblyLine(printerGroupId));
+            for (Integer printerGroupId : modCombo.keySet()) {
+                boolean isFound = false;
 
-                for (Printer prnt : printers) {
-                    KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
-                    if (kds1 != null) {
-                        kds1.setKdsType(prnt.getPrinterUsageType());
-                        KotJob kotjob = new KotJob(kds1, toKotSummary,
-                                fromKotSummary, orderMap, kotItemDetail);
-                        kotJobManager.addJob(kotjob);
+                for (KotSummaryLog ksl : copyKotSummaryLogs) {
+
+                    KDSDevice kdsDevice;
+                    List<KotItemDetail> logKotItemDetailList = ksl.kotItemDetails;
+
+                    for (KotItemDetail kid : logKotItemDetailList) {
+                        if (kid.getId().equals(kotItemDetail.getId())) {
+
+                            kdsDevice = ksl.kdsDevice;
+
+                            for (Printer printer : CoreData.getInstance().getPrintersInGroup(printerGroupId)) {
+                                if (printer.getId().equals(kdsDevice.getDevice_id())) {
+                                    printers.add(printer);
+                                    break;
+                                }
+                            }
+
+                            isFound = true;
+                            break;
+                        }
+                    }
+
+                    if (isFound) {
+                        copyKotSummaryLogs.remove(ksl);
+                        break;
+                    }
+                }
+            }
+            //endregion
+        } else {
+
+            //region item normal
+            for (KotSummaryLog ksl : kotSummaryLogs) {
+                List<KotItemDetail> logKotItemDetailList = ksl.kotItemDetails;
+                KDSDevice kdsDevice = null;
+
+                //region set kotsummary log to destination kotsummary
+                List<KotSummaryLog> toKotSummaryLogs;
+                if (!TextUtils.isEmpty(toKotSummary.getKotSummaryLog())) {
+                    toKotSummaryLogs = new Gson().fromJson(toKotSummary.getKotSummaryLog(),
+                            new TypeToken<List<KotSummaryLog>>() {
+                            }.getType());
+                    toKotSummaryLogs.add(ksl);
+                } else {
+                    toKotSummaryLogs = unreverseKotSummaryLogs;
+                }
+
+                toKotSummary.setKotSummaryLog(new Gson().toJson(toKotSummaryLogs));
+                //endregion
+
+                for (KotItemDetail kid : logKotItemDetailList) {
+                    if (kid.getId().equals(kotItemDetail.getId())) {
+
+                        kdsDevice = ksl.kdsDevice;
+
+                        ArrayList<Printer> tmpPrinter = CoreData.getInstance().getPrintersInGroup(kid.getPrinterGroupId());
+                        for (Printer printer : tmpPrinter) {
+                            if (printer.getId().equals(kdsDevice.getDevice_id())) {
+                                printers.add(printer);
+                                break;
+                            }
+                        }
+                        break;
                     }
                 }
 
-            }
-        } else {
-
-//            List<Integer> printerGrougIds = KotItemDetailSQL
-//                    .getPrinterGroupIds(toKotSummary);
-
-            // add job to send it to KDS
-//            for (Integer prgid : printerGrougIds) {
-//            ArrayList<Printer> printers = CoreData.getInstance()
-//                    .getPrintersInGroup(prgid.intValue());
-            List<Printer> printers = getPrinters(kotItemDetail.getPrinterGroupId(), 0, isAssemblyLine(kotItemDetail.getPrinterGroupId()));
-
-            for (Printer prnt : printers) {
-                KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
-                if (kds1 != null) {
-                    kds1.setKdsType(prnt.getPrinterUsageType());
-                    KotJob kotjob = new KotJob(kds1, toKotSummary,
-                            fromKotSummary, orderMap, kotItemDetail);
-                    kotJobManager.addJob(kotjob);
+                if (kdsDevice != null) {
+                    break;
                 }
             }
-//            }
+            //endregion
+        }
 
-            boolean ret = transferItemToPrinter(fromKotSummary,
-                    toKotSummary, orderMap, kotItemDetail);
-            if (!ret) {
-                App.getTopActivity().kotPrintStatus(
-                        MainPage.KOT_PRINT_FAILED, null);
+        KotSummarySQL.update(toKotSummary);
+        KotSummarySQL.update(fromKotSummary);
+
+//        OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(kotItemDetail.getOrderDetailId());
+//        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
+//
+//        if (itemDetail.getItemType() == 3) {//package item
+//            ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.
+//                    getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+//            Map<Integer, ArrayList<KotItemModifier>> modCombo = getComboModifiers(kotItemDetail, kotItemModifiers,
+//                    new HashMap<Integer, ArrayList<KotItemModifier>>());
+//
+//            for (Map.Entry<Integer, ArrayList<KotItemModifier>> entry : modCombo.entrySet()) {
+//                int printerGroupId = entry.getKey();
+//
+//                List<Printer> printers = getPrinters(printerGroupId, 0, isAssemblyLine(printerGroupId));
+//
+//                for (Printer prnt : printers) {
+//                    KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
+//                    if (kds1 != null) {
+//                        kds1.setKdsType(prnt.getPrinterUsageType());
+//                        KotJob kotjob = new KotJob(kds1, toKotSummary,
+//                                fromKotSummary, orderMap, kotItemDetail);
+//                        kotJobManager.addJob(kotjob);
+//                    }
+//                }
+//
+//            }
+//        } else {
+
+        for (Printer prnt : printers) {
+            KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
+            if (kds1 != null) {
+                kds1.setKdsType(prnt.getPrinterUsageType());
+                KotJob kotjob = new KotJob(kds1, toKotSummary,
+                        fromKotSummary, orderMap, kotItemDetail);
+                kotJobManager.addJob(kotjob);
             }
         }
+
+        boolean ret = transferItemToPrinter(fromKotSummary,
+                toKotSummary, orderMap, kotItemDetail);
+        if (!ret) {
+            App.getTopActivity().kotPrintStatus(
+                    MainPage.KOT_PRINT_FAILED, null);
+        }
+//        }
     }
 
     /* transfer item to printer */

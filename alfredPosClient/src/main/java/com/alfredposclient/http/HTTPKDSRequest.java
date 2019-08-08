@@ -2,6 +2,7 @@ package com.alfredposclient.http;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
@@ -11,6 +12,7 @@ import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -212,6 +214,13 @@ public class HTTPKDSRequest {
                                         KotItemDetailSQL.update(kotItemDetail);
                                         kotItemDetailsCopy.add(kotItemDetail);
                                     }
+                                }
+
+                                int kotSummaryId = CommonSQL.isFakeId(kotSummary.getId()) ? kotSummary.getOriginalId() : kotSummary.getId();
+
+                                KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummaryId);
+                                if (!TextUtils.isEmpty(kotSummaryLocal.getKotSummaryLog())) {
+                                    kotSummary.setKotSummaryLog(kotSummaryLocal.getKotSummaryLog());
                                 }
 
                                 kotSummary.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummary, kotItemDetailsCopy, kds));

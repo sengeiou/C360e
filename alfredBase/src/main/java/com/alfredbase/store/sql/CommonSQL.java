@@ -38,6 +38,6 @@ public class CommonSQL {
     }
 
     public static boolean isFakeId(int id) {
-        return id < 0;
+        return id <= 0;
     }
 }
