@@ -52,8 +52,8 @@ public class BaseApplication extends Application {
      */
 
     public static boolean isDebug = false ;    //	Debug开关 release的时候设置为false
-    public static boolean isOpenLog = false;    //	release 时设置为false
-    public static boolean isCartenzLog = true;
+    public static boolean isOpenLog = true;    //	release 时设置为false
+    public static boolean isCartenzLog = false;
 
     protected String APPPATH = "sunmi";// sunmi or google or alibaba;
 

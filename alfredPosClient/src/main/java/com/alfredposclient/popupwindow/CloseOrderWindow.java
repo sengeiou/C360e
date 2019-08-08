@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -181,7 +182,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private String referenceNum;
 
     PaymentMethod paymentMethod = new PaymentMethod();
-
+    private BigDecimal cardAmountPaidNum;
 
     private boolean isFirstClickCash = false;
     List<PaymentMethod> pamentMethodlist = new ArrayList<PaymentMethod>();
@@ -663,6 +664,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BH.getBD(sumPaidamount), true);
             }
         }
+        Log.wtf("Test_k0",""+BH.formatMoney(remainTotal.toString()));
         ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
 
 
@@ -1021,7 +1023,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         if (!App.instance.getSystemSettings().isCardRounding()) {
 
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
-            tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotal.toString()).toString());
+            Log.wtf("Test_k1",""+BH.formatMoney(remainTotal.toString()));
+            cardAmountPaidNum = remainTotal;
+            tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotal.toString()));
             tv_cards_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
         } else {
             BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
@@ -1034,7 +1038,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
             tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()).toString());
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotalAfterRound.toString()).toString());
-            tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotalAfterRound.toString()).toString());
+            Log.wtf("Test_k2",""+BH.formatMoney(remainTotalAfterRound.toString()));
+            cardAmountPaidNum = remainTotalAfterRound;
+            tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotalAfterRound.toString()));
         }
         selectView = tv_card_no_num;
         tv_cards_amount_paid_num.setBackgroundColor(parent.getResources().getColor(
@@ -2191,7 +2197,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 PaymentSettlement paymentSettlement = null;
                 //四舍五入
                 if (!App.instance.getSystemSettings().isCardRounding()) {
-                    paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+                    paidBD = cardAmountPaidNum;
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
                                 .getInstance().getPaymentSettlementForCard(
@@ -2208,7 +2214,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                     }
                 } else {
-                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(tv_cards_amount_paid_num.getText().toString()));
+                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), cardAmountPaidNum);
                     BigDecimal remainTotalAlfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory

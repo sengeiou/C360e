@@ -190,7 +190,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
     boolean isFirstClickPart;
 
-
+    private BigDecimal cardAmountPaidNum;
     PaymentMethod paymentMethod = new PaymentMethod();
 
     Button tv_other_media;
@@ -835,31 +835,29 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
                         case ParamConst.SETTLEMENT_TYPE_JCB:
 
-                                CardsSettlement cardsSettlement = CardsSettlementSQL
-                                        .getCardsSettlementByPament(payment.getId(),
-                                                paymentSettlement.getId());
+                            CardsSettlement cardsSettlement = CardsSettlementSQL
+                                    .getCardsSettlementByPament(payment.getId(),
+                                            paymentSettlement.getId());
 
-                                subPaymentSettlement = cardsSettlement;
+                            subPaymentSettlement = cardsSettlement;
+                            if (parent instanceof EditSettlementPage) {
+                                cardsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
+                                CardsSettlementSQL.addCardsSettlement(cardsSettlement);
+                            } else {
+                                CardsSettlementSQL.deleteCardsSettlement(cardsSettlement);
+                            }
+                            RoundAmount roundAmounts = RoundAmountSQL.getRoundAmount(orderSplit);
+                            if (roundAmounts != null && BH.getBD(roundAmounts.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
+                                orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmounts.getRoundBalancePrice()), true).toString());
+                                OrderSplitSQL.update(orderSplit);
                                 if (parent instanceof EditSettlementPage) {
-                                    cardsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
-                                    CardsSettlementSQL.addCardsSettlement(cardsSettlement);
+                                    roundAmounts.setRoundBalancePrice(0.00);
+                                    RoundAmountSQL.update(roundAmounts);
                                 } else {
-                                    CardsSettlementSQL.deleteCardsSettlement(cardsSettlement);
+                                    RoundAmountSQL.deleteRoundAmount(roundAmounts);
                                 }
-                                RoundAmount roundAmounts = RoundAmountSQL.getRoundAmount(orderSplit);
-                                if (roundAmounts != null && BH.getBD(roundAmounts.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
-                                    orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmounts.getRoundBalancePrice()), true).toString());
-                                    OrderSplitSQL.update(orderSplit);
-                                    if (parent instanceof EditSettlementPage) {
-                                        roundAmounts.setRoundBalancePrice(0.00);
-                                        RoundAmountSQL.update(roundAmounts);
-                                    } else {
-                                        RoundAmountSQL.deleteRoundAmount(roundAmounts);
-                                    }
-                                    remainTotal = BH.getBD(orderSplit.getTotal());
-                                }
-
-
+                                remainTotal = BH.getBD(orderSplit.getTotal());
+                            }
 
 
                             break;
@@ -1175,6 +1173,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         if (!App.instance.getSystemSettings().isCardRounding()) {
 
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
+            cardAmountPaidNum = remainTotal;
             tv_cards_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
             tv_cards_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(0).toString()).toString());
         } else {
@@ -1188,10 +1187,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
             tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()).toString());
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()).toString());
+            cardAmountPaidNum = remainTotalAfterRound;
             tv_cards_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()).toString());
         }
         tv_cards_expiration_date_num.setText("");
 //        tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+//        remainTotalAfterRound = remainTotal
         //  tv_cards_amount_paid_num.setText(BH.getBD(remainTotal).toString());
         selectView = tv_card_no_num;
         tv_cards_amount_paid_num.setBackgroundColor(parent.getResources().getColor(
@@ -2424,8 +2425,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             case ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE: {
                 if (paymentMethod.getIsTax() == 0) {
                     //不计税
-                  //  deleteVoidOrEntTax();
-                    ToastUtils.showToast(parent,"setting error\n");
+                    //  deleteVoidOrEntTax();
+                    ToastUtils.showToast(parent, "setting error\n");
 
                     return;
                 }
@@ -2515,7 +2516,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 PaymentSettlement paymentSettlement = null;
                 //四舍五入
                 if (!App.instance.getSystemSettings().isCardRounding()) {
-                    paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+                    paidBD = cardAmountPaidNum;
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
                                 .getInstance().getPaymentSettlementForCard(
@@ -2536,7 +2537,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         }
                     }
                 } else {
-                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(tv_cards_amount_paid_num.getText().toString()));
+                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), cardAmountPaidNum);
                     BigDecimal remainTotalAlfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
@@ -2592,9 +2593,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //
 //                //四舍五入
 //                if(!App.instance.getSystemSettings().isCardRounding()) {
-//                   paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+//                   paidBD = BH.getBD(cardAmountPaidNum);
 //                }else {
-//                    paidBD= RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(),  BH.getBD(tv_cards_amount_paid_num.getText().toString()));
+//                    paidBD= RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(),  BH.getBD(cardAmountPaidNum));
 //                }
 //                if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
 //                    PaymentSettlement paymentSettlement = ObjectFactory
@@ -2615,7 +2616,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //                        remainTotal = BH.sub(remainTotal, settlementNum, false);
 //                    }
 
-                if (paymentSettlement!=null) {
+                if (paymentSettlement != null) {
                     PaymentSQL.addPayment(payment);
                     PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
                     String cvv = tv_cards_cvv_num.getText().toString();
@@ -3366,13 +3367,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     rl_special_settlement_phone.setVisibility(View.GONE);
                     contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                             View.VISIBLE);
-                  //  show.append(0);
+                    //  show.append(0);
                     EditText et_special_settlement_person_name = (EditText) contentView
                             .findViewById(R.id.et_special_settlement_person_name);
-                    if(TextUtils.isEmpty(paymentMethod.getDescription()))
-                    {
+                    if (TextUtils.isEmpty(paymentMethod.getDescription())) {
                         et_special_settlement_person_name.setText("");
-                    }else {
+                    } else {
                         et_special_settlement_person_name.setText(paymentMethod.getDescription().toString());
                     }
                     moneyKeyboard.setVisibility(View.VISIBLE);
@@ -3412,13 +3412,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                         View.VISIBLE);
-           //     show.append(0);
+                //     show.append(0);
                 EditText et_special_settlement_person_name = (EditText) contentView
                         .findViewById(R.id.et_special_settlement_person_name);
-                if(TextUtils.isEmpty(paymentMethod.getDescription()))
-                {
+                if (TextUtils.isEmpty(paymentMethod.getDescription())) {
                     et_special_settlement_person_name.setText("");
-                }else {
+                } else {
                     et_special_settlement_person_name.setText(paymentMethod.getDescription().toString());
                 }
                 moneyKeyboard.setVisibility(View.VISIBLE);
@@ -3470,9 +3469,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
     }
 
-    public void backLikeClose(){
+    public void backLikeClose() {
         closeWindowAction();
-        if(splitPax){
+        if (splitPax) {
             handler.sendEmptyMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW);
         }
         if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
@@ -3483,8 +3482,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     EditSettlementPage.EDIT_SETTLEMENT_CLOSE_BILL,
                     newAndOldPaymentSettlement));
         }
-        if(!(parent instanceof EditSettlementPage)){
-            if(splitPax){
+        if (!(parent instanceof EditSettlementPage)) {
+            if (splitPax) {
                 handler.sendEmptyMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW);
             }
         }
