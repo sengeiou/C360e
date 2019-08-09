@@ -75,25 +75,29 @@ public class KotJobManager {
         if (isAssemblyLine) {
             Printer printer = null;
 
-//            int i = 0;
-
             if (kdsId > 0) {
                 boolean isPrinterFound = false;
+                int i = 0;
 
                 for (Printer mPrinter : printersData) {
                     if (mPrinter.getId().equals(kdsId)) {
                         isPrinterFound = true;
                     } else {
                         if (isPrinterFound) {
-//                            if (i < printersData.size() - 1) {
-//                                kdsType = Printer.KDS_SUB;
-//                            }
+                            if (i < printersData.size() - 1) {
+                                int position = i + 1;
+                                Printer nextPrinter = printersData.get(position);
+
+                                if (nextPrinter.getPrinterUsageType() == Printer.KDS_EXPEDITER) {
+                                    mPrinter.isShowNext = 1;
+                                }
+                            }
 
                             printer = mPrinter;
                             break;
                         }
                     }
-//                    i++;
+                    i++;
                 }
             } else {
                 if (printersData.size() > 0) {
@@ -107,11 +111,11 @@ public class KotJobManager {
             if (printer != null) {
 //                printer.kdsType = kdsType;
 
-                if (printer.getPrinterUsageType() == Printer.KDS_EXPEDITER) {
-                    printerResult.addAll(getPrinterEx(printerGroupId));
-                } else {
-                    printerResult.add(printer);
-                }
+//                if (printer.getPrinterUsageType() == Printer.KDS_EXPEDITER) {
+//                    printerResult.addAll(getPrinterEx(printerGroupId));
+//                } else {
+                printerResult.add(printer);
+//                }
             }
         } else {
 //            for (Printer printer : printersData) {
@@ -456,8 +460,11 @@ public class KotJobManager {
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
+                    kotSummary.setNext(printer.isShowNext);//don't save to db here
+
 //                    KotJob kotjob = new KotJob(kdsDevice, kotSummary,
 //                            mapKOT.get(prgid), mods.get(prgid), method, orderMap, APIName.SUBMIT_NEXT_KOT);
+
                     KotJob kotjob = new KotJob(kdsDevice, kotSummary,
                             kotItemDetails, modifiers, method, orderMap, APIName.SUBMIT_NEXT_KOT);
 
@@ -513,6 +520,7 @@ public class KotJobManager {
 
                 if (kotItemDetail != null) {
                     if (!mapKotItemDetail.containsKey(kotItemDetail.getId())) {
+                        kotItemDetail.setItemType(ParamConst.ITEMDETAIL_COMBO_ITEM);
                         mapKotItemDetail.put(kotItemDetail.getId(), kotItemDetail);
                     }
                 }
@@ -571,6 +579,7 @@ public class KotJobManager {
         Map<Integer, ArrayList<KotItemModifier>> modCombo = new HashMap<>();
 
         BaseActivity context = App.getTopActivity();
+        int comboCount = 0;
 
         for (KotItemDetail items : kot) {
 
@@ -579,6 +588,8 @@ public class KotJobManager {
             OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(items.getOrderDetailId());
             ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
             if (itemDetail.getItemType() == 3) {//package item
+                comboCount++;
+                items.setItemType(ParamConst.ITEMDETAIL_COMBO_ITEM);
                 modCombo = getComboModifiers(items, modifiers, modCombo);
                 continue;
             } else {
@@ -630,7 +641,9 @@ public class KotJobManager {
 
             int kotSize = 0;
             int kotVoidSize = 0;
+
             for (KotItemDetail kotItemDetail : kot) {
+
                 if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
                     kotVoidSize++;
                 } else {
@@ -640,6 +653,8 @@ public class KotJobManager {
 
             kotSummary.setOriginalId(kotSummary.getId());
             KotSummarySQL.update(kotSummary);
+
+            kotSize += modCombo.size() - comboCount;//kurangi combo parent
 
             int count = kotSummaryLocal != null ? kotSummaryLocal.getOrderDetailCount() - kotVoidSize + kotSize : kotSize;
 //            int count = kot.size();

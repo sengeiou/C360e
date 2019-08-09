@@ -2614,11 +2614,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             String kotSummaryStr = jsonObject.getString("kotSummary");
             String kidStr = jsonObject.getString("kotItemDetails");
+            String kimStr = jsonObject.getString("kotModifiers");
             int kdsId = jsonObject.getInt("kdsId");
 
-            final ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(
-                    jsonObject.optString("kotItemDetails"),
+            final ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(kidStr,
                     new TypeToken<ArrayList<KotItemDetail>>() {
+                    }.getType());
+            final ArrayList<KotItemModifier> kotItemModifiers = gson.fromJson(kimStr,
+                    new TypeToken<ArrayList<KotItemModifier>>() {
                     }.getType());
 
             KotSummary kotSummary = gson.fromJson(kotSummaryStr, KotSummary.class);

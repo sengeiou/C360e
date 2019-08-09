@@ -249,7 +249,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                     if (kotItemDetails != null) {
                         if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_EXPEDITER) {
                             for (KotItemDetail kotItemDetail : kotItemDetails) {
-                                kotItemDetail.setKotSummaryId(kotSummary.getOriginalId());//set original id
+                                int kotSummaryId = CommonSQL.isFakeId(kotSummary.getId()) ? kotSummary.getOriginalId() : kotSummary.getId();
+                                kotItemDetail.setKotSummaryId(kotSummaryId);//set original id
                             }
                         }
 

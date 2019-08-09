@@ -408,11 +408,14 @@ public class KitchenOrder extends BaseActivity {
                     Bundle bundle2 = msg.getData();
                     String kotStr = bundle2.getString("kot");
                     String kidStr = bundle2.getString("kotItemDetails");
+                    String kimStr = bundle2.getString("kotItemModifiers");
 
                     final Kot kot = new Gson().fromJson(kotStr, Kot.class);
                     if (kot == null) return;
 
                     final List<KotItemDetail> kotItemDetails = new Gson().fromJson(kidStr, new TypeToken<List<KotItemDetail>>() {
+                    }.getType());
+                    final List<KotItemModifier> kotItemModifiers = new Gson().fromJson(kimStr, new TypeToken<List<KotItemModifier>>() {
                     }.getType());
 
                     String titleNext = getResources().getString(R.string.warning);
@@ -427,7 +430,8 @@ public class KitchenOrder extends BaseActivity {
                                     parameters.put("kotSummary", kot.getKotSummary());
 //                                    parameters.put("kotItemDetails", kot.getKotItemDetails());
                                     parameters.put("kotItemDetails", kotItemDetails);
-                                    parameters.put("kotModifiers", kot.getKotItemModifiers());
+//                                    parameters.put("kotModifiers", kot.getKotItemModifiers());
+                                    parameters.put("kotModifiers", kotItemModifiers);
                                     parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                                     parameters.put("type", 1);
                                     SyncCentre.getInstance().kotNextKDS(KitchenOrder.this,

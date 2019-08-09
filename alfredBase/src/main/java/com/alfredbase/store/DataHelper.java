@@ -1658,6 +1658,9 @@ public class DataHelper {
             db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
                     + " ADD COLUMN  endTime INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  itemType INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN kotSummaryLog TEXT");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
@@ -1666,6 +1669,8 @@ public class DataHelper {
                     + " ADD COLUMN orderDetailCount INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN originalId INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN isNext INTEGER default 0");
         }
     }
 }

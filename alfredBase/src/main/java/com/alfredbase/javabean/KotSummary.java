@@ -52,6 +52,8 @@ public class KotSummary implements Serializable {
      */
     private Integer originalId;
 
+    private int isNext;
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -306,6 +308,14 @@ public class KotSummary implements Serializable {
 
     public void setOriginalId(Integer originalId) {
         this.originalId = originalId;
+    }
+
+    public int isNext() {
+        return isNext;
+    }
+
+    public void setNext(int next) {
+        isNext = next;
     }
 
     @Override

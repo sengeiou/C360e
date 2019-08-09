@@ -65,6 +65,8 @@ public class KotItemDetail implements Serializable {
 
     private long endTime;
 
+    private int itemType;
+
     public boolean isChecklist;
 
     public KotItemDetail() {
@@ -262,6 +264,14 @@ public class KotItemDetail implements Serializable {
 
     public void setEndTime(long endTime) {
         this.endTime = endTime;
+    }
+
+    public int getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(int itemType) {
+        this.itemType = itemType;
     }
 
     @Override

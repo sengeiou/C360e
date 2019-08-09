@@ -61,6 +61,8 @@ public class Printer implements Serializable {
      */
     public int kdsType;
 
+    public int isShowNext;
+
     public Integer getId() {
         return id;
     }
