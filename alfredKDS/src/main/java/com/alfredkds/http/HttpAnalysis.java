@@ -225,6 +225,8 @@ public class HttpAnalysis {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT, null));
     }
 
     public static void getKotItemDetail(int statusCode, Header[] headers,

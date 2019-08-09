@@ -263,6 +263,7 @@ public class HttpAPI {
                     });
         } catch (Exception e) {
             e.printStackTrace();
+            handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT, null));
         }
     }
 

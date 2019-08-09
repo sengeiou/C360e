@@ -57,8 +57,6 @@ public class KdsHttpServer extends AlfredHttpServer {
             }
             if (uri.equals(APIName.SUBMIT_NEW_KOT)) {
                 //handlerSubmitNewKot
-                if (App.instance.getKdsDevice().getKdsType() != Printer.KDS_SUMMARY)
-                    App.instance.ringUtil.playRingOnce();
                 resp = handlerSubmitNewKot(body);
             } else if (uri.equals(APIName.TRANSFER_KOT)) {
                 App.instance.ringUtil.playRingOnce();
@@ -74,8 +72,8 @@ public class KdsHttpServer extends AlfredHttpServer {
             } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
                 App.instance.ringUtil.playRingOnce();
                 resp = handlerNextKot(body);
-            } else if (uri.equals(APIName.DELETE_KOT_ON_SUMMARY_KDS)) {
-                resp = handlerDeleteSummary(body);
+            } else if (uri.equals(APIName.DELETE_KOT_KDS)) {
+                resp = handlerDeleteKot(body);
             } else if (uri.equals(APIName.SUBMIT_SUMMARY_KDS)) {
                 resp = handlerSubmitSummary(body);
             } else {
@@ -134,7 +132,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                         KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                     }
 
-                    App.getTopActivity().httpRequestAction(App.HANDLER_UPDATE_KOT, null);
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_UPDATE_KOT, null);
                 }
             }).start();
 
@@ -152,13 +151,12 @@ public class KdsHttpServer extends AlfredHttpServer {
         return resp;
     }
 
-    private Response handlerDeleteSummary(String params) {
+    private Response handlerDeleteKot(String params) {
         Response resp;
         Map<String, Object> result = new HashMap<>();
         try {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
-            String method = jsonObject.optString("method");
             KotSummary kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
             if (kotSummary == null) {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
@@ -167,7 +165,8 @@ public class KdsHttpServer extends AlfredHttpServer {
 
             int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
             if (revenueCenterId != kotSummary.getRevenueCenterId()) {
-                App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                if (App.getTopActivity() != null)
+                    App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                 result.put("resultCode", ResultCode.CONNECTION_FAILED);
                 resp = getJsonResponse(new Gson().toJson(result));
                 return resp;
@@ -187,7 +186,8 @@ public class KdsHttpServer extends AlfredHttpServer {
             KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
             KotSummarySQL.deleteKotSummary(kotSummary);
 
-            App.getTopActivity().httpRequestAction(App.HANDLER_DELETE_KOT, null);
+            if (App.getTopActivity() != null)
+                App.getTopActivity().httpRequestAction(App.HANDLER_DELETE_KOT, null);
             result.put("resultCode", ResultCode.SUCCESS);
             resp = getJsonResponse(new Gson().toJson(result));
         } catch (JSONException ex) {
@@ -219,7 +219,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                 return resp;
             } else {
                 if (revenueCenterId != kotSummary.getRevenueCenterId()) {
-                    App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
                     resp = getJsonResponse(new Gson().toJson(result));
                     return resp;
@@ -237,7 +238,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                 public void run() {
 
                     if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY ||
-                            App.instance.getKdsDevice().getKdsType() == Printer.KDS_EXPEDITER) {
+                            App.instance.getKdsDevice().getKdsType() == Printer.KDS_EXPEDITER ||
+                            App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
                         if (CommonSQL.isFakeId(kotSummary.getId())) {
                             kotSummary.setId(kotSummary.getOriginalId());
                         }
@@ -257,7 +259,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                         KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                     }
 
-                    App.getTopActivity().httpRequestAction(App.HANDLER_NEXT_KOT, null);
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_NEXT_KOT, null);
                 }
             }).start();
 
@@ -297,7 +300,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                 return resp;
             } else {
                 if (revenueCenterId != kotSummary.getRevenueCenterId()) {
-                    App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
                     resp = getJsonResponse(new Gson().toJson(result));
                     return resp;
@@ -407,7 +411,9 @@ public class KdsHttpServer extends AlfredHttpServer {
                 } else {
                     resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.transfer_table_failed));
                 }
-                App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_TRANSFER_KOT, null);
+
+                if (App.getTopActivity() != null)
+                    App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_TRANSFER_KOT, null);
                 result.put("resultCode", ResultCode.SUCCESS);
                 resp = getJsonResponse(new Gson().toJson(result));
             }
@@ -425,7 +431,9 @@ public class KdsHttpServer extends AlfredHttpServer {
                     }
                     KotSummarySQL.deleteKotSummary(fromKotSummary);
                 }
-                App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
+
+                if (App.getTopActivity() != null)
+                    App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
                 result.put("resultCode", ResultCode.SUCCESS);
                 resp = getJsonResponse(new Gson().toJson(result));
             }
@@ -448,7 +456,8 @@ public class KdsHttpServer extends AlfredHttpServer {
             KotItemDetailSQL.update(kotItemDetail);
             KotSummarySQL.update(toKotSummary);
             KotSummarySQL.update(fromKotSummary);
-            App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
+            if (App.getTopActivity() != null)
+                App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
             result.put("resultCode", ResultCode.SUCCESS);
             resp = getJsonResponse(new Gson().toJson(result));
         } catch (Exception e) {
@@ -477,11 +486,17 @@ public class KdsHttpServer extends AlfredHttpServer {
                 return resp;
             } else {
                 if (revenueCenterId != kotSummary.getRevenueCenterId()) {
-                    App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
                     resp = getJsonResponse(new Gson().toJson(result));
                     return resp;
                 }
+            }
+
+            if (App.instance.getKdsDevice().getKdsType() != Printer.KDS_SUMMARY &&
+                    !ParamConst.JOB_VOID_KOT.equals(method)) {
+                App.instance.ringUtil.playRingOnce();
             }
 
             //region new kot
@@ -503,7 +518,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                             KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
                         }
 
-                        App.getTopActivity().httpRequestAction(App.HANDLER_NEW_KOT, null);
+                        if (App.getTopActivity() != null)
+                            App.getTopActivity().httpRequestAction(App.HANDLER_NEW_KOT, null);
                     }
                 }).start();
 
@@ -526,7 +542,9 @@ public class KdsHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
 
-                        if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
+                        if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY ||
+                                App.instance.getKdsDevice().getKdsType() == Printer.KDS_EXPEDITER ||
+                                App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
                             KotSummarySQL.update(kotSummary);
                             if (kotItemDetails != null) {
                                 KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -573,13 +591,15 @@ public class KdsHttpServer extends AlfredHttpServer {
                             }
                         }
 
-
-                        App.getTopActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                App.getTopActivity().httpRequestAction(App.HANDLER_UPDATE_KOT, null);
-                            }
-                        });
+                        if (App.getTopActivity() != null) {
+                            App.getTopActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (App.getTopActivity() != null)
+                                        App.getTopActivity().httpRequestAction(App.HANDLER_UPDATE_KOT, null);
+                                }
+                            });
+                        }
 
                     }
                 }).start();
@@ -598,7 +618,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
                         KotItemDetailSQL.deleteKotItemDetail(kotItemDetails);
-                        App.getTopActivity().httpRequestAction(App.HANDLER_DELETE_KOT, null);
+                        if (App.getTopActivity() != null)
+                            App.getTopActivity().httpRequestAction(App.HANDLER_DELETE_KOT, null);
                     }
                 }).start();
                 result.put("resultCode", ResultCode.SUCCESS);
@@ -610,13 +631,25 @@ public class KdsHttpServer extends AlfredHttpServer {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+
+                        boolean isFound = false;
+
                         for (KotItemDetail kotItemDetail : kotItemDetails) {
-                            kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);//状态改变为void
-                            KotItemDetailSQL.update(kotItemDetail);
+                            KotItemDetail kotItemDetailLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                            if (kotItemDetailLocal != null) {
+                                isFound = true;
+                                kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);//状态改变为void
+                                KotItemDetailSQL.update(kotItemDetail);
+                            }
                         }
 
-                        KotSummarySQL.update(kotSummary);
-                        App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_KOT, null);
+                        if (isFound) {
+                            App.instance.ringUtil.playRingOnce();
+                            KotSummarySQL.update(kotSummary);
+
+                            if (App.getTopActivity() != null)
+                                App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_KOT, null);
+                        }
                     }
                 }).start();
                 result.put("resultCode", ResultCode.SUCCESS);
@@ -688,27 +721,29 @@ public class KdsHttpServer extends AlfredHttpServer {
             Gson gson = new Gson();
             JSONObject jsonObject = new JSONObject(params);
             SessionStatus sessionStatus = gson.fromJson(jsonObject.optString("session"), SessionStatus.class);
-            App.getTopActivity().runOnUiThread(new Runnable() {
+            if (App.getTopActivity() != null) {
+                App.getTopActivity().runOnUiThread(new Runnable() {
 
-                @Override
-                public void run() {
-                    App.getTopActivity().showOneButtonCompelDialog(App.getTopActivity().getResources().getString(R.string.session_change),
-                            App.getTopActivity().getResources().getString(R.string.relogin_pos),
-                            new OnClickListener() {
+                    @Override
+                    public void run() {
+                        App.getTopActivity().showOneButtonCompelDialog(App.getTopActivity().getResources().getString(R.string.session_change),
+                                App.getTopActivity().getResources().getString(R.string.relogin_pos),
+                                new OnClickListener() {
 
-                                @Override
-                                public void onClick(View v) {
-                                    KotSummarySQL.deleteAllKotSummary();
-                                    KotItemDetailSQL.deleteAllKotItemDetail();
-                                    KotItemModifierSQL.deleteAllKotItemModifier();
+                                    @Override
+                                    public void onClick(View v) {
+                                        KotSummarySQL.deleteAllKotSummary();
+                                        KotItemDetailSQL.deleteAllKotItemDetail();
+                                        KotItemModifierSQL.deleteAllKotItemModifier();
 //							App.instance.popAllActivityExceptOne(EmployeeID.class);
-                                    UIHelp.startWelcome(App.getTopActivity());
-                                    App.instance.popAllActivityExceptOne(Login.class);
-                                }
-                            });
+                                        UIHelp.startWelcome(App.getTopActivity());
+                                        App.instance.popAllActivityExceptOne(Login.class);
+                                    }
+                                });
 
-                }
-            });
+                    }
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

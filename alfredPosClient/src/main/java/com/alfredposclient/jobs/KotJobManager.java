@@ -12,7 +12,6 @@ import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.KotSummaryLog;
-import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Printer;
@@ -24,11 +23,8 @@ import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
-import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.PrinterGroupSQL;
 import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
-import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -74,7 +70,7 @@ public class KotJobManager {
         //kdsType currently not used
 //        int kdsType = Printer.KDS_EXPEDITER;//default is expediter;
 
-        isAssemblyLine = true;//dummy
+//        isAssemblyLine = true;//dummy
 
         if (isAssemblyLine) {
             Printer printer = null;
@@ -261,15 +257,16 @@ public class KotJobManager {
         }
 
         for (int pgId : printerGroupIds) {
-            List<Printer> printerSummary = getPrinterSummary(pgId);
+            List<Printer> printerList = getPrinterSummary(pgId);
+            printerList.addAll(getPrinterEx(pgId));//also delete from all expediter
 
-            for (Printer printer : printerSummary) {
+            for (Printer printer : printerList) {
                 if (printer == null) continue;
 
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
                 if (kdsDevice == null) continue;
 
-                KotJob kotjob = new KotJob(kdsDevice, kotSummary, ParamConst.JOB_DELETE_KOT_SUMMARY, APIName.DELETE_KOT_ON_SUMMARY_KDS);
+                KotJob kotjob = new KotJob(kdsDevice, kotSummary, ParamConst.JOB_DELETE_KOT_SUMMARY, APIName.DELETE_KOT_KDS);
                 kotJobManager.addJob(kotjob);
             }
         }
@@ -527,6 +524,11 @@ public class KotJobManager {
 
             List<Printer> printers = getPrinters(printerGroupId, kdsId, isAssemblyLine(printerGroupId));
 
+            if (ParamConst.JOB_VOID_KOT.equals(method)) {
+                printers = CoreData.getInstance()
+                        .getPrintersInGroup(printerGroupId);
+            }
+
             for (Printer printer : printers) {
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
                 PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer.getId());
@@ -658,7 +660,11 @@ public class KotJobManager {
 
             PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
             List<Printer> printers = getPrinters(printerGroup.getPrinterGroupId(), 0, isAssemblyLine(prgid));
-//            printers.addAll(getPrinterEx(printerGroup.getPrinterGroupId()));
+
+            if (ParamConst.JOB_VOID_KOT.equals(method)) {
+                printers = CoreData.getInstance()
+                        .getPrintersInGroup(prgid);
+            }
 
             for (Printer printer : printers) {
                 // KDS device
@@ -1225,6 +1231,11 @@ public class KotJobManager {
                     new HashMap<Integer, ArrayList<KotItemModifier>>());
 
             List<KotSummaryLog> copyKotSummaryLogs = new ArrayList<>(kotSummaryLogs);
+            List<Printer> printerList = new ArrayList<>();
+
+            for (Integer printerGroupId : modCombo.keySet()) {//get all printer from all group
+                printerList.addAll(CoreData.getInstance().getPrintersInGroup(printerGroupId));
+            }
 
             for (Integer printerGroupId : modCombo.keySet()) {
                 boolean isFound = false;
@@ -1234,12 +1245,26 @@ public class KotJobManager {
                     KDSDevice kdsDevice;
                     List<KotItemDetail> logKotItemDetailList = ksl.kotItemDetails;
 
+                    //region set kotsummary log to destination kotsummary
+                    List<KotSummaryLog> toKotSummaryLogs;
+                    if (!TextUtils.isEmpty(toKotSummary.getKotSummaryLog())) {
+                        toKotSummaryLogs = new Gson().fromJson(toKotSummary.getKotSummaryLog(),
+                                new TypeToken<List<KotSummaryLog>>() {
+                                }.getType());
+                        toKotSummaryLogs.add(ksl);
+                    } else {
+                        toKotSummaryLogs = unreverseKotSummaryLogs;
+                    }
+
+                    toKotSummary.setKotSummaryLog(new Gson().toJson(toKotSummaryLogs));
+                    //endregion
+
                     for (KotItemDetail kid : logKotItemDetailList) {
                         if (kid.getId().equals(kotItemDetail.getId())) {
 
                             kdsDevice = ksl.kdsDevice;
 
-                            for (Printer printer : CoreData.getInstance().getPrintersInGroup(printerGroupId)) {
+                            for (Printer printer : printerList) {
                                 if (printer.getId().equals(kdsDevice.getDevice_id())) {
                                     printers.add(printer);
                                     break;

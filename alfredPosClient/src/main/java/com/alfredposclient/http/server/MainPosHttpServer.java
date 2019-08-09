@@ -2038,8 +2038,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                App.getTopActivity().httpRequestAction(
-                        MainPage.REFRESH_TABLES_STATUS, tables);
+                if (App.getTopActivity() != null)
+                    App.getTopActivity().httpRequestAction(
+                            MainPage.REFRESH_TABLES_STATUS, tables);
             } else {// 错误处理
                 // result.put("resultCode", ResultCode.UNKNOW_ERROR);
                 // send200(new Gson().toJson(result));
@@ -2829,8 +2830,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (filteredKotItemDetails.size() > 0) {
                 KotItemDetailSQL.addKotItemDetailList(filteredKotItemDetails);
                 KotNotificationSQL.addKotNotificationList(kotNotifications);
-                App.getTopActivity().httpRequestAction(
-                        MainPage.VIEW_EVENT_SET_DATA, localKotSummary.getOrderId());
+
+                if (App.getTopActivity() != null)
+                    App.getTopActivity().httpRequestAction(
+                            MainPage.VIEW_EVENT_SET_DATA, localKotSummary.getOrderId());
                 result.put("resultCode", ResultCode.SUCCESS);
                 result.put("resultKotItemDetails", resultKotItemDetails);
                 result.put("kotSummaryId", kotSummary.getId());
@@ -2883,7 +2886,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     }
                 }).start();
 
-                //delete kot on summary kds
+                //delete kot on summary kds and expediter
                 deleteKotSummary(localKotSummary, kotItemDetails);
                 resp = this.getJsonResponse(new Gson().toJson(result));
             } else {

@@ -461,6 +461,7 @@ public class KitchenOrder extends BaseActivity {
                     break;
                 case App.HANDLER_KOT_NEXT_FAILED:
                     loadingDialog.dismiss();
+                    refresh();
                     break;
                 default:
                     break;

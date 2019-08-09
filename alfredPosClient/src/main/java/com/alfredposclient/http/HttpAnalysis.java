@@ -209,19 +209,19 @@ public class HttpAnalysis {
                     }.getType());
 
             //region set dummy data
-            for (Printer printer : printers) {
-                if ("Kitchen 1".equalsIgnoreCase(printer.getPrinterName()) ||
-                        "Kitchen 2".equalsIgnoreCase(printer.getPrinterName()) ||
-                        "Bar".equalsIgnoreCase(printer.getPrinterName())) {
-                    printer.setPrinterUsageType(Printer.KDS_SUB);
-                } else if ("EX Kitchen".equalsIgnoreCase(printer.getPrinterName())) {
-                    printer.setPrinterUsageType(Printer.KDS_EXPEDITER);
-                } else if ("Summary Printer".equalsIgnoreCase(printer.getPrinterName())) {
-                    printer.setPrinterUsageType(Printer.KDS_SUMMARY);
-                } else {
-                    printer.setPrinterUsageType(Printer.KDS_NORMAL);
-                }
-            }
+//            for (Printer printer : printers) {
+//                if ("Kitchen 1".equalsIgnoreCase(printer.getPrinterName()) ||
+//                        "Kitchen 2".equalsIgnoreCase(printer.getPrinterName()) ||
+//                        "Bar".equalsIgnoreCase(printer.getPrinterName())) {
+//                    printer.setPrinterUsageType(Printer.KDS_SUB);
+//                } else if ("EX Kitchen".equalsIgnoreCase(printer.getPrinterName())) {
+//                    printer.setPrinterUsageType(Printer.KDS_EXPEDITER);
+//                } else if ("Summary Printer".equalsIgnoreCase(printer.getPrinterName())) {
+//                    printer.setPrinterUsageType(Printer.KDS_SUMMARY);
+//                } else {
+//                    printer.setPrinterUsageType(Printer.KDS_NORMAL);
+//                }
+//            }
             //endregion
 
             CoreData.getInstance().setPrinters(printers);

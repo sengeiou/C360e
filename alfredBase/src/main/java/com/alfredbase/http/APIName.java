@@ -131,7 +131,7 @@ public class APIName {
     public static final String SUBMIT_NEW_KOT = "submit_new_kot";
     public static final String SUBMIT_TMP_KOT = "submit_tmp_kot";
     public static final String SUBMIT_NEXT_KOT = "submit_next_kot";
-    public static final String DELETE_KOT_ON_SUMMARY_KDS = "delete_kot_on_summary_kds";
+    public static final String DELETE_KOT_KDS = "delete_kot_kds";
     public static final String SUBMIT_SUMMARY_KDS = "submit_summary_kds";
 
     /**

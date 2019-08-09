@@ -567,7 +567,7 @@ public class SyncCentre {
 
     public void deleteKotSummary(KDSDevice kdsDevice, BaseActivity context,
                                  Map<String, Object> parameters, Handler handler) throws Throwable {
-        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.DELETE_KOT_ON_SUMMARY_KDS);
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.DELETE_KOT_KDS);
         HTTPKDSRequest.deleteKotSummary(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
 
