@@ -428,4 +428,8 @@
     <string name="send_data_process">ส่งข้อมูล: กระบวนการ</string>
     <string name="amount_less_than">จำนวนเงินน้อยกว่า</string>
 
+    <string name="print_preparation_instructions">คำแนะนำในการเตรียมการพิมพ์</string>
+    <string name="waiter_print_bill_once">บริกรพิมพ์บิลหนึ่งครั้ง</string>
+    <string name="promotion">การส่งเสริม</string>
+
 </resources>

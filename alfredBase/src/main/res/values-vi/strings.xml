@@ -428,4 +428,9 @@
     <string name="send_data_failed">Gửi dữ liệu: thất bại</string>
     <string name="send_data_process">Gửi dữ liệu: quá trình</string>
     <string name="amount_less_than">Số tiền ít hơn</string>
+
+    <string name="print_preparation_instructions">Hướng dẫn chuẩn bị in</string>
+    <string name="waiter_print_bill_once">Người phục vụ in hóa đơn một lần</string>
+    <string name="promotion">Khuyến mãi</string>
+
 </resources>

@@ -35,6 +35,7 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -160,7 +161,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                     return;
                 }
 
-                int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+                int timely= Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
 //				if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
 //					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
 //

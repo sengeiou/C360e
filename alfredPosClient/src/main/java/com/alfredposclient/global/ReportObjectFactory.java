@@ -3415,9 +3415,9 @@ public class ReportObjectFactory {
         return reportDayPromotions;
     }
 
-	public ArrayList<PromotionData> loadXReportItemPromotions(long businessDate,
+    public ArrayList<OrderPromotion> loadXReportItemPromotions(long businessDate,
                                                                SessionStatus sessionStatus) {
-		ArrayList<OrderPromotion> reportPromotions = new ArrayList<OrderPromotion>();
+        ArrayList<OrderPromotion> reportPromotions = new ArrayList<OrderPromotion>();
         // if (App.instance.getBusinessDate() != businessDate) {
         // reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
         // return reportHourlys;
@@ -3426,19 +3426,20 @@ public class ReportObjectFactory {
         // Calendar nextPoint = TimeUtil.getCalendarNextPoint();
         // Calendar zeroPoint = TimeUtil.getCalendarByZero(0);
         long nowTime = System.currentTimeMillis();
-		reportPromotions=	PromotionDataSQL.getItemPromotionData(businessDate,sessionStatus,nowTime);
+        reportPromotions=	PromotionDataSQL.getItemPromotionData(businessDate,sessionStatus,nowTime);
 //		for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
 //				.getCalendarNextPoint(i)) {
-//			// Calendar hourCal = Calendar.getInstance(Locale.US);
+//			// Calendar hourCal = Calendar.getInstance();
 //			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// hourCal.set(Calendar.HOUR_OF_DAY, i);
-//			// Calendar netHourCal = Calendar.getInstance(Locale.US);
+//			// Calendar netHourCal = Calendar.getInstance();
 //			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
 //				reportPromotions.add(reportHourly);
 //			}
 //
 //		}
+
         //	ReportHourlySQL.addReportHourly(reportPromotions);
         return reportPromotions;
     }

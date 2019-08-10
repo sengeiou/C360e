@@ -463,7 +463,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
                     BH.formatThree(reportDaySales.getDiscountPer()), 1);
             this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
                     BH.formatThree(reportDaySales.getDiscount()), PrintData.LANG_EN, 1);
-            this.addItem(PrintService.instance.getResources().getString(R.string.total_disc),
+            this.addItem(PrintService.instance.getResources().getString(R.string.total_discount),
                     String.valueOf(reportDaySales.getDiscountPerQty() + reportDaySales.getDiscountQty()),
                     String.valueOf(BH.formatMoney(BH.add(BH.getBD(reportDaySales.getDiscountPer()),
                             BH.getBD(reportDaySales.getDiscount()), true).toString())), 1);

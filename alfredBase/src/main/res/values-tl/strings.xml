@@ -429,4 +429,8 @@
     <string name="send_data_process">Magpadala ng data: proseso</string>
     <string name="amount_less_than">Mas mababa sa halaga</string>
 
+    <string name="print_preparation_instructions">Mga Tagubilin sa Pag-print ng Pag-print</string>
+    <string name="waiter_print_bill_once">Isang beses sa Bill ng Waiter Print</string>
+    <string name="promotion">Promosyon</string>
+
 </resources>

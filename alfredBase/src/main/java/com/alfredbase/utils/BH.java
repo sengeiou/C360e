@@ -79,62 +79,62 @@ public class BH {
         format.setRoundingMode(RoundingMode.HALF_UP);
     }
 
-//    public static BigDecimal formatMoney(String string) {
-//        Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
-//        int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
-//        if (CommonUtil.isNull(string))
-//            return new BigDecimal("0.00");
-//        BigDecimal value2 = null;
-//        int money;
-//        if (type == FORMAT_FRONT) {
-//            if (string.toString().contains(".")) {
-//                money = Integer.valueOf(string.toString().substring(0, string.toString().indexOf(".")));
-//            } else {
-//                return value2;
-//            }
-//            int r;
-//            r = money % 100;
-//            money -= r;
-//            if (r >= 50) {
-//                money += 100;
-//            }
-//
-//            return new BigDecimal(money);
-//        } else {
-//            value2 = new BigDecimal(string);
-//            //return new BigDecimal(doubleFormat.format(value2));
-//            return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
-//        }
-//    }
-//
-//
-//    public static BigDecimal formatMoney(Integer integer) {
-//        Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
-//        int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
-//        if (CommonUtil.isNull(integer))
-//            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
-//        BigDecimal value2 = null;
-//        int money;
-//        if (type == FORMAT_FRONT) {
-//            if (integer.toString().contains(".")) {
-//                money = Integer.valueOf(integer.toString().substring(0, integer.toString().indexOf(".")));
-//            } else {
-//                return value2;
-//            }
-//            int r;
-//            r = money % 100;
-//            money -= r;
-//            if (r >= 50) {
-//                money += 100;
-//            }
-//
-//            return new BigDecimal(money);
-//        } else {
-//            value2 = new BigDecimal(integer);
-//            //return new BigDecimal(doubleFormat.format(value2));
-//            return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
-//        }
-//    }
+    public static BigDecimal formatMoneyBigDecimal(String string) {
+        Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
+        int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
+        if (CommonUtil.isNull(string))
+            return new BigDecimal("0.00");
+        BigDecimal value2 = null;
+        int money;
+        if (type == FORMAT_FRONT) {
+            if (string.toString().contains(".")) {
+                money = Integer.valueOf(string.toString().substring(0, string.toString().indexOf(".")));
+            } else {
+                return value2;
+            }
+            int r;
+            r = money % 100;
+            money -= r;
+            if (r >= 50) {
+                money += 100;
+            }
+
+            return new BigDecimal(money);
+        } else {
+            value2 = new BigDecimal(string);
+            //return new BigDecimal(doubleFormat.format(value2));
+            return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+    }
+
+
+    public static BigDecimal formatMoneyBigDecimal(Integer integer) {
+        Store.putInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 1);
+        int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
+        if (CommonUtil.isNull(integer))
+            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+        BigDecimal value2 = null;
+        int money;
+        if (type == FORMAT_FRONT) {
+            if (integer.toString().contains(".")) {
+                money = Integer.valueOf(integer.toString().substring(0, integer.toString().indexOf(".")));
+            } else {
+                return value2;
+            }
+            int r;
+            r = money % 100;
+            money -= r;
+            if (r >= 50) {
+                money += 100;
+            }
+
+            return new BigDecimal(money);
+        } else {
+            value2 = new BigDecimal(integer);
+            //return new BigDecimal(doubleFormat.format(value2));
+            return value2.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+    }
 
 
     /**

@@ -597,7 +597,7 @@ public class App extends BaseApplication {
                         .toString();
             }
             if (order.getPromotion() != null) {
-                total = BH.add(BH.formatMoney(total),
+                total = BH.add(BH.formatMoneyBigDecimal(total),
                         BH.getBD(order.getPromotion()), true)
                         .toString();
             }

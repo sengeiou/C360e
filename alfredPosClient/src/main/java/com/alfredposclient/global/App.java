@@ -68,7 +68,6 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDayPromotion;
 import com.alfredbase.javabean.ReportDaySales;

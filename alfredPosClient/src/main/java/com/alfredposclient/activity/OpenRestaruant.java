@@ -48,7 +48,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.Promotion;
-import com.alfredbase.javabean.PromotionData;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;

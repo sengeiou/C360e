@@ -435,4 +435,9 @@
     <string name="send_data_process">Send data: process</string>
     <string name="amount_less_than">Amount less than</string>
 
+
+    <string name="print_preparation_instructions">Print Preparation Instructions</string>
+    <string name="waiter_print_bill_once">Waiter Print Bill Once</string>
+    <string name="promotion">Promotion</string>
+
 </resources>

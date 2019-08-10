@@ -430,4 +430,8 @@
     <string name="send_data_process">Kirim data: proses</string>
     <string name="amount_less_than">Jumlahnya kurang dari</string>
 
+    <string name="print_preparation_instructions">Petunjuk Pembuatan Cetak</string>
+    <string name="waiter_print_bill_once">Pelayan Cetak Tagihan Sekali</string>
+    <string name="promotion">Promosi</string>
+
 </resources>

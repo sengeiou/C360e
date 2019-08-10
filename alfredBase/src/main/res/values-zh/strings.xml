@@ -427,4 +427,9 @@
     <string name="send_data_failed">发送数据：失败</string>
     <string name="send_data_process">发送数据：进程</string>
     <string name="amount_less_than">金额少于</string>
+
+    <string name="print_preparation_instructions">打印准备说明</string>
+    <string name="waiter_print_bill_once">服务员打印比尔一次</string>
+    <string name="promotion">提升</string>
+
 </resources>
