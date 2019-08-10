@@ -11,12 +11,12 @@ import java.io.Serializable;
  *
  * @ return :
  */
-public class PromotionData implements Serializable {
+public class OrderPromotion implements Serializable {
 
     private Integer id;
     private Integer promotionId;
     private String promotionName;
-    private Integer promotionType;// 0 item  1 order
+    private Integer promotionType;
     private String promotionAmount;
     private String discountPercentage;
     private Integer itemId;
@@ -31,6 +31,9 @@ public class PromotionData implements Serializable {
     private String discountPrice;
     private long businessDate;
     private Integer itemNum;
+    private Integer sessionStatus;
+    private long sysCreateTime;
+    private long sysUpdateTime;
 
     public Integer getId() {
         return id;
@@ -176,9 +179,33 @@ public class PromotionData implements Serializable {
         this.itemNum = itemNum;
     }
 
+    public Integer getSessionStatus() {
+        return sessionStatus;
+    }
+
+    public void setSessionStatus(Integer sessionStatus) {
+        this.sessionStatus = sessionStatus;
+    }
+
+    public long getSysCreateTime() {
+        return sysCreateTime;
+    }
+
+    public void setSysCreateTime(long sysCreateTime) {
+        this.sysCreateTime = sysCreateTime;
+    }
+
+    public long getSysUpdateTime() {
+        return sysUpdateTime;
+    }
+
+    public void setSysUpdateTime(long sysUpdateTime) {
+        this.sysUpdateTime = sysUpdateTime;
+    }
+
     @Override
     public String toString() {
-        return "PromotionData{" +
+        return "OrderPromotion{" +
                 "id=" + id +
                 ", promotionId=" + promotionId +
                 ", promotionName='" + promotionName + '\'' +
@@ -197,6 +224,9 @@ public class PromotionData implements Serializable {
                 ", discountPrice='" + discountPrice + '\'' +
                 ", businessDate=" + businessDate +
                 ", itemNum=" + itemNum +
+                ", sessionStatus=" + sessionStatus +
+                ", sysCreateTime=" + sysCreateTime +
+                ", sysUpdateTime=" + sysUpdateTime +
                 '}';
     }
 }

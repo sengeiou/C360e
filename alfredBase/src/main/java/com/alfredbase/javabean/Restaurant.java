@@ -61,7 +61,9 @@ public class Restaurant implements Serializable{
 	private String options; // customized fields shown at receipt header
 	
 	private String footerOptions; //customized fields shown at receipt footer
-	private Integer reportOrderTimely;
+	private Integer reportOrderTimely;//即时报表
+
+	private String RoundingFormart;
 
 	public Restaurant() {
 	}
@@ -312,6 +314,14 @@ public class Restaurant implements Serializable{
 		this.restaurantPrint = restaurantPrint;
 	}
 
+	public String getRoundingFormart() {
+		return RoundingFormart;
+	}
+
+	public void setRoundingFormart(String roundingFormart) {
+		RoundingFormart = roundingFormart;
+	}
+
 	public Integer getReportOrderTimely() {
 		return reportOrderTimely;
 	}
@@ -346,7 +356,8 @@ public class Restaurant implements Serializable{
 				", restaurantPrint='" + restaurantPrint + '\'' +
 				", options='" + options + '\'' +
 				", footerOptions='" + footerOptions + '\'' +
-				", reportOrderTimely='" + reportOrderTimely + '\'' +
+				", reportOrderTimely=" + reportOrderTimely +
+				", RoundingFormart='" + RoundingFormart + '\'' +
 				'}';
 	}
 

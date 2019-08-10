@@ -2,10 +2,12 @@ package com.alfredwaiter.global;
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.http.APIName;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -18,6 +20,7 @@ import com.alfredwaiter.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SyncCentre {
@@ -114,6 +117,12 @@ public class SyncCentre {
      * select tables and get order ID*/
     public void selectTables(Context context, Map<String, Object> parameters,
                              Handler handler) {
+        Map<String, String> waiterMap = new LinkedHashMap<String, String>();
+
+        waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+
+        String waitterName = CommonUtil.getMapToString(waiterMap);
+        parameters.put("waitterName", waitterName);
         HttpAPI.selectTables(context, parameters,
                 getAbsoluteUrl(APIName.SELECT_TABLES), httpClient, handler);
     }
@@ -201,9 +210,6 @@ public class SyncCentre {
     public void setIp(String ip) {
         this.ip = ip;
     }
-
-
-
 
 
 }

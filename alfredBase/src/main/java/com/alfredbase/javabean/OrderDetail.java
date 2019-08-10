@@ -129,6 +129,7 @@ public class OrderDetail implements Serializable {
     private int transferFromDetailId = 0;
     @Expose(serialize = false)
     private int transferFromDetailNum = 0;
+    private String orderDetailRound;
 
     public OrderDetail() {
         // set openItem False
@@ -437,6 +438,14 @@ public class OrderDetail implements Serializable {
         this.barCode = barCode;
     }
 
+    public String getOrderDetailRound() {
+        return orderDetailRound;
+    }
+
+    public void setOrderDetailRound(String orderDetailRound) {
+        this.orderDetailRound = orderDetailRound;
+    }
+
     @Override
     public String toString() {
         return "OrderDetail{" +
@@ -478,6 +487,7 @@ public class OrderDetail implements Serializable {
                 ", itemDesc='" + itemDesc + '\'' +
                 ", transferFromDetailId=" + transferFromDetailId +
                 ", transferFromDetailNum=" + transferFromDetailNum +
+                ", orderDetailRound='" + orderDetailRound + '\'' +
                 '}';
     }
 

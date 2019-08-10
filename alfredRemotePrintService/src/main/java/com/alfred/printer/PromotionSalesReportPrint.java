@@ -13,7 +13,7 @@ public class PromotionSalesReportPrint extends ReportBasePrint{
 	 */
 	private static final long serialVersionUID = -5153016507452886118L;
 	public final static int FIXED_COL3_SPACE = 2;
-	public final static int FIXED_COL3_QTY = 1; //in case of 48 dots width, QTY col = 10dots
+	public final static int FIXED_COL3_QTY = 10; //in case of 48 dots width, QTY col = 10dots
 	public final static int FIXED_COL3_TOTAL = 12; //in case of 48 dots width, QTY col = 12dots
 
 	public static int COL3_ITEMNAME; // Width = CharSize/scale - FIXED_COL3_QTY/scale -

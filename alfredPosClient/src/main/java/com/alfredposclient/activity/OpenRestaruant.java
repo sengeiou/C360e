@@ -57,6 +57,7 @@ import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.Restaurant;
+import com.alfredbase.javabean.ReportDayPromotion;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
@@ -78,6 +79,7 @@ import com.alfredbase.store.sql.MultiReportRelationSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PromotionSQL;
 import com.alfredbase.store.sql.ReportDayPaymentSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
@@ -258,6 +260,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         super.initView();
         setContentView(R.layout.activity_open_restaruant);
         train = SharedPreferencesHelper.getInt(context, SharedPreferencesHelper.TRAINING_MODE);
+		BH.initFormart( App.instance.getLocalRestaurantConfig().getFormatType(),App.instance.getLocalRestaurantConfig().getCurrencySymbol());
         ButtonClickTimer.canClick();
         initDrawerLayout();
         verifyDialog = new VerifyDialog(context, handler);
@@ -826,35 +829,37 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
     /* close session */
     private void close(final String actual) {
-        if (!NetworkUtils.isNetworkAvailable(context)) {
 
-            UIHelp.showShortToast(context, context.getResources().getString(R.string.network_connected));
+        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+//		if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
+//
+//			UIHelp.showShortToast(context, context.getResources().getString(R.string.network_connected));
+//
+//		}
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		final SessionStatus sessionStatus = Store.getObject(
+				context, Store.SESSION_STATUS, SessionStatus.class);
+		final long bizDate = App.instance.getBusinessDate().longValue();
+		final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 
-        }
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        final SessionStatus sessionStatus = Store.getObject(
-                context, Store.SESSION_STATUS, SessionStatus.class);
-        final long bizDate = App.instance.getBusinessDate().longValue();
-        final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+		parameters.put("session",
+				Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
+		SyncCentre.getInstance().sendSessionClose(context, parameters);
+		if(size == 4){
+			iv_lunch_session_icon.setOnTouchListener(this);
+			iv_breakfast_session_icon.setOnTouchListener(this);
+			iv_dinner_session_icon.setOnTouchListener(this);
+			iv_supper_session_icon.setOnTouchListener(this);
+		} else {
+			iv_lunch_icon.setOnTouchListener(this);
+			iv_breakfast_icon.setOnTouchListener(this);
+			iv_dinner_icon.setOnTouchListener(this);
+		}
+		// remove jobs on KOTJobManager
+		App.instance.getKdsJobManager().clear();
+		mSettingView.initOptionsNoSessionOpen();
 
-        parameters.put("session",
-                Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
-        SyncCentre.getInstance().sendSessionClose(context, parameters);
-        if (size == 4) {
-            iv_lunch_session_icon.setOnTouchListener(this);
-            iv_breakfast_session_icon.setOnTouchListener(this);
-            iv_dinner_session_icon.setOnTouchListener(this);
-            iv_supper_session_icon.setOnTouchListener(this);
-        } else {
-            iv_lunch_icon.setOnTouchListener(this);
-            iv_breakfast_icon.setOnTouchListener(this);
-            iv_dinner_icon.setOnTouchListener(this);
-        }
-        // remove jobs on KOTJobManager
-        App.instance.getKdsJobManager().clear();
-        mSettingView.initOptionsNoSessionOpen();
-
-        //when close session, we need save sales data
+		//when close session, we need save sales data
 //		final PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 //				context);
 //		printerLoadingDialog.setTitle(context.getResources().getString(R.string.save_print_sales));
@@ -1219,9 +1224,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         ArrayList<ReportDayTax> reportDayTaxs = (ArrayList<ReportDayTax>) xReport.get("reportDayTaxs");
         List<ReportDayPayment> reportDayPayments = (List<ReportDayPayment>) xReport.get("reportDayPayments");
         ArrayList<ReportPluDayItem> reportPluDayItems = (ArrayList<ReportPluDayItem>) xReport.get("reportPluDayItems");
-        ArrayList<PromotionData> reportOrderPromotions = (ArrayList<PromotionData>) xReport.get("reportOrderPromotions");
-        ArrayList<PromotionData> reportItemPromotions = (ArrayList<PromotionData>) xReport.get("reportItemPromotions");
-        ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
+		ArrayList<ReportDayPromotion> reportDayPromotions = (ArrayList<ReportDayPromotion>) xReport.get("reportDayPromotions");
+	//	ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
         //add to filter ENT and VOID item in PLU items
 //		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
 //			.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
@@ -1252,9 +1256,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
                 title, reportDaySales, reportDayTaxs, reportDayPayments, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
-        if (reportItemPromotions != null && reportItemPromotions.size() > 0) {
+        if(reportDayPromotions !=null&& reportDayPromotions.size()>0){
             App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-                    reportItemPromotions, reportOrderPromotions, promotions);
+                    reportDayPromotions);
         }
 
 //		try {
@@ -1298,33 +1302,32 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //				reportPluDayComboModifiers);
     }
 
-    private void sendPrintData(long businessDate, String reportType) {
-        ReportDaySales reportDaySales = ReportObjectFactory.getInstance()
-                .loadReportDaySales(businessDate);
-        if (reportDaySales == null) {
-            handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
-            return;
-        }
-        String bizDate = TimeUtil.getPrintingDate(businessDate);
-        List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory
-                .getInstance().loadReportDayTax(businessDate);
-        LoginResult loginResult = CoreData.getInstance().getLoginResult();
-        List<ReportDayTax> reportDayTaxs = ReportObjectFactory
-                .getInstance().loadReportDayTax(businessDate);
-        List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
-        ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory
-                .getInstance().loadReportPluDayItem(businessDate);
-        Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(businessDate);
-        ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
+	private void sendPrintData(long businessDate, String reportType) {
+		ReportDaySales reportDaySales = ReportObjectFactory.getInstance()
+				.loadReportDaySales(businessDate);
+		if (reportDaySales == null) {
+			handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
+			return;
+		}
+		String bizDate = TimeUtil.getPrintingDate(businessDate);
+		List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory
+				.getInstance().loadReportDayTax(businessDate);
+		LoginResult loginResult = CoreData.getInstance().getLoginResult();
+		List<ReportDayTax> reportDayTaxs = ReportObjectFactory
+				.getInstance().loadReportDayTax(businessDate);
+		List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
+		ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory
+				.getInstance().loadReportPluDayItem(businessDate);
+		Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(businessDate);
+		ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
 
-        ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
-        ArrayList<PromotionData> reportOrderPromotions = ReportObjectFactory.getInstance()
-                .loadReportOrderPromotions(businessDate);
-        ArrayList<PromotionData> reportItemPromotions = ReportObjectFactory.getInstance()
-                .loadReportItemPromotions(businessDate);
-        ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
-        ArrayList<ReportHourly> reportHourlys = ReportObjectFactory
-                .getInstance().loadReportHourlys(businessDate);
+		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
+        ArrayList<ReportDayPromotion> reportDayPromotions = ReportObjectFactory.getInstance()
+                .loadReportPromotions(businessDate);
+
+     //   ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
+		ArrayList<ReportHourly> reportHourlys = ReportObjectFactory
+				.getInstance().loadReportHourlys(businessDate);
 
 
 //		List<ReportVoidItem> reportVoidItems = ReportObjectFactory
@@ -1347,14 +1350,14 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
         PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
-        // sales report
-        App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-                title, reportDaySales, reportDayTaxs, reportDayPayments,
-                ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
-                reportSessionSalesList);
-        if (reportItemPromotions != null && reportItemPromotions.size() > 0) {
+		// sales report
+		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
+				title, reportDaySales, reportDayTaxs, reportDayPayments,
+				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
+				reportSessionSalesList);
+		if(reportDayPromotions !=null&& reportDayPromotions.size()>0){
             App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
-                    reportItemPromotions, reportOrderPromotions, promotions);
+                    reportDayPromotions);
         }
 
 //		try {
@@ -2288,7 +2291,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 	        @Override
 	        public void run() {
 	            doubleBackToExitPressedOnce=false;
-
 	        }
 	    }, 2000);
 	}
@@ -2298,6 +2300,4 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 			zPrinterLoadingDialog.dismiss();
 		}
 	}
-
-
 }

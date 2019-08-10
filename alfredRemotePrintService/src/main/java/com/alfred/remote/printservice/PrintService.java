@@ -125,7 +125,7 @@ public class PrintService extends Service {
                 if (extras.containsKey("isDouble")) {
                     isDouble = extras.getBoolean("isDouble");
                 }
-                BH.initFormart(isDouble);
+                BH.initFormart(null, null);
                 return new PrintServiceBinder(this);
             }
         }

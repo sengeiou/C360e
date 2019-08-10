@@ -147,11 +147,11 @@ public class ParamConst {
     public static final int FREE = 1;
 
 
-	//  0 堂吃, 1 打包, 2 外卖
+    //  0 堂吃, 1 打包, 2 外卖
     public static final int DINE_IN = 0;
     public static final int TAKE_AWAY = 1;
     public static final int APP_DELIVERY = 2;
-	public static final int NOT_TAKE_AWAY=DINE_IN;
+    public static final int NOT_TAKE_AWAY=DINE_IN;
 
     // 0:没有发送，1：发送中，2：发送成功, 3没有成功
     public static final int SYNC_MSG_UN_SEND = 0; // initial state create a new
@@ -260,6 +260,7 @@ public class ParamConst {
     // Job用 标记placeOrder 发送给KDS的状态
     public static final String JOB_NEW_KOT = "new_kot";
     public static final String JOB_UPDATE_KOT = "update_kot";
+    public static final String JOB_REFRESH_KOT = "refresh_kot";
     public static final String JOB_DELETE_KOT = "delete_kot";
     public static final String JOB_VOID_KOT = "void_kot";
 
@@ -345,6 +346,25 @@ public class ParamConst {
      * 精确到小数点前一位四舍五入
      */
     public static final String ROUND_1DOLLAR = "ROUND_1DOLLAR";
+
+    /**
+     * 精确到小数点前一位四舍五入
+     */
+    public static final String ROUND_50DOLLAR = "ROUND_50DOLLAR";
+
+    /**
+     * 精确到小数点前一位四舍五入
+     */
+    public static final String ROUND_100DOLLAR = "ROUND_100DOLLAR";
+
+    /**
+     * 精确到小数点前一位四舍五入
+     */
+    public static final String ROUND_500DOLLAR = "ROUND_500DOLLAR";
+    /**
+     * 精确到小数点前一位四舍五入
+     */
+    public static final String ROUND_1000DOLLAR = "ROUND_1000DOLLAR";
     /**
      * 精确小数点后两位,向上四舍五入
      */
@@ -544,8 +564,8 @@ public class ParamConst {
         }
         return type;
     }
-	public static final int ENABLE_POS_TRAINING  = 1;
-	public static final int DISABLE_POS_TRAINING = 0;
+    public static final int ENABLE_POS_TRAINING  = 1;
+    public static final int DISABLE_POS_TRAINING = 0;
 
 
 

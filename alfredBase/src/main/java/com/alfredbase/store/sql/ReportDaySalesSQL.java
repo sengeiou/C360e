@@ -27,9 +27,9 @@ public class ReportDaySalesSQL {
                     + " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty,"
                     + " refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, takeawayQty, createTime,"
                     + " updateTime, deliveroo, deliverooQty, ubereats, ubereatsQty, foodpanda, foodpandaQty, voucher, voucherQty, totalHour, reportNoStr,"
-                    + " payHalal, payHalalQty, promotionTotal, ipay88Wepay, ipay88WepayQty, ipay88Alipay, ipay88AlipayQty, ipay88Boost, ipay88BoostQty, ipay88Mcash, ipay88McashQty, ipay88TouchnGo, ipay88TouchnGoQty, ipay88Unionpay, ipay88UnionpayQty, ipay88Mbb, ipay88MbbQty, ipay88Cimb, ipay88CimbQty, ipay88Grabpay, ipay88GrabpayQty, ipay88Nets, ipay88NetsQty )"
+                    + " payHalal, payHalalQty, promotionTotal, ipay88Wepay, ipay88WepayQty, ipay88Alipay, ipay88AlipayQty, ipay88Boost, ipay88BoostQty, ipay88Mcash, ipay88McashQty, ipay88TouchnGo, ipay88TouchnGoQty, ipay88Unionpay, ipay88UnionpayQty, ipay88Mbb, ipay88MbbQty, ipay88Cimb, ipay88CimbQty, ipay88Grabpay, ipay88GrabpayQty, ipay88Nets, ipay88NetsQty,daySalesRound,promotionQty )"
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-                    + "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{reportDaySales.getId(),
@@ -146,8 +146,9 @@ public class ReportDaySalesSQL {
                             reportDaySales.getIpay88Grabpay() == null ? "0.00" : reportDaySales.getIpay88Grabpay(),
                             reportDaySales.getIpay88GrabpayQty() == null ? 0 : reportDaySales.getIpay88GrabpayQty(),
                             reportDaySales.getIpay88Nets() == null ? "0.00" : reportDaySales.getIpay88Nets(),
-                            reportDaySales.getIpay88NetsQty() == null ? 0 : reportDaySales.getIpay88NetsQty()
-
+                            reportDaySales.getIpay88NetsQty() == null ? 0 : reportDaySales.getIpay88NetsQty(),
+                            reportDaySales.getDaySalesRound(),
+                            reportDaySales.getPromotionQty() == null ? "0.00" : reportDaySales.getPromotionQty()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -168,9 +169,9 @@ public class ReportDaySalesSQL {
                     + " thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty, billRefund, billRefundQty,"
                     + " refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, takeawayQty, createTime,"
                     + " updateTime, deliveroo, deliverooQty, ubereats, ubereatsQty, foodpanda, foodpandaQty, voucher, voucherQty, totalHour, reportNoStr,"
-                    + " payHalal,payHalalQty,promotionTotal, ipay88Wepay, ipay88WepayQty, ipay88Alipay, ipay88AlipayQty, ipay88Boost, ipay88BoostQty, ipay88Mcash, ipay88McashQty, ipay88TouchnGo, ipay88TouchnGoQty, ipay88Unionpay, ipay88UnionpayQty, ipay88Mbb, ipay88MbbQty, ipay88Cimb, ipay88CimbQty, ipay88Grabpay, ipay88GrabpayQty, ipay88Nets, ipay88NetsQty)"
+                    + " payHalal,payHalalQty,promotionTotal, ipay88Wepay, ipay88WepayQty, ipay88Alipay, ipay88AlipayQty, ipay88Boost, ipay88BoostQty, ipay88Mcash, ipay88McashQty, ipay88TouchnGo, ipay88TouchnGoQty, ipay88Unionpay, ipay88UnionpayQty, ipay88Mbb, ipay88MbbQty, ipay88Cimb, ipay88CimbQty, ipay88Grabpay, ipay88GrabpayQty, ipay88Nets, ipay88NetsQty,daySalesRound,promotionQty)"
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-                    + "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             db.execSQL(
                     sql,
                     new Object[]{reportDaySales.getId(),
@@ -287,13 +288,15 @@ public class ReportDaySalesSQL {
                             reportDaySales.getIpay88Grabpay() == null ? "0.00" : reportDaySales.getIpay88Grabpay(),
                             reportDaySales.getIpay88GrabpayQty() == null ? 0 : reportDaySales.getIpay88GrabpayQty(),
                             reportDaySales.getIpay88Nets() == null ? "0.00" : reportDaySales.getIpay88Nets(),
-                            reportDaySales.getIpay88NetsQty() == null ? 0 : reportDaySales.getIpay88NetsQty()
+                            reportDaySales.getIpay88NetsQty() == null ? 0 : reportDaySales.getIpay88NetsQty(),
+                            reportDaySales.getDaySalesRound(),
+                            reportDaySales.getPromotionQty() == null ? "0.00" : reportDaySales.getPromotionQty()
 
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+					});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 
     /*ONLY use to save report downloaded from cloud*/
@@ -321,9 +324,9 @@ public class ReportDaySalesSQL {
                     + " alipay, alipayQty, thirdParty, thirdPartyQty, weixinpay, weixinpayQty, paypalpay, paypalpayQty, storedCard, storedCardQty, topUps, topUpsQty,"
                     + " billRefund, billRefundQty, refundTax, startDrawerAmount, expectedAmount, waiterAmount, difference, cashTopUp, takeawaySales, takeawayTax, "
                     + " takeawayQty, createTime, updateTime, deliveroo, deliverooQty, ubereats, ubereatsQty, foodpanda, foodpandaQty, voucher, voucherQty,totalHour, reportNoStr,"
-                    + " payHalal,payHalalQty,promotionTotal, ipay88Wepay, ipay88WepayQty, ipay88Alipay, ipay88AlipayQty, ipay88Boost, ipay88BoostQty, ipay88Mcash, ipay88McashQty, ipay88TouchnGo, ipay88TouchnGoQty, ipay88Unionpay, ipay88UnionpayQty, ipay88Mbb, ipay88MbbQty, ipay88Cimb, ipay88CimbQty, ipay88Grabpay, ipay88GrabpayQty, ipay88Nets, ipay88NetsQty)"
+                    + " payHalal,payHalalQty,promotionTotal, ipay88Wepay, ipay88WepayQty, ipay88Alipay, ipay88AlipayQty, ipay88Boost, ipay88BoostQty, ipay88Mcash, ipay88McashQty, ipay88TouchnGo, ipay88TouchnGoQty, ipay88Unionpay, ipay88UnionpayQty, ipay88Mbb, ipay88MbbQty, ipay88Cimb, ipay88CimbQty, ipay88Grabpay, ipay88GrabpayQty, ipay88Nets, ipay88NetsQty,daySalesRound,promotionQty)"
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
-                    + "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{reportDaySales.getRestaurantId(),
@@ -439,7 +442,9 @@ public class ReportDaySalesSQL {
                             reportDaySales.getIpay88Grabpay() == null ? "0.00" : reportDaySales.getIpay88Grabpay(),
                             reportDaySales.getIpay88GrabpayQty() == null ? 0 : reportDaySales.getIpay88GrabpayQty(),
                             reportDaySales.getIpay88Nets() == null ? "0.00" : reportDaySales.getIpay88Nets(),
-                            reportDaySales.getIpay88NetsQty() == null ? 0 : reportDaySales.getIpay88NetsQty()
+                            reportDaySales.getIpay88NetsQty() == null ? 0 : reportDaySales.getIpay88NetsQty(),
+                            reportDaySales.getDaySalesRound(),
+                            reportDaySales.getPromotionQty() == null ? "0.00" : reportDaySales.getPromotionQty()
 
                     });
         } catch (Exception e) {
@@ -572,12 +577,12 @@ public class ReportDaySalesSQL {
                 reportDaySales.setIpay88GrabpayQty(cursor.getInt(112));
                 reportDaySales.setIpay88Nets(cursor.getString(113));
                 reportDaySales.setIpay88NetsQty(cursor.getInt(114));
-
-
-                return reportDaySales;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+                reportDaySales.setDaySalesRound(cursor.getString(115));
+                reportDaySales.setPromotionQty(cursor.getInt(116));
+				return reportDaySales;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 
         } finally {
             if (cursor != null && !cursor.isClosed()) {
@@ -713,11 +718,13 @@ public class ReportDaySalesSQL {
                 reportDaySales.setIpay88GrabpayQty(cursor.getInt(112));
                 reportDaySales.setIpay88Nets(cursor.getString(113));
                 reportDaySales.setIpay88NetsQty(cursor.getInt(114));
+                reportDaySales.setDaySalesRound(cursor.getString(115));
+                reportDaySales.setPromotionQty(cursor.getInt(116));
 
-                return reportDaySales;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+				return reportDaySales;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 
         } finally {
             if (cursor != null && !cursor.isClosed()) {
@@ -889,11 +896,13 @@ public class ReportDaySalesSQL {
                 reportDaySales.setIpay88GrabpayQty(cursor.getInt(112));
                 reportDaySales.setIpay88Nets(cursor.getString(113));
                 reportDaySales.setIpay88NetsQty(cursor.getInt(114));
+                reportDaySales.setDaySalesRound(cursor.getString(115));
+                reportDaySales.setPromotionQty(cursor.getInt(116));
 
-                result.add(reportDaySales);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+				result.add(reportDaySales);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 
         } finally {
             if (cursor != null && !cursor.isClosed()) {
@@ -1037,10 +1046,13 @@ public class ReportDaySalesSQL {
                 reportDaySales.setIpay88Nets(cursor.getString(113));
                 reportDaySales.setIpay88NetsQty(cursor.getInt(114));
 
+                reportDaySales.setDaySalesRound(cursor.getString(115));
+                reportDaySales.setPromotionQty(cursor.getInt(116));
+
                 result.add(reportDaySales);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 
         } finally {
             if (cursor != null && !cursor.isClosed()) {
@@ -1063,7 +1075,7 @@ public class ReportDaySalesSQL {
                 + " sum(thirdPartyQty), sum(weixinpay), sum(weixinpayQty), sum(paypalpay), sum(paypalpayQty), sum(storedCard), sum(storedCardQty), sum(topUps), sum(topUpsQty),"
                 + " sum(billRefund), sum(billRefundQty), sum(refundTax), sum(startDrawerAmount), sum(expectedAmount), sum(waiterAmount), sum(difference), sum(cashTopUp), "
                 + " sum(takeawaySales), sum(takeawayTax), sum(takeawayQty), createTime, updateTime, sum(deliveroo), sum(deliverooQty), sum(ubereats), sum(ubereatsQty), "
-                + " sum(foodpanda), sum(foodpandaQty), sum(voucher), sum(voucherQty), sum(totalHour), reportNoStr, sum(payHalal), sum(payHalalQty),sum(promotionTotal), sum(ipay88Wepay), sum(ipay88WepayQty), sum(ipay88Alipay), sum(ipay88AlipayQty), sum(ipay88Boost), sum(ipay88BoostQty), sum(ipay88Mcash), sum(ipay88McashQty), sum(ipay88TouchnGo), sum(ipay88TouchnGoQty), sum(ipay88Unionpay), sum(ipay88UnionpayQty), sum(ipay88Mbb), sum(ipay88MbbQty), sum(ipay88Cimb), sum(ipay88CimbQty), sum(ipay88Grabpay), sum(ipay88GrabpayQty), sum(ipay88Nets), sum(ipay88NetsQty) from "
+                + " sum(foodpanda), sum(foodpandaQty), sum(voucher), sum(voucherQty), sum(totalHour), reportNoStr, sum(payHalal), sum(payHalalQty),sum(promotionTotal), sum(ipay88Wepay), sum(ipay88WepayQty), sum(ipay88Alipay), sum(ipay88AlipayQty), sum(ipay88Boost), sum(ipay88BoostQty), sum(ipay88Mcash), sum(ipay88McashQty), sum(ipay88TouchnGo), sum(ipay88TouchnGoQty), sum(ipay88Unionpay), sum(ipay88UnionpayQty), sum(ipay88Mbb), sum(ipay88MbbQty), sum(ipay88Cimb), sum(ipay88CimbQty), sum(ipay88Grabpay), sum(ipay88GrabpayQty), sum(ipay88Nets), sum(ipay88NetsQty),sum(daySalesRound),sum(promotionQty) from "
                 + TableNames.ReportDaySales
                 + " where businessDate = ? ";
         Cursor cursor = null;
@@ -1192,10 +1204,11 @@ public class ReportDaySalesSQL {
                 reportDaySales.setIpay88GrabpayQty(cursor.getInt(111));
                 reportDaySales.setIpay88Nets(cursor.getString(112));
                 reportDaySales.setIpay88NetsQty(cursor.getInt(113));
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+                reportDaySales.setDaySalesRound(cursor.getString(114));
+                reportDaySales.setPromotionQty(cursor.getInt(115));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 
         } finally {
             if (cursor != null && !cursor.isClosed()) {

@@ -133,6 +133,8 @@ public class Store {
 	public static final String CREDIT_CARD_ROUNDING = "CREDIT_CARD_ROUNDING";
 	public static final String INCLUDE_PLU_VOID = "INCLUDE_PLU_VOID";
 
+	public static final String PRINT_INSTRUCTIONS = "PRINT_INSTRUCTIONS";
+	public static final String PRINT_WAITER_ONCE = "PRINT_WAITER_ONCE";
 	public static final String PRINT_BILL = "PRINT_BILL";
 	public static final String OF_PAX = "OF_PAX";
 	public static final String TRAINING = "training";
@@ -140,7 +142,7 @@ public class Store {
 	public static final String OPEN_BALANCE = "OPEN_BALANCE";
 	public static final String KDS_LANDSCAPE= "KDS_LANDSCAPE";
 	public static final String DEFAULT_VIEW = "default_view";
-	public static final String REPORT_ORDER_TIMELY = "report_order_timely";
+	public static final String REPORT_ORDER_TIMELY = "report_order_timely";// 实时订单
 
 	//subPos
 	public static final String MAIN_POS_IP = "MAIN_POS_IP";

@@ -1,6 +1,7 @@
 package com.alfredbase.javabean;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.store.DataHelper;
 import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
@@ -121,11 +122,15 @@ public class Order implements Serializable {
 	private String numTag = "";
 
 	private int subPosBeanId = 0;// IF it is main Pos， subPosBeanId is  zero
+
+    private String waiterInformation;
+    private int isWaiterPrint; //0 未打印， 1 已打印
 	@Expose(serialize = false)
 	private int isSplitByPax;
 	private  String promotion;
 
 	private String grandTotal; // only used "split by pax"
+	private String  orderRound;
 	public Order() {
 	}
 
@@ -470,6 +475,30 @@ public class Order implements Serializable {
 		this.grandTotal = grandTotal;
 	}
 
+	public String getOrderRound() {
+		return orderRound;
+	}
+
+	public void setOrderRound(String orderRound) {
+		this.orderRound = orderRound;
+	}
+
+    public String getWaiterInformation() {
+        return waiterInformation;
+    }
+
+    public void setWaiterInformation(String waiterInformation) {
+        this.waiterInformation = waiterInformation;
+    }
+
+	public int getIsWaiterPrint() {
+		return isWaiterPrint;
+	}
+
+	public void setIsWaiterPrint(int isWaiterPrint) {
+		this.isWaiterPrint = isWaiterPrint;
+	}
+
 	@Override
 	public String toString() {
 		return "Order{" +
@@ -507,6 +536,10 @@ public class Order implements Serializable {
 				", subPosBeanId=" + subPosBeanId +
 				", isSplitByPax=" + isSplitByPax +
 				", promotion='" + promotion + '\'' +
+				", orderRound='" + orderRound + '\'' +
+				", waiterInformation='" + waiterInformation + '\'' +
+				", isWaiterPrint=" + isWaiterPrint +
+				", isSplitByPax=" + isSplitByPax +
 				'}';
 
 }

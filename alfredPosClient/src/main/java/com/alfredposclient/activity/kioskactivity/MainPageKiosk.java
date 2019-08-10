@@ -39,6 +39,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
@@ -80,6 +81,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
@@ -462,7 +464,7 @@ public class MainPageKiosk extends BaseActivity {
                 App.instance.getIndexOfRevenueCenter(),
                 ParamConst.ORDER_STATUS_OPEN_IN_POS,
                 App.instance.getLocalRestaurantConfig()
-                        .getIncludedTax().getTax());
+                        .getIncludedTax().getTax(),"");
     }
 
     private void getTableStatusInfo() {
@@ -715,8 +717,10 @@ public class MainPageKiosk extends BaseActivity {
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
                                             .getId()));
+                            List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+
                             App.instance.remoteBillPrint(printer, title, currentOrder,
-                                    orderItems, orderModifiers, taxMap, null, null);
+                                    orderItems, orderModifiers, taxMap, null, null,orderPromotions);
                         }
                     } else {
                         UIHelp.showToast(context, context.getResources().getString(R.string.no_items));
@@ -806,17 +810,18 @@ public class MainPageKiosk extends BaseActivity {
                         if (orderItems.size() > 0 && printer != null) {
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
 //
+                            List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
 
 //                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
 //
 //                            } else {
                             if (!App.instance.isRevenueKiosk()) {
                                 App.instance.remoteBillPrint(printer, title, paidOrder,
-                                        orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                            orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,orderPromotions);
                             } else {
                                 if (printer.getIsLablePrinter() == 0) {
                                     App.instance.remoteBillPrint(printer, title, paidOrder,
-                                            orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,orderPromotions);
                                 }
                             }
 //                            }
@@ -1019,7 +1024,7 @@ public class MainPageKiosk extends BaseActivity {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
 //                        if (App.instance.getSystemSettings().isPrintBill()) {
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,null);
 //                        }
                     }
 //
@@ -2098,7 +2103,7 @@ public class MainPageKiosk extends BaseActivity {
                         App.instance.getIndexOfRevenueCenter(),
                         ParamConst.ORDER_STATUS_OPEN_IN_POS,
                         App.instance.getLocalRestaurantConfig()
-                                .getIncludedTax().getTax());
+                                .getIncludedTax().getTax(),"");
                 List<TempOrderDetail> tempOrderDetails = TempOrderDetailSQL.getTempOrderDetailByAppOrderId(appOrderId);
                 for (TempOrderDetail tempOrderDetail : tempOrderDetails) {
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId());

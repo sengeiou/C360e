@@ -1618,10 +1618,6 @@ public class DataHelper {
                     + " ADD COLUMN deliveryTime INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN appOrderId INTEGER default 0");
-
-//
-//
-
         }
 
         private void onUpgradeForOldVersion29(SQLiteDatabase db) {
@@ -1629,7 +1625,9 @@ public class DataHelper {
                     + " ADD COLUMN payHalal TEXT default '0.00'");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN payHalalQty INTEGER default 0");
+
         }
+
 
 
         private void onUpgradeForOldVersion30(SQLiteDatabase db) {
@@ -1669,6 +1667,46 @@ public class DataHelper {
                     + " ADD COLUMN  promotion TEXT default ''");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN promotionTotal TEXT");
+
+
+        }
+        private void onUpgradeForOldVersion31(SQLiteDatabase db){
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Order
+                    + " ADD COLUMN  orderRound TEXT");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.OrderDetail
+                    + " ADD COLUMN  orderDetailRound TEXT");
+
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN daySalesRound TEXT");
+
+            db.execSQL("ALTER TABLE " + TableNames.RestaurantConfig
+                    + " ADD COLUMN paraValue3 TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.Tax
+                    + " ADD COLUMN beforeDiscount INTEGER");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.ReportDayPromotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, revenueId INTEGER, revenueName TEXT, businessDate LONG, promotionQty INTEGER," +
+                    " promotionAmount TEXT,promotionName TEXT," +
+                    "promotionId INTEGER,daySalesId INTEGER,createTime LONG ,updateTime LONG)");
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.OrderPromotion
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT,promotionId INTEGER, promotionName TEXT, promotionType INTEGER," +
+                    "promotionAmount TEXT,discountPercentage TEXT,itemId INTEGER,itemName TEXT,freeNum INTEGER,freeItemId INTEGER," +
+                    "freeItemName TEXT,createTime LONG,updateTime LONG,orderId INTEGER,orderDetailId INTEGER,discountPrice TEXT,businessDate LONG," +
+                    "itemNum INTEGER,sessionStatus INTEGER,sysCreateTime LONG,sysUpdateTime LONG)");
+
+            db.execSQL("ALTER TABLE " + TableNames.Order
+                    + " ADD COLUMN waiterInformation TEXT ");
+            db.execSQL("ALTER TABLE " + TableNames.Order
+                    + " ADD COLUMN isWaiterPrint INTEGER default 0 ");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN promotionQty INTEGER default 0");
+
         }
 
         private void onUpgradeForOldVersion31(SQLiteDatabase db) {

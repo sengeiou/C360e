@@ -371,7 +371,7 @@ public class XZReportActivity extends BaseActivity {
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(reportDaySales.getPromotionTotal()).toString(), true)
             ;
             ll_sales_total.addView(promotionTotal);
-            double nSales = Double.parseDouble(reportDaySales.getItemSales()) + Double.parseDouble(reportDaySales.getTopUps()) - Double.parseDouble(reportDaySales.getFocItem()) - Double.parseDouble(reportDaySales.getFocBill()) - Double.parseDouble(reportDaySales.getItemVoid()) - Double.parseDouble(reportDaySales.getBillVoid()) - Double.parseDouble(reportDaySales.getBillRefund()) - Double.parseDouble(reportDaySales.getDiscount()) - Double.parseDouble(reportDaySales.getDiscountPer());
+            double nSales = Double.parseDouble(reportDaySales.getItemSales()) + Double.parseDouble(reportDaySales.getTopUps()) - Double.parseDouble(reportDaySales.getFocItem()) - Double.parseDouble(reportDaySales.getFocBill()) - Double.parseDouble(reportDaySales.getItemVoid()) - Double.parseDouble(reportDaySales.getBillVoid()) - Double.parseDouble(reportDaySales.getBillRefund()) - Double.parseDouble(reportDaySales.getDiscount()) - Double.parseDouble(reportDaySales.getDiscountPer())-Double.parseDouble(reportDaySales.getPromotionTotal());
             ReportDaySalesItem nettsSales = new ReportDaySalesItem(context);
             nettsSales.setData("NETT Sales", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(nSales+"").toString(), true)
@@ -436,7 +436,13 @@ public class XZReportActivity extends BaseActivity {
             ll_sales_total.addView(rounding);
 
             // Total/sales
-            double grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue();
+            double grossTotal;
+            if(reportDaySales.getPromotionTotal()!=null) {
+                grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() ;
+            }else {
+                grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue() ;
+            }
+         //   double grossTotal = nSales + Double.parseDouble(reportDaySales.getTotalTax()) + Double.parseDouble(reportDaySales.getTotalBalancePrice()) + overPaymentAmount.doubleValue();
             ReportDaySalesItem totalSales = new ReportDaySalesItem(context);
             totalSales.setData("Gross Total Sales", "",
                     App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(grossTotal+"").toString(), true);

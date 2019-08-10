@@ -21,17 +21,18 @@ interface IAlfredRemotePrintService {
 	void printBillSummary(String printer,String summary, String detail, String modifiers, int kotFontSize);
 
 						
-	void printBill(String printer, String title, 
-							String order, String orderDetail,
-							String modifiers,String tax, String payment,
-							boolean doubleprint, boolean doubleReceipts,
-							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr);
 
-	void printKioskBill(String printer, String title, 
-							String order, String orderDetail,
-							String modifiers,String tax, String payment,
-							boolean doubleprint, boolean doubleReceipts,
-							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble);
+	void printBill(String printer, String title,
+    							String order, String orderDetail,
+    							String modifiers,String tax, String payment,
+    							boolean doubleprint, boolean doubleReceipts,
+    							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr,String promotiomData,String formatType,boolean isInstructions);
+
+    	void printKioskBill(String printer, String title,
+    							String order, String orderDetail,
+    							String modifiers,String tax, String payment,
+    							boolean doubleprint, boolean doubleReceipts,
+    							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String promotiomData,String formatType);
 
 
 	void kickCashDrawer(String printer);
@@ -44,9 +45,9 @@ interface IAlfredRemotePrintService {
 
 	void printDaySalesReport(String xzType,String printer,String title, String report, String tax, String customPayment, String useropen, String sessionSales);
 
-	void printDetailAnalysisReport(String xzType, String printer, 
+	void printDetailAnalysisReport(String xzType, String printer,
 										String title, String daySaleSummary, String plu, String pluMod, String pluCombo, String category, String items);
-	void printSummaryAnalysisReport(String xzType, String printer, 
+	void printSummaryAnalysisReport(String xzType, String printer,
 										String title, String plu, String pluMod, String category, String items,boolean isPluVoid);
 	void printHourlyAnalysisReport(String xzType, String printer, String title, String hourly);
 	void printVoidItemAnalysisReport(String xzType, String printer, String title, String voidItems);
@@ -63,9 +64,8 @@ interface IAlfredRemotePrintService {
 							String order, String orderDetail,
 							String modifiers,String tax, String payment,
 							boolean doubleprint, boolean doubleReceipts,
-							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr);
- void printPromotionAnalysisReport(String xzType, String printer, String title, String orderPromotion,String itemPromotion,String promotion);
- void printIpay88Qrcode(String printer, String id, String printerTitle,  String paymentMethod, String amount, inout byte[] qrCodeBitmap);
-
+							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr,String formatType);
+  void printPromotionAnalysisReport(String xzType, String printer, String title, String reportDayPromotion);
+  void printIpay88Qrcode(String printer, String id, String printerTitle,  String paymentMethod, String amount, inout byte[] qrCodeBitmap);
 
 }

@@ -1,7 +1,6 @@
 package com.alfredkds.http.server;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -67,6 +66,9 @@ public class KdsHttpServer extends AlfredHttpServer {
             } else if (uri.equals(APIName.CLOSE_SESSION)) {
                 App.instance.ringUtil.playRingOnce();
                 resp = handlerSessionClose(body);
+            } else if (uri.equals(APIName.REFRESH_KOT)) {
+                App.instance.ringUtil.playRingOnce();
+                resp = handlerRefreshKot();
             } else if (uri.equals(APIName.POS_LANGUAGE)) {
                 Map<String, Object> map = new HashMap<>();
                 try {
@@ -141,6 +143,10 @@ public class KdsHttpServer extends AlfredHttpServer {
         try {
             JSONObject jsonObject = new JSONObject(params);
             Gson gson = new Gson();
+			KotSummary kotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
+			if(kotSummary != null){
+				KotSummarySQL.update(kotSummary);
+			}
             KotItemDetail kotItemDetail = gson.fromJson(jsonObject.optString("tansferKotItem"), KotItemDetail.class);
             KotItemDetailSQL.update(kotItemDetail);
             App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
@@ -378,6 +384,18 @@ public class KdsHttpServer extends AlfredHttpServer {
         Response resp = this.getJsonResponse(new Gson().toJson(result));
         return resp;
     }
+
+	private Response handlerRefreshKot(){
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			App.getTopActivity().httpRequestAction(App.HANDLER_RELOAD_KOT, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		result.put("resultCode", ResultCode.SUCCESS);
+		Response resp = this.getJsonResponse(new Gson().toJson(result));
+		return resp;
+	}
 
     private Response invalidDeviceResponse() {
         Map<String, Object> result = new HashMap<String, Object>();

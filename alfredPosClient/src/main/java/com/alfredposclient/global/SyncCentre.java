@@ -136,8 +136,8 @@ public class SyncCentre {
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getPromotionInfo(context,
                 getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler, MODE_FIRST_SYNC);
-        HttpAPI.getPromotionData(context,
-                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
+//        HttpAPI.getPromotionData(context,
+//                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
 
         getRemainingStock(context, handler, MODE_FIRST_SYNC);
 
@@ -231,12 +231,12 @@ public class SyncCentre {
     public void cloudSyncUploadOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
-            HttpAPI.cloudSync(context, syncMsg,
-                    getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+        HttpAPI.cloudSync(context, syncMsg,
+                getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
     }
 
     public void cloudSyncUploadRealOrderInfo(BaseActivity context,
-                                         SyncMsg syncMsg, Handler handler) {
+                                             SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
         int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
         if (timely == 0) {
@@ -555,6 +555,13 @@ public class SyncCentre {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
         HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
+
+    }
+
+    public void refreshSameGroupKDS(KDSDevice kdsDevice, BaseActivity context,
+                                    Map<String, Object> parameters) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.REFRESH_KOT);
+        HTTPKDSRequest.refreshSameGroupKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient);
 
     }
 

@@ -177,15 +177,15 @@ public class ModifierDetailAnalysisReportPrint extends ReportBasePrint{
 			boolean showMainCategory = true;
 			for (int j = 0; j < pluModifiers.size(); j++) {
 				ReportPluDayModifier pluModifier = pluModifiers.get(j);
-				ObjectFactory.getInstance().getReportPluDayModifier(pluModifier);
+			//	ObjectFactory.getInstance().getReportPluDayModifier(pluModifier);
 				if (pluModifier.getModifierCategoryId().intValue() == modifierCategory.getId().intValue()) {
 					if (showMainCategory) {
 						this.AddItem(modifierCategory.getCategoryName(), "", "", "", 1);
 						this.addHortionalLine(this.charSize);
 						showMainCategory = false;
 					}
-					this.AddItem(pluModifier.getModifierName(), pluModifier.getModifierItemPrice(), pluModifier.getModifierCount().toString(),
-							BH.getBD(pluModifier.getModifierPrice()).toString(), 1);
+					this.AddItem(pluModifier.getModifierName(),  BH.formatThree(pluModifier.getModifierItemPrice()), pluModifier.getModifierCount().toString(),
+							BH.formatThree(pluModifier.getModifierPrice()), 1);
 					allQty += pluModifier.getModifierCount();
 					allAmount = BH.add(allAmount,
 							BH.getBD(pluModifier.getModifierPrice()), true);
@@ -195,7 +195,7 @@ public class ModifierDetailAnalysisReportPrint extends ReportBasePrint{
 			this.addHortionalLine(this.charSize);
 		}
 		if (allQty != 0) {
-			this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "",  ""+ allAmount, 1);			
+			this.AddItem(PrintService.instance.getResources().getString(R.string.total), "", allQty + "",   BH.formatThree(""+ allAmount), 1);
 		}
 	}
 	

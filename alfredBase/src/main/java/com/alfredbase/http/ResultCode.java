@@ -23,6 +23,8 @@ public class ResultCode {
 	 * 成功
 	 */
 	public static final int SUCCESS = 1;
+
+	public static final int SUCCESS_WAITER_ONCE = 100;
 	
 
 	/**
@@ -208,7 +210,7 @@ public class ResultCode {
 	public static final int IS_NOT_KIOSK = -989;
 
 	public static final int SESSION_HAS_CHANGE = -988;
-
+	public static final int ORDER_PRINT = -1990;
 	/**
 	 * waiter提交的拆单在POS机上已经结账的返回
 	 */

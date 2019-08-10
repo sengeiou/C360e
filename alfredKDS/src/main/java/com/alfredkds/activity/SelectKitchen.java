@@ -135,10 +135,8 @@ public class SelectKitchen extends BaseActivity {
                 default:
                     break;
             }
-        }
-
-        ;
-    };
+		};
+	};
 
     class KitchenListAdapter extends BaseAdapter {
         private Context context;

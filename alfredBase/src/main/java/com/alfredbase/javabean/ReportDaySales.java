@@ -180,9 +180,11 @@ public class ReportDaySales implements Serializable{
 
 	private String reportNoStr;
 	private String promotionTotal;
+	private String daySalesRound;
 
 	private String payHalal;
 	private Integer payHalalQty;
+	private  Integer promotionQty;
 
 	private String ipay88Wepay;
 	private Integer ipay88WepayQty;
@@ -1031,7 +1033,24 @@ public class ReportDaySales implements Serializable{
 		this.payHalalQty = payHalalQty;
 	}
 
-	public String getIpay88Wepay() {
+    public String getDaySalesRound() {
+        return daySalesRound;
+    }
+
+    public void setDaySalesRound(String daySalesRound) {
+        this.daySalesRound = daySalesRound;
+    }
+
+    public Integer getPromotionQty() {
+        return promotionQty;
+    }
+
+    public void setPromotionQty(Integer promotionQty) {
+        this.promotionQty = promotionQty;
+    }
+
+
+    public String getIpay88Wepay() {
 		return ipay88Wepay;
 	}
 
@@ -1309,9 +1328,7 @@ public class ReportDaySales implements Serializable{
 				", ipay88Nets='" + ipay88Nets + '\'' +
 				", ipay88NetsQty=" +ipay88NetsQty +
 				", promotionTotal='" + promotionTotal + '\'' +
+				", daySalesRound='" + daySalesRound + '\'' +
 				'}';
 	}
-
-
-
 }

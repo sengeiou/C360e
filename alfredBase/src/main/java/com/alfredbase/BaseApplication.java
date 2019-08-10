@@ -45,7 +45,7 @@ public class BaseApplication extends Application {
 
     public static BaseApplication instance;
     public static List<BaseActivity> activitys;
-    public static final int DATABASE_VERSION = 31;
+    public static final int DATABASE_VERSION = 32;
     public static final int HANDLER_REFRESH_LANGUAGE = 772;
 
     /**
@@ -77,6 +77,7 @@ public class BaseApplication extends Application {
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     public static final int REQUEST_ENABLE_BT = 1;  //请求的code
+
     /**
      * 国家电话代码
      * 用于区别不同国家的代码逻辑

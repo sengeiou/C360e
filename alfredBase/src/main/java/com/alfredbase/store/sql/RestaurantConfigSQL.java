@@ -21,8 +21,8 @@ public class RestaurantConfigSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.RestaurantConfig
-					+ " (id, restaurantId, paraId, paraType, paraName, paraValue1, paraValue2)"
-					+ " values (?,?,?,?,?,?,?)";
+					+ " (id, restaurantId, paraId, paraType, paraName, paraValue1, paraValue2, paraValue3)"
+					+ " values (?,?,?,?,?,?,?,?)";
 			SQLExe.getDB()
 					.execSQL(
 							sql,
@@ -32,7 +32,9 @@ public class RestaurantConfigSQL {
 										   restaurantConfig.getParaType(),
 										   restaurantConfig.getParaName(),
 										   restaurantConfig.getParaValue1(),
-										   restaurantConfig.getParaValue2()});
+										   restaurantConfig.getParaValue2(),
+							                restaurantConfig.getParaValue3()
+							});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -47,8 +49,8 @@ public class RestaurantConfigSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.RestaurantConfig
-					+ " (id, restaurantId, paraId, paraType, paraName, paraValue1, paraValue2)"
-					+ " values (?,?,?,?,?,?,?)";
+					+ " (id, restaurantId, paraId, paraType, paraName, paraValue1, paraValue2, paraValue3)"
+					+ " values (?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (RestaurantConfig restaurantConfig : restaurantConfigs) {
@@ -66,6 +68,8 @@ public class RestaurantConfigSQL {
 							restaurantConfig.getParaValue1());
 					SQLiteStatementHelper.bindString(sqLiteStatement, 7,
 							restaurantConfig.getParaValue2());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 8,
+							restaurantConfig.getParaValue3());
 					sqLiteStatement.executeInsert();
 				}
 				db.setTransactionSuccessful();
@@ -98,6 +102,7 @@ public class RestaurantConfigSQL {
 				restaurantConfig.setParaName(cursor.getString(4));
 				restaurantConfig.setParaValue1(cursor.getString(5));
 				restaurantConfig.setParaValue2(cursor.getString(6));
+				restaurantConfig.setParaValue3(cursor.getString(7));
 				result.add(restaurantConfig);
 			}
 		} catch (Exception e) {
