@@ -1671,6 +1671,36 @@ public class DataHelper {
 
         }
         private void onUpgradeForOldVersion31(SQLiteDatabase db){
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Wepay TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88WepayQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Alipay TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88AlipayQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Boost TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88BoostQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Mcash TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88McashQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88TouchnGo TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88TouchnGoQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Unionpay TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88UnionpayQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Mbb TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88MbbQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Cimb TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88CimbQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Grabpay TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88GrabpayQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Nets TEXT default '0.00'");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88NetsQty INTEGER default 0");
+
             db.execSQL("ALTER TABLE "
                     + TableNames.Order
                     + " ADD COLUMN  orderRound TEXT");
@@ -1709,37 +1739,5 @@ public class DataHelper {
 
         }
 
-        private void onUpgradeForOldVersion31(SQLiteDatabase db) {
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Wepay TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88WepayQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Alipay TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88AlipayQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Boost TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88BoostQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Mcash TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88McashQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88TouchnGo TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88TouchnGoQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Unionpay TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88UnionpayQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Mbb TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88MbbQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Cimb TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88CimbQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Grabpay TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88GrabpayQty INTEGER default 0");
-
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88Nets TEXT default '0.00'");
-            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales + " ADD COLUMN ipay88NetsQty INTEGER default 0");
-
-        }
     }
 }
