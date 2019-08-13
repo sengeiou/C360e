@@ -76,4 +76,6 @@
     <string name="reconn_pos">Bạn nên kết nối lại pos!</string>
     <string name="complete_all_item">Xác nhận tất cả các đơn hàng đã hoàn thành?</string>
     <string name="completed">Đã hoàn thành</string>
+    <string name="choose">chọn</string>
+    <string name="please_choose_pos">Vui lòng chọn POS</string>
 </resources>

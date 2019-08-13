@@ -1342,6 +1342,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
 
                     kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
+                    //Log.wtf("test_","kotupdate_28");
                     KotSummarySQL.update(kotSummary);
                 }
                 HashMap<String, String> map = new HashMap<String, String>();

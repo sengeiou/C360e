@@ -2,6 +2,7 @@ package com.alfredkds.global;
 
 import android.os.Build;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -29,6 +30,7 @@ import com.alfredkds.activity.Welcome;
 import com.alfredkds.http.server.KdsHttpServer;
 import com.alfredkds.javabean.Kot;
 import com.alfredkds.view.SystemSettings;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -65,11 +67,10 @@ public class App extends BaseApplication {
     public static final int HANDLER_RELOAD_KOT = 21;
     public static App instance;
     //for pairing
-    private String pairingIp;
+    private ArrayList<String> pairingIps = new ArrayList<>();
     private User user;
     private KDSDevice kdsDevice;
     private Map<Integer, MainPosInfo> mainPosInfos = new HashMap<Integer, MainPosInfo>();
-    private Integer currentMainPosId = -1;
     public RingUtil ringUtil;
     private Printer printer;
     public static String TAG = App.class.getName();
@@ -188,20 +189,51 @@ public class App extends BaseApplication {
     public synchronized void addMainPosInfo(MainPosInfo mainPosInfo) {
         getMainPosInfos();
         this.mainPosInfos.put(mainPosInfo.getRevenueId(), mainPosInfo);
-        currentMainPosId = mainPosInfo.getRevenueId();
         Store.saveObject(instance, Store.MAINPOSINFO_MAP, this.mainPosInfos);
-        Store.putInt(this, Store.CURRENT_MAIN_POS_ID_CONNECTED, currentMainPosId);
+        ArrayList<Integer> posId = new ArrayList<>();
+        for (Map.Entry<Integer, MainPosInfo> entry : mainPosInfos.entrySet()) {
+            MainPosInfo posInfo = entry.getValue();
+            posId.add(posInfo.getRevenueId());
+        }
+        Store.putString(this, Store.CURRENT_MAIN_POS_ID_CONNECTED, new Gson().toJson(posId));
     }
 
-    public MainPosInfo getCurrentConnectedMainPos() {
+    public List<MainPosInfo> getCurrentConnectedMainPos() {
         getMainPosInfos();
-        Integer cid = Store.getInt(this, Store.CURRENT_MAIN_POS_ID_CONNECTED);
-        if (cid != null && cid.intValue() > 0) {
-            return this.mainPosInfos.get(cid.intValue());
+
+        String data = Store.getString(this, Store.CURRENT_MAIN_POS_ID_CONNECTED);
+        ArrayList<Integer> posId = new ArrayList<>();
+        if (!TextUtils.isEmpty(data)) {
+            try {
+                ArrayList<Integer> list = new Gson().fromJson(data, new TypeToken<ArrayList<Integer>>() {
+                }.getType());
+                if (list != null) {
+                    posId.addAll(list);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (posId.size() > 0) {
+            List<MainPosInfo> mainPosInfos = new ArrayList<>();
+            for (Integer cid : posId) {
+                mainPosInfos.add(this.mainPosInfos.get(cid));
+            }
+            return mainPosInfos;
         } else {
             return null;
         }
+    }
 
+    public MainPosInfo getCurrentConnectedMainPosByRevenueCenterId(Integer revenueCenterId) {
+        List<MainPosInfo> list = getCurrentConnectedMainPos();
+        for (MainPosInfo pos : list) {
+            if(pos.getRevenueId().equals(revenueCenterId)){
+                return pos;
+            }
+        }
+        return null;
 
     }
 
@@ -217,12 +249,14 @@ public class App extends BaseApplication {
         Store.saveObject(this, Store.KDS_PRINTER, printer);
     }
 
-    public String getPairingIp() {
-        return pairingIp;
+    public ArrayList<String> getPairingIp() {
+        return pairingIps;
     }
 
     public void setPairingIp(String pairingIp) {
-        this.pairingIp = pairingIp;
+        if (!pairingIps.contains(pairingIp)) {
+            this.pairingIps.add(pairingIp);
+        }
     }
 
     public SessionStatus getSessionStatus() {
@@ -454,9 +488,12 @@ public class App extends BaseApplication {
         parameters.put("password", Store.getString(context, Store.PASSWORD));
         parameters.put("type", ParamConst.USER_TYPE_KOT);
         parameters.put("device", App.instance.getKdsDevice());
-        MainPosInfo currentOne = App.instance.getCurrentConnectedMainPos();
-        if (currentOne != null) {
-            SyncCentre.getInstance().login(context, currentOne.getIP(), parameters, handler);
+
+        List<MainPosInfo> datas = App.instance.getCurrentConnectedMainPos();
+        if (datas != null) {
+            for (MainPosInfo data : datas) {
+                SyncCentre.getInstance().login(context, data.getIP(), parameters, handler);
+            }
         } else {
             UIHelp.showToast(context, context.getResources().getString(R.string.reconn_pos));
         }

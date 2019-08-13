@@ -63,6 +63,8 @@ public class DevicesActivity extends BaseActivity {
     private TextView devices_ip_tv;
     private TextView devices_revenueCenter_tv;
     //打印机
+    private LinearLayout devices_rvc_lyt;
+
     private LinearLayout devices_printe_lyt;
     //KDS
     private LinearLayout devices_transfer_lyt;
@@ -352,6 +354,22 @@ public class DevicesActivity extends BaseActivity {
                 devices_customlistview.setAdapter(adapter);
             }
         }
+
+        if (selectedViewId == R.id.devices_rvc_lyt) {
+//todo test            if (adapter != null) {
+//
+//                //     Log.d("printerDBModelList", " ---printerDBModelList1---"+printerDBModelList.size()+"--"+printerDBModelList.get(0).getIP());
+//
+//
+//                adapter.setList(printerDBModelList, 1);
+//            } else {
+//                adapter = new DevicesAdapter(this, printerDBModelList, handler);
+//                // Log.d("printerDBModelList", " ---printerDBModelList2---"+printerDBModelList.size());
+//                devices_customlistview.setAdapter(adapter);
+//            }
+        }
+
+
     }
 
     private void unassignDevice(PrinterDevice device) {
@@ -374,13 +392,18 @@ public class DevicesActivity extends BaseActivity {
     }
 
 
-
     @Override
     public void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
         switch (v.getId()) {
             case R.id.btn_back:
                 DevicesActivity.this.finish();
+                break;
+            case R.id.devices_rvc_lyt:
+                selectedViewId = v.getId();
+                float f0 = devices_rvc_lyt.getY();
+                initAnimation(f0);
+                MViews(R.id.devices_rvc_lyt);
                 break;
             case R.id.devices_printe_lyt:
                 selectedViewId = v.getId();
@@ -407,6 +430,34 @@ public class DevicesActivity extends BaseActivity {
 
     private void MViews(int id) {
         switch (id) {
+            case R.id.devices_rvc_lyt:
+//todo test        hv_printer_group.setVisibility(View.VISIBLE);
+//                List<PrinterDevice> devices = new ArrayList<PrinterDevice>();
+//                Map<Integer, List<PrinterDevice>> hash = App.instance.getMap();
+//                if (hash.containsKey(printerDeptModelList.get(dex).getId())) {
+//                    devices = hash.get(printerDeptModelList.get(dex).getId());
+//                } else {
+//                    List<PrinterDevice> list = hash.get(-1);
+//                    if (list != null) {
+//                        for (PrinterDevice device : list) {
+//                            PrinterDevice printerDevice = new PrinterDevice();
+//                            printerDevice.setDevice_id(-1);
+//                            printerDevice.setName(device.getName());
+//                            printerDevice.setGroupId(device.getGroupId());
+//                            printerDevice.setIP(device.getIP());
+//                            printerDevice.setMac(device.getMac());
+//                            printerDevice.setModel(device.getModel());
+//                            devices.add(printerDevice);
+//                        }
+//                    }
+//                }
+//                if (adapter != null) {
+//                    adapter.setList(devices, 1);
+//                } else {
+//                    adapter = new DevicesAdapter(DevicesActivity.this, devices, handler);
+//                    devices_customlistview.setAdapter(adapter);
+//                }
+                break;
             case R.id.devices_printe_lyt:
                 hv_printer_group.setVisibility(View.VISIBLE);
                 List<PrinterDevice> devices = new ArrayList<PrinterDevice>();
@@ -579,15 +630,19 @@ public class DevicesActivity extends BaseActivity {
         devices_revenueCenter_tv = (TextView) findViewById(R.id.devices_revenueCenter_tv);
         if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
             MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
-            if(mainPosInfo != null) {
+            if (mainPosInfo != null) {
                 devices_revenueCenter_tv.setText(mainPosInfo.getName());
             }
         } else {
             devices_revenueCenter_tv.setText("");
         }
 
+        devices_rvc_lyt = (LinearLayout) findViewById(R.id.devices_rvc_lyt);
+//        selectedViewId = R.id.devices_rvc_lyt;
+
         devices_printe_lyt = (LinearLayout) findViewById(R.id.devices_printe_lyt);
         selectedViewId = R.id.devices_printe_lyt;
+
         devices_transfer_lyt = (LinearLayout) findViewById(R.id.devices_transfer_lyt);
 
         devices_waiter_lyt = (LinearLayout) findViewById(R.id.devices_waiter_lyt);
@@ -603,6 +658,7 @@ public class DevicesActivity extends BaseActivity {
 
         btn_back.setOnClickListener(this);
         ll_print.setOnClickListener(this);
+        devices_rvc_lyt.setOnClickListener(this);
         devices_printe_lyt.setOnClickListener(this);
         devices_transfer_lyt.setOnClickListener(this);
         devices_waiter_lyt.setOnClickListener(this);

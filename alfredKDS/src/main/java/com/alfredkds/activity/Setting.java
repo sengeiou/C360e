@@ -3,6 +3,7 @@ package com.alfredkds.activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -14,10 +15,10 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LanguageManager;
-import com.alfredbase.utils.LogUtil;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
@@ -107,8 +108,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
 
     @Override
     public void handlerClickEvent(View v) {
-        final Integer cid = (Integer) Store.getInt(context, Store.CURRENT_MAIN_POS_ID_CONNECTED);
-        LogUtil.i(TAG, "" + cid);
+        final String data = Store.getString(this, Store.CURRENT_MAIN_POS_ID_CONNECTED);
         super.handlerClickEvent(v);
         switch (v.getId()) {
             case R.id.tv_history:
@@ -126,7 +126,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                                 if (user != null) {
                                     Store.remove(context, Store.KDS_USER);
                                 }
-                                if (cid != null && cid != Store.DEFAULT_INT_TYPE) {
+                                if (!TextUtils.isEmpty(data)) {
                                     Store.remove(context, Store.CURRENT_MAIN_POS_ID_CONNECTED);
                                 }
                                 UIHelp.startWelcome(context);
@@ -141,7 +141,9 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("device", kdsDevice);
                 parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
-                SyncCentre.getInstance().Logout(context, App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPos()) {
+                    SyncCentre.getInstance().Logout(context, mainPos, parameters, handler);
+                }
                 break;
             case R.id.ll_language_setting:
                 alertLanguage = LanguageManager.alertLanguage(this, this);

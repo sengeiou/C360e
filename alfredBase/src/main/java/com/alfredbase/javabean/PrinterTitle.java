@@ -164,7 +164,6 @@ public class PrinterTitle implements Serializable{
 		return bill_NO;
 	}
 	public void setBill_NO(String bill_NO) {
-		Log.wtf("Test_bill", bill_NO);
 		this.bill_NO = bill_NO;
 	}
 	public String getTime() {

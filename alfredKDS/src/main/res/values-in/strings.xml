@@ -76,4 +76,6 @@
     <string name="reconn_pos">Anda harus menghubungkan kembali pos!</string>
     <string name="complete_all_item">Konfirmasikan semua pesanan sudah selesai?</string>
     <string name="completed">Lengkap</string>
+    <string name="choose">Pilih</string>
+    <string name="please_choose_pos">Silakan pilih POS</string>
 </resources>
