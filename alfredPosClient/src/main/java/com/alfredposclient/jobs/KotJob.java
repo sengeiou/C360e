@@ -1,6 +1,7 @@
 
 package com.alfredposclient.jobs;
 
+import com.alfredbase.API;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.APIName;
@@ -68,6 +69,25 @@ public class KotJob extends Job {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        failCount = 0;
+    }
+
+    public KotJob(KDSDevice kds, KotSummary kotSummary, String method) {
+        super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
+        long time = System.currentTimeMillis();
+        kotSummary.setUpdateTime(time);
+        localId = -time;
+        apiName = APIName.UPDATE_ORDER_COUNT;
+        data.put("kotSummary", kotSummary);
+        data.put("method", method);
+        this.kds = kds;
+
+        try {
+            KotSummarySQL.updateKotSummaryTimeById(time, kotSummary.getId().intValue());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         failCount = 0;
     }
 
@@ -257,6 +277,8 @@ public class KotJob extends Job {
                 SyncCentre.getInstance().deleteKotSummary(kds, context, data, null);
             } else if (APIName.SUBMIT_SUMMARY_KDS.equals(apiName)) {
                 SyncCentre.getInstance().syncSubmitKotToSummaryKDS(kds, context, data, null);
+            } else if (APIName.UPDATE_ORDER_COUNT.equals(apiName)) {
+                SyncCentre.getInstance().updateOrderCount(kds, context, data, null);
             }
             LogUtil.d(TAG, "KOT JOB Successful");
         } catch (Throwable e) {

@@ -249,6 +249,7 @@ public class ParamConst {
     public static final String JOB_DELETE_KOT_SUMMARY = "delete_kot_summary";
     public static final String JOB_DELETE_TMP_ITEM_KOT = "delete_tmp_item_kot";
     public static final String JOB_KOT_SUMMARY = "kot_summary";
+    public static final String JOB_KOT_UPDATE_ORDER_COUNT = "kot_summary_update_order_count";
 
     // Job用 标记transfer table 发送给KDS的装填
     public static final String JOB_MERGER_KOT = "merger_kot";

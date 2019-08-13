@@ -27,8 +27,8 @@ public class KotItemDetailSQL {
                     + TableNames.KotItemDetail
                     + "(id, restaurantId, revenueId, orderId, orderDetailId, printerGroupId, kotSummaryId, "
                     + "itemName,itemNum,finishQty,sessionStatus,kotStatus,specialInstractions ,version,createTime,"
-                    + "updateTime, unFinishQty, categoryId,isTakeAway, fireStatus,callType,expectedTime,startTime,endTime)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "updateTime, unFinishQty, categoryId,isTakeAway, fireStatus,callType,expectedTime,startTime,endTime,itemType)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{kotItemDetail.getId(),
@@ -54,7 +54,8 @@ public class KotItemDetailSQL {
                             kotItemDetail.getCallType(),
                             kotItemDetail.getExpectedTime(),
                             kotItemDetail.getStartTime(),
-                            kotItemDetail.getEndTime()
+                            kotItemDetail.getEndTime(),
+                            kotItemDetail.getItemType()
                     });
             kotItemDetail.getCallType();
         } catch (Exception e) {
@@ -779,6 +780,29 @@ public class KotItemDetailSQL {
         return result;
     }
 
+    public static int getAllKotItemDetailCountBySummaryId(int kotSummaryId) {
+        int result = 0;
+        String sql = "select id from " + TableNames.KotItemDetail
+                + " where kotSummaryId = ? and kotStatus < 4";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{kotSummaryId + ""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            result = cursor.getCount();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
     public static int getAllUnDoneKotItemDetailCount() {
         int result = 0;
         String sql = "select id from " + TableNames.KotItemDetail
@@ -1021,6 +1045,15 @@ public class KotItemDetailSQL {
         String sql = "update " + TableNames.KotItemDetail + " set orderDetailId = ? where orderDetailId = ? and kotSummaryId=?";
         try {
             SQLExe.getDB().execSQL(sql, new Object[]{newOrderDetailId, oldOrderDetailId, kotSummaryId});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKotItemDetailField(String field, int value, int id) {
+        String sql = "update " + TableNames.KotItemDetail + " set " + field + " = " + value + " where id = " + id;
+        try {
+            SQLExe.getDB().execSQL(sql);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -76,9 +76,66 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = handlerDeleteKot(body);
             } else if (uri.equals(APIName.SUBMIT_SUMMARY_KDS)) {
                 resp = handlerSubmitSummary(body);
+            } else if (uri.equals(APIName.UPDATE_ORDER_COUNT)) {
+                resp = handlerUpdateOrderCount(body);
             } else {
                 resp = getNotFoundResponse();
             }
+        }
+
+        return resp;
+    }
+
+    private Response handlerUpdateOrderCount(String params) {
+        Response resp;
+        Map<String, Object> result = new HashMap<>();
+        int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final Gson gson = new Gson();
+            String method = jsonObject.optString("method");
+
+            //region parameter validation
+            if (TextUtils.isEmpty(method)) {
+                resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+                return resp;
+            }
+
+            final KotSummary kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
+
+            if (kotSummary == null) {
+                resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+                return resp;
+            } else {
+                if (revenueCenterId != kotSummary.getRevenueCenterId()) {
+                    App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                    result.put("resultCode", ResultCode.CONNECTION_FAILED);
+                    resp = getJsonResponse(new Gson().toJson(result));
+                    return resp;
+                }
+            }
+            //endregion
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    KotSummarySQL.updateKotSummaryOrderCountById(kotSummary.getOrderDetailCount(), kotSummary.getId());
+
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_KOT, null);
+                }
+            }).start();
+
+            result.put("resultCode", ResultCode.SUCCESS);
+            result.put("method", method);
+            result.put("kotSummary", kotSummary);
+            resp = getJsonResponse(new Gson().toJson(result));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
         }
 
         return resp;
@@ -558,6 +615,13 @@ public class KdsHttpServer extends AlfredHttpServer {
                             }
 
                         } else {//sub kds with fake id
+                            int KotSummaryId = CommonSQL.isFakeId(kotSummary.getId()) ? kotSummary.getOriginalId() : kotSummary.getId();
+                            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(KotSummaryId);
+
+                            if (kotSummaryLocal != null) {
+                                KotSummarySQL.updateKotSummaryOrderCountById(kotSummary.getOrderDetailCount(),
+                                        kotSummaryLocal.getId());
+                            }
 
                             int fakeId = CommonSQL.getFakeId();
 
@@ -644,9 +708,10 @@ public class KdsHttpServer extends AlfredHttpServer {
                             }
                         }
 
+                        KotSummarySQL.update(kotSummary);//update total order count
+
                         if (isFound) {
                             App.instance.ringUtil.playRingOnce();
-                            KotSummarySQL.update(kotSummary);
 
                             if (App.getTopActivity() != null)
                                 App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_KOT, null);

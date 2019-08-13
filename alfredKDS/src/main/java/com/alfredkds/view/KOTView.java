@@ -38,6 +38,7 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.ItemDetailSQL;
+import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
@@ -393,29 +394,22 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 complete_all_tv.setVisibility(VISIBLE);
                 call_num_tv.setVisibility(VISIBLE);
 
-//                Map<Integer, ArrayList<KotItemModifier>> modCombo = new HashMap<>();
-//                int comboCount = 0;
-//
-//                for (KotItemDetail kotItemDetail : kot.getKotItemDetails()) {
-//                    OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(kotItemDetail.getOrderDetailId());
-//                    ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
-//
-//                    if (itemDetail.getItemType() == 3) {//package item
-//                        comboCount++;
-//                        modCombo = getComboModifiers(kotItemDetail, kot.getKotItemModifiers(), modCombo);
-//                    }
-//                }
+                int itemCount = 0;
 
-                int count = 0;
+                List<KotItemDetail> kotItemDetailsLocal = KotItemDetailSQL.getKotItemDetailBySummaryId(kot.getKotSummary().getId());
 
-                for (KotItemDetail kotItemDetail : kot.getKotItemDetails()) {
-                    if (ParamConst.KOT_STATUS_VOID != kotItemDetail.getKotStatus())
-                        count++;
+                for (KotItemDetail kotItemDetail : kotItemDetailsLocal) {
+
+                    if (ParamConst.KOT_STATUS_VOID != kotItemDetail.getKotStatus()) {
+                        if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {//package item
+                            itemCount += KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId()).size();
+                        } else {
+                            itemCount++;
+                        }
+                    }
                 }
-
-//                count += modCombo.size() - comboCount;
-
-                if (count >= kot.getKotSummary().getOrderDetailCount()) {
+//
+                if (itemCount >= kot.getKotSummary().getOrderDetailCount()) {
                     llAction.setVisibility(VISIBLE);
 
                     if (kot.getKotSummary().isNext() == 1) {
@@ -644,6 +638,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
             if (kotItemDetails.size() > 0) {
 
                 for (KotItemDetail kotItemDetail : kotItemDetails) {
+
                     ArrayList<KotItemModifier> kims = KotItemModifierSQL.
                             getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
 

@@ -565,6 +565,14 @@ public class SyncCentre {
 
     }
 
+    public void updateOrderCount(KDSDevice kdsDevice, BaseActivity context,
+                                 Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.UPDATE_ORDER_COUNT);
+        HTTPKDSRequest.updateOrderCount(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
     public void deleteKotSummary(KDSDevice kdsDevice, BaseActivity context,
                                  Map<String, Object> parameters, Handler handler) throws Throwable {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.DELETE_KOT_KDS);

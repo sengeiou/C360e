@@ -182,19 +182,22 @@ public class HttpAnalysis {
                     }.getType());
 
             for (KotItemDetail kotItemDetail : kotItemDetails) {
-                List<KotItemModifier> kotItemModifierList =
-                        KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);//done local only
+                KotItemDetailSQL.update(kotItemDetail);
 
-                for (KotItemModifier kotItemModifier : kotItemModifierList) {
-                    KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
-                }
+//                List<KotItemModifier> kotItemModifierList =
+//                        KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+//
+//                for (KotItemModifier kotItemModifier : kotItemModifierList) {
+//                    KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
+//                }
             }
 
-            KotItemDetailSQL.deleteKotItemDetail(kotItemDetails);
+//            KotItemDetailSQL.deleteKotItemDetail(kotItemDetails);
 
-            List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
-            if (kotItemDetailList.size() <= 0)
-                KotSummarySQL.deleteKotSummary(kotSummary);
+//            List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+//            if (kotItemDetailList.size() <= 0)
+//                KotSummarySQL.deleteKotSummary(kotSummary);
 
         } catch (JSONException e) {
             e.printStackTrace();

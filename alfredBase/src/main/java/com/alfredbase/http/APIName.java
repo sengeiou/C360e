@@ -133,6 +133,7 @@ public class APIName {
     public static final String SUBMIT_NEXT_KOT = "submit_next_kot";
     public static final String DELETE_KOT_KDS = "delete_kot_kds";
     public static final String SUBMIT_SUMMARY_KDS = "submit_summary_kds";
+    public static final String UPDATE_ORDER_COUNT = "update_order_count";
 
     /**
      * 以waiter作为服务器

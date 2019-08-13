@@ -327,7 +327,7 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             error.printStackTrace();
                             List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
-                            ;
+
                             for (int i = 0; i < kotItemDetails.size(); i++) {
                                 KotItemDetail kotItemDetail = kotItemDetails.get(i);
                                 KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
