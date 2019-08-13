@@ -1,7 +1,6 @@
 
 package com.alfredposclient.jobs;
 
-import com.alfredbase.API;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.APIName;
@@ -197,6 +196,9 @@ public class KotJob extends Job {
                 }
                 List<Integer> orderDetailIds = (List<Integer>) kotMap.get("orderDetailIds");
                 if (orderDetailIds.size() != 0) {
+
+                    KotSummarySQL.updateKotSummaryOrderCountById(kotsmy.getOrderDetailCount(), kotsmy.getId());
+
                     ArrayList<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
                     ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                     if (kotMap.containsKey("orderPosType") && (Integer) kotMap.get("orderPosType") == ParamConst.POS_TYPE_SUB) {
@@ -255,14 +257,16 @@ public class KotJob extends Job {
                         KotItemDetailSQL.update(kotItemDetail);
                     }
                     KotSummarySQL.deleteKotSummary(fromKotSummary);
-                    context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
+                    if (context != null)
+                        context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
                 } else if (ParamConst.JOB_TRANSFER_KOT.equals(action)) {
                     KotSummary fromKotSummary = (KotSummary) data.get("fromKotSummary");
 
                     KotSummarySQL.update(fromKotSummary);
                     Order order = (Order) kotMap.get("fromOrder");
 //		    		OrderSQL.update(order);
-                    context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE, order);
+                    if (context != null)
+                        context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE, order);
                 }
 
                 SyncCentre.getInstance().transferTable(context, kotMap);
@@ -285,7 +289,8 @@ public class KotJob extends Job {
             LogUtil.d(TAG, "KOT JOB Failed:" + e.getMessage());
             if (failCount < 2) {
                 failCount++;
-                context.kotPrintStatus(MainPage.KOT_PRINT_FAILED, "KDS");
+                if (context != null)
+                    context.kotPrintStatus(MainPage.KOT_PRINT_FAILED, "KDS");
             }
             throw new RuntimeException("KOT failed");
         }
