@@ -63,7 +63,7 @@ public class BH {
         }
 
         if (type.equals(defaultType)) {
-            format = new DecimalFormat(formatNarrow().toString());
+            format = new DecimalFormat(formatNarrow().toString(), new DecimalFormatSymbols(Locale.US));
             if (!TextUtils.isEmpty(currencySymbol)) {
                 if (currencySymbol.equals("Rp")) {
                     format = intFormat;
@@ -73,7 +73,7 @@ public class BH {
             if (("" + formatNarrow()).equals("1")) {
                 format = doubleFormat;
             } else {
-                format = new DecimalFormat(formatNarrow().toString());
+                format = new DecimalFormat(formatNarrow().toString() , new DecimalFormatSymbols(Locale.US));
             }
         }
         format.setRoundingMode(RoundingMode.HALF_UP);
@@ -173,7 +173,7 @@ public class BH {
         //	int type = Store.getInt(BaseApplication.instance, Store.FORMAT_MONEY_TYPE, 0);
 
 
-        format1 = new DecimalFormat(type);
+        format1 = new DecimalFormat(type , new DecimalFormatSymbols(Locale.US));
         format1.setRoundingMode(RoundingMode.HALF_UP);
         formatM = BigDecimal.ZERO;
         if (CommonUtil.isNull(string)) {
@@ -247,7 +247,7 @@ public class BH {
     ) {
 
 
-        format1 = new DecimalFormat(type);
+        format1 = new DecimalFormat(type , new DecimalFormatSymbols(Locale.US));
         format1.setRoundingMode(RoundingMode.HALF_UP);
         formatM = BigDecimal.ZERO;
         if (CommonUtil.isNull(integer)) {
@@ -473,7 +473,7 @@ public class BH {
 
     public static BigDecimal getBD(Integer integer) {
         if (CommonUtil.isNull(integer))
-            return new BigDecimal(ParamConst.DOUBLE_ZERO);
+            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
 //        return new BigDecimal(format.format(new BigDecimal(integer)));
         return new BigDecimal(format.format(new BigDecimal(integer)));
     }
@@ -489,13 +489,13 @@ public class BH {
 
     public static BigDecimal getReplace(String string) {
         if (CommonUtil.isNull(string))
-            return new BigDecimal(ParamConst.DOUBLE_ZERO);
+            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
         return new BigDecimal(format.format(new BigDecimal(string.replace(",", ""))));
     }
 
     public static BigDecimal getBD(String string) {
         if (CommonUtil.isNull(string))
-            return new BigDecimal(ParamConst.DOUBLE_ZERO);
+            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
         return new BigDecimal(format.format(new BigDecimal(string)));
     }
 
@@ -507,20 +507,20 @@ public class BH {
 
     public static BigDecimal getBDNoFormatz(String string) {
         if (CommonUtil.isNull(string))
-            return new BigDecimal(ParamConst.DOUBLE_ZERO);
+            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
         return new BigDecimal(doubleFormat.format(new BigDecimal(string)));
     }
 
 
     public static BigDecimal getBDThirdFormat(String string) {
         if (CommonUtil.isNull(string))
-            return new BigDecimal(ParamConst.DOUBLE_ZERO);
+            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
         return new BigDecimal(format.format(new BigDecimal(string)));
     }
 
     public static BigDecimal getBD(Double string) {
         if (CommonUtil.isNull(string)) {
-            return new BigDecimal(ParamConst.DOUBLE_ZERO);
+            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
         } else {
             return new BigDecimal(format.format(new BigDecimal(string)));
         }
@@ -528,7 +528,7 @@ public class BH {
 
     public static BigDecimal getBD(BigDecimal bigDecimal) {
         if (CommonUtil.isNull(bigDecimal))
-            return new BigDecimal(ParamConst.DOUBLE_ZERO);
+            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
         return new BigDecimal(format.format(bigDecimal));
     }
 
