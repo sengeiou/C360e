@@ -3,6 +3,7 @@ package com.alfredposclient.activity.kioskactivity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -432,6 +433,7 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                         }
                     }
                 }
+                //Log.wtf("test_","kotupdate_18");
                 KotSummarySQL.update(kotSummary);
                 PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
                 final HashMap<String, String> map = new HashMap<String, String>();

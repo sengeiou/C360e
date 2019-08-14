@@ -1521,6 +1521,7 @@ public class App extends BaseApplication {
     }
 
     public User getUserByKey(String userKey) {
+        //Log.wtf("Test_active_userkey",new Gson().toJson(getActiveUser()));
         return getActiveUser().get(userKey);
     }
 
@@ -1835,9 +1836,11 @@ public class App extends BaseApplication {
             KotSummary fakeKotSummary = new KotSummary();
             fakeKotSummary.setBusinessDate(kotsummary.getBusinessDate());
             fakeKotSummary.setCreateTime(kotsummary.getCreateTime());
+
             fakeKotSummary.setId(kotsummary.getId());
             fakeKotSummary.setOrderId(kotsummary.getOrderId());
             fakeKotSummary.setOrderNo(kotsummary.getOrderNo());
+
             fakeKotSummary.setRevenueCenterId(kotsummary.getRevenueCenterId());
             fakeKotSummary.setRevenueCenterName(CoreData.getInstance().getRestaurant().getRestaurantName());
             fakeKotSummary.setTableId(kotsummary.getTableId());
@@ -3298,6 +3301,7 @@ public class App extends BaseApplication {
                     }
                 }
             }
+            //Log.wtf("test_","kotupdate_22");
             KotSummarySQL.update(kotSummary);
             if (!kotItemDetails.isEmpty()) {
 

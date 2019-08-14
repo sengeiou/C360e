@@ -133,7 +133,9 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 			map.put("printerType", ParamConst.PRINTER_TYPE_UNGROUP);
 			map.put("employeeId", employee_ID);
 			//Verify employee and load all printers/KDS from POS
-			SyncCentre.getInstance().getPrinters(context, App.instance.getPairingIp(),map, handler);
+			for(String pairingIp : App.instance.getPairingIp()) {
+				SyncCentre.getInstance().getPrinters(context, pairingIp, map, handler);
+			}
 		}
 	}
 

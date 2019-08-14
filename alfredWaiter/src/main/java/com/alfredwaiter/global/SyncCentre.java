@@ -2,20 +2,10 @@ package com.alfredwaiter.global;
 
 import android.content.Context;
 import android.os.Handler;
-import android.text.TextUtils;
-import android.view.View;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.http.APIName;
 import com.alfredbase.utils.CommonUtil;
-import com.alfredbase.store.sql.KotItemDetailSQL;
-import com.alfredbase.store.sql.KotItemModifierSQL;
-import com.alfredbase.store.sql.KotSummarySQL;
-import com.alfredbase.store.sql.OrderDetailSQL;
-import com.alfredbase.store.sql.OrderDetailTaxSQL;
-import com.alfredbase.store.sql.OrderModifierSQL;
-import com.alfredbase.store.sql.OrderSQL;
-import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 
@@ -62,6 +52,7 @@ public class SyncCentre {
 
     public void login(Context context, Map<String, Object> parameters,
                       Handler handler) {
+
         HttpAPI.getItem(context, getAbsolutePOSUrlByIp(getIp(), APIName.ITEM_GETITEM),
                 parameters, httpClient);
         HttpAPI.login(context, parameters,
@@ -71,7 +62,7 @@ public class SyncCentre {
     public void getRestaurantInfo(Context context,
                                   Map<String, Object> parameters, Handler handler) {
         HttpAPI.getRestaurantInfo(context,
-                getAbsolutePOSUrlByIp(ip, APIName.RESTAURANT_GETRESTAURANTINFO), parameters,
+                getAbsolutePOSUrlByIp(ip, APIName.RESTAURANT_GETRESTAURANTINFO), App.instance.getMainPosInfo().getRevenueId(), parameters,
                 httpClient, handler);
     }
 
@@ -109,7 +100,7 @@ public class SyncCentre {
     }
 
     public void getPlaceInfo(Context context, String ip, Map<String, Object> parameters, Handler handler) {
-        HttpAPI.getPlaceInfo(context, parameters,
+        HttpAPI.getPlaceInfo(context, App.instance.getMainPosInfo().getRevenueId(), parameters,
                 getAbsolutePOSUrlByIp(ip, APIName.RESTAURANT_GETPLACEINFO), httpClient, handler);
     }
 
@@ -123,7 +114,7 @@ public class SyncCentre {
 
         String waitterName = CommonUtil.getMapToString(waiterMap);
         parameters.put("waitterName", waitterName);
-        HttpAPI.selectTables(context, parameters,
+        HttpAPI.selectTables(context, App.instance.getMainPosInfo().getRevenueId(), parameters,
                 getAbsoluteUrl(APIName.SELECT_TABLES), httpClient, handler);
     }
 
@@ -131,7 +122,7 @@ public class SyncCentre {
      * Get bill print */
     public void getBillPrint(Context context, Map<String, Object> parameters,
                              Handler handler) {
-        HttpAPI.getBillPrint(context, parameters,
+        HttpAPI.getBillPrint(context, App.instance.getMainPosInfo().getRevenueId(), parameters,
                 getAbsoluteUrl(APIName.GET_BILL), httpClient, handler);
     }
 
@@ -140,33 +131,33 @@ public class SyncCentre {
      */
     public void printBill(Context context, Map<String, Object> parameters,
                           Handler handler) {
-        HttpAPI.printBill(context, parameters,
+        HttpAPI.printBill(context, App.instance.getMainPosInfo().getRevenueId(), parameters,
                 getAbsoluteUrl(APIName.PRINT_BILL), httpClient, handler);
     }
 
     public void rePrintKOT(Context context, Map<String, Object> parameters,
                            Handler handler) {
-        HttpAPI.rePrintKOT(context, parameters,
+        HttpAPI.rePrintKOT(context, App.instance.getMainPosInfo().getRevenueId(), parameters,
                 getAbsoluteUrl(APIName.RE_PRINT_KOT), httpClient, handler);
     }
 
     public void getPrintKOTData(Context context, Map<String, Object> parameters,
                                 Handler handler) {
-        HttpAPI.getPrintKOTData(context, parameters,
+        HttpAPI.getPrintKOTData(context, App.instance.getMainPosInfo().getRevenueId(), parameters,
                 getAbsoluteUrl(APIName.PRINT_KOT_DATA), httpClient, handler);
     }
 
     //临时菜
     public void getTemporaryDish(Context context, Map<String, Object> parameters,
                                  Handler handler) {
-        HttpAPI.getTemporaryDish(context, parameters,
+        HttpAPI.getTemporaryDish(context, App.instance.getMainPosInfo().getRevenueId(), parameters,
                 getAbsoluteUrl(APIName.TEMPORARY_DISH), httpClient, handler);
     }
 
     // get OrderDetail Un Waiter Create
     public void handlerGetOrderDetails(Context context, Map<String, Object> parameters,
                                        Handler handler) {
-        HttpAPI.handlerGetOrderDetails(context, parameters, getAbsoluteUrl(APIName.GET_ORDERDETAILS), httpClient, handler);
+        HttpAPI.handlerGetOrderDetails(context, App.instance.getMainPosInfo().getRevenueId(), parameters, getAbsoluteUrl(APIName.GET_ORDERDETAILS), httpClient, handler);
     }
 
     private String getAbsoluteUrl(String url) {
@@ -181,22 +172,22 @@ public class SyncCentre {
 
     public void commitOrderAndOrderDetails(Context context, Map<String, Object> parameters,
                                            Handler handler) {
-        HttpAPI.commitOrderAndOrderDetails(context, parameters, getAbsoluteUrl(APIName.COMMIT_ORDER), httpClient, handler);
+        HttpAPI.commitOrderAndOrderDetails(context, App.instance.getMainPosInfo().getRevenueId(), parameters, getAbsoluteUrl(APIName.COMMIT_ORDER), httpClient, handler);
     }
 
     public void getKotNotifications(Context context, Map<String, Object> parameters,
                                     Handler handler) {
-        HttpAPI.getKotNotification(context, parameters, getAbsoluteUrl(APIName.GET_KOT_NOTIFICATION), httpClient, handler);
+        HttpAPI.getKotNotification(context, App.instance.getMainPosInfo().getRevenueId(), parameters, getAbsoluteUrl(APIName.GET_KOT_NOTIFICATION), httpClient, handler);
     }
 
     public void handlerCollectKotItem(Context context, Map<String, Object> parameters,
                                       Handler handler) {
-        HttpAPI.handlerCollectKotItem(context, parameters, getAbsoluteUrl(APIName.COLLECT_KOT_ITEM), httpClient, handler);
+        HttpAPI.handlerCollectKotItem(context, App.instance.getMainPosInfo().getRevenueId(), parameters, getAbsoluteUrl(APIName.COLLECT_KOT_ITEM), httpClient, handler);
     }
 
     public void logout(Context context, Map<String, Object> parameters,
                        Handler handler) {
-        HttpAPI.logout(context, parameters, getAbsoluteUrl(APIName.LOGIN_LOGOUT), httpClient, handler);
+        HttpAPI.logout(context, App.instance.getMainPosInfo().getRevenueId(), parameters, getAbsoluteUrl(APIName.LOGIN_LOGOUT), httpClient, handler);
     }
 
     public String getIp() {

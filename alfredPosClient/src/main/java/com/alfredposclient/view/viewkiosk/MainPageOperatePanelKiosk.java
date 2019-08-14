@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -401,6 +402,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                                     }
                                                 }
                                             }
+                                            //Log.wtf("test_","kotupdate_31");
                                             KotSummarySQL.update(kotSummary);
                                             PrinterTitle title = ObjectFactory.getInstance()
                                                     .getPrinterTitle(
@@ -655,6 +657,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                         }
                     }
                 }
+                //Log.wtf("test_","kotupdate_32");
                 KotSummarySQL.update(kotSummary);
                 PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
                 HashMap<String, String> map = new HashMap<String, String>();

@@ -17,7 +17,6 @@ public class ParamHelper {
 	}
 	
 	public static String getPrintOrderBillNo(int orderBillNo) {
-		Log.wtf("Test_printorder_bill_no",""+orderBillNo);
 		String preStr = String.format(Locale.US,"%08d",orderBillNo);
 		return preStr;
 	}

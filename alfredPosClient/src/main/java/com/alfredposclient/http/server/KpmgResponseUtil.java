@@ -137,6 +137,7 @@ public class KpmgResponseUtil {
                 resp = mainPosHttpServer.getJsonResponse(gson.toJson(result));
             } else {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
                 resp = mainPosHttpServer.getJsonResponse(gson.toJson(result));
             }
         } catch (Exception e) {

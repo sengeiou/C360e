@@ -73,8 +73,10 @@ public class SelectKitchen extends BaseActivity {
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("device", kdsDevice);
                 parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
-                SyncCentre.getInstance().pairingComplete(context, App.instance.getPairingIp(), parameters,
-                        handler);
+                for(String pairingIp : App.instance.getPairingIp()) {
+                    SyncCentre.getInstance().pairingComplete(context, pairingIp, parameters,
+                            handler);
+                }
             }
         });
 

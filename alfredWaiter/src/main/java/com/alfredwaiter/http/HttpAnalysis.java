@@ -35,7 +35,6 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.TableAndKotNotificationList;
-import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
@@ -123,8 +122,7 @@ public class HttpAnalysis {
             SessionStatus sessionStatus = gson.fromJson(
                     object.optString("session"), SessionStatus.class);
             MainPosInfo mainPosInfo = gson.fromJson(object.optString("mainPosInfo"), MainPosInfo.class);
-			String formatType = object.optString("formatType");
-
+            String formatType = object.optString("formatType");
 
 
             SessionStatus localSessionStatus = App.instance.getSessionStatus();
@@ -167,8 +165,8 @@ public class HttpAnalysis {
             App.instance.setMainPosInfo(mainPosInfo);
             App.instance.setSessionStatus(sessionStatus);
             App.instance.setCurrencySymbol(currencySymbol, isDouble);
-			App.instance.setFormatType(formatType);
-            CoreData.getInstance().setUserKey(userKey);
+            App.instance.setFormatType(formatType);
+            CoreData.getInstance().setUserKey(mainPosInfo.getRevenueId(), userKey);
             return userKey;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -196,9 +194,9 @@ public class HttpAnalysis {
                     && kotItemModifiers != null) {
 
                 //replace existing data, only one kotSummary on waiter device
-                KotSummarySQL.deleteAllKotSummary();
-                KotItemDetailSQL.deleteAllKotItemDetail();
-                KotItemModifierSQL.deleteAllKotItemModifier();
+                KotSummarySQL.deleteAllKotSummary(App.instance.getRevenueCenter().getId());
+                KotItemDetailSQL.deleteAllKotItemDetail(App.instance.getRevenueCenter().getId());
+                KotItemModifierSQL.deleteAllKotItemModifier(App.instance.getRevenueCenter().getId());
 
                 KotSummarySQL.update(kotSummary);
                 KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -338,15 +336,15 @@ public class HttpAnalysis {
             Gson gson = new Gson();
             order = gson.fromJson(object.getJSONObject("order").toString(),
                     Order.class);
-			Map<String, String> waiterMap = new LinkedHashMap<String, String>(16, 0.75f, true);
-			if(!TextUtils.isEmpty(order.getWaiterInformation())){
-				waiterMap=CommonUtil.getStringToMap(order.getWaiterInformation());
-				waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
-			}else {
-				waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
-			}
-			String waitterName = CommonUtil.getMapToString(waiterMap);
-			order.setWaiterInformation(waitterName);
+            Map<String, String> waiterMap = new LinkedHashMap<String, String>(16, 0.75f, true);
+            if (!TextUtils.isEmpty(order.getWaiterInformation())) {
+                waiterMap = CommonUtil.getStringToMap(order.getWaiterInformation());
+                waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+            } else {
+                waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+            }
+            String waitterName = CommonUtil.getMapToString(waiterMap);
+            order.setWaiterInformation(waitterName);
             List<ItemDetail> itemDetails = gson.fromJson(object.getString("tempItems"),
                     new TypeToken<ArrayList<ItemDetail>>() {
                     }.getType());

@@ -26,6 +26,7 @@ import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Login extends BaseActivity implements KeyBoardClickListener {
@@ -172,11 +173,15 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
         parameters.put("password", password);
         parameters.put("type", ParamConst.USER_TYPE_KOT);
         parameters.put("device", App.instance.getKdsDevice());
-        MainPosInfo currentOne = App.instance.getCurrentConnectedMainPos();
+
+//        MainPosInfo currentOne = App.instance.getCurrentConnectedMainPos();
         loadingDialog.setTitle(context.getResources().getString(R.string.logining));
         loadingDialog.show();
-        if (currentOne != null) {
-            SyncCentre.getInstance().login(context, currentOne.getIP(), parameters, handler);
+        List<MainPosInfo> listMainPos = App.instance.getCurrentConnectedMainPos();
+        if (listMainPos != null && listMainPos.size() > 0) {
+            for (MainPosInfo mainPos : listMainPos) {
+                SyncCentre.getInstance().login(context, mainPos.getIP(), parameters, handler);
+            }
 //			Map<String,Object> map = new HashMap<String, Object>();
 //			map.put("printerType", ParamConst.PRINTER_TYPE_UNGROUP);
 //			map.put("employeeId", old_employee_ID);

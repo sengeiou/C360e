@@ -68,16 +68,19 @@ import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class CoreData {
     private static CoreData instance;
 
-    private String userKey;
+    private Map<Integer, String> userKey = new HashMap<>();
 
     private List<User> users;
     private List<RevenueCenter> revenueCenters;
@@ -671,7 +674,9 @@ public class CoreData {
             return null;
         if (users == null || users.size() == 0)
             users = UserSQL.getAllUser();
+        //Log.wtf("Test_user", new Gson().toJson(users));
         if (users == null) {
+            //Log.wtf("Test_user", "empteh");
             return null;
         }
         for (User user : users) {
@@ -742,7 +747,9 @@ public class CoreData {
     public Boolean checkUserKDSAccessInRevcenter(int userId, int restaurantid,
                                                  int revenueid) {
 
+        //Log.wtf("Test_user", "" + userId + " " + restaurantid + " " + revenueid);
         for (UserRestaurant user : userRestaurant) {
+            //Log.wtf("Test_tuser", new Gson().toJson(user));
             if (user.getUserId().intValue() == userId
                     && user.getRestaurantId().intValue() == restaurantid
                     && user.getRevenueId().intValue() == revenueid) {
@@ -1088,12 +1095,18 @@ public class CoreData {
         this.happyHours = happyHours;
     }
 
-    public String getUserKey() {
-        return userKey;
+    public String getUserKey(Integer revenueId) {
+        Log.wtf("Test_getuserKey",""+revenueId+" : "+new Gson().toJson(userKey));
+        for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
+            if (entry.getKey().equals(revenueId)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
-    public void setUserKey(String userKey) {
-        this.userKey = userKey;
+    public void setUserKey(Integer revenueId, String key) {
+        this.userKey.put(revenueId, key);
     }
 
     public List<UserRestaurant> getUserRestaurant() {

@@ -76,4 +76,6 @@
     <string name="reconn_pos">คุณควรเชื่อมต่อ POS อีกครั้ง!</string>
     <string name="complete_all_item">ยืนยันคำสั่งซื้อทั้งหมดเสร็จสมบูรณ์หรือไม่</string>
     <string name="completed">เสร็จ</string>
+    <string name="choose">เลือก</string>
+    <string name="please_choose_pos">กรุณาเลือก POS</string>
 </resources>

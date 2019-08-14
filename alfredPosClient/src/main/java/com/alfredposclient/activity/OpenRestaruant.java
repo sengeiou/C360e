@@ -2115,9 +2115,10 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
                         @Override
                         public void run() {
                             //bob: delete all KOT summary and KOT details
-                            KotSummarySQL.deleteAllKotSummary();
-                            KotItemDetailSQL.deleteAllKotItemDetail();
-                            KotNotificationSQL.deleteAllKotNotifications();
+
+                            KotSummarySQL.deleteAllKotSummary(App.instance.getRevenueCenter().getId());
+                            KotItemDetailSQL.deleteAllKotItemDetail(App.instance.getRevenueCenter().getId());
+                            KotNotificationSQL.deleteAllKotNotifications(App.instance.getRevenueCenter().getId());
 //							TablesSQL.setAllTableIdle();
                             TableInfoSQL.setAllTableIdle();
 

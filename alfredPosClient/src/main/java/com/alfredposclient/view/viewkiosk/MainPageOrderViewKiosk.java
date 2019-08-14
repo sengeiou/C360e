@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -315,6 +316,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                     }
                                 }
                             }
+                            //Log.wtf("test_","kotupdate_33");
                             KotSummarySQL.update(kotSummary);
                             handler.sendEmptyMessage(MainPageKiosk.VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW);
 						/*
