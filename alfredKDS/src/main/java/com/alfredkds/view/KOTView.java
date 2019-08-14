@@ -50,6 +50,7 @@ import com.alfredbase.utils.TimeUtil;
 import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
+import com.alfredkds.global.SyncCentre;
 import com.alfredkds.javabean.Kot;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -378,6 +379,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 new TypeToken<List<KotSummaryLog>>() {
                 }.getType());
 
+        complete_all_tv.setText("Complete All");
+
         if (!kot.isPlaceOrder()) {
             linear_progress.setVisibility(GONE);
         } else {
@@ -389,6 +392,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 tvNext.setVisibility(VISIBLE);
             } else if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
                 llAction.setVisibility(VISIBLE);
+                complete_all_tv.setText("Complete");
             } else if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY) {
                 llAction.setVisibility(GONE);
             } else {//kds expediter
@@ -538,7 +542,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
             adapter.notifyDataSetChanged();
         }
 
-        if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUB) {
+        if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUB ||
+                App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
             lv_dishes.setOnItemClickListener(new OnItemClickListener() {
 
                 @Override
@@ -563,18 +568,6 @@ public class KOTView extends LinearLayout implements AnimationListener,
                     if (kot.isPlaceOrder())
                         parent.showOrderItem(kot.getKotSummary());
                     return false;
-                }
-            });
-        } else if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
-            lv_dishes.setOnItemClickListener(new OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> parentView, View View, int position,
-                                        long id) {
-                    if (!ButtonClickTimer.canClick(View)) return;
-
-                    if (kot.isPlaceOrder())
-                        parent.showOrderItem(kot.getKotSummary());
                 }
             });
         }
@@ -613,17 +606,47 @@ public class KOTView extends LinearLayout implements AnimationListener,
                     return;
                 }
 
-                if (kot.getKotSummary().isNext() == 1) {
-                    sendToNextKds(false);
-                } else {
-                    Message message = new Message();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("kotSummary", kot.getKotSummary());
-                    message.setData(bundle);
-                    message.what = App.HANDLER_KOT_COMPLETE_ALL;
-                    handler.sendMessage(message);
-                }
+                if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
+                    List<KotItemDetail> kotItemDetails = getSelectedKotItemDetails();
 
+                    if (kotItemDetails.size() <= 0) {
+                        return;
+                    }
+
+                    for (KotItemDetail kotItemDetail : kotItemDetails) {
+                        if (kotItemDetail.getKotStatus() < ParamConst.KOT_STATUS_DONE &&
+                                kotItemDetail.getCategoryId() == ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN) {
+
+                            if (kotItemDetail.getUnFinishQty() > 1) {
+                            }
+
+                            kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+                            kotItemDetail.setUnFinishQty(0);
+                            kotItemDetail.setFinishQty(1);
+                            KotItemDetailSQL.update(kotItemDetail);
+                        }
+                    }
+
+                    Map<String, Object> parameters = new HashMap<>();
+                    parameters.put("kotSummary", kot.getKotSummary());
+                    parameters.put("kotItemDetails", kotItemDetails);
+                    parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+
+                    SyncCentre.getInstance().kotComplete(context,
+                            App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+
+                } else {
+                    if (kot.getKotSummary().isNext() == 1) {
+                        sendToNextKds(false);
+                    } else {
+                        Message message = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("kotSummary", kot.getKotSummary());
+                        message.setData(bundle);
+                        message.what = App.HANDLER_KOT_COMPLETE_ALL;
+                        handler.sendMessage(message);
+                    }
+                }
             }
         });
 
