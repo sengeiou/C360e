@@ -274,15 +274,21 @@ public class CoreData {
     public ArrayList<Printer> getPrintersInGroup(int groupid) {
         ArrayList<Printer> result = new ArrayList<Printer>();
         List<Printer> summaryPrinter = new ArrayList<>();
+        List<Printer> expediterPrinter = new ArrayList<>();
+
         for (PrinterGroup pg : this.printerGroups) {
             if (pg.getPrinterGroupId().intValue() == groupid) {
                 Printer pt = this.getPrinterById(pg.getPrinterId().intValue());
+                if (pt == null) continue;
                 if (pt.getPrinterUsageType() == Printer.KDS_SUMMARY)
                     summaryPrinter.add(pt);
+                else if (pt.getPrinterUsageType() == Printer.KDS_SUMMARY)
+                    expediterPrinter.add(pt);
                 else
                     result.add(pt);
             }
         }
+        result.addAll(expediterPrinter);//add summary printer before summary
         result.addAll(summaryPrinter);//add summary printer at last
         return result;
     }
