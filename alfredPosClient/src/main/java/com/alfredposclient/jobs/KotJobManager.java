@@ -167,6 +167,8 @@ public class KotJobManager {
         Printer printer = CoreData.getInstance()
                 .getPrinterByGroupId(printerGroupId);
 
+        if (printer == null) return false;
+
         return printer.getPrinterGroupType() == PrinterGroup.KDS_ASMBLY_LINE;
     }
 

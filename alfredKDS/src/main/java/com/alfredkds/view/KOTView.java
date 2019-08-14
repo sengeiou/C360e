@@ -552,20 +552,32 @@ public class KOTView extends LinearLayout implements AnimationListener,
                         adapter.setCheckListPosition(position);
                 }
             });
-        }
 
-        lv_dishes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!ButtonClickTimer.canClick(view)) {
+            lv_dishes.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (!ButtonClickTimer.canClick(view)) {
+                        return false;
+                    }
+
+                    if (kot.isPlaceOrder())
+                        parent.showOrderItem(kot.getKotSummary());
                     return false;
                 }
+            });
+        } else if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
+            lv_dishes.setOnItemClickListener(new OnItemClickListener() {
 
-                if (kot.isPlaceOrder())
-                    parent.showOrderItem(kot.getKotSummary());
-                return false;
-            }
-        });
+                @Override
+                public void onItemClick(AdapterView<?> parentView, View View, int position,
+                                        long id) {
+                    if (!ButtonClickTimer.canClick(View)) return;
+
+                    if (kot.isPlaceOrder())
+                        parent.showOrderItem(kot.getKotSummary());
+                }
+            });
+        }
 
         if (isComplete()) {
             tv_progress.setText(context.getResources().getString(R.string.item_complete));
