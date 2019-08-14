@@ -3527,7 +3527,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         Button btnCancel = (Button) paymentDialog.findViewById(R.id.btn_qrcode_cancel);
 
 
-        final String title = "Please Scan the QR Code \n" + ParamConst.getQRPaymentName(paymentTypeId);
+        final String title = parent.getResources().getString(R.string.scan_qrcode)+"\n" + ParamConst.getQRPaymentName(paymentTypeId);
         final String total = App.instance.getLocalRestaurantConfig().getCurrencySymbol() + amount;
         tvAmount.setText(total);
         tvTitle.setText(title);

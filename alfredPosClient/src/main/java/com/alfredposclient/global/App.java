@@ -2490,8 +2490,6 @@ public class App extends BaseApplication {
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 qrcode.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-
                 byte[] byteArray = stream.toByteArray();
                 mRemoteService.printIpay88Qrcode(prtStr, id, prtTitle,paymentMethod, amount, byteArray);
             } catch (RemoteException e) {
