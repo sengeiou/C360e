@@ -418,11 +418,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
     private void init() {
-        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
-        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
-        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
-        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
-        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
 //		Tax tax = App.instance.getLocalRestaurantConfig().getIncludedTax().getTax();
 //		if(tax != null){
 //			includTax = BH.mul(BH.getBD(tax.getTaxPercentage()), BH.div(BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(order.getDiscountAmount()), false), BH.add(BH.getBD(1), BH.getBD(tax.getTaxPercentage()), false), false), true);
@@ -449,6 +444,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             cash_num = BH.getBD(ParamConst.DOUBLE_ZERO);
             change_num = BH.getBD(ParamConst.DOUBLE_ZERO);
         }
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
         initBillSummary();
     }
 
@@ -1449,19 +1449,18 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
             // 支付方式的点击事件
             switch (v.getId()) {
-                case R.id.tv_Others: {
+                case R.id.tv_Others:
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     isFirstClickCash = true;
                     break;
-                }
-                case R.id.tv_exact: {
+                case R.id.tv_exact:
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     isFirstClickCash = true;
                     clickEnterAction();
-                }
+                    break;
                 case R.id.tv_cash_200:
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
-                    selectNumberAction(200);
+                    //selectNumberAction(200);
                     isFirstClickCash = true;
                     break;
                 case R.id.tv_cash_150:
