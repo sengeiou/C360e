@@ -933,15 +933,15 @@ public class BillPrint extends PrintJob {
                 }
                 else
                 {
-                    DecimalFormat df = new DecimalFormat("#.##");
+                    DecimalFormat df = new DecimalFormat("0.00");
                     df.setRoundingMode(RoundingMode.HALF_UP);
                     lable = StringUtil.padLeft(df.format(Double.parseDouble(entry.getValue())), this.FIXED_COL4_TOTAL);
                 }
                 if (PrintService.instance.getResources().getString(R.string.card_no).equals(entry.getKey())) {
-                    lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
+                    //lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
                     toPrintStr = entry.getKey() + " : " + lable + reNext;
                 } else {
-                    lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
+                    //lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
                     toPrintStr = entry.getKey() + " : " + currencySymbol + lable + reNext;
                 }
                 toPrint.setDataFormat(PrintData.FORMAT_TXT);
