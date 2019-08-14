@@ -16,6 +16,7 @@ import com.alfredbase.utils.TextTypeFace;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.UIHelp;
+import com.google.gson.Gson;
 import com.moonearly.model.UdpMsg;
 import com.moonearly.utils.service.UdpServiceCallBack;
 
@@ -57,11 +58,13 @@ public class SelectRevenue extends BaseActivity {
         loadingDialog.showByTime(5000);
         tv_select_pos = (TextView) findViewById(R.id.tv_select_pos);
         tv_select_pos.setVisibility(View.GONE);
-        observable = RxBus.getInstance().register("RECEIVE_IP_ACTION");
+
+        observable = RxBus.getInstance().register(RxBus.RECEIVE_IP_ACTION);
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
             @Override
             public void call(UdpMsg udpMsg) {
                 for (UdpMsg udpMsg1 : udpMsgList) {
+                    Log.wtf("Test_udpmsg_kds", new Gson().toJson(udpMsg1));
                     if (udpMsg1.getIp().equals(udpMsg.getIp())) {
                         return;
                     }
@@ -75,8 +78,6 @@ public class SelectRevenue extends BaseActivity {
                 }
             }
         });
-
-
         App.instance.startUDPService(App.UDP_INDEX_KDS, "KDS", new UdpServiceCallBack() {
             @Override
             public void callBack(final UdpMsg udpMsg) {

@@ -28,6 +28,7 @@
                 android:layout_marginTop="30dp"
                 android:orientation="vertical">
 
+                <!--revennue center-->
                 <LinearLayout
                     android:id="@+id/devices_rvc_lyt"
                     android:layout_width="match_parent"
@@ -181,7 +182,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
                 android:background="@android:color/transparent"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <View
                 android:layout_width="match_parent"
