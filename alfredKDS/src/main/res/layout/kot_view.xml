@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="340dp"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white">
 
     <View
@@ -37,33 +37,61 @@
                 android:textSize="@dimen/text_size_small"
                 android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/tv_table"
+            <RelativeLayout
+                android:id="@+id/contHeader"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@color/color_kotview"
-                android:gravity="center"
-                android:padding="5dp"
-                tools:text="Table"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_small" />
+                android:layout_height="wrap_content"
+                android:background="@color/color_kotview">
+
+                <TextView
+                    android:id="@+id/tvPos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_small"
+                    tools:text="POS" />
+
+                <TextView
+                    android:id="@+id/tv_table"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_small"
+                    tools:text="Table" />
+
+                <TextView
+                    android:id="@+id/tvType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_small"
+                    tools:text="Dine In" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/tv_order_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_table"
+                android:layout_below="@+id/contHeader"
                 android:gravity="center_vertical"
                 android:paddingLeft="15dp"
                 android:text="Order ID"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_s"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_table"
+                android:layout_below="@+id/contHeader"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -80,6 +108,7 @@
                         android:gravity="center_vertical"
                         android:paddingLeft="15dp"
                         android:text="Order No"
+                        android:ellipsize="end"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_s" />
 
@@ -90,9 +119,9 @@
                         android:layout_weight="1"
                         android:gravity="right|center_vertical"
                         android:paddingRight="15dp"
-                        android:text="11:20am"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_s" />
+                        android:textSize="@dimen/text_size_s"
+                        tools:text="11:20am" />
                 </LinearLayout>
 
                 <LinearLayout

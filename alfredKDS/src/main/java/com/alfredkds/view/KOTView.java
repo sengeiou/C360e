@@ -76,6 +76,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
     private Context context;
     private TextView kotId, tv_kds_delivery;
     private TextView orderId;
+    private TextView tvType;
     private TextView table;
     private TextView posName;
     private TextView date;
@@ -135,6 +136,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
         /*---kotTop显示---*/
         kotId = (TextView) kotView.findViewById(R.id.tv_kotId);
 
+        tvType = (TextView) kotView.findViewById(R.id.tvType);
         orderId = (TextView) kotView.findViewById(R.id.tv_order_id);
         table = (TextView) kotView.findViewById(R.id.tv_table);
         posName = (TextView) kotView.findViewById(R.id.tv_pos);
@@ -423,20 +425,26 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
         kotId.setText(kot.getKotSummary().getId() + "");
         String orderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + kot.getKotSummary().getOrderNo();
+        String type = "";
 
         if (!TextUtils.isEmpty(kot.getKotSummary().getEmpName())) {
             orderNoStr = orderNoStr + "(Emp:" + kot.getKotSummary().getEmpName() + ")";
         }
+
         String kioskOrderNoStr = context.getResources().getString(R.string.order_id_) + kot.getKotSummary().getNumTag() + IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + "");
         if (kot.getKotSummary() != null && kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.TAKE_AWAY) {
-            orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away) + ")";
+//            orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.take_away) + ")";
+            type = "(" + context.getResources().getString(R.string.take_away) + ")";
             kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.take_away) + ")";
         }
+
         if (kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.DINE_IN) {
-            orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.dine_in) + ")";
+//            orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.dine_in) + ")";
+            type = "(" + context.getResources().getString(R.string.dine_in) + ")";
             kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.dine_in) + ")";
         } else if (kot.getKotSummary().getIsTakeAway().intValue() == ParamConst.APP_DELIVERY) {
-            orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.app_delivery) + ")";
+//            orderNoStr = orderNoStr + "(" + context.getResources().getString(R.string.app_delivery) + ")";
+            type = "(" + context.getResources().getString(R.string.app_delivery) + ")";
             kioskOrderNoStr = kioskOrderNoStr + "(" + context.getResources().getString(R.string.app_delivery) + ")";
         }
 
@@ -458,7 +466,9 @@ public class KOTView extends LinearLayout implements AnimationListener,
             }
             ll_type.setVisibility(GONE);
         } else {
-            table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
+//            table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName());
+            table.setText("T-" + kot.getKotSummary().getTableName());
+            tvType.setText(type);
             orderId.setText(orderNoStr);
             tv_kiosk_order_id.setText(kioskOrderNoStr);
             if (kot.getKotSummary().getAppOrderId() > 0) {
