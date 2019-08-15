@@ -106,7 +106,7 @@ public class HTTPKDSRequest {
                                     }
                                 }
 
-                                kotSummaryLocal.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummaryLocal, kotItemDetailsCopy, kds));
+                                kotSummaryLocal.setKotSummaryLog(KDSLogUtil.putLog(kotSummaryLocal.getKotSummaryLog(), kotItemDetailsCopy, kds));
                                 KotSummarySQL.updateKotSummaryLog(kotSummaryLocal);
 
                                 sendKOTToSummaryKDS(kotSummaryLocal);

@@ -2615,7 +2615,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             String kotSummaryStr = jsonObject.getString("kotSummary");
             String kidStr = jsonObject.getString("kotItemDetails");
             String kimStr = jsonObject.getString("kotModifiers");
-            int kdsId = jsonObject.getInt("kdsId");
+            int kdsId = jsonObject.getInt("kdsId");//current kds, flag for next kds
 
             final ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(kidStr,
                     new TypeToken<ArrayList<KotItemDetail>>() {
@@ -2651,7 +2651,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 kotItemDetailsCopy.add(kidLocal);
             }
 
-            kotSummaryLocal.setKotSummaryLog(KDSLogUtil.setEndTime(kotSummaryLocal, kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
+            kotSummaryLocal.setKotSummaryLog(KDSLogUtil.putLog(kotSummaryLocal.getKotSummaryLog(), kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
+            kotSummaryLocal.setKotSummaryLog(KDSLogUtil.removeTrackerLog(kotSummaryLocal.getKotSummaryLog(), kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
             KotSummarySQL.updateKotSummaryLog(kotSummaryLocal);
 
             sendToNextKDS(params);
@@ -2785,7 +2786,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 kotItemDetailsCopy.add(kidLocal);
             }
 
-            localKotSummary.setKotSummaryLog(KDSLogUtil.setEndTime(localKotSummary, kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
+            localKotSummary.setKotSummaryLog(KDSLogUtil.putLog(localKotSummary.getKotSummaryLog(), kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
+            localKotSummary.setKotSummaryLog(KDSLogUtil.removeTrackerLog(localKotSummary.getKotSummaryLog(), kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
             KotSummarySQL.updateKotSummaryLog(localKotSummary);
 
             // : fix bug: filter out old data that may be in KDS
