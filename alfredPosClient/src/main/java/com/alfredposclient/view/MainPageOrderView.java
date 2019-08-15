@@ -408,6 +408,15 @@ public class MainPageOrderView extends LinearLayout {
         if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.takeaway) + ")";
         }
+        if (order.getTableId() < 0) {
+            orderNoStr = context.getResources().getString(R.string.queue)
+                    + " - "
+                    + TableInfoSQL.getTableById(order.getTableId())
+                    .getName();
+            btn_place_order.setVisibility(View.GONE);
+        } else {
+            btn_place_order.setVisibility(View.VISIBLE);
+        }
         tv_table_name_ontop.setText(orderNoStr);
         tv_item_count.setText("" + itemCount);
         List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(order.getId().intValue());
@@ -1064,8 +1073,6 @@ public class MainPageOrderView extends LinearLayout {
             public int getPageIndex() {
                 return pageIndex;
             }
-
-            ;
 
             @Override
             public int getCount() {

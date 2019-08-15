@@ -201,6 +201,7 @@ public class MainPage extends BaseActivity {
     public static final int VIEW_EVENT_SHOW_CLOSE_SPLIT_BILL = 142;
     public static final int VIEW_EVENT_CLOSE_SPLIT_BILL = 143;
     public static final int VIEW_EVENT_SHOW_TABLES_AFTER_CLOSE_BILL = 144;
+    public static final int VIEW_EVENT_OPEN_WAITING_LIST_DATA = 300;
     // KOT PRINT
     public static final int KOT_PRINT_FAILED = 200;
     public static final int KOT_PRINT_SUCCEED = 201;
@@ -230,8 +231,8 @@ public class MainPage extends BaseActivity {
     public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
     public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
     private static final String SHOW_TABLES = "SHOW_TABLES";
-    private static final String TRANSFER_TABLE = "TRANSFER_TABLE";
-    private static final String TRANSFER_ITEM = "TRANSFER_ITEM";
+    public static final String TRANSFER_TABLE = "TRANSFER_TABLE";
+    public static final String TRANSFER_ITEM = "TRANSFER_ITEM";
     private static final String HANDLER_MSG_OBJECT_DISCOUNT = "DISCOUNT";
     public static final String HANDLER_MSG_OBJECT_BILL_ON_HOLD = "BILL_ON_HOLD";
     public static final String HANDLER_MSG_OBJECT_VOID = "VOID";
@@ -266,13 +267,13 @@ public class MainPage extends BaseActivity {
     private Gson gson = new Gson();
     private boolean isShowTables = false;
     private boolean isTableFirstShow = true;
-    private String tableShowAction = SHOW_TABLES;
+    public String tableShowAction = SHOW_TABLES;
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
     private List<TableInfo> tables = new ArrayList<TableInfo>();
     private List<TablesStatusInfo> tableStatusInfo = new ArrayList<TablesStatusInfo>();
     private TableInfo currentTable;
     private TableInfo oldTable;
-    private Order currentOrder;
+    public Order currentOrder;
     private Order oldOrder;
     private List<OrderDetail> orderDetails;
     private VerifyDialog verifyDialog;
@@ -429,6 +430,17 @@ public class MainPage extends BaseActivity {
 
     public void tableAction(TableInfo tableInfo) {
         if (tableInfo != null) {
+            try {
+                if (currentTable != null) {
+                    if (currentTable.getPosId() < 0 && tableInfo.getStatus() > ParamConst.TABLE_STATUS_IDLE && tableShowAction.equals(TRANSFER_TABLE)) {
+                        UIHelp.showShortToast(context, "Can not assign because table is not empty");
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             if (TRANSFER_ITEM.equals(tableShowAction)) {
                 oldTable = currentTable;
                 handler.sendMessage(handler
@@ -531,6 +543,19 @@ public class MainPage extends BaseActivity {
                 App.instance.getLocalRestaurantConfig()
                         .getIncludedTax().getTax(), "");
     }
+
+    private void initOrderWaitingList(TableInfo tables) {
+        currentOrder = ObjectFactory.getInstance().getOrderWaitingList(
+                ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
+                App.instance.getRevenueCenter(), App.instance.getUser(),
+                App.instance.getSessionStatus(),
+                App.instance.getBusinessDate(),
+                App.instance.getIndexOfRevenueCenter(),
+                ParamConst.ORDER_STATUS_OPEN_IN_POS,
+                App.instance.getLocalRestaurantConfig()
+                        .getIncludedTax().getTax());
+    }
+
 
     private void getTableStatusInfo() {
         for (int i = 0; i < places.size(); i++) {
@@ -638,7 +663,7 @@ public class MainPage extends BaseActivity {
     }
 
 
-    private Handler handler = new Handler() {
+    public Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
 //			case VIEW_EVENT_CLOSE_PAY_WINDOW:
@@ -692,10 +717,21 @@ public class MainPage extends BaseActivity {
                 case VIEW_EVENT_DISMISS_TABLES:
                     if (loadingDialog != null && loadingDialog.isShowing())
                         loadingDialog.dismiss();
-                    closeTables();
-                    setData();
+
+                    if (currentTable.getPosId() < 0) {
+                        closeTables();
+                        setDataWaitingList();
+                    } else {
+                        closeTables();
+                        setData();
+                    }
                     break;
                 case VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER:
+                    if (oldTable != null) {
+                        if (oldTable.getPosId() < 0) {
+                            TableInfoSQL.deleteTableInfo(oldTable.getPosId());
+                        }
+                    }
                     closeTables();
                     setData();
                     break;
@@ -707,7 +743,12 @@ public class MainPage extends BaseActivity {
                     break;
                 case VIEW_EVENT_SET_TABLE_PACKS:
                     setTablePacks((String) msg.obj);
-                    handler.sendEmptyMessage(VIEW_EVENT_DISMISS_TABLES);
+                    if (currentTable.getPosId() < 0) {
+                        handler.sendMessage(handler.obtainMessage(
+                                MainPage.VIEW_EVENT_OPEN_WAITING_LIST_DATA, currentTable));
+                    } else {
+                        handler.sendEmptyMessage(VIEW_EVENT_DISMISS_TABLES);
+                    }
                     break;
                 case VIEW_EVENT_SET_APPORDER_TABLE_PACKS:
                     setTablePacks((String) msg.obj);
@@ -1077,13 +1118,21 @@ public class MainPage extends BaseActivity {
                     }
                     break;
                 case VIEW_EVENT_SET_DATA:
-                    setData();
-                    if (msg.arg1 > 0) { // When need refresh Menu List
-                        mainPageMenuView.refreshAllMenu();
+                    if (currentTable.getPosId() < 0) {
+                        setDataWaitingList();
+                    } else {
+                        setData();
+                        if (msg.arg1 > 0) { // When need refresh Menu List
+                            mainPageMenuView.refreshAllMenu();
+                        }
                     }
                     break;
                 case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
-                    setData();
+                    if (currentTable.getPosId() < 0) {
+                        setDataWaitingList();
+                    } else {
+                        setData();
+                    }
                     if (mainPageMenuView.isModifierOpen()) {
                         mainPageMenuView.closeModifiers();
                     }
@@ -1101,7 +1150,17 @@ public class MainPage extends BaseActivity {
                 case JavaConnectJS.ACTION_CLICK_TABLE: {
                     currentTable = (TableInfo) msg.obj;
                     if (currentTable != null) {
-                        if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
+                        boolean isValid = false;
+                        if (currentTable.getStatus() != null) {
+                            if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
+                                isValid = true;
+                            }
+                        } else {
+                            if (currentTable.getPosId() < 0) {
+                                isValid = true;
+                            }
+                        }
+                        if (isValid) {
                             new Thread(new Runnable() {
 
                                 @Override
@@ -1124,9 +1183,13 @@ public class MainPage extends BaseActivity {
                                 setTablePacks("4");
                                 if (loadingDialog != null && loadingDialog.isShowing())
                                     loadingDialog.dismiss();
-                                closeTables();
-                                setData();
-
+                                if (currentTable.getPosId() < 0) {
+                                    closeTables();
+                                    setDataWaitingList();
+                                } else {
+                                    closeTables();
+                                    setData();
+                                }
                             }
                         } else {
                             handler.sendMessage(handler
@@ -2120,6 +2183,11 @@ public class MainPage extends BaseActivity {
                     verifyDialog.show(HANDLER_MSG_OBJECT_CANCEL_ITEM, tag);
                 }
                 break;
+                case VIEW_EVENT_OPEN_WAITING_LIST_DATA:
+                    currentTable = (TableInfo) msg.obj;
+                    closeTables();
+                    setDataWaitingList();
+                    break;
                 default:
                     break;
             }
@@ -2395,6 +2463,26 @@ public class MainPage extends BaseActivity {
         }
     }
 
+    private void setDataWaitingList() {
+        initOrderWaitingList(currentTable);
+        orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
+        //update tabels orders
+        currentTable.setOrders(orderDetails.size());
+        TableInfoSQL.updateTables(currentTable);
+        mainPageMenuView.setParam(currentOrder, handler);
+        orderView.setParam(this, currentOrder, orderDetails, handler);
+
+//        DiffData data = new DiffData(this);//实例化data类
+//        data.updateData(orderDetails);//启动发送
+        //  DifferentDislay.setParam(orderDetails,currentOrder);
+        operatePanel.setParams(this, currentOrder, orderDetails,
+                handler);
+        loadingDialog.dismiss();
+        if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
+            printerLoadingDialog.dismiss();
+        }
+    }
+
     private void mergerOrderSetData() {
         // initOrder(currentTable);
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
@@ -2418,7 +2506,11 @@ public class MainPage extends BaseActivity {
                         CoreData.getInstance().getItemDetailById(
                                 orderDetail.getItemId()));
         OrderDetailSQL.addOrderDetailETC(orderDetail);
-        setData();
+        if (currentTable.getPosId() < 0) {
+            setDataWaitingList();
+        } else {
+            setData();
+        }
         if (itemModifiers.size() > 0) {
             for (ItemModifier itemModifier : itemModifiers) {
 
