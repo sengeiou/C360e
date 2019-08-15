@@ -25,6 +25,7 @@ import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.cpsql.CPOrderDetailSQL;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -660,6 +661,29 @@ public class KotJobManager {
             int count = kotSummaryLocal != null ? kotSummaryLocal.getOrderDetailCount() - kotVoidSize + kotSize : kotSize;
             kotSummary.setOrderDetailCount(count);
 //            KotSummarySQL.updateKotSummaryOrderCountById(count, kotSummary.getId().intValue());
+
+            //region kotSummary logs initialization
+            if (TextUtils.isEmpty(kotSummary.getKotSummaryLog())) {
+                List<KDSDevice> kdsDeviceList = new ArrayList<>();
+                List<Integer> printerGroupIdList = new ArrayList<>(printerGrougIds);
+                printerGroupIdList.addAll(modCombo.keySet());
+
+                for (Integer printerGroupId : printerGroupIdList) {
+                    ArrayList<Printer> printersData = CoreData.getInstance()
+                            .getPrintersInGroup(printerGroupId);
+
+                    for (Printer printer : printersData) {
+                        KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
+                        if (kdsDevice != null) {
+                            kdsDeviceList.add(kdsDevice);
+                        }
+                    }
+                }
+
+                kotSummary.setKotSummaryLog(KDSLogUtil.initLog(kdsDeviceList));
+                KotSummarySQL.updateKotSummaryLog(kotSummary);
+            }
+            //endregion
         }
 
         if (modCombo.size() > 0)

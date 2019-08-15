@@ -2,6 +2,8 @@ package com.alfredbase.utils;
 
 import android.text.TextUtils;
 
+import com.alfredbase.javabean.KDSHistory;
+import com.alfredbase.javabean.KDSTracking;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.KotSummaryLog;
@@ -19,6 +21,27 @@ import java.util.List;
  * Created by Arif S. on 7/18/19
  */
 public class KDSLogUtil {
+
+    public static String initLog(List<KDSDevice> kdsDeviceList) {
+        KotSummaryLog kotSummaryLog = new KotSummaryLog();
+        List<KDSHistory> kdsHistoryList = new ArrayList<>();
+        List<KDSTracking> kdsTrackingList = new ArrayList<>();
+
+        for (KDSDevice kdsDevice : kdsDeviceList) {
+            KDSHistory kdsHistory = new KDSHistory();
+            kdsHistory.kdsDevice = kdsDevice;
+            kdsHistoryList.add(kdsHistory);
+
+            KDSTracking kdsTracking = new KDSTracking();
+            kdsTracking.kdsDevice = kdsDevice;
+            kdsTrackingList.add(kdsTracking);
+        }
+
+        kotSummaryLog.kdsHistoryList = kdsHistoryList;
+        kotSummaryLog.kdsTrackingList = kdsTrackingList;
+
+        return new Gson().toJson(kotSummaryLog);
+    }
 
     public static String setEndTime(KotSummary kotSummary, List<KotItemDetail> kotItemDetails, KDSDevice kdsDevice) {
         List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(kotSummary.getKotSummaryLog());
