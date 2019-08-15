@@ -119,7 +119,6 @@ public class KitchenOrder extends BaseActivity {
 
     public Handler handler = new Handler() {
         public void handleMessage(Message msg) {
-            //Log.wtf("Test_msg",""+msg.what);
             switch (msg.what) {
                 case App.HANDLER_NEW_KOT:
                     kots = App.instance.getRefreshKots();
@@ -163,7 +162,6 @@ public class KitchenOrder extends BaseActivity {
                     refresh();
                     break;
                 case App.HANDLER_RECONNECT_POS:
-                    //Log.wtf("Test_", "reconnect_3");
                     loadingDialog.dismiss();
                     DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
                             getString(R.string.cancel), getString(R.string.ok), null,
@@ -373,7 +371,6 @@ public class KitchenOrder extends BaseActivity {
                         }
                     });
                 case App.HANDLER_RELOAD_KOT:
-                    //Log.wtf("test_","reload_kot");
                     App.instance.reload(context, handler);
                     break;
                 default:
@@ -395,7 +392,6 @@ public class KitchenOrder extends BaseActivity {
             loadingDialog.dismiss();
         }
         List<Kot> kots = App.instance.getRefreshKots();
-        //Log.wtf("Test_refresh",""+kots.size());
         if (App.instance.getSystemSettings().isKdsLan()) {
             madapter.setKots(getKotItem(kots));
             madapter.notifyDataSetChanged();

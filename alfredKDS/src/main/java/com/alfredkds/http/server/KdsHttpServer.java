@@ -106,7 +106,6 @@ public class KdsHttpServer extends AlfredHttpServer {
             if (action.equals(ParamConst.JOB_TRANSFER_KOT)) {
                 fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
                 if (fromKotSummary != null) {
-                    //Log.wtf("test_","kotupdate_6");
                     KotSummarySQL.update(fromKotSummary);
                 } else {
                     resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.transfer_table_failed));
@@ -119,7 +118,6 @@ public class KdsHttpServer extends AlfredHttpServer {
                 toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
                 fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
                 List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
-                //Log.wtf("test_","kotupdate_7");
                 KotSummarySQL.update(toKotSummary);
                 if (fromKotSummary != null) {
                     for (int i = 0; i < kotItemDetails.size(); i++) {
@@ -148,7 +146,6 @@ public class KdsHttpServer extends AlfredHttpServer {
             Gson gson = new Gson();
             KotSummary kotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
             if (kotSummary != null) {
-                //Log.wtf("test_","kotupdate_8");
                 KotSummarySQL.update(kotSummary);
             }
             KotItemDetail kotItemDetail = gson.fromJson(jsonObject.optString("tansferKotItem"), KotItemDetail.class);
@@ -204,7 +201,6 @@ public class KdsHttpServer extends AlfredHttpServer {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        //Log.wtf("test_","kotupdate_9");
                         KotSummarySQL.update(kotSummary);
                         if (kotItemDetails != null) {
                             KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -233,7 +229,6 @@ public class KdsHttpServer extends AlfredHttpServer {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        //Log.wtf("test_","kotupdate_10");
                         KotSummarySQL.update(kotSummary);
                         if (kotItemModifiers != null) {
                             KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);

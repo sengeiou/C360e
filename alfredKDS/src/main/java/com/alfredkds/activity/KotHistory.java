@@ -81,7 +81,6 @@ public class KotHistory extends BaseActivity {
                     refresh();
                     break;
                 case HANDLER_RECONNECT_POS:
-                    //Log.wtf("Test_","reconnect_2");
                     loadingDialog.dismiss();
                     DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
                             getString(R.string.cancel), getString(R.string.ok), null,
@@ -215,7 +214,6 @@ public class KotHistory extends BaseActivity {
                 public void onClick(View v) {
                     loadingDialog.show();
                     kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
-                    //Log.wtf("test_","kotupdate_4");
                     KotSummarySQL.update(kotSummary);
                     kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
                     KotItemDetailSQL.update(kotItemDetail);
@@ -223,7 +221,6 @@ public class KotHistory extends BaseActivity {
                     parameters.put("kotSummary", kotSummary);
                     parameters.put("kotItemDetail", kotItemDetail);
 
-                    //Log.wtf("Test_","cancel");
                     SyncCentre.getInstance().cancelComplete(context,
                             App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId()), parameters, handler);
                     adapter.setKotHistory(App.instance.getKotHistoryData());

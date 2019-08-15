@@ -2167,7 +2167,6 @@ public class ObjectFactory {
                 kotSummary.setTableName(tableName);
             }
             kotSummary.setIsTakeAway(order.getIsTakeAway());
-            //Log.wtf("test_","kotupdate_1");
             KotSummarySQL.update(kotSummary);
         }
         return kotSummary;
@@ -2222,7 +2221,6 @@ public class ObjectFactory {
                 kotSummary.setTableName(tableName);
             }
             kotSummary.setIsTakeAway(order.getIsTakeAway());
-            //Log.wtf("test_","kotupdate_2");
             KotSummarySQL.update(kotSummary);
         }
         return kotSummary;
@@ -2269,7 +2267,6 @@ public class ObjectFactory {
                 kotSummary.setRevenueCenterIndex(revenueCenter.getIndexId());
                 kotSummary.setOrderRemark(order.getOrderRemark());
                 kotSummary.setNumTag(order.getNumTag());
-                //Log.wtf("test_","kotupdate_3");
                 KotSummarySQL.update(kotSummary);
             }
         }

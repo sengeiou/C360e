@@ -116,7 +116,6 @@ public class HttpAnalysis {
                     if (!flag) {
                         kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
                     }
-                    //Log.wtf("test_", "kotupdate_5");
                     KotSummarySQL.update(kotSummary);
                 }
 

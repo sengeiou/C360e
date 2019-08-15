@@ -3,10 +3,7 @@ package com.alfredposclient.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.ActivityManager;
-import android.app.AlarmManager;
 import android.app.DownloadManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,8 +45,8 @@ import com.alfredbase.javabean.MultiReportRelation;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PrinterTitle;
-import com.alfredbase.javabean.Promotion;
 import com.alfredbase.javabean.ReportDayPayment;
+import com.alfredbase.javabean.ReportDayPromotion;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.ReportHourly;
@@ -56,7 +54,6 @@ import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.Restaurant;
-import com.alfredbase.javabean.ReportDayPromotion;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.TableInfo;
@@ -78,8 +75,6 @@ import com.alfredbase.store.sql.MultiReportRelationSQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
-import com.alfredbase.store.sql.PlaceInfoSQL;
-import com.alfredbase.store.sql.PromotionSQL;
 import com.alfredbase.store.sql.ReportDayPaymentSQL;
 import com.alfredbase.store.sql.ReportDaySalesSQL;
 import com.alfredbase.store.sql.ReportDayTaxSQL;
@@ -113,12 +108,12 @@ import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.alfredposclient.utils.AlertToDeviceSetting;
-import com.alfredposclient.utils.AlfredRootCmdUtil;
-import com.alfredposclient.utils.NetworkUtils;
 import com.alfredposclient.utils.SessionImageUtils;
 import com.alfredposclient.view.SettingView;
 import com.floatwindow.float_lib.FloatActionController;
 import com.google.gson.Gson;
+import com.moonearly.model.UdpMsg;
+import com.moonearly.utils.service.UdpServiceCallBack;
 import com.tencent.bugly.crashreport.BuglyLog;
 import com.umeng.analytics.MobclickAgent;
 
@@ -192,7 +187,6 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
     private int size;
     private Observable<Integer> observable;
     private Observable<Object> observable1;
-    private Observable<Object> observable2;
     private VerifyDialog verifyDialog;
     private static final int OVERLAY_PERMISSION_REQ_CODE = 0x001;
     int train;
@@ -259,7 +253,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         super.initView();
         setContentView(R.layout.activity_open_restaruant);
         train = SharedPreferencesHelper.getInt(context, SharedPreferencesHelper.TRAINING_MODE);
-		BH.initFormart( App.instance.getLocalRestaurantConfig().getFormatType(),App.instance.getLocalRestaurantConfig().getCurrencySymbol());
+        BH.initFormart(App.instance.getLocalRestaurantConfig().getFormatType(), App.instance.getLocalRestaurantConfig().getCurrencySymbol());
         ButtonClickTimer.canClick();
         initDrawerLayout();
         verifyDialog = new VerifyDialog(context, handler);
@@ -479,8 +473,15 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         });
         // 系统初始化工作
         App.instance.startHttpServer();
-        App.instance.startUDPService(App.UDP_INDEX_POS, App.instance.getRevenueCenter().getRevName()
-                , null);
+
+
+
+        App.instance.startUDPService(App.UDP_INDEX_POS, App.instance.getRevenueCenter().getRevName(), new UdpServiceCallBack() {
+            @Override
+            public void callBack(final UdpMsg udpMsg) {
+                RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
+            }
+        });
         observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
             @Override
@@ -511,6 +512,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
                     verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER, null);
             }
         });
+
         downManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         IntentFilter downFilter = new IntentFilter();
         downFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
@@ -829,36 +831,36 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
     /* close session */
     private void close(final String actual) {
 
-        int timely=Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
+        int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
 //		if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
 //
 //			UIHelp.showShortToast(context, context.getResources().getString(R.string.network_connected));
 //
 //		}
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		final SessionStatus sessionStatus = Store.getObject(
-				context, Store.SESSION_STATUS, SessionStatus.class);
-		final long bizDate = App.instance.getBusinessDate().longValue();
-		final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        final SessionStatus sessionStatus = Store.getObject(
+                context, Store.SESSION_STATUS, SessionStatus.class);
+        final long bizDate = App.instance.getBusinessDate().longValue();
+        final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 
-		parameters.put("session",
-				Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
-		SyncCentre.getInstance().sendSessionClose(context, parameters);
-		if(size == 4){
-			iv_lunch_session_icon.setOnTouchListener(this);
-			iv_breakfast_session_icon.setOnTouchListener(this);
-			iv_dinner_session_icon.setOnTouchListener(this);
-			iv_supper_session_icon.setOnTouchListener(this);
-		} else {
-			iv_lunch_icon.setOnTouchListener(this);
-			iv_breakfast_icon.setOnTouchListener(this);
-			iv_dinner_icon.setOnTouchListener(this);
-		}
-		// remove jobs on KOTJobManager
-		App.instance.getKdsJobManager().clear();
-		mSettingView.initOptionsNoSessionOpen();
+        parameters.put("session",
+                Store.getObject(context, Store.SESSION_STATUS, SessionStatus.class));
+        SyncCentre.getInstance().sendSessionClose(context, parameters);
+        if (size == 4) {
+            iv_lunch_session_icon.setOnTouchListener(this);
+            iv_breakfast_session_icon.setOnTouchListener(this);
+            iv_dinner_session_icon.setOnTouchListener(this);
+            iv_supper_session_icon.setOnTouchListener(this);
+        } else {
+            iv_lunch_icon.setOnTouchListener(this);
+            iv_breakfast_icon.setOnTouchListener(this);
+            iv_dinner_icon.setOnTouchListener(this);
+        }
+        // remove jobs on KOTJobManager
+        App.instance.getKdsJobManager().clear();
+        mSettingView.initOptionsNoSessionOpen();
 
-		//when close session, we need save sales data
+        //when close session, we need save sales data
 //		final PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 //				context);
 //		printerLoadingDialog.setTitle(context.getResources().getString(R.string.save_print_sales));
@@ -1223,8 +1225,8 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         ArrayList<ReportDayTax> reportDayTaxs = (ArrayList<ReportDayTax>) xReport.get("reportDayTaxs");
         List<ReportDayPayment> reportDayPayments = (List<ReportDayPayment>) xReport.get("reportDayPayments");
         ArrayList<ReportPluDayItem> reportPluDayItems = (ArrayList<ReportPluDayItem>) xReport.get("reportPluDayItems");
-		ArrayList<ReportDayPromotion> reportDayPromotions = (ArrayList<ReportDayPromotion>) xReport.get("reportDayPromotions");
-	//	ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
+        ArrayList<ReportDayPromotion> reportDayPromotions = (ArrayList<ReportDayPromotion>) xReport.get("reportDayPromotions");
+        //	ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
         //add to filter ENT and VOID item in PLU items
 //		ArrayList<ReportPluDayItem> filteredPluDayItems = ReportObjectFactory
 //			.getInstance().getPLUItemWithoutVoidEnt(reportPluDayItems);
@@ -1255,7 +1257,7 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
                 title, reportDaySales, reportDayTaxs, reportDayPayments, ReportObjectFactory.getInstance().loadXReportUserOpenDrawerbySessionStatus(businessDate, sessionStatus), null);
 
-        if(reportDayPromotions !=null&& reportDayPromotions.size()>0){
+        if (reportDayPromotions != null && reportDayPromotions.size() > 0) {
             App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
                     reportDayPromotions);
         }
@@ -1301,32 +1303,32 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //				reportPluDayComboModifiers);
     }
 
-	private void sendPrintData(long businessDate, String reportType) {
-		ReportDaySales reportDaySales = ReportObjectFactory.getInstance()
-				.loadReportDaySales(businessDate);
-		if (reportDaySales == null) {
-			handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
-			return;
-		}
-		String bizDate = TimeUtil.getPrintingDate(businessDate);
-		List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory
-				.getInstance().loadReportDayTax(businessDate);
-		LoginResult loginResult = CoreData.getInstance().getLoginResult();
-		List<ReportDayTax> reportDayTaxs = ReportObjectFactory
-				.getInstance().loadReportDayTax(businessDate);
-		List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
-		ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory
-				.getInstance().loadReportPluDayItem(businessDate);
-		Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(businessDate);
-		ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
+    private void sendPrintData(long businessDate, String reportType) {
+        ReportDaySales reportDaySales = ReportObjectFactory.getInstance()
+                .loadReportDaySales(businessDate);
+        if (reportDaySales == null) {
+            handler.sendMessage(handler.obtainMessage(PROGRESS_PRINT_Z_END, null));
+            return;
+        }
+        String bizDate = TimeUtil.getPrintingDate(businessDate);
+        List<ReportDayTax> reportSvgDayTaxs = ReportObjectFactory
+                .getInstance().loadReportDayTax(businessDate);
+        LoginResult loginResult = CoreData.getInstance().getLoginResult();
+        List<ReportDayTax> reportDayTaxs = ReportObjectFactory
+                .getInstance().loadReportDayTax(businessDate);
+        List<ReportDayPayment> reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
+        ArrayList<ReportPluDayItem> reportPluDayItems = ReportObjectFactory
+                .getInstance().loadReportPluDayItem(businessDate);
+        Map<String, Object> map = ReportObjectFactory.getInstance().loadReportPluDayModifierInfo(businessDate);
+        ArrayList<ReportPluDayModifier> reportPluDayModifiers = (ArrayList<ReportPluDayModifier>) map.get("reportPluDayModifiers");
 
-		ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
+        ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) map.get("reportPluDayComboModifiers");
         ArrayList<ReportDayPromotion> reportDayPromotions = ReportObjectFactory.getInstance()
                 .loadReportPromotions(businessDate);
 
-     //   ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
-		ArrayList<ReportHourly> reportHourlys = ReportObjectFactory
-				.getInstance().loadReportHourlys(businessDate);
+        //   ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
+        ArrayList<ReportHourly> reportHourlys = ReportObjectFactory
+                .getInstance().loadReportHourlys(businessDate);
 
 
 //		List<ReportVoidItem> reportVoidItems = ReportObjectFactory
@@ -1349,12 +1351,12 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
         PrinterDevice cashierPrinter = App.instance.getCahierPrinter();
 
-		// sales report
-		App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
-				title, reportDaySales, reportDayTaxs, reportDayPayments,
-				ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
-				reportSessionSalesList);
-		if(reportDayPromotions !=null&& reportDayPromotions.size()>0){
+        // sales report
+        App.instance.remotePrintDaySalesReport(reportType, cashierPrinter,
+                title, reportDaySales, reportDayTaxs, reportDayPayments,
+                ReportObjectFactory.getInstance().loadReportUserOpenDrawerbyBusinessDate(businessDate),
+                reportSessionSalesList);
+        if (reportDayPromotions != null && reportDayPromotions.size() > 0) {
             App.instance.remotePrintPromotionReport(reportType, cashierPrinter, title,
                     reportDayPromotions);
         }
@@ -2242,13 +2244,13 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         }
     }
 
-	@Override
-	protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    protected void onActivityResult(int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-		if (resultCode == RESULT_OK) {
-			switch (requestCode) {
-				case OVERLAY_PERMISSION_REQ_CODE:
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case OVERLAY_PERMISSION_REQ_CODE:
 //					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 //						if (!Settings.canDrawOverlays(this)) {
 //							Toast.makeText(OpenRestaruant.this, "权限授予失败，无法开启悬浮窗", Toast.LENGTH_SHORT).show();
@@ -2256,31 +2258,32 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 //							// TODO: 18/1/7 已经授权
 //						}
 //					}
-					break;
-			}
-		}
-		BaseApplication.postHandler.postDelayed(new Runnable() {
+                    break;
+            }
+        }
+        BaseApplication.postHandler.postDelayed(new Runnable() {
 
-			@Override
-			public void run() {
-				if (mDrawerLayout.isDrawerOpen(mSettingView)) {
-					mDrawerLayout.closeDrawer(Gravity.END);
-					if(resultCode == RESULT_OK){
-						if(data.getBooleanExtra("refreshSession", false))
-							initView();
-					}
-				}
-			}
-		}, 500);
+            @Override
+            public void run() {
+                if (mDrawerLayout.isDrawerOpen(mSettingView)) {
+                    mDrawerLayout.closeDrawer(Gravity.END);
+                    if (resultCode == RESULT_OK) {
+                        if (data.getBooleanExtra("refreshSession", false))
+                            initView();
+                    }
+                }
+            }
+        }, 500);
 
-	}
-	@Override
-	public void onBackPressed() {
-	    if (doubleBackToExitPressedOnce) {
-			FloatActionController.getInstance().stopMonkServer(context);
-	        super.onBackPressed();
-	        return;
-	    }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            FloatActionController.getInstance().stopMonkServer(context);
+            super.onBackPressed();
+            return;
+        }
 
         this.doubleBackToExitPressedOnce = true;
         UIHelp.showToast(this, context.getResources().getString(R.string.exit_program));
@@ -2288,16 +2291,16 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
 
         BaseApplication.postHandler.postDelayed(new Runnable() {
 
-	        @Override
-	        public void run() {
-	            doubleBackToExitPressedOnce=false;
-	        }
-	    }, 2000);
-	}
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+    }
 
-	private void dismissPrinterLoadingDialog(){
-		if(zPrinterLoadingDialog != null && zPrinterLoadingDialog.isShowing()){
-			zPrinterLoadingDialog.dismiss();
-		}
-	}
+    private void dismissPrinterLoadingDialog() {
+        if (zPrinterLoadingDialog != null && zPrinterLoadingDialog.isShowing()) {
+            zPrinterLoadingDialog.dismiss();
+        }
+    }
 }

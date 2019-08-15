@@ -371,7 +371,6 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 @Override
                 public void onClick(View v) {
                     kot.getKotSummary().setStatus(ParamConst.KOTS_STATUS_DONE);
-                    //Log.wtf("test_","kotupdate_11");
                     KotSummarySQL.update(kot.getKotSummary());
                     KOTView.this.dismissKot();
                 }

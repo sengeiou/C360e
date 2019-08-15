@@ -24,7 +24,9 @@ import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.model.RVCDevice;
 import com.alfredbase.javabean.model.WaiterDevice;
+import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.utils.BarcodeUtil;
 import com.alfredbase.utils.CommonUtil;
@@ -42,7 +44,6 @@ import com.alfredposclient.popupwindow.SelectPrintWindow;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.moonearly.model.UdpMsg;
-import com.moonearly.utils.service.UdpServiceCallBack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +73,8 @@ public class DevicesActivity extends BaseActivity {
     //打印机
 
     private LinearLayout devices_rvc_lyt;
-    private List<PrinterDevice> RvcDevices = new ArrayList<PrinterDevice>();
+    private List<String> rvcIds = new ArrayList<String>();
+    private List<PrinterDevice> rvcDevices = new ArrayList<PrinterDevice>();
 
     private LinearLayout devices_printe_lyt;
     //KDS
@@ -94,45 +96,23 @@ public class DevicesActivity extends BaseActivity {
     private int selectedViewId;
     private SelectPrintWindow selectPrintWindow;
     private int dex = 0;
-    private Observable<UdpMsg> observable;
+    private Observable<UdpMsg> observable2;
 
     Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
 
-    List<UdpMsg> udpMsgList = new ArrayList<>();
 
     @Override
     protected void initView() {
         super.initView();
         setContentView(R.layout.devices_layout);
+
         map.clear();
 
-        observable = RxBus.getInstance().register(RxBus.RECEIVE_IP_ACTION);
-        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
-            @Override
-            public void call(UdpMsg udpMsg) {
-                for (UdpMsg udpMsg1 : udpMsgList) {
-                    Log.wtf("Test_udpmsg", new Gson().toJson(udpMsg1));
-                    if (udpMsg1.getIp().equals(udpMsg.getIp())) {
-                        return;
-                    }
-                }
-                MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
-                if (!(udpMsg.getIp().equals(mainPosInfo.getIP()) && udpMsg.getName().equals(mainPosInfo.getName()))) {
-                    udpMsgList.add(udpMsg);
-                }
-            }
-        });
-        App.instance.startUDPService(App.UDP_INDEX_POS, App.instance.getRevenueCenter().getRevName(), new UdpServiceCallBack() {
-            @Override
-            public void callBack(final UdpMsg udpMsg) {
-                RxBus.getInstance().post("RECEIVE_IP_ACTION", udpMsg);
-            }
-        });
-        App.instance.searchRevenueIp();
 
         initUI();
         initData();
         //  new MyThread().start();
+
 
     }
 
@@ -390,15 +370,77 @@ public class DevicesActivity extends BaseActivity {
         }
 
         if (selectedViewId == R.id.devices_rvc_lyt) {
-            if (adapter != null) {
-                adapter.setList(RvcDevices, 2);
-            } else {
-                adapter = new DevicesAdapter(DevicesActivity.this, RvcDevices, handler);
-                devices_customlistview.setAdapter(adapter);
-            }
+            callRvc();
         }
 
 
+    }
+
+    private void callRvc() {
+        hv_printer_group.setVisibility(View.GONE);
+
+        rvcIds.clear();
+        rvcDevices.clear();
+        LocalDeviceSQL.deleteAllLocalDeviceByDeviceType(ParamConst.DEVICE_TYPE_MAIN_POS);
+        App.instance.removeRVCDevices();
+
+        if (adapter != null) {
+            adapter.setList(rvcDevices, 2);
+        } else {
+            adapter = new DevicesAdapter(DevicesActivity.this, rvcDevices, handler);
+            devices_customlistview.setAdapter(adapter);
+        }
+        observable2 = RxBus.getInstance().register("RECEIVE_IP_ACTION");
+        observable2.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
+            @Override
+            public void call(UdpMsg device) {
+                if (device != null) {
+                    MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
+                    if (!mainPosInfo.getIP().equals(device.getIp())) {
+                        if (!(device.getName().toLowerCase().equals("kds")
+                                || device.getName().toLowerCase().equals("printer")
+                                || device.getName().toLowerCase().equals("waiter"))) {
+
+                            String[] splitIp = device.getIp().split("\\.");
+                            int lastId = 0;
+                            try {
+                                lastId = Integer.parseInt(splitIp[splitIp.length - 1]);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            PrinterDevice printerDevice = new PrinterDevice();
+                            printerDevice.setDevice_id(lastId);
+                            printerDevice.setModel(device.getName());
+                            printerDevice.setName(device.getName());
+                            printerDevice.setIP(device.getIp());
+                            printerDevice.setType("1");
+                            String rvcId = device.getIp() + "" + device.getName();
+                            if (!rvcIds.contains(rvcId)) {
+                                rvcIds.add(rvcId);
+                                rvcDevices.add(printerDevice);
+                                App.instance.addRVCDevice(new RVCDevice(device));
+
+                                LocalDevice localDevice = ObjectFactory
+                                        .getInstance().getLocalDevice(device.getName(),
+                                                null,
+                                                ParamConst.DEVICE_TYPE_MAIN_POS,
+                                                lastId,
+                                                device.getIp(), "", device.getName(), 0);
+                                CoreData.getInstance().addLocalDevice(localDevice);
+
+                            }
+                        }
+                    }
+                }
+                if (adapter != null) {
+                    adapter.setList(rvcDevices, 2);
+                }
+            }
+        });
+
+
+        App.instance.searchRevenueIp();
     }
 
     private void unassignDevice(PrinterDevice device) {
@@ -458,37 +500,11 @@ public class DevicesActivity extends BaseActivity {
     }
 
     private void MViews(int id) {
-        Log.wtf("Test_x", "" + id + " " + R.id.devices_rvc_lyt);
         switch (id) {
             case R.id.devices_rvc_lyt:
-                Log.wtf("Test_","k1");
-                hv_printer_group.setVisibility(View.GONE);
-                if (map.size() > 0) {
-                    for (UdpMsg device : udpMsgList) {
-                        PrinterDevice printerDevice = new PrinterDevice();
-//                        printerDevice.setDevice_id(device.getDevice_id());
-                        printerDevice.setModel(device.getName());
-                        printerDevice.setName(device.getName());
-                        printerDevice.setIP(device.getIp());
-//                        printerDevice.setMac(device.getMac());
-
-                        if (device.getIp().indexOf(":") != -1) {
-                            printerDevice.setType("2");
-                        } else {
-                            printerDevice.setType("1");
-                        }
-                        RvcDevices.add(printerDevice);
-                    }
-                }
-                if (adapter != null) {
-                    adapter.setList(RvcDevices, 2);
-                } else {
-                    adapter = new DevicesAdapter(DevicesActivity.this, RvcDevices, handler);
-                    devices_customlistview.setAdapter(adapter);
-                }
+                callRvc();
                 break;
             case R.id.devices_printe_lyt:
-                Log.wtf("Test_","k2");
                 hv_printer_group.setVisibility(View.VISIBLE);
                 List<PrinterDevice> devices = new ArrayList<PrinterDevice>();
                 Map<Integer, List<PrinterDevice>> hash = App.instance.getMap();
@@ -780,8 +796,11 @@ public class DevicesActivity extends BaseActivity {
         super.onPause();
     }
 
+
     @Override
     protected void onDestroy() {
+        if (observable2 != null)
+            RxBus.getInstance().unregister("RECEIVE_IP_ACTION", observable2);
         App.instance.closeDiscovery();
         super.onDestroy();
     }

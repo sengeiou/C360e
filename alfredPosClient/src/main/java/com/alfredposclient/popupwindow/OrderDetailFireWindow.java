@@ -281,7 +281,6 @@ public class OrderDetailFireWindow implements OnClickListener {
 							OrderDetailSQL.updateOrderDetailFireStatus(1, orderDetail.getId().intValue());
 						}
 						if (!kotItemDetails.isEmpty()) {
-							//Log.wtf("test_","kotupdate_29");
 							KotSummarySQL.update(kotSummary);
 							if(!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()){
 								PrinterDevice printer = App.instance.getCahierPrinter();

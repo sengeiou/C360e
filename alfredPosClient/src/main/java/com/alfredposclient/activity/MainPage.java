@@ -856,7 +856,6 @@ public class MainPage extends BaseActivity {
                             .getAllPaymentSettlementByPaymentId(Integer.valueOf(paymentMap.get("paymentId")));
                     KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                     if (kotSummary != null) {
-                        //Log.wtf("test_","kotupdate_12");
                         kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
                         KotSummarySQL.update(kotSummary);
                     }
@@ -1114,7 +1113,6 @@ public class MainPage extends BaseActivity {
                                             kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
                                             KotItemDetailSQL.update(kotItemDetail);
                                         }
-                                        //Log.wtf("test_","kotupdate_13");
                                         kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
                                         KotSummarySQL.update(kotSummary);
                                     }
@@ -1149,6 +1147,8 @@ public class MainPage extends BaseActivity {
                                     .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
                         }
                     } else {
+                        Log.wtf("Test_size"," | "+App.instance.getRVCDevices().size());
+
                         DialogFactory.commonTwoBtnDialog(
                                 context,
                                 context.getResources().getString(R.string.table_transfer),
@@ -1179,6 +1179,8 @@ public class MainPage extends BaseActivity {
                                     .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
                         }
                     } else {
+                        Log.wtf("Test_size"," | "+App.instance.getRVCDevices().size());
+
                         DialogFactory.commonTwoBtnDialog(
                                 context,
                                 context.getResources().getString(R.string.table_transfer),
@@ -1222,7 +1224,6 @@ public class MainPage extends BaseActivity {
                                             kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
                                             KotItemDetailSQL.update(kotItemDetail);
                                         }
-                                        //Log.wtf("test_","kotupdate_14");
                                         kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
                                         KotSummarySQL.update(kotSummary);
                                     }
@@ -1297,7 +1298,6 @@ public class MainPage extends BaseActivity {
                                                                     .getRevenueCenter(),
                                                             App.instance
                                                                     .getBusinessDate());
-                                            //Log.wtf("test_","kotupdate_15");
                                             KotSummarySQL.update(toKotSummary);
                                         }
                                         KotSummary fromKotSummary = KotSummarySQL
@@ -1386,7 +1386,6 @@ public class MainPage extends BaseActivity {
                                                                 .getRevenueCenter(),
                                                         App.instance
                                                                 .getBusinessDate());
-                                        //Log.wtf("test_","kotupdate_16");
                                         KotSummarySQL.update(toKotSummary);
                                     }
                                     KotSummary fromKotSummary = KotSummarySQL
@@ -1905,7 +1904,6 @@ public class MainPage extends BaseActivity {
                         kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
 
                         kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
-                        //Log.wtf("test_","kotupdate_17");
                         KotSummarySQL.update(kotSummary);
                         KotItemDetailSQL.update(kotItemDetail);
                         ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();

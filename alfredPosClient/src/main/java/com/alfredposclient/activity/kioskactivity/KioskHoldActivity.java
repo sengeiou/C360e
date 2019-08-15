@@ -433,7 +433,6 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                         }
                     }
                 }
-                //Log.wtf("test_","kotupdate_18");
                 KotSummarySQL.update(kotSummary);
                 PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
                 final HashMap<String, String> map = new HashMap<String, String>();

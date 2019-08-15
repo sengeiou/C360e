@@ -149,7 +149,6 @@ public class Summary extends BaseActivity {
                         popItemAdapter.notifyDataSetChanged();
                     break;
                 case App.HANDLER_RECONNECT_POS:
-                    //Log.wtf("Test_","reconnect_1");
                     loadingDialog.dismiss();
                     DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
                             getString(R.string.cancel), getString(R.string.ok), null,

@@ -316,7 +316,6 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                     }
                                 }
                             }
-                            //Log.wtf("test_","kotupdate_33");
                             KotSummarySQL.update(kotSummary);
                             handler.sendEmptyMessage(MainPageKiosk.VIEW_EVENT_SHOW_CLOSE_ORDER_WINDOW);
 						/*

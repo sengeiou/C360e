@@ -402,7 +402,6 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                                     }
                                                 }
                                             }
-                                            //Log.wtf("test_","kotupdate_31");
                                             KotSummarySQL.update(kotSummary);
                                             PrinterTitle title = ObjectFactory.getInstance()
                                                     .getPrinterTitle(
@@ -657,7 +656,6 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                         }
                     }
                 }
-                //Log.wtf("test_","kotupdate_32");
                 KotSummarySQL.update(kotSummary);
                 PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
                 HashMap<String, String> map = new HashMap<String, String>();

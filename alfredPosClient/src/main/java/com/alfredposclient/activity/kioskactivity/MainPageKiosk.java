@@ -1194,7 +1194,6 @@ public class MainPageKiosk extends BaseActivity {
                                             kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
                                             KotItemDetailSQL.update(kotItemDetail);
                                         }
-                                        //Log.wtf("test_","kotupdate_19");
                                         kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
                                         KotSummarySQL.update(kotSummary);
                                     }
@@ -1306,7 +1305,6 @@ public class MainPageKiosk extends BaseActivity {
                                                                     .getRevenueCenter(),
                                                             App.instance
                                                                     .getBusinessDate());
-                                            //Log.wtf("test_","kotupdate_20");
                                             KotSummarySQL.update(toKotSummary);
                                         }
                                         KotSummary fromKotSummary = KotSummarySQL
@@ -1699,7 +1697,6 @@ public class MainPageKiosk extends BaseActivity {
                         kotItemDetail.setSpecialInstractions(orderDetail.getSpecialInstractions());
 
                         kotSummary.setIsTakeAway(currentOrder.getIsTakeAway());
-                        //Log.wtf("test_","kotupdate_21");
                         KotSummarySQL.update(kotSummary);
                         KotItemDetailSQL.update(kotItemDetail);
                         ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();

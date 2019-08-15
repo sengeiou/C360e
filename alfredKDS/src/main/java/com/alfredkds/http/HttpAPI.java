@@ -95,7 +95,6 @@ public class HttpAPI {
                         public void onSuccess(int statusCode, Header[] headers,
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            //Log.wtf("Test_result", new String(responseBody));
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS,
                                         HttpAnalysis.getPrinterList(statusCode, headers, responseBody)));
@@ -251,25 +250,20 @@ public class HttpAPI {
                         public void onSuccess(int statusCode, Header[] headers,
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            //Log.wtf("Test_complete", new String(responseBody));
                             if (resultCode == ResultCode.SUCCESS) {
                                 List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
                                 HttpAnalysis.getKotItemDetail(statusCode, headers, responseBody, handler);
                                 if (id >= 0) {
-                                    //Log.wtf("Test_", "t1");
                                     handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL, kotItemDetails));
                                 } else {
-                                    //Log.wtf("Test_", "t2");
                                     handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT, kotItemDetails));
                                 }
                             } else if (resultCode == ResultCode.USER_POS_TYPE) {
 
                                 diaLogTrain();
                             } else if (resultCode == ResultCode.USER_NO_PERMIT) {
-                                //Log.wtf("Test_", "t3");
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_RECONNECT_POS));
                             } else if (resultCode == ResultCode.KOT_COMPLETE_USER_FAILED) {
-                                //Log.wtf("Test_", "t4");
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_COMPLETE_USER_FAILED));
                             } else if (resultCode == ResultCode.KOT_COMPLETE_FAILED) {
                                 List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
@@ -282,14 +276,12 @@ public class HttpAPI {
                                     sqlKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
                                     KotItemDetailSQL.update(sqlKotItemDetail);
                                 }
-                                //Log.wtf("Test_", "t5");
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_RETURN_ERROR, resultCode));
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_RETURN_ERROR_SHOW, kotItemDetails));
                             } else if (resultCode == ResultCode.KOTSUMMARY_IS_UNREAL) {
                                 KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
                                 KotSummarySQL.deleteKotSummary(kotSummary);
                                 KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
-                                //Log.wtf("Test_", "t6");
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOTSUMMARY_IS_UNREAL));
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
@@ -311,7 +303,6 @@ public class HttpAPI {
                                 sqlKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
                                 KotItemDetailSQL.update(sqlKotItemDetail);
                             }
-                            //Log.wtf("Test_", "t7");
                             handler.sendMessage(handler.obtainMessage(App.HANDLER_SEND_FAILURE, kotItemDetails));
                             handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
                             super.onFailure(statusCode, headers, responseBody, error);

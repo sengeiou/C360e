@@ -215,8 +215,6 @@ public class KotJob extends Job {
                     context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
                 } else if (ParamConst.JOB_TRANSFER_KOT.equals(action)) {
                     KotSummary fromKotSummary = (KotSummary) data.get("fromKotSummary");
-                    //Log.wtf("test_","kotupdate_26");
-                    KotSummarySQL.update(fromKotSummary);
                     Order order = (Order) kotMap.get("fromOrder");
 //		    		OrderSQL.update(order);
                     context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE, order);

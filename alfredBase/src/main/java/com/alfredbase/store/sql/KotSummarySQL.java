@@ -134,7 +134,6 @@ public class KotSummarySQL {
     }
 
     public static ArrayList<KotSummary> getAllKotSummary() {
-        //Log.wtf("Test_", "kotsummary_get_all");
         ArrayList<KotSummary> result = new ArrayList<KotSummary>();
         String sql = "select * from " + TableNames.KotSummary + " order by id desc";
         Cursor cursor = null;

@@ -18,14 +18,15 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
 import com.floatwindow.float_lib.FloatActionController;
+import com.google.gson.Gson;
 import com.moonearly.utils.service.TcpUdpFactory;
 import com.moonearly.utils.service.UdpServiceCallBack;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -198,6 +199,7 @@ public class BaseApplication extends Application {
 //	}
 
     public void startUDPService(int index, String serviceName, UdpServiceCallBack udpServiceCallBack) {
+        Log.wtf("Test_", "tf : " + index + " " + serviceName + " " + new Gson().toJson(udpServiceCallBack));
         TcpUdpFactory.startUdpServer(index, serviceName, udpServiceCallBack);
     }
 

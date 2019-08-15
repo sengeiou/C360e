@@ -64,7 +64,6 @@ public class SelectRevenue extends BaseActivity {
             @Override
             public void call(UdpMsg udpMsg) {
                 for (UdpMsg udpMsg1 : udpMsgList) {
-                    Log.wtf("Test_udpmsg_kds", new Gson().toJson(udpMsg1));
                     if (udpMsg1.getIp().equals(udpMsg.getIp())) {
                         return;
                     }

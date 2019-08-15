@@ -672,7 +672,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                 }
                             }
                         }
-                        //Log.wtf("test_","kotupdate_23");
                         KotSummarySQL.update(kotSummary);
                         List<OrderDetail> orderDetailListR = OrderDetailSQL.getAllOrderDetailsByOrder(order);
                         List<OrderModifier> orderModifierListR = OrderModifierSQL.getAllOrderModifier(order);
@@ -1337,7 +1336,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
             return handlerLanguage(body);
         } else {
             String userKey = jsonObject.optString("userKey");
-            //Log.wtf("Test_userkey",""+userKey);
             if (TextUtils.isEmpty(userKey) || App.instance.getUserByKey(userKey) == null) {
                 Map<String, Object> result = new HashMap<String, Object>();
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
@@ -1537,14 +1535,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     result.put("revenue", revenueCenter);
                     result.put("resultCode", ResultCode.SUCCESS);
                 } else {
-                    //Log.wtf("Test_k","000");
                     result.put("resultCode", ResultCode.USER_NO_PERMIT);
                     result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
                     result.put("printers", null);
                 }
                 resp = this.getJsonResponse(new Gson().toJson(result));
             } else {
-                //Log.wtf("Test_k","001");
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
                 result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
                 resp = this.getJsonResponse(new Gson().toJson(result));
@@ -2055,7 +2051,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
                             KotItemDetailSQL.update(kotItemDetail);
                         }
                     kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
-                    //Log.wtf("test_","kotupdate_24");
                     KotSummarySQL.update(kotSummary);
                 }
 
@@ -2457,7 +2452,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
             orderMap.put("orderDetailIds", orderDetailIds);
             LogUtil.i(TAG, "3333333333333");
             if (!kotItemDetails.isEmpty()) {
-                //Log.wtf("test_","kotupdate_25");
                 KotSummarySQL.update(kotSummary);
                 if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
                     PrinterDevice printer = App.instance.getCahierPrinter();

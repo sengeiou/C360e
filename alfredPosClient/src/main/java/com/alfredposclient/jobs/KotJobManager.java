@@ -555,7 +555,6 @@ public class KotJobManager {
             context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
             printKotSummary = toKotSummary;
         } else if (ParamConst.JOB_TRANSFER_KOT.equals(transferAction)) {
-            //Log.wtf("test_","kotupdate_27");
             KotSummarySQL.update(fromKotSummary);
             Order order = (Order) orderMap.get("fromOrder");
 //			OrderSQL.update(order);
