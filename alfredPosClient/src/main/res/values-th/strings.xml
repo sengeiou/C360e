@@ -335,5 +335,15 @@
     <string name="turning_on_training_mode">เปิดโหมดการฝึกอบรม</string>
     <string name="turning_on_training_mode_desc">สำหรับผู้ใช้ครั้งแรกการตั้งค่าจะปรากฏขึ้นที่ด้านบน</string>
 
+    <string name="ok">ตกลง</string>
+    <string name="add">ขึ้น</string>
+    <string name="cancel">ยกเลิกมัน</string>
+    <string name="sign_in">การเข้า</string>
+    <string name="sync">ซิงค์</string>
+    <string name="waiting_list">กำลังรอรายการ</string>
+    <string name="queue">คิว</string>
+    <string name="assign_table">ตั้งค่า \nตาราง</string>
+    <string name="summary">ย่อ</string>
+
 
 </resources>

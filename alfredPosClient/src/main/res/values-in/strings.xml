@@ -335,4 +335,14 @@
     <string name="turning_on_training_mode">Mengaktifkan Mode Pelatihan</string>
     <string name="turning_on_training_mode_desc">Untuk Pengguna pertama kali, Pengaturan akan muncul pada muncul di atas</string>
 
+    <string name="ok">ok</string>
+    <string name="add">Tambah</string>
+    <string name="cancel">Batal</string>
+    <string name="sign_in">Masuk</string>
+    <string name="sync">Sync</string>
+    <string name="waiting_list">Daftar tunggu</string>
+    <string name="queue">antrian</string>
+    <string name="assign_table">Tetapkan \nMeja</string>
+    <string name="summary">Ringkasan</string>
+
 </resources>

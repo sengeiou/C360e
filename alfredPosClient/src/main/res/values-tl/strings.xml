@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">AlfredPosClient</string>
+    <string name="printer_app_name">AlfredRemotePrintService</string>
+
     <!--translate-->
     <string name="open_rest_tips">Bago buksan ang restaurant, pakitiyak na nakakonekta ang lahat ng device sa device na ito.</string>
     <string name="sync_tips">Ang aparatong ito ay hindi pa nasisiyahan sa iyong data ng restaurant sa Alfred Cloud. Mangyaring magbigay ng sumusunod na impormasyon ng account upang i-sync kasama ang Alfred Cloud</string>
@@ -334,6 +336,15 @@
     <string name="turning_on_training_mode">Pag-on sa Mode ng Pagsasanay</string>
     <string name="turning_on_training_mode_desc">Para sa mga unang beses na Gumagamit, ang mga setting ay pop up switch sa lilitaw sa tuktok</string>
 
+    <string name="ok">ok</string>
+    <string name="add">Idagdag</string>
+    <string name="cancel">Kanselahin ito</string>
+    <string name="sign_in">Ipasok</string>
+    <string name="sync">Pag-sync</string>
+    <string name="waiting_list">Listahan ng paghihintay</string>
+    <string name="queue">ang pila</string>
+    <string name="assign_table">Itakda\nTalahanayan</string>
+    <string name="summary">Buod</string>
 
 
 </resources>

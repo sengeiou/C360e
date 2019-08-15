@@ -341,8 +341,7 @@
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
     <string name="sign_in">Sign in</string>
-    <string name="sync">Sync   </string>
-
+    <string name="sync">Sync</string>
     <string name="waiting_list">Waiting List</string>
     <string name="queue">Queue</string>
     <string name="assign_table">Assign\nTable</string>

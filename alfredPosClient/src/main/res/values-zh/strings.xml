@@ -335,5 +335,13 @@
     <string name="turning_on_training_mode">开启训练模式</string>
     <string name="turning_on_training_mode_desc">对于初次使用的用户，设置将弹出开启显示在顶部</string>
 
-
+    <string name="ok">行</string>
+    <string name="add">更</string>
+    <string name="cancel">取消它</string>
+    <string name="sign_in">条目</string>
+    <string name="sync">同步</string>
+    <string name="waiting_list">等候名单</string>
+    <string name="queue">队列</string>
+    <string name="assign_table">设置\n表</string>
+    <string name="summary">摘要</string>
 </resources>
