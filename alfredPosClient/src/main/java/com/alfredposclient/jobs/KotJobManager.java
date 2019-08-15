@@ -1041,52 +1041,51 @@ public class KotJobManager {
                 Map<Integer, ArrayList<KotItemModifier>> modCombo = getComboModifiers(kotItemDetail, kotItemModifiers,
                         new HashMap<Integer, ArrayList<KotItemModifier>>());
 
-                List<Printer> printerList = new ArrayList<>();
+                Map<Integer, List<Printer>> mapPrinter = new HashMap<>();
 
                 for (Integer printerGroupId : modCombo.keySet()) {//get all printer from all group
-                    printerList.addAll(CoreData.getInstance().getPrintersInGroup(printerGroupId));
+                    mapPrinter.put(printerGroupId, CoreData.getInstance().getPrintersInGroup(printerGroupId));
                 }
 
-                for (Integer printerGroupId : modCombo.keySet()) {
-                    boolean isFound = false;
+                //region loop all kds to find the item
+                for (KDSTracking kdsTracking : kotSummaryLogs.kdsTrackingList) {
 
-                    for (KDSTracking kdsTracking : kotSummaryLogs.kdsTrackingList) {
+                    KDSDevice kdsDevice;
 
-                        KDSDevice kdsDevice;
+                    //region check the item is exists in the current kds
+                    for (KotItemDetail kid : kdsTracking.kotItemDetails) {
+                        if (kid.getId().equals(kotItemDetail.getId())) {
 
-                        //region check the item is exists in the current kds
-                        for (KotItemDetail kid : kdsTracking.kotItemDetails) {
-                            if (kid.getId().equals(kotItemDetail.getId())) {
+                            kdsDevice = kdsTracking.kdsDevice;//found kds position of item
 
-                                kdsDevice = kdsTracking.kdsDevice;//found kds position of item
-
-                                //region check position and status kds
-                                for (Printer printer : printerList) {
+                            //region check position and status kds
+                            boolean isPrinterFound = false;
+                            for (Map.Entry<Integer, List<Printer>> map : mapPrinter.entrySet()) {
+                                for (Printer printer : map.getValue()) {
                                     //make sure the printer assigned in the item
                                     if (printer.getId().equals(kdsDevice.getDevice_id())) {
 
-                                        Printer nextPrinter = getNextPrinter(printerGroupId, printer.getId());
+                                        Printer nextPrinter = getNextPrinter(map.getKey(), printer.getId());
 
                                         if (nextPrinter != null)
                                             printer.isShowNext = nextPrinter.isShowNext;
 
                                         printers.add(printer);
+
+                                        isPrinterFound = true;
                                         break;
                                     }
                                 }
-                                //endregion
-
-                                isFound = true;
-                                break;
+                                if (isPrinterFound) break;
                             }
-                        }
-                        //endregion
+                            //endregion
 
-                        if (isFound) {
-                            break; //continue to next item
+                            break;
                         }
                     }
+                    //endregion
                 }
+                //endregion
                 //endregion
 
             } else {
@@ -1110,7 +1109,7 @@ public class KotJobManager {
                                 //make sure the printer assigned in the item
                                 if (printer.getId().equals(kdsDevice.getDevice_id())) {
 
-                                    Printer nextPrinter = getNextPrinter(kid.getPrinterGroupId(), printer.getId());
+                                    Printer nextPrinter = getNextPrinter(kotItemDetail.getPrinterGroupId(), printer.getId());
 
                                     if (nextPrinter != null)
                                         printer.isShowNext = nextPrinter.isShowNext;
@@ -1323,6 +1322,10 @@ public class KotJobManager {
         ArrayList<Printer> printers = new ArrayList<>();
         KotSummaryLog kotSummaryLogs = new Gson().fromJson(fromKotSummary.getKotSummaryLog(), KotSummaryLog.class);
 
+        if (TextUtils.isEmpty(toKotSummary.getKotSummaryLog())) {
+            toKotSummary.setKotSummaryLog(new Gson().toJson(kotSummaryLogs));
+        }
+
         //transfer only one item
         int toCount = toKotSummary.getOrderDetailCount();
         int fromCount = fromKotSummary.getOrderDetailCount();
@@ -1468,58 +1471,62 @@ public class KotJobManager {
             Map<Integer, ArrayList<KotItemModifier>> modCombo = getComboModifiers(kotItemDetail, kotItemModifiers,
                     new HashMap<Integer, ArrayList<KotItemModifier>>());
 
-            List<Printer> printerList = new ArrayList<>();
+            Map<Integer, List<Printer>> mapPrinter = new HashMap<>();
 
             for (Map.Entry<Integer, ArrayList<KotItemModifier>> map : modCombo.entrySet()) {//get all printer from all group
-                printerList.addAll(CoreData.getInstance().getPrintersInGroup(map.getKey()));
+                mapPrinter.put(map.getKey(), CoreData.getInstance().getPrintersInGroup(map.getKey()));
 
                 toCount += map.getValue().size();
                 fromCount -= map.getValue().size();
             }
-
-            boolean isFound = false;
 
             for (KDSTracking kdsTracking : kotSummaryLogs.kdsTrackingList) {
 
                 KDSDevice kdsDevice;
 
                 //region check the item is exists in the current kds
+                boolean isPrinterFound = false;
                 for (KotItemDetail kid : kdsTracking.kotItemDetails) {
                     if (kid.getId().equals(kotItemDetail.getId())) {
 
                         kdsDevice = kdsTracking.kdsDevice;//found kds position of item
 
                         //region check position and status kds
-                        for (Printer printer : printerList) {
-                            //make sure the printer assigned in the item
-                            if (printer.getId().equals(kdsDevice.getDevice_id())) {
+                        for (Map.Entry<Integer, List<Printer>> map : mapPrinter.entrySet()) {
+                            for (Printer printer : map.getValue()) {
+                                //make sure the printer assigned in the item
+                                if (printer.getId().equals(kdsDevice.getDevice_id())) {
 
-                                Printer nextPrinter = getNextPrinter(kid.getPrinterGroupId(), printer.getId());
+                                    Printer nextPrinter = getNextPrinter(map.getKey(), printer.getId());
 
-                                if (nextPrinter != null)
-                                    printer.isShowNext = nextPrinter.isShowNext;
+                                    if (nextPrinter != null)
+                                        printer.isShowNext = nextPrinter.isShowNext;
 
-                                printers.add(printer);
-                                break;
+                                    printers.add(printer);
+
+                                    isPrinterFound = true;
+                                    break;
+                                }
                             }
+
+                            if (isPrinterFound) break;
                         }
                         //endregion
-
-                        isFound = true;
                         break;
                     }
                 }
                 //endregion
-
-                if (isFound) {
-                    break; //continue to next item
-                }
             }
+
             //endregion
 
         } else {
 
             //region item normal
+            //transfer only one item
+            toCount += 1;
+            fromCount -= 1;
+
             for (KDSTracking kdsTracking : kotSummaryLogs.kdsTrackingList) {
 
                 KDSDevice kdsDevice = null;
@@ -1538,7 +1545,7 @@ public class KotJobManager {
                             //make sure the printer assigned in the item
                             if (printer.getId().equals(kdsDevice.getDevice_id())) {
 
-                                Printer nextPrinter = getNextPrinter(kid.getPrinterGroupId(), printer.getId());
+                                Printer nextPrinter = getNextPrinter(kotItemDetail.getPrinterGroupId(), printer.getId());
 
                                 if (nextPrinter != null)
                                     printer.isShowNext = nextPrinter.isShowNext;
