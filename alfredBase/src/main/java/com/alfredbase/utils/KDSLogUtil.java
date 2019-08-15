@@ -77,11 +77,39 @@ public class KDSLogUtil {
     }
 
     public static String putLog(String kotSummaryLogStr, List<KotItemDetail> kotItemDetails, KDSDevice kdsDevice) {
-        KotSummaryLog kotSummaryLog = new Gson().fromJson(kotSummaryLogStr, KotSummaryLog.class);
+        Gson gson = new Gson();
+        KotSummaryLog kotSummaryLog = gson.fromJson(kotSummaryLogStr, KotSummaryLog.class);
         KDSHistory kdsHistory = getKdsHistory(kotSummaryLog.kdsHistoryList, kdsDevice.getDevice_id());
         KDSTracking kdsTracking = getKdsTracking(kotSummaryLog.kdsTrackingList, kdsDevice.getDevice_id());
 
-        return "";
+        if (kdsHistory != null) {
+            kdsHistory.kotItemDetails.addAll(kotItemDetails);
+        }
+
+        if (kdsTracking != null) {
+            kdsTracking.kotItemDetails.addAll(kotItemDetails);
+        }
+
+        return gson.toJson(kotSummaryLog);
+    }
+
+    public static String removeLog(String kotSummaryLogStr, List<KotItemDetail> kotItemDetails, KDSDevice kdsDevice) {
+        Gson gson = new Gson();
+        KotSummaryLog kotSummaryLog = gson.fromJson(kotSummaryLogStr, KotSummaryLog.class);
+        KDSTracking kdsTracking = getKdsTracking(kotSummaryLog.kdsTrackingList, kdsDevice.getDevice_id());
+
+        if (kdsTracking != null) {
+            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                for (KotItemDetail kid : kdsTracking.kotItemDetails) {
+                    if (kotItemDetail.getId().equals(kid.getId())) {
+                        kdsTracking.kotItemDetails.remove(kid);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return gson.toJson(kotSummaryLog);
     }
 
     private static KDSHistory getKdsHistory(List<KDSHistory> kdsHistoryList, int id) {

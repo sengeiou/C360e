@@ -282,7 +282,7 @@ public class CoreData {
                 if (pt == null) continue;
                 if (pt.getPrinterUsageType() == Printer.KDS_SUMMARY)
                     summaryPrinter.add(pt);
-                else if (pt.getPrinterUsageType() == Printer.KDS_SUMMARY)
+                else if (pt.getPrinterUsageType() == Printer.KDS_EXPEDITER)
                     expediterPrinter.add(pt);
                 else
                     result.add(pt);

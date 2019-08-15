@@ -153,7 +153,7 @@ public class HTTPKDSRequest {
     }
 
     public static void updateOrderCount(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
-                                                 SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+                                        SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
 
         parameters.put("mainpos", App.instance.getMainPosInfo());
 
@@ -251,7 +251,7 @@ public class HTTPKDSRequest {
                                     kotSummary.setKotSummaryLog(kotSummaryLocal.getKotSummaryLog());
                                 }
 
-                                kotSummary.setKotSummaryLog(KDSLogUtil.putKdsLog(kotSummary, kotItemDetailsCopy, kds));
+                                kotSummary.setKotSummaryLog(KDSLogUtil.putLog(kotSummary.getKotSummaryLog(), kotItemDetailsCopy, kds));
                                 KotSummarySQL.updateKotSummaryLog(kotSummary);
 
                                 sendKOTToSummaryKDS(kotSummary);
