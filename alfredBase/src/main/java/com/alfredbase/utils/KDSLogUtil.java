@@ -76,6 +76,32 @@ public class KDSLogUtil {
         return createLogs(kotSummaryLogs, kotSummaryLog);
     }
 
+    public static String putLog(String kotSummaryLogStr, List<KotItemDetail> kotItemDetails, KDSDevice kdsDevice) {
+        KotSummaryLog kotSummaryLog = new Gson().fromJson(kotSummaryLogStr, KotSummaryLog.class);
+        KDSHistory kdsHistory = getKdsHistory(kotSummaryLog.kdsHistoryList, kdsDevice.getDevice_id());
+        KDSTracking kdsTracking = getKdsTracking(kotSummaryLog.kdsTrackingList, kdsDevice.getDevice_id());
+
+        return "";
+    }
+
+    private static KDSHistory getKdsHistory(List<KDSHistory> kdsHistoryList, int id) {
+        for (KDSHistory kdsHistory : kdsHistoryList) {
+            if (kdsHistory.kdsDevice.getDevice_id() == id)
+                return kdsHistory;
+        }
+
+        return null;
+    }
+
+    private static KDSTracking getKdsTracking(List<KDSTracking> kdsTrackingList, int id) {
+        for (KDSTracking kdsTracking : kdsTrackingList) {
+            if (kdsTracking.kdsDevice.getDevice_id() == id)
+                return kdsTracking;
+        }
+
+        return null;
+    }
+
     public static String putKdsLog(KotSummary kotSummary, List<KotItemDetail> kotItemDetails, KDSDevice kdsDevice) {
         List<KotSummaryLog> kotSummaryLogs = getKotSummaryLogs(kotSummary.getKotSummaryLog());
         KotSummaryLog kotSummaryLog = getKotSummaryLog(kdsDevice.getDevice_id(), kotSummaryLogs);
