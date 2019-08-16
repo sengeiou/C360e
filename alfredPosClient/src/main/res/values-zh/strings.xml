@@ -344,4 +344,10 @@
     <string name="queue">队列</string>
     <string name="assign_table">设置\n表</string>
     <string name="summary">摘要</string>
+
+    <string name="add_queue">添加新队列</string>
+    <string name="queue_name">队列名称</string>
+    <string name="ask_save_edit_content">想要保存已编辑的内容？</string>
+    <string name="ask_delete_queue">您确定要删除此队列吗？</string>
+    <string name="name_used">该名称已被使用，请尝试另一个</string>
 </resources>

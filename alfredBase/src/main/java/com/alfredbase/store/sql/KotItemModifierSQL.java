@@ -184,6 +184,10 @@ public class KotItemModifierSQL {
         }
     }
 
+    public static void deleteAllKotItemModifier() {
+        deleteAllKotItemModifier(null);
+    }
+
     public static void deleteAllKotItemModifier(Integer revenueId) {
 
         String sql = "delete from " + TableNames.KotItemModifier;

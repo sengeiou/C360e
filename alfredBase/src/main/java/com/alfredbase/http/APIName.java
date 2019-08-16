@@ -38,7 +38,6 @@ public class APIName {
     public static final String RESTAURANT_GETPLACEINFONEW = "restaurant/getPlaceInfoNew";
 
 
-
     public static final String MEMBERSHIP_ACTIVATECARD = "membership/activateCard";
     public static final String MEMBERSHIP_OPERATEBALANCE = "membership/operateBalance";
     public static final String MEMBERSHIP_REPORTCARD = "membership/reportCard";
@@ -165,5 +164,9 @@ public class APIName {
 
     public static final String SET_LANGUAGE = "set_language"; //to server
     public static final String POS_LANGUAGE = "pos_language"; //to client
+
+    public static final String GET_OTHER_RVC_PLACE_TABLE = "get_other_rvc_place_table"; //GET OTHER TABLE PLACE FROM OTHER RVC
+    public static final String POS_OTHER_RVC_PLACE_TABLE = "pos_other_rvc_place_table";
+
 
 }

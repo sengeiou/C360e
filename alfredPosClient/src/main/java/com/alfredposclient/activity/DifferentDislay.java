@@ -90,6 +90,7 @@ private ImageView homePageWelcomeImg;
         setContentView(R.layout.dialog_different);
         init();
 
+        Log.wtf("Test_","diff display");
 
         list = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
 
@@ -115,12 +116,15 @@ private ImageView homePageWelcomeImg;
         });
         refreshUI();
 
+        Log.wtf("Test_","kyz");
         observable = RxBus.getInstance().register(RxBus.showOrder);
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Map<String, Object>>() {
             @Override
             public void call(Map<String, Object> stringObjectMap) {
+                Log.wtf("Test_","kt");
                 if (stringObjectMap != null && stringObjectMap.containsKey("type")){
                     int type = (int) stringObjectMap.get("type");
+                    Log.wtf("Test_",""+type);
                     if(type ==0){
                         refreshUI();
                         LogUtil.e(TAG, "刷新welcom");
@@ -149,9 +153,12 @@ private ImageView homePageWelcomeImg;
 
     public void refreshUI() {
         String url = Store.getString(App.instance, Store.WELCOME_PATH);
+        Log.wtf("Test_",""+url);
         if (CommonUtil.isNull(url)){
+            Log.wtf("Test_","k1");
             homePageWelcomeImg.setBackgroundResource(R.drawable.welcome_d);
         }else {
+            Log.wtf("Test_","k2");
             homePageWelcomeImg.setImageURI(Uri.parse(url));
         }
         activityHomePage.removeAllViews();
@@ -346,9 +353,8 @@ private ImageView homePageWelcomeImg;
     @Override
     protected void onStop() {
         super.onStop();
-        if(homePageImageView != null)
-        {
+//        if(homePageImageView != null){
             homePageImageView.releasePlayer();
-        }
+//        }
     }
 }

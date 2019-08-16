@@ -80,6 +80,7 @@
         android:layout_marginRight="30dp">
 
         <LinearLayout
+            android:id="@+id/ll_add_new_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

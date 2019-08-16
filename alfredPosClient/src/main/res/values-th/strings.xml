@@ -345,5 +345,11 @@
     <string name="assign_table">ตั้งค่า \nตาราง</string>
     <string name="summary">ย่อ</string>
 
+    <string name="add_queue">เพิ่มคิวใหม่</string>
+    <string name="queue_name">ชื่อของคิว</string>
+    <string name="ask_save_edit_content">ต้องการบันทึกเนื้อหาที่แก้ไขหรือไม่</string>
+    <string name="ask_delete_queue">คุณแน่ใจที่จะลบคิวนี้?</string>
+    <string name="name_used">มีการใช้ชื่อนี้แล้วลองใช้ชื่ออื่น</string>
+
 
 </resources>

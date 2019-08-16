@@ -2821,4 +2821,54 @@ public class HttpAPI {
     }
 
     //end payhalal
+
+    //start connection multi rvc
+
+
+    public static void getOtherRVCPlaceTable(Context context,
+                                             final String url,
+                                             AsyncHttpClient httpClient, final Handler handler) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("appVersion", App.instance.VERSION);
+
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
+                                Message message = new Message();
+                                message.obj = body;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_GET_OTHER_RVC;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+                            } else {
+                                String body = new String(responseBody);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //end connection multi rvc
 }

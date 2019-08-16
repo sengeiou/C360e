@@ -345,5 +345,11 @@
     <string name="assign_table">تعيين\nالجدول</string>
     <string name="summary">ملخص</string>
 
+    <string name="add_queue">إضافة قائمة انتظار جديدة</string>
+    <string name="queue_name">اسم قائمة الانتظار</string>
+    <string name="ask_save_edit_content">هل تريد حفظ المحتوى المحرر؟</string>
+    <string name="ask_delete_queue">هل أنت متأكد من حذف قائمة الانتظار هذه؟</string>
+    <string name="name_used">الاسم مستخدم بالفعل ، جرب آخر</string>
+
 
 </resources>

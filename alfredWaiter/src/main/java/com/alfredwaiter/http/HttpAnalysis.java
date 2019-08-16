@@ -35,6 +35,7 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.model.TableAndKotNotificationList;
+import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
@@ -125,6 +126,7 @@ public class HttpAnalysis {
             String formatType = object.optString("formatType");
 
 
+
             SessionStatus localSessionStatus = App.instance.getSessionStatus();
             if (localSessionStatus == null
                     || localSessionStatus.getSession_status() != sessionStatus
@@ -166,7 +168,7 @@ public class HttpAnalysis {
             App.instance.setSessionStatus(sessionStatus);
             App.instance.setCurrencySymbol(currencySymbol, isDouble);
             App.instance.setFormatType(formatType);
-            CoreData.getInstance().setUserKey(mainPosInfo.getRevenueId(), userKey);
+            CoreData.getInstance().setUserKey(mainPosInfo.getRevenueId(),userKey);
             return userKey;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -194,9 +196,9 @@ public class HttpAnalysis {
                     && kotItemModifiers != null) {
 
                 //replace existing data, only one kotSummary on waiter device
-                KotSummarySQL.deleteAllKotSummary(App.instance.getRevenueCenter().getId());
-                KotItemDetailSQL.deleteAllKotItemDetail(App.instance.getRevenueCenter().getId());
-                KotItemModifierSQL.deleteAllKotItemModifier(App.instance.getRevenueCenter().getId());
+                KotSummarySQL.deleteAllKotSummary();
+                KotItemDetailSQL.deleteAllKotItemDetail();
+                KotItemModifierSQL.deleteAllKotItemModifier();
 
                 KotSummarySQL.update(kotSummary);
                 KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -337,10 +339,10 @@ public class HttpAnalysis {
             order = gson.fromJson(object.getJSONObject("order").toString(),
                     Order.class);
             Map<String, String> waiterMap = new LinkedHashMap<String, String>(16, 0.75f, true);
-            if (!TextUtils.isEmpty(order.getWaiterInformation())) {
-                waiterMap = CommonUtil.getStringToMap(order.getWaiterInformation());
+            if(!TextUtils.isEmpty(order.getWaiterInformation())){
+                waiterMap=CommonUtil.getStringToMap(order.getWaiterInformation());
                 waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
-            } else {
+            }else {
                 waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
             }
             String waitterName = CommonUtil.getMapToString(waiterMap);

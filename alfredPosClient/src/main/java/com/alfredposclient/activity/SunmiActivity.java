@@ -38,6 +38,8 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
         super.initView();
         setContentView(R.layout.activity_sunmi);
 
+
+
         sunmi_rg = (RadioGroup) findViewById(R.id.sunmi_rg);
         sunmi_select_picture_rbt = (RadioButton) findViewById(R.id.sunmi_select_picture_rbt);
         sunmi_select_text_rbt = (RadioButton) findViewById(R.id.sunmi_select_text_rbt);
@@ -178,6 +180,7 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
                 if (resultList.size() > 0) {
                     String welcomeURL = resultList.get(0).getPhotoPath();
 //                    Store.putString(SunmiActivity.this, Store.SUNMI_WELCOME, welcomeURL);
+                    Log.wtf("Test_welcomeurl",""+welcomeURL);
                     Store.putInt(SunmiActivity.this, Store.SUNMI_STYLE, styleType);
                     App.instance.setWelcomeToSecondScreen(welcomeURL);
                     Store.putString(App.instance, Store.WELCOME_PATH, welcomeURL);
@@ -186,6 +189,7 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             public void onHanlderFailure(int requestCode, String errorMsg) {
+                Log.wtf("Test_welcomeurl_failed",""+errorMsg);
                 LogUtil.d(TAG, errorMsg);
                 Toast.makeText(SunmiActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
             }

@@ -1308,8 +1308,10 @@ public class App extends BaseApplication {
             fos.flush();
             fos.close();
         } catch (FileNotFoundException e) {
+            Log.wtf("Test_1",""+e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            Log.wtf("Test_2",""+e.getMessage());
             e.printStackTrace();
         }
 
@@ -1319,10 +1321,12 @@ public class App extends BaseApplication {
 
     public void showSunmiQrimg(final Context context, String title, String content, final String path) {
         JSONObject json = new JSONObject();
+        Log.wtf("Test_tpat",""+content+" | "+path);
         try {
             json.put("title", title);
             json.put("content", content);
         } catch (JSONException e) {
+            Log.wtf("Test_ep",""+e.getMessage());
             e.printStackTrace();
         }
 
@@ -1332,6 +1336,7 @@ public class App extends BaseApplication {
             @Override
             public void onSendSuccess(long l) {
 //display image
+                Log.wtf("Test_ex","success");
                 try {
                     JSONObject json = new JSONObject();
                     json.put("dataModel", "QRCODE");
@@ -1349,7 +1354,7 @@ public class App extends BaseApplication {
 
             @Override
             public void onSendFail(int i, String s) {
-
+                Log.wtf("Test_ex","faile");
             }
 
             @Override
@@ -1431,7 +1436,6 @@ public class App extends BaseApplication {
                 waiterDevices.put(devid, wdev);
             }
         }
-        Log.wtf("Test_",""+rvcDevices.size());
     }
 
     public void loadPrinters() {

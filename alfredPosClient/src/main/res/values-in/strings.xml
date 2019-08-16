@@ -345,4 +345,10 @@
     <string name="assign_table">Tetapkan \nMeja</string>
     <string name="summary">Ringkasan</string>
 
+    <string name="add_queue">Tambahkan antrian baru</string>
+    <string name="queue_name">Nama antrian</string>
+    <string name="ask_save_edit_content">Ingin menyimpan konten yang diedit?</string>
+    <string name="ask_delete_queue">Apakah Anda yakin untuk menghapus antrian ini?</string>
+    <string name="name_used">Nama sudah digunakan, coba yang lain</string>
+
 </resources>

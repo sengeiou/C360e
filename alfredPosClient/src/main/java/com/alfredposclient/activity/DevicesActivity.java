@@ -397,6 +397,7 @@ public class DevicesActivity extends BaseActivity {
                 if (device != null) {
                     MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
                     if (!mainPosInfo.getIP().equals(device.getIp())) {
+                        //todo check must same restoId
                         if (!(device.getName().toLowerCase().equals("kds")
                                 || device.getName().toLowerCase().equals("printer")
                                 || device.getName().toLowerCase().equals("waiter"))) {

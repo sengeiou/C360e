@@ -346,5 +346,11 @@
     <string name="assign_table">Itakda\nTalahanayan</string>
     <string name="summary">Buod</string>
 
+    <string name="add_queue">Magdagdag ng isang bagong pila</string>
+    <string name="queue_name">Pangalan ng pila</string>
+    <string name="ask_save_edit_content">Nais mong i-save ang na-edit na nilalaman?</string>
+    <string name="ask_delete_queue">Sigurado ka bang tanggalin ang queue na ito?</string>
+    <string name="name_used">Ang pangalan ay ginamit na, subukan ang isa pa</string>
+
 
 </resources>

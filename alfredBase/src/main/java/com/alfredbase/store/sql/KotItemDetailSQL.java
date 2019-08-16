@@ -909,6 +909,9 @@ public class KotItemDetailSQL {
         }
     }
 
+    public static void deleteAllKotItemDetail() {
+        deleteAllKotItemDetail(null);
+    }
     public static void deleteAllKotItemDetail(Integer revenueId) {
         String deleteByRevenue = "";
         if (revenueId != null) {

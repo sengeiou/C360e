@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -17,7 +16,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -664,7 +662,9 @@ public class MainPage extends BaseActivity {
 
 
     public Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(final android.os.Message msg) {
+            Log.wtf("Test_click_handler", " | " + msg.what + " " + App.instance.getRevenueCenter().getRestaurantId() + " | " + App.instance.getMainPosInfo().getRestId() + " | " + App.instance.getMainPosInfo().getRevenueId());
+
             switch (msg.what) {
 //			case VIEW_EVENT_CLOSE_PAY_WINDOW:
 //				closeCloseOrderWindow();
@@ -1149,6 +1149,10 @@ public class MainPage extends BaseActivity {
 
                 case JavaConnectJS.ACTION_CLICK_TABLE: {
                     currentTable = (TableInfo) msg.obj;
+                    boolean fromThisRVC = checkIfTableFromThisRVC(msg, currentTable);
+                    if (!fromThisRVC) {
+                        return;
+                    }
                     if (currentTable != null) {
                         boolean isValid = false;
                         if (currentTable.getStatus() != null) {
@@ -1200,18 +1204,22 @@ public class MainPage extends BaseActivity {
                 break;
                 case JavaConnectJS.ACTION_CLICK_TABLE_TRANSFER: {
                     final TableInfo newTable = (TableInfo) msg.obj;
+                    boolean showDialog = true;
                     if (newTable.getPosId().intValue() == oldTable.getPosId()
                             .intValue()) {
                         currentTable = newTable;
-                        if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
-                        } else {
-                            handler.sendMessage(handler
-                                    .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
+                        boolean fromThisRVC = checkIfTableFromThisRVC(msg, newTable);
+                        if (fromThisRVC) {
+                            showDialog = false;
+                            if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
+                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
+                            }
                         }
-                    } else {
-                        Log.wtf("Test_size"," | "+App.instance.getRVCDevices().size());
-
+                    }
+                    if (showDialog) {
                         DialogFactory.commonTwoBtnDialog(
                                 context,
                                 context.getResources().getString(R.string.table_transfer),
@@ -1232,18 +1240,23 @@ public class MainPage extends BaseActivity {
                 break;
                 case JavaConnectJS.ACTION_CLICK_TABLE_ITEM: {
                     final TableInfo newTable = (TableInfo) msg.obj;
+                    final boolean fromThisRVC = checkIfTableFromThisRVC(msg, newTable);
+                    boolean showDialog = true;
                     if (newTable.getPosId().intValue() == oldTable.getPosId()
                             .intValue()) {
+                        showDialog = false;
                         currentTable = newTable;
-                        if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
-                        } else {
-                            handler.sendMessage(handler
-                                    .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
+                        if (fromThisRVC) {
+                            if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
+                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(MainPage.VIEW_EVENT_DISMISS_TABLES));
+                            }
                         }
-                    } else {
-                        Log.wtf("Test_size"," | "+App.instance.getRVCDevices().size());
 
+                    }
+                    if (showDialog) {
                         DialogFactory.commonTwoBtnDialog(
                                 context,
                                 context.getResources().getString(R.string.table_transfer),
@@ -1275,26 +1288,32 @@ public class MainPage extends BaseActivity {
                         e.printStackTrace();
                     }
                     if (currentTable != null) {
-                        if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-                            new Thread(new Runnable() {
+                        boolean fromThisRVC = checkIfTableFromThisRVC(msg, currentTable);
+                        if (fromThisRVC) {
+                            if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
+                                new Thread(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    KotSummary kotSummary = KotSummarySQL.getKotSummaryByTable(currentTable.getPosId().intValue());
-                                    if (kotSummary != null) {
-                                        List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
-                                        for (KotItemDetail kotItemDetail : kotItemDetails) {
-                                            kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
-                                            KotItemDetailSQL.update(kotItemDetail);
+                                    @Override
+                                    public void run() {
+                                        KotSummary kotSummary = KotSummarySQL.getKotSummaryByTable(currentTable.getPosId().intValue());
+                                        if (kotSummary != null) {
+                                            List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
+                                            for (KotItemDetail kotItemDetail : kotItemDetails) {
+                                                kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_DONE);
+                                                KotItemDetailSQL.update(kotItemDetail);
+                                            }
+                                            kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
+                                            KotSummarySQL.update(kotSummary);
                                         }
-                                        kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
-                                        KotSummarySQL.update(kotSummary);
                                     }
-                                }
-                            }).start();
-                            setPAXWindow.show(SetPAXWindow.APP_ORDER, context.getResources().getString(R.string.no_of_pax));
+                                }).start();
+                                setPAXWindow.show(SetPAXWindow.APP_ORDER, context.getResources().getString(R.string.no_of_pax));
+                            } else {
+                                DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.please_select_empty_table), null);
+                            }
                         } else {
-                            DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.please_select_empty_table), null);
+                            Log.wtf("Test_", "t1");
+                            //todo other
                         }
                     }
                 }
@@ -1302,6 +1321,12 @@ public class MainPage extends BaseActivity {
 
                 case ACTION_TRANSFER_TABLE: {
                     currentTable = (TableInfo) msg.obj;
+                    boolean fromThisRVC = checkIfTableFromThisRVC(msg, currentTable);
+                    if (!fromThisRVC) {
+                        Log.wtf("Test_", "t2");
+                        //todo other
+                        return;
+                    }
                     if (currentTable != null) {
                         new Thread(new Runnable() {
 
@@ -1400,6 +1425,12 @@ public class MainPage extends BaseActivity {
                 break;
                 case ACTION_TRANSFER_ITEM: {
                     currentTable = (TableInfo) msg.obj;
+                    boolean fromThisRVC = checkIfTableFromThisRVC(msg, currentTable);
+                    if (!fromThisRVC) {
+                        Log.wtf("Test_", "t3");
+                        //todo other
+                        return;
+                    }
                     if (currentTable != null) {
                         new Thread(new Runnable() {
 
@@ -1622,7 +1653,7 @@ public class MainPage extends BaseActivity {
                                                 showTables();
                                             } else {
                                                 int maxNum = transfItemOrderDetail.getItemNum().intValue();
-                                                setPAXWindow.show(SetPAXWindow.TRANSFER_ITEM_SPLIT, "1", getString(R.string.amount_less_than) +" "+ maxNum, maxNum);
+                                                setPAXWindow.show(SetPAXWindow.TRANSFER_ITEM_SPLIT, "1", getString(R.string.amount_less_than) + " " + maxNum, maxNum);
                                             }
                                         }
                                     }, new OnClickListener() {
@@ -1820,7 +1851,7 @@ public class MainPage extends BaseActivity {
                     if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
                         return;
                     } else {
-                        UIHelp.showToast(context, String.format(Locale.US,context.getResources().getString(R.string.no_set_item_print), itemName));
+                        UIHelp.showToast(context, String.format(Locale.US, context.getResources().getString(R.string.no_set_item_print), itemName));
                     }
                     //   UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
                 }
@@ -2195,6 +2226,16 @@ public class MainPage extends BaseActivity {
 
         ;
     };
+
+    private boolean checkIfTableFromThisRVC(android.os.Message msg, TableInfo tableInfo) {
+        if (tableInfo.getRevenueId().equals(App.instance.getMainPosInfo().getRevenueId())) {
+            Log.wtf("Test_check", "from same rvc");
+            return true;
+        } else {
+            Log.wtf("Test_check", "from other rvc");
+            return false;
+        }
+    }
 
     @Override
     public void onBackPressed() {

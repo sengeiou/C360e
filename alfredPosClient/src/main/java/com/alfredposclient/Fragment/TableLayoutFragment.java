@@ -61,12 +61,15 @@ import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.javabean.MultiRVCPlacesDao;
 import com.alfredposclient.utils.ImageUtils;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Created by Alex on 16/9/22.
@@ -96,6 +99,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private List<TableInfo> newTables = new ArrayList<TableInfo>();
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
     private List<TableInfo> waitingList = new ArrayList<TableInfo>();
+    private List<MultiRVCPlacesDao.Places> otherRVCPlaces = new ArrayList<>();
+    private Handler otherRVChandler = new Handler();
+    private Runnable otherRVCrunnable = null;
+
 
     private BaseActivity mainPage;
     private LoadingDialog loadingDialog;
@@ -150,13 +157,16 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //                return true;
 //            }
 //        });
-        refreshPlace();
-        refreshWaitingList();
 
-        if (places.size() > 0) {
-            selectPlaceIndex = 0;
-            refreshTableLayout();
+        if (App.instance.getRVCDevices().size() > 0) {
+            if (loadingDialog == null) {
+                loadingDialog = new LoadingDialog(mainPage);
+                loadingDialog.setTitle(mainPage.getResources().getString(R.string.loading));
+            }
+            loadingDialog.show();
+            SyncCentre.getInstance().getOtherRVCPlaceTable(mainPage, handler);
         } else {
+            refreshView();
         }
 
 
@@ -183,13 +193,36 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         iv_more_table.setOnClickListener(this);
         view.findViewById(R.id.ll_table_root).setOnClickListener(null);
         tv_place.setOnClickListener(this);
+
+
         tv_summary.setOnClickListener(this);
         return view;
+    }
+
+    private void refreshView() {
+        refreshPlace();
+        refreshWaitingList();
+
+        if (places.size() > 0) {
+            selectPlaceIndex = 0;
+            tv_place.setText(places.get(selectPlaceIndex).getPlaceName());
+            refreshTableLayout();
+        }
     }
 
     private void refreshPlace() {
         places.clear();
         places = PlaceInfoSQL.getAllPlaceInfo();
+
+        String tableShowAction = ((MainPage) mainPage).tableShowAction;
+        if (!TextUtils.isEmpty(tableShowAction)) {
+            if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                for (MultiRVCPlacesDao.Places otherPlace : otherRVCPlaces) {
+                    places.add(otherPlace.getPlaceInfo());
+                }
+            }
+        }
+
         PlaceInfo place = new PlaceInfo();
         place.setPlaceName("");
         places.add(place);
@@ -233,7 +266,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             String tableShowAction = ((MainPage) mainPage).tableShowAction;
             if (!TextUtils.isEmpty(tableShowAction)) {
                 if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
-                    tv_place.setVisibility(View.GONE);
+                    tv_place.setVisibility(View.VISIBLE);
                     tv_table_edit.setVisibility(View.GONE);
                     tv_summary.setText(tableShowAction.replace("_", " "));
                     if (tableShowAction.equals(MainPage.TRANSFER_TABLE) && ((MainPage) mainPage).currentOrder.getTableId() < 0) {
@@ -248,7 +281,18 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
         }
 
-        newTables = TableInfoSQL.getTableInfosByPlaces(places.get(selectPlaceIndex));
+        String placeName = places.get(selectPlaceIndex).getPlaceName();
+        boolean isPlaceInfoExist = PlaceInfoSQL.checkPlaceInfoExistByName(placeName);
+        if (isPlaceInfoExist) {
+            newTables = TableInfoSQL.getTableInfosByPlaces(places.get(selectPlaceIndex));
+        } else { //from other RVC
+            for (MultiRVCPlacesDao.Places other : otherRVCPlaces) {
+                if (other.getPlaceName().equals(placeName)) {
+                    newTables = other.getTables();
+                }
+            }
+        }
+
         changeLayoutStatus();
         rl_tables.removeAllViews();
 
@@ -365,7 +409,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         Button btn_table_middle = (Button) selfView.findViewById(R.id.btn_table_middle);
         Button btn_table_large = (Button) selfView.findViewById(R.id.btn_table_large);
         Bitmap bmp = BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap);
-        if(bmp!=null) {
+        if (bmp != null) {
             imageView.setImageBitmap(bmp);
         }
         initTableName(tv_table_name, newTable);
@@ -701,6 +745,16 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 if (ll_table_left.getVisibility() == View.VISIBLE) {
                     ll_table_left.setVisibility(View.GONE);
                     ll_waiting_list.setVisibility(View.VISIBLE);
+
+                    if (mainPage instanceof MainPage) {
+                        String tableShowAction = ((MainPage) mainPage).tableShowAction;
+                        if (!TextUtils.isEmpty(tableShowAction)) {
+                            if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                                ll_waiting_list.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+
                 } else {
                     ll_table_left.setVisibility(View.VISIBLE);
                     ll_waiting_list.setVisibility(View.GONE);
@@ -775,6 +829,34 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //                    TableInfoSQL.addTablesList(newTables);
 
                     break;
+                case com.alfredbase.BaseApplication.HANDLER_GET_OTHER_RVC:
+                    try {
+                        MultiRVCPlacesDao dao = new Gson().fromJson((String) msg.obj, MultiRVCPlacesDao.class);
+                        if (dao != null) {
+                            if (dao.getResultCode() == ResultCode.SUCCESS) {
+                                for (MultiRVCPlacesDao.Places daoPlace : dao.getData().getPlaces()) {
+                                    otherRVCPlaces.add(daoPlace);
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (otherRVCrunnable != null) {
+                        otherRVChandler.removeCallbacks(otherRVCrunnable);
+                    }
+                    otherRVCrunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            loadingDialog.dismiss();
+                            refreshView();
+                        }
+                    };
+                    otherRVChandler.postDelayed(otherRVCrunnable, 300);
+
+
+                    break;
             }
         }
     };
@@ -844,6 +926,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
                 holder.ll_add_edit = (LinearLayout) convertView.findViewById(R.id.ll_add_edit);
                 holder.iv_add_place = (ImageView) convertView.findViewById(R.id.iv_add_place);
+                holder.ll_add_new_place = (LinearLayout) convertView.findViewById(R.id.ll_add_new_place);
                 holder.tv_add_place = (TextView) convertView.findViewById(R.id.tv_add_place);
                 holder.et_add_place = (EditText) convertView.findViewById(R.id.et_add_place);
                 holder.et_place_name = (EditText) convertView.findViewById(R.id.et_place_name);
@@ -919,11 +1002,21 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         case R.id.tv_place_name: {
                             BugseeHelper.buttonClicked("Place Name");
                             selectPlaceIndex = position;
+                            tv_place.setText(places.get(selectPlaceIndex).getPlaceName());
                             canEdit = false;
                             refreshPlace();
                             refreshTableLayout();
                             ll_table_left.setVisibility(View.GONE);
                             ll_waiting_list.setVisibility(View.VISIBLE);
+                            if (mainPage instanceof MainPage) {
+                                String tableShowAction = ((MainPage) mainPage).tableShowAction;
+                                if (!TextUtils.isEmpty(tableShowAction)) {
+                                    if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                                        ll_waiting_list.setVisibility(View.GONE);
+                                    }
+                                }
+                            }
+
                         }
                         break;
                         case R.id.iv_place_delete: {
@@ -976,6 +1069,20 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 holder.tv_place_name.setText(place.getPlaceName());
             }
             holder.rl_add_place.setOnClickListener(onClickListener);
+            holder.iv_place_delete.setVisibility(View.VISIBLE);
+            holder.iv_place_edit.setVisibility(View.VISIBLE);
+            if (mainPage instanceof MainPage) {
+                String tableShowAction = ((MainPage) mainPage).tableShowAction;
+                if (!TextUtils.isEmpty(tableShowAction)) {
+                    if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                        holder.iv_place_delete.setVisibility(View.GONE);
+                        holder.iv_place_edit.setVisibility(View.GONE);
+                        holder.rl_add_place.setVisibility(View.GONE);
+                        holder.rl_add_place.setOnClickListener(null);
+                    }
+                }
+
+            }
 
 
             convertView.findViewById(R.id.tv_add_place_cancel).setOnClickListener(onClickListener);
@@ -1032,6 +1139,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             ImageView iv_place_delete;
             TextView tv_place_number;
             TextView tv_place_name;
+            LinearLayout ll_add_new_place;
             TextView tv_add_place;
             ImageView iv_add_place;
             EditText et_add_place;
@@ -1082,9 +1190,9 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 holder.ll_add_edit = (LinearLayout) convertView.findViewById(R.id.ll_add_edit);
                 holder.iv_add_place = (ImageView) convertView.findViewById(R.id.iv_add_place);
                 holder.tv_add_place = (TextView) convertView.findViewById(R.id.tv_add_place);
-                holder.tv_add_place.setText("Add a new queue");
+                holder.tv_add_place.setText(getString(R.string.add_queue));
                 holder.et_add_place = (EditText) convertView.findViewById(R.id.et_add_place);
-                holder.et_add_place.setHint("Name of queue");
+                holder.et_add_place.setHint(getString(R.string.queue_name));
                 holder.et_place_name = (EditText) convertView.findViewById(R.id.et_place_name);
                 holder.iv_place_edit.setTag(holder);
 
@@ -1101,7 +1209,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     if (canEdit) {
                         DialogFactory.commonTwoBtnDialog(mainPage,
                                 mainPage.getResources().getString(R.string.warning),
-                                "Want to save the edited content?",
+                                mainPage.getResources().getString(R.string.ask_save_edit_content),
                                 mainPage.getResources().getString(R.string.cancel),
                                 mainPage.getResources().getString(R.string.ok),
                                 null,
@@ -1171,7 +1279,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //                            }
                             DialogFactory.commonTwoBtnDialog(mainPage,
                                     mainPage.getResources().getString(R.string.warning),
-                                    "Are you sure to delete this queue ?",
+                                    mainPage.getResources().getString(R.string.ask_delete_queue),
                                     mainPage.getResources().getString(R.string.cancel),
                                     mainPage.getResources().getString(R.string.ok),
                                     null,
@@ -1260,7 +1368,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         if (IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
                             TableInfo tableExist = TableInfoSQL.getTableByName(v.getText().toString());
                             if (tableExist != null) {
-                                UIHelp.showShortToast(mainPage, "The name has already been used, try another");
+                                UIHelp.showShortToast(mainPage, mainPage.getResources().getString(R.string.name_used));
                                 return false;
                             } else {
                                 TableInfo newTableInfo = ObjectFactory.getInstance().addNewWaitingList(v.getText().toString(), App.instance.getRevenueCenter().getRestaurantId().intValue(), App.instance.getRevenueCenter().getId().intValue(), places.get(selectPlaceIndex).getId());
@@ -1324,9 +1432,9 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
             return "http://139.224.17.126/" + relativeUrl;
         } else {
-            if(App.instance.isCartenzLog){
+            if (App.instance.isCartenzLog) {
                 return "http://18.138.252.241/" + relativeUrl;
-            }else{
+            } else {
                 return "http://www.servedbyalfred.biz/" + relativeUrl;
             }
         }

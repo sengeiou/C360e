@@ -47,7 +47,8 @@ public class BaseApplication extends Application {
     public static BaseApplication instance;
     public static List<BaseActivity> activitys;
     public static final int DATABASE_VERSION = 32;
-    public static final int HANDLER_REFRESH_LANGUAGE = 772;
+
+
 
     /**
      * 注意
@@ -199,7 +200,6 @@ public class BaseApplication extends Application {
 //	}
 
     public void startUDPService(int index, String serviceName, UdpServiceCallBack udpServiceCallBack) {
-        Log.wtf("Test_", "tf : " + index + " " + serviceName + " " + new Gson().toJson(udpServiceCallBack));
         TcpUdpFactory.startUdpServer(index, serviceName, udpServiceCallBack);
     }
 
@@ -541,4 +541,7 @@ public class BaseApplication extends Application {
             this.time = time;
         }
     }
+
+    public static final int HANDLER_REFRESH_LANGUAGE = 772;
+    public static final int HANDLER_GET_OTHER_RVC = 773;
 }

@@ -606,6 +606,9 @@ public class KotSummarySQL {
         }
     }
 
+    public static void deleteAllKotSummary() {
+        deleteAllKotSummary(null);
+    }
     public static void deleteAllKotSummary(Integer revenueCenterId) {
         String deleteByRevenue = "";
         if (revenueCenterId != null) {

@@ -2,7 +2,6 @@ package com.alfredbase.global;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.HappyHour;
@@ -68,7 +67,6 @@ import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1091,11 +1089,21 @@ public class CoreData {
         this.happyHours = happyHours;
     }
 
+    public String getUserKey() {
+        return getUserKey(null);
+    }
+
     public String getUserKey(Integer revenueId) {
         //Log.wtf("Test_getuserKey",""+revenueId+" : "+new Gson().toJson(userKey));
-        for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
-            if (entry.getKey().equals(revenueId)) {
+        if (revenueId == null) {
+            for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
                 return entry.getValue();
+            }
+        } else {
+            for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
+                if (entry.getKey().equals(revenueId)) {
+                    return entry.getValue();
+                }
             }
         }
         return null;

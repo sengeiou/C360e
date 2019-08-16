@@ -346,4 +346,11 @@
     <string name="queue">Queue</string>
     <string name="assign_table">Assign\nTable</string>
     <string name="summary">Summary</string>
+
+    <string name="add_queue">Add a new queue</string>
+    <string name="queue_name">Name of queue</string>
+    <string name="ask_save_edit_content">Want to save the edited content?</string>
+    <string name="ask_delete_queue">Are you sure to delete this queue ?</string>
+    <string name="name_used">The name has already been used, try another</string>
+
 </resources>

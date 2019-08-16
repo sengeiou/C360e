@@ -345,5 +345,10 @@
     <string name="assign_table">Đặt\nBảng</string>
     <string name="summary">Tóm tắt</string>
 
+    <string name="add_queue">Thêm một hàng đợi mới</string>
+    <string name="queue_name">Tên của hàng đợi</string>
+    <string name="ask_save_edit_content">Bạn muốn lưu nội dung chỉnh sửa?</string>
+    <string name="ask_delete_queue">Bạn có chắc chắn để xóa hàng đợi này?</string>
+    <string name="name_used">Tên đã được sử dụng, hãy thử tên khác</string>
 
 </resources>

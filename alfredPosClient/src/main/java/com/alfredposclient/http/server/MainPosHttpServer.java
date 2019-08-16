@@ -5,7 +5,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -133,6 +132,7 @@ import com.alfredposclient.activity.kioskactivity.subpos.SubPosManagePage;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.javabean.MultiRVCPlacesDao;
 import com.alfredposclient.jobs.CloudSyncJobManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -271,7 +271,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     /*No waiter apps in kiosk mode */
                     if (App.instance.isRevenueKiosk()) {
                         result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                        result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                         resp = this.getJsonResponse(new Gson().toJson(result));
                         return resp;
                     }
@@ -446,7 +446,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     Response resp;
                     if (!App.instance.isRevenueKiosk()) {
                         result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                        result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                         return this.getJsonResponse(new Gson().toJson(result));
                     }
                     try {
@@ -523,7 +523,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     Response resp;
                     if (App.instance.isRevenueKiosk()) {
                         result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                        result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                         return this.getJsonResponse(new Gson().toJson(result));
                     }
 
@@ -761,7 +761,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         User user = CoreData.getInstance().getUserById(userId);
         if (user == null) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             return this.getJsonResponse(new Gson().toJson(result));
         }
         if (apiName.equals(APIName.KPMG_COMMIT_ORDER)) {
@@ -816,7 +816,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             User user = CoreData.getInstance().getUserById(userId);
             if (user == null) {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                 return this.getJsonResponse(new Gson().toJson(result));
             }
             if (apiName.equals(APIName.SUBPOS_COMMIT_ORDER)) {
@@ -858,7 +858,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (user != null) {
                 if (user.getType() != ParamConst.USER_TYPE_MANAGER && user.getType() != ParamConst.USER_TYPE_POS) {
                     result.put(RESULT_CODE, ResultCode.USER_NO_PERMIT);
-                    result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                    result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                     return this.getJsonResponse(new Gson().toJson(result));
                 }
                 result.put("user", user);
@@ -888,7 +888,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 resp = this.getJsonResponse(gson.toJson(result));
             } else {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                 resp = this.getJsonResponse(gson.toJson(result));
             }
             if (App.getTopActivity() instanceof SubPosManagePage) {
@@ -1334,12 +1334,30 @@ public class MainPosHttpServer extends AlfredHttpServer {
             return handlerTemporaryDish(body);
         } else if (apiName.equals(APIName.SET_LANGUAGE)) {// 注销
             return handlerLanguage(body);
+        } else if (apiName.equals(APIName.GET_OTHER_RVC_PLACE_TABLE)) {
+
+            MultiRVCPlacesDao multiRVCPlacesDao = new MultiRVCPlacesDao();
+            multiRVCPlacesDao.setResultCode(ResultCode.SUCCESS);
+
+            MultiRVCPlacesDao.Data rvcData = new MultiRVCPlacesDao.Data();
+
+            List<MultiRVCPlacesDao.Places> places = new ArrayList<>();
+            ArrayList<PlaceInfo> data = PlaceInfoSQL.getAllPlaceInfo();
+            for (int i = 0; i < data.size(); i++) {
+                List<TableInfo> tables = TableInfoSQL.getTableInfosByPlaces(data.get(i));
+                MultiRVCPlacesDao.Places place = new MultiRVCPlacesDao.Places(App.instance.getMainPosInfo(), data.get(i), tables);
+                places.add(place);
+            }
+            rvcData.setPlaces(places);
+            multiRVCPlacesDao.setData(rvcData);
+
+            return getJsonResponse(new Gson().toJson(multiRVCPlacesDao));
         } else {
             String userKey = jsonObject.optString("userKey");
             if (TextUtils.isEmpty(userKey) || App.instance.getUserByKey(userKey) == null) {
                 Map<String, Object> result = new HashMap<String, Object>();
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                 return this.getJsonResponse(new Gson().toJson(result));
             }
 
@@ -1514,7 +1532,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             User user = CoreData.getInstance().getUserByEmpId(employeeId);
             if (App.instance.isRevenueKiosk()) {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                 resp = this.getJsonResponse(new Gson().toJson(result));
                 return resp;
             }
@@ -1536,13 +1554,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     result.put("resultCode", ResultCode.SUCCESS);
                 } else {
                     result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                    result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                    result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                     result.put("printers", null);
                 }
                 resp = this.getJsonResponse(new Gson().toJson(result));
             } else {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                 resp = this.getJsonResponse(new Gson().toJson(result));
             }
         } catch (Exception e) {
@@ -1563,7 +1581,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             User user = CoreData.getInstance().getUserByEmpId(employeeId);
 //			if (App.instance.isRevenueKiosk()) {
 //				result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
 //				resp = this.getJsonResponse(new Gson().toJson(result));
 //				return resp;
 //			}
@@ -1585,13 +1603,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     result.put("resultCode", ResultCode.SUCCESS);
                 } else {
                     result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                    result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                     result.put("printers", null);
                 }
                 resp = this.getJsonResponse(new Gson().toJson(result));
             } else {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                 resp = this.getJsonResponse(new Gson().toJson(result));
             }
         } catch (Exception e) {
@@ -1850,7 +1868,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             } else {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                 resp = this.getJsonResponse(new Gson().toJson(result));
             }
         } catch (Exception e) {
@@ -1865,7 +1883,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         Map<String, Object> result = new HashMap<String, Object>();
         if (!isValidUser(params)) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
         } else {
             result.put("revenueList", CoreData.getInstance()
@@ -1990,7 +2008,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         /*No waiter apps in kiosk mode */
         if (App.instance.isRevenueKiosk()) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
@@ -2016,14 +2034,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
         /*No waiter apps in kiosk mode */
         if (App.instance.isRevenueKiosk()) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
 
         if (!isValidUser(params)) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
@@ -2121,14 +2139,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
         /*No waiter apps in kiosk mode */
         if (App.instance.isRevenueKiosk()) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
 
         if (!isValidUser(params)) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
@@ -2160,14 +2178,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
         /*No waiter apps in kiosk mode */
         if (App.instance.isRevenueKiosk()) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
 
         if (!isValidUser(params)) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
@@ -2582,12 +2600,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     result.put("resultCode", ResultCode.SUCCESS);
                 } else {
                     result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                    result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                     result.put("printers", null);
                 }
             } else {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
                 result.put("printers", null);
             }
             resp = this.getJsonResponse(new Gson().toJson(result));
@@ -2866,7 +2884,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         /*No waiter apps in kiosk mode */
         if (App.instance.isRevenueKiosk()) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
@@ -2897,7 +2915,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         /*No waiter apps in kiosk mode */
         if (App.instance.isRevenueKiosk()) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
@@ -3009,7 +3027,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         /*No waiter apps in kiosk mode */
         if (App.instance.isRevenueKiosk()) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
@@ -3165,7 +3183,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         /*No waiter apps in kiosk mode */
         if (App.instance.isRevenueKiosk()) {
             result.put("resultCode", ResultCode.USER_NO_PERMIT);
-                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
+            result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber() + " " + this.getClass().getName());
             resp = this.getJsonResponse(new Gson().toJson(result));
             return resp;
         }
