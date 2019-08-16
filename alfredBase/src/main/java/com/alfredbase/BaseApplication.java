@@ -36,6 +36,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.umeng.analytics.MobclickAgent;
 
+import org.apache.commons.codec.language.bm.Lang;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -123,7 +125,7 @@ public class BaseApplication extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LanguageManager.setLocale(base));
+        super.attachBaseContext(base);
         MultiDex.install(this);
     }
 
