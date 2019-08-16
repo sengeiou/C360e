@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.KDSTracking;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummaryLog;
@@ -104,7 +105,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
     private RelativeLayout ll_progress;
     private LinearLayout linear_progress;
     private LinearLayout llAction;
-    private List<KotSummaryLog> kotSummaryLogs;
+    private KotSummaryLog kotSummaryLogs;
 
     public KOTView(Context context) {
         super(context);
@@ -256,11 +257,13 @@ public class KOTView extends LinearLayout implements AnimationListener,
 //                long createTime = kot.getKotSummary().getUpdateTime();
 //                holder.cmItem.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
 
+                List<KDSTracking> kdsTrackingList = kotSummaryLogs.kdsTrackingList;
                 boolean isCompleted = false;
-                for (KotSummaryLog kotSummaryLog : kotSummaryLogs) {
-                    if (kotSummaryLog.kdsDevice.getKdsType() == Printer.KDS_EXPEDITER ||
-                            kotSummaryLog.kdsDevice.getKdsType() == Printer.KDS_SUMMARY) {
-                        List<KotItemDetail> kotItemDetails = kotSummaryLog.kotItemDetails;
+
+                for (KDSTracking kdsTracking : kdsTrackingList) {
+                    if (kdsTracking.kdsDevice.getKdsType() == Printer.KDS_EXPEDITER ||
+                            kdsTracking.kdsDevice.getKdsType() == Printer.KDS_SUMMARY) {
+                        List<KotItemDetail> kotItemDetails = kdsTracking.kotItemDetails;
 
                         for (KotItemDetail kid : kotItemDetails) {
                             if (kid.getId().equals(kotItemDetail.getId()) && kid.getEndTime() > 0) {
@@ -375,9 +378,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
         this.kotItemDetails.addAll(kot.getKotItemDetails());
         this.kotItemModifiers.clear();
         this.kotItemModifiers.addAll(kot.getKotItemModifiers());
-        this.kotSummaryLogs = new Gson().fromJson(kot.getKotSummary().getKotSummaryLog(),
-                new TypeToken<List<KotSummaryLog>>() {
-                }.getType());
+        this.kotSummaryLogs = new Gson().fromJson(kot.getKotSummary().getKotSummaryLog(), KotSummaryLog.class);
 
         complete_all_tv.setText("Complete All");
 
