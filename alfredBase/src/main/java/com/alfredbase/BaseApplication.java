@@ -121,7 +121,7 @@ public class BaseApplication extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LanguageManager.setLocale(base));
+        super.attachBaseContext(base);//LanguageManager.setLocale(base));
         MultiDex.install(this);
     }
 
