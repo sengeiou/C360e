@@ -136,8 +136,8 @@ public class SyncCentre {
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getPromotionInfo(context,
                 getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler, MODE_FIRST_SYNC);
-        HttpAPI.getPromotionData(context,
-                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
+//        HttpAPI.getPromotionData(context,
+//                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
 
         getRemainingStock(context, handler, MODE_FIRST_SYNC);
 
@@ -231,12 +231,12 @@ public class SyncCentre {
     public void cloudSyncUploadOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
-            HttpAPI.cloudSync(context, syncMsg,
-                    getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+        HttpAPI.cloudSync(context, syncMsg,
+                getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
     }
 
     public void cloudSyncUploadRealOrderInfo(BaseActivity context,
-                                         SyncMsg syncMsg, Handler handler) {
+                                             SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
         int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
         if (timely == 0) {
@@ -444,7 +444,7 @@ public class SyncCentre {
         } else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
             if (App.instance.isCartenzLog) {
-                return "http://18.139.110.250/alfred-api/" + relativeUrl;
+                return "http://18.138.252.241/alfred-api/" + relativeUrl;
             } else {
                 return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
             }
@@ -558,6 +558,13 @@ public class SyncCentre {
 
     }
 
+    public void refreshSameGroupKDS(KDSDevice kdsDevice, BaseActivity context,
+                                    Map<String, Object> parameters) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.REFRESH_KOT);
+        HTTPKDSRequest.refreshSameGroupKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient);
+
+    }
+
     public void syncTransferTable(KDSDevice kdsDevice, BaseActivity context,
                                   final Map<String, Object> parameters, Handler handler) {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.TRANSFER_KOT);
@@ -663,7 +670,7 @@ public class SyncCentre {
                 url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
                 if (App.instance.isCartenzLog) {
-                    url = "http://18.139.110.250/alfred-api/" + APIName.REQUEST_ALIPAY;
+                    url = "http://18.138.252.241/alfred-api/" + APIName.REQUEST_ALIPAY;
                 } else {
                     url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
                 }

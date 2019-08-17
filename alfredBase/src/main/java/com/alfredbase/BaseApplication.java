@@ -45,7 +45,7 @@ public class BaseApplication extends Application {
 
     public static BaseApplication instance;
     public static List<BaseActivity> activitys;
-    public static final int DATABASE_VERSION = 31;
+    public static final int DATABASE_VERSION = 32;
     public static final int HANDLER_REFRESH_LANGUAGE = 772;
 
     /**
@@ -57,8 +57,8 @@ public class BaseApplication extends Application {
      */
 
     public static boolean isDebug = false;    //	Debug开关 release的时候设置为false
-    public static boolean isOpenLog = true;    //	release 时设置为false
-    public static boolean isCartenzLog = false;
+    public static boolean isOpenLog = false;    //	release 时设置为false
+    public static boolean isCartenzLog = true;
 
     protected String APPPATH = "sunmi";// sunmi or google or alibaba;
 
@@ -77,6 +77,7 @@ public class BaseApplication extends Application {
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     public static final int REQUEST_ENABLE_BT = 1;  //请求的code
+
     /**
      * 国家电话代码
      * 用于区别不同国家的代码逻辑
@@ -120,7 +121,7 @@ public class BaseApplication extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(LanguageManager.setLocale(base));
+        super.attachBaseContext(base);//LanguageManager.setLocale(base));
         MultiDex.install(this);
     }
 

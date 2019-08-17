@@ -21,15 +21,15 @@ public class TaxSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.Tax
-					+ "(id,companyId,restaurantId,taxName,taxPercentage,taxType,status,createTime,updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?)";
+					+ "(id,companyId,restaurantId,taxName,taxPercentage,taxType,status,createTime,updateTime,beforeDiscount)"
+					+ " values (?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { tax.getId(), tax.getCompanyId(),
 							tax.getRestaurantId(), tax.getTaxName(),
 							tax.getTaxPercentage(), tax.getTaxType(),
 							tax.getStatus(), tax.getCreateTime(),
-							tax.getUpdateTime() });
+							tax.getUpdateTime(),tax.getBeforeDiscount() });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -44,8 +44,8 @@ public class TaxSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.Tax
-					+ "(id,companyId,restaurantId,taxName,taxPercentage,taxType,status,createTime,updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?)";
+					+ "(id,companyId,restaurantId,taxName,taxPercentage,taxType,status,createTime,updateTime,beforeDiscount)"
+					+ " values (?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Tax tax : taxs) {
@@ -67,6 +67,8 @@ public class TaxSQL {
 							tax.getCreateTime());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
 							tax.getUpdateTime());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 10,
+							tax.getBeforeDiscount());
 
 					sqLiteStatement.executeInsert();
 				}
@@ -102,6 +104,7 @@ public class TaxSQL {
 				tax.setStatus(cursor.getInt(6));
 				tax.setCreateTime(cursor.getLong(7));
 				tax.setUpdateTime(cursor.getLong(8));
+				tax.setBeforeDiscount(cursor.getInt(9));
 				result.add(tax);
 			}
 		} catch (Exception e) {
@@ -134,6 +137,7 @@ public class TaxSQL {
 				tax.setStatus(cursor.getInt(6));
 				tax.setCreateTime(cursor.getLong(7));
 				tax.setUpdateTime(cursor.getLong(8));
+				tax.setBeforeDiscount(cursor.getInt(9));
 				return tax;
 			}
 		} catch (Exception e) {

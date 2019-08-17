@@ -3,7 +3,9 @@ package com.alfredposclient.view;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -70,12 +73,16 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.NetworkUtils;
+import com.google.gson.Gson;
+import com.path.android.jobqueue.network.NetworkUtil;
+import com.alfredposclient.utils.NetworkUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -143,8 +150,8 @@ public class MainPageOrderView extends LinearLayout {
                     UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
                     return;
                 }
-
-//				if(!NetworkUtils.isNetworkAvailable(context)){
+                int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
+//				if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
 //					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
 //
 //				//	return;
@@ -223,6 +230,7 @@ public class MainPageOrderView extends LinearLayout {
                                             App.instance.getBusinessDate());
                             User user = App.instance.getUser();
                             if (user != null) {
+
                                 String empName = user.getFirstName() + user.getLastName();
                                 kotSummary.setEmpName(empName);
                                 KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId().intValue());
@@ -416,6 +424,7 @@ public class MainPageOrderView extends LinearLayout {
             }
             subtotal = BH.sub(BH.getBD(order.getSubTotal()), subtotal, true);
             taxAmount = BH.sub(BH.getBD(order.getTaxAmount()), taxAmount, true);
+
             discountAmount = BH.sub(BH.getBD(order.getDiscountAmount()), discountAmount, true);
             total = BH.sub(BH.getBD(order.getTotal()), total, true);
             tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(subtotal.toString()).toString());

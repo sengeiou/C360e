@@ -119,6 +119,7 @@ public class App extends BaseApplication {
 
     private String currencySymbol = "$";
     public static boolean isleftMoved;
+    private String formatType;
 
     private LocalRestaurantConfig localRestaurantConfig;
     private IntentFilter intentFilter;
@@ -504,9 +505,13 @@ public class App extends BaseApplication {
         return currencySymbol;
     }
 
-    public void setCurrencySymbol(String currencySymbol, boolean isDouble) {
-        this.currencySymbol = currencySymbol;
-        BH.initFormart(isDouble);
+	public void setCurrencySymbol(String currencySymbol, boolean isDouble) {
+		this.currencySymbol = currencySymbol;
+		//BH.initFormart(isDouble);
+	}
+
+    public String getFormatType() {
+        return formatType;
     }
 
     public void setNewOrderDetail(List<OrderDetail> orderDetails) {
@@ -592,7 +597,7 @@ public class App extends BaseApplication {
                         .toString();
             }
             if (order.getPromotion() != null) {
-                total = BH.add(BH.formatMoney(total),
+                total = BH.add(BH.formatMoneyBigDecimal(total),
                         BH.getBD(order.getPromotion()), true)
                         .toString();
             }
@@ -819,4 +824,8 @@ public class App extends BaseApplication {
         return copyIsFinish;
     }
 
+    public void setFormatType(String formatType) {
+        this.formatType = formatType;
+        BH.initFormart(formatType, getCurrencySymbol());
+    }
 }

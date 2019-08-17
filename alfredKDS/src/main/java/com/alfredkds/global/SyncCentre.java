@@ -43,7 +43,8 @@ public class SyncCentre {
     public void setNetworkStatus(boolean connected) {
     	this.connected = connected;
     }
-	public void login(Context context, String posIp, Map<String, Object> parameters,
+
+    public void login(Context context, String posIp, Map<String, Object> parameters,
 			Handler handler) {
 		HttpAPI.login(context, parameters,
 				getAbsolutePOSUrlByIp(posIp, APIName.LOGIN_LOGINVERIFY), httpClient, handler);

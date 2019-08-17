@@ -582,7 +582,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
 					temporaryOrder.setOrderNo(order.getOrderNo());
 					App.instance.remoteBillPrint(printer, title, temporaryOrder,
-							orderItems, orderModifiers, taxMap, null, null);
+							orderItems, orderModifiers, taxMap, null, null,null);
 				}
 //				OrderBill orderBill = OrderBillSQL
 //						.getOrderBillByOrder(order);
@@ -629,7 +629,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 			ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 					.getInstance().getItemModifierList(order, OrderDetailSQL.getOrderDetails(order.getId()));
 			App.instance.remoteBillPrint(printer, title, order, orderItems,
-					orderModifiers, taxMap, null, null);
+					orderModifiers, taxMap, null, null,null);
 			handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
 			dismiss();
 		}

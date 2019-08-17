@@ -429,5 +429,8 @@
     <string name="send_data_failed">إرسال البيانات: فشل</string>
     <string name="send_data_process">إرسال البيانات: العملية</string>
     <string name="amount_less_than">كمية أقل من</string>
+    <string name="print_preparation_instructions">تعليمات إعداد الطباعة</string>
+    <string name="waiter_print_bill_once">النادل طباعة بيل مرة واحدة</string>
+    <string name="promotion">ترقية وظيفية</string>
 
 </resources>
