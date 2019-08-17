@@ -140,6 +140,7 @@ import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.OpenRestaruant;
 import com.alfredposclient.activity.Welcome;
 import com.alfredposclient.http.server.MainPosHttpServer;
+import com.alfredposclient.javabean.MultiRVCPlacesDao;
 import com.alfredposclient.javabean.SecondScreenBean;
 import com.alfredposclient.javabean.SecondScreenTotal;
 import com.alfredposclient.jobs.CloudSyncJobManager;
@@ -226,6 +227,7 @@ public class App extends BaseApplication {
     private User user;
     private Map<String, User> activeUsers = new ConcurrentHashMap<String, User>();
     private Map<String, RVCDevice> rvcDevices = new ConcurrentHashMap<String, RVCDevice>();
+    private List<MultiRVCPlacesDao.Places> otherRVCPlaces = new ArrayList<>();
     private Map<Integer, KDSDevice> kdsDevices = new ConcurrentHashMap<Integer, KDSDevice>();
     private Map<Integer, PrinterDevice> printerDevices = new ConcurrentHashMap<Integer, PrinterDevice>();
     private Map<Integer, WaiterDevice> waiterDevices = new ConcurrentHashMap<Integer, WaiterDevice>();
@@ -1308,10 +1310,8 @@ public class App extends BaseApplication {
             fos.flush();
             fos.close();
         } catch (FileNotFoundException e) {
-            Log.wtf("Test_1",""+e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
-            Log.wtf("Test_2",""+e.getMessage());
             e.printStackTrace();
         }
 
@@ -1321,12 +1321,10 @@ public class App extends BaseApplication {
 
     public void showSunmiQrimg(final Context context, String title, String content, final String path) {
         JSONObject json = new JSONObject();
-        Log.wtf("Test_tpat",""+content+" | "+path);
         try {
             json.put("title", title);
             json.put("content", content);
         } catch (JSONException e) {
-            Log.wtf("Test_ep",""+e.getMessage());
             e.printStackTrace();
         }
 
@@ -1336,7 +1334,6 @@ public class App extends BaseApplication {
             @Override
             public void onSendSuccess(long l) {
 //display image
-                Log.wtf("Test_ex","success");
                 try {
                     JSONObject json = new JSONObject();
                     json.put("dataModel", "QRCODE");
@@ -1354,7 +1351,7 @@ public class App extends BaseApplication {
 
             @Override
             public void onSendFail(int i, String s) {
-                Log.wtf("Test_ex","faile");
+
             }
 
             @Override
@@ -1550,6 +1547,14 @@ public class App extends BaseApplication {
 
     public Map<Integer, KDSDevice> getKDSDevices() {
         return this.kdsDevices;
+    }
+
+    public List<MultiRVCPlacesDao.Places> getOtherRVCPlaces() {
+        return otherRVCPlaces;
+    }
+
+    public void setOtherRVCPlaces(List<MultiRVCPlacesDao.Places> otherRVCPlaces) {
+        this.otherRVCPlaces = otherRVCPlaces;
     }
 
     public void addRVCDevice(RVCDevice device) {

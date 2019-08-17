@@ -166,7 +166,7 @@ public class APIName {
     public static final String POS_LANGUAGE = "pos_language"; //to client
 
     public static final String GET_OTHER_RVC_PLACE_TABLE = "get_other_rvc_place_table"; //GET OTHER TABLE PLACE FROM OTHER RVC
-    public static final String POS_OTHER_RVC_PLACE_TABLE = "pos_other_rvc_place_table";
+    public static final String SEND_ORDER_TO_OTHER_RVC = "send_order_to_other_rvc";
 
 
 }

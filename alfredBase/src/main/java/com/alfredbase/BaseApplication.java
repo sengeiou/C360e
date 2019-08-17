@@ -546,4 +546,5 @@ public class BaseApplication extends Application {
 
     public static final int HANDLER_REFRESH_LANGUAGE = 772;
     public static final int HANDLER_GET_OTHER_RVC = 773;
+    public static final int HANDLER_SEND_ORDER_TO_OTHER_RVC = 774;
 }

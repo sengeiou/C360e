@@ -3155,7 +3155,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 .into(new SimpleTarget<Bitmap>(200, 200) {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                        Log.wtf("Test_","abc");
                         App.instance.showSunmiQrimg(parent, title, total, bitmap);
                         ivQrcode.setImageBitmap(bitmap);
 

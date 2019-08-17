@@ -108,6 +108,16 @@ android {
 //        exclude 'LICENSE.txt'
 //    }
     buildToolsVersion '27.0.3'
+    flavorDimensions 'default'
+    productFlavors {
+        dev {
+            dimension = 'default'
+            applicationIdSuffix = '.debug'
+        }
+        prod {
+            dimension = 'default'
+        }
+    }
 }
 repositories {
 

@@ -11,8 +11,12 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderBill;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -23,6 +27,9 @@ import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.OrderBillSQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
@@ -55,6 +62,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -2868,6 +2876,73 @@ public class HttpAPI {
             e.printStackTrace();
         }
     }
+
+
+    public static void sendOrderToOtherRVC(Context context,
+                                           final String url, Order currentOrder, int tableId,
+                                             AsyncHttpClient httpClient, final Handler handler) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("appVersion", App.instance.VERSION);
+        parameters.put("order", new Gson().toJson(currentOrder));
+
+        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
+        parameters.put("orderDetail", new Gson().toJson(orderDetails));
+
+        KotSummary kot = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
+        parameters.put("kotSummary", new Gson().toJson(kot));
+
+        List<OrderBill> orderbill = OrderBillSQL.getAllOrderBillByOrder(currentOrder);
+        parameters.put("orderBill", new Gson().toJson(orderbill));
+
+
+        parameters.put("tableId", tableId); //selected tableId
+
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            //Log.wtf("Test_sendOrderToOtherRVC","result_success_"+resultCode);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
+                                Message message = new Message();
+                                message.obj = body;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_SEND_ORDER_TO_OTHER_RVC;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+                            } else {
+                                String body = new String(responseBody);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            //Log.wtf("Test_sendOrderToOtherRVC","result_failed_"+new String(responseBody));
+                            error.printStackTrace();
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+
+                        @Override
+                        public boolean getUseSynchronousMode() {
+                            return false;
+                        }
+                    });
+        } catch (Exception e) {
+            //Log.wtf("Test_sendOrderExcep",""+e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
 
     //end connection multi rvc

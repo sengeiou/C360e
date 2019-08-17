@@ -10,6 +10,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.LoginResult;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -782,7 +783,7 @@ public class SyncCentre {
     //end payhalal
 
     //start connection multi RVC
-    public void getOtherRVCPlaceTable(Context context,Handler handler) {
+    public void getOtherRVCPlaceTable(Context context, Handler handler) {
         ArrayList<String> urls = new ArrayList<String>();
         for (Map.Entry<String, RVCDevice> entry : App.instance.getRVCDevices().entrySet()) {
             RVCDevice posInfo = entry.getValue();
@@ -792,6 +793,12 @@ public class SyncCentre {
             HttpAPI.getOtherRVCPlaceTable(context,
                     urls.get(i), httpClient, handler);
         }
+    }
+
+    public void sendOrderToOtherRVC(Context context, String url, Order currentOrder, int tableId, Handler handler) {
+        HttpAPI.sendOrderToOtherRVC(context,
+                getAbsoluteUrl(url, APIName.SEND_ORDER_TO_OTHER_RVC), currentOrder, tableId, httpClient, handler);
+
     }
 
     private String getAbsoluteUrl(String url, String subUrl) {

@@ -165,6 +165,8 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             }
             loadingDialog.show();
             SyncCentre.getInstance().getOtherRVCPlaceTable(mainPage, handler);
+
+
         } else {
             refreshView();
         }
@@ -831,6 +833,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     break;
                 case com.alfredbase.BaseApplication.HANDLER_GET_OTHER_RVC:
                     try {
+
                         MultiRVCPlacesDao dao = new Gson().fromJson((String) msg.obj, MultiRVCPlacesDao.class);
                         if (dao != null) {
                             if (dao.getResultCode() == ResultCode.SUCCESS) {
@@ -849,6 +852,8 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     otherRVCrunnable = new Runnable() {
                         @Override
                         public void run() {
+                            App.instance.getOtherRVCPlaces().clear();
+                            App.instance.getOtherRVCPlaces().addAll(otherRVCPlaces);
                             loadingDialog.dismiss();
                             refreshView();
                         }

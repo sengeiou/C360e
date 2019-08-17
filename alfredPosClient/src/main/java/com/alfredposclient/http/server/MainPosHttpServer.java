@@ -5,6 +5,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -1352,6 +1353,28 @@ public class MainPosHttpServer extends AlfredHttpServer {
             multiRVCPlacesDao.setData(rvcData);
 
             return getJsonResponse(new Gson().toJson(multiRVCPlacesDao));
+        } else if (apiName.equals(APIName.SEND_ORDER_TO_OTHER_RVC)) {
+            Map<String, Object> result = new HashMap<String, Object>();
+            result.put("resultCode", ResultCode.SUCCESS);
+            String orderData = jsonObject.optString("order");
+            int tableId = jsonObject.optInt("tableId");
+
+            try {
+                Order order = new Gson().fromJson(orderData, Order.class);
+                if (order != null && TableInfoSQL.getTableById(tableId) != null) {
+                    App.getTopActivity().httpRequestAction(
+                            MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
+                } else {
+                    result.put("resultCode", ResultCode.UNKNOW_ERROR);
+                }
+            } catch (Exception e) {
+                result.put("resultCode", ResultCode.UNKNOW_ERROR);
+                e.printStackTrace();
+            }
+            //Log.wtf("Test_sendOrderToOtherRVC","result_getto_"+new Gson().toJson(jsonObject));
+
+
+            return getJsonResponse(new Gson().toJson(result));
         } else {
             String userKey = jsonObject.optString("userKey");
             if (TextUtils.isEmpty(userKey) || App.instance.getUserByKey(userKey) == null) {
