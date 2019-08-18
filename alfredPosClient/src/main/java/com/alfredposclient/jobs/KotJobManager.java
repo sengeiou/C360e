@@ -125,7 +125,7 @@ public class KotJobManager {
                 if (kds1 == null && prntd == null) {
                     if (context != null)
                         context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
-                    continue;
+                    return;
                 }
                 if (kds1 != null) {
                     KotJob kotjob = new KotJob(kds1, kotSummary,
