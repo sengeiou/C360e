@@ -17,6 +17,8 @@ import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -30,6 +32,8 @@ import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
@@ -2879,12 +2883,13 @@ public class HttpAPI {
 
 
     public static void sendOrderToOtherRVC(Context context,
-                                           final String url, Order currentOrder, int tableId,
+                                           final String url, int transferType, Order currentOrder, int tableId,
                                              AsyncHttpClient httpClient, final Handler handler) {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("appVersion", App.instance.VERSION);
         parameters.put("order", new Gson().toJson(currentOrder));
+        parameters.put("transferType", transferType);
 
         List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
         parameters.put("orderDetail", new Gson().toJson(orderDetails));
@@ -2895,9 +2900,15 @@ public class HttpAPI {
         List<OrderBill> orderbill = OrderBillSQL.getAllOrderBillByOrder(currentOrder);
         parameters.put("orderBill", new Gson().toJson(orderbill));
 
+        ArrayList<OrderModifier> orderModifier = OrderModifierSQL.getAllOrderModifier(currentOrder);
+        parameters.put("orderModifier", new Gson().toJson(orderModifier));
+
+        List<OrderSplit> orderSplit = OrderSplitSQL.getAllOrderSplits(currentOrder);
+        parameters.put("orderSplit", new Gson().toJson(orderSplit));
 
         parameters.put("tableId", tableId); //selected tableId
 
+//        Log.wtf("Test_send",""+new Gson().toJson(parameters));
         try {
             httpClient.post(context, url,
                     new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,

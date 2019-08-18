@@ -187,7 +187,7 @@ public class MainPage extends BaseActivity {
     public static final int ACTION_SWITCH_USER = 129;
     // public static final int ACTION_SWITCH_USER_ERROR = 130;
     private static final int VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER = 131;
-    private static final int ACTION_TRANSFER_TABLE = 132;
+    public static final int ACTION_TRANSFER_TABLE = 132;
     public static final int WAITER_SEND_KDS = 133;
     public static final int VIEW_EVENT_KICK_CASHDRAWER = 134;
     public static final int VIEW_EVENT_SHOW_VOIDORFREE_WINDOW = 135;
@@ -227,6 +227,7 @@ public class MainPage extends BaseActivity {
     public static final int VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER = 163;
 
     public static final int SERVER_TRANSFER_TABLE_FROM_OTHER_RVC = 400;
+    public static final int ACTION_MERGE_TABLE = 401;
 
     public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
     public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
@@ -489,11 +490,11 @@ public class MainPage extends BaseActivity {
         }
     };
 
-    private void setTablePacks( String tablePacks) {
-        setTablePacks( currentTable, tablePacks);
+    public void setTablePacks(String tablePacks) {
+        setTablePacks(currentTable, tablePacks);
     }
 
-    private void setTablePacks(TableInfo tableInfo, String tablePacks) {
+    public static void setTablePacks(TableInfo tableInfo, String tablePacks) {
         if (tableInfo != null) {
             tableInfo.setPacks(Integer.parseInt(tablePacks));
             tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
@@ -592,6 +593,12 @@ public class MainPage extends BaseActivity {
     }
 
     private void transferOrder(TableInfo table) {
+        transferOrder(table, -1);
+    }
+
+
+    private void transferOrder(TableInfo table, int transferType) {
+        //msg.what
         boolean fromThisRVC = checkIfTableFromThisRVC(table);
         if (fromThisRVC) {
             //Log.wtf("Test_table_1",""+new Gson().toJson(table));
@@ -599,12 +606,7 @@ public class MainPage extends BaseActivity {
         } else {
             for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
                 if (table.getRevenueId().equals(otherPlace.getRevenueId())) {
-                    currentOrder.setTableId(table.getPosId());
-                    currentOrder.setRevenueId(table.getRevenueId());
-
-                    //Log.wtf("Test_table_2",""+new Gson().toJson(table));
-                    //Log.wtf("Test_table_2_order",""+new Gson().toJson(currentOrder));
-                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), currentOrder, table.getPosId(), handler);
+                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), transferType, currentOrder, table.getPosId(), handler);
                     break;
                 }
             }
@@ -622,12 +624,12 @@ public class MainPage extends BaseActivity {
     }
 
     private void mergerOrder() {
+        if (oldOrder == null) {
+            return;
+        }
+
         boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
         if (fromThisRVC) {
-
-            if (oldOrder == null) {
-                return;
-            }
             List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(oldOrder.getId().intValue());
             StringBuffer orderSplitIds = new StringBuffer();
             if (orderSplits != null && orderSplits.size() > 0) {
@@ -646,6 +648,8 @@ public class MainPage extends BaseActivity {
                 orderDetails.addAll(OrderDetailSQL
                         .getUnFreeOrderDetails(oldOrder));
             }
+
+
             KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
             if (!orderDetails.isEmpty()) {
                 for (OrderDetail orderDetail : orderDetails) {
@@ -687,10 +691,16 @@ public class MainPage extends BaseActivity {
 
             TableInfo oldTable = TableInfoSQL.getTableById(oldOrder.getTableId().intValue());
             currentTable.setPacks(currentTable.getPacks() + oldTable.getPacks());
+
             initOrder(currentTable);
         } else {
-            //todo
-            //Log.wtf("Test_", "t5");
+//            Log.wtf("Test_", "TMERGER");
+            for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
+                if (currentTable.getRevenueId().equals(otherPlace.getRevenueId())) {
+                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), ACTION_MERGE_TABLE, oldOrder, currentTable.getPosId(), handler);
+                    break;
+                }
+            }
         }
 
     }
@@ -1345,8 +1355,8 @@ public class MainPage extends BaseActivity {
                                 DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.please_select_empty_table), null);
                             }
                         } else {
-                            //Log.wtf("Test_", "t1"); //saat mau order
-                            transferOrder(currentTable);
+                            //Log.wtf("test_", "T1"); //saat mau order
+                            transferOrder(currentTable, ACTION_TRANSFER_TABLE);
                             handler.sendMessage(handler
                                     .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER));
                         }
@@ -1399,12 +1409,13 @@ public class MainPage extends BaseActivity {
                                                 }
                                             }
                                         } else {
-                                            //Log.wtf("test_", "Tx");
+                                            //Log.wtf("test_", "Tx : transfer table ke kursi kosong, sudah place order");
+                                            transferOrder(currentTable, ACTION_TRANSFER_TABLE);
                                         }
 
                                     } else {
-                                        //Log.wtf("test_", "T3");
-                                        transferOrder(currentTable);
+                                        //Log.wtf("test_", "T3 : transfer table ke kursi kosong, belum place order");
+                                        transferOrder(currentTable, ACTION_TRANSFER_TABLE);
                                     }
                                     handler.sendMessage(handler
                                             .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER));
@@ -1449,10 +1460,13 @@ public class MainPage extends BaseActivity {
                                                             toKotSummary,
                                                             fromKotSummary, parameters);
                                         } else {
-                                            //Log.wtf("Test_", "t4");
-                                            //todo other
+                                            //Log.wtf("test_", "T4 : transfer table ke kursi terisi, sudah place order");
+                                            mergerOrder();
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER));
                                         }
                                     } else {
+                                        //Log.wtf("test_", "T5 : transfer table ke kursi yg telah terisi, belum place order");
                                         mergerOrder();
                                         handler.sendMessage(handler
                                                 .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER));
@@ -1570,7 +1584,7 @@ public class MainPage extends BaseActivity {
                                                         fromKotSummary, parameters, kotItemDetail);
                                     }
                                 } else {
-                                    //Log.wtf("Test_", "t6");
+                                    Log.wtf("test_", "T6 :  transfer item, kursi kosong, blm place order");
                                     //todo other
                                 }
                                 handler.sendEmptyMessage(VIEW_EVENT_DISMISS_TABLES);
@@ -2263,8 +2277,16 @@ public class MainPage extends BaseActivity {
     private void unseat() {
         OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
         KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
+        OrderModifierSQL.deleteOrderModifierByOrder(currentOrder);
+        List<OrderSplit> splits = OrderSplitSQL.getAllOrderSplits(currentOrder);
+        if (splits.size() > 0) {
+            for (OrderSplit split : splits) {
+                OrderSplitSQL.delete(split);
+            }
+        }
         OrderBillSQL.deleteOrderBillByOrder(currentOrder);
         OrderSQL.deleteOrder(currentOrder);
+
         TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
         tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
         TableInfoSQL.updateTables(tables);
@@ -2756,62 +2778,8 @@ public class MainPage extends BaseActivity {
                 handler.sendEmptyMessage(action);
                 break;
             case SERVER_TRANSFER_TABLE_FROM_OTHER_RVC:
-                JSONObject jsonObject = (JSONObject) obj;
-                String orderData = jsonObject.optString("order");
-                String orderDetail = jsonObject.optString("orderDetail");
-                String kotSummary = jsonObject.optString("kotSummary");
-                String orderbill = jsonObject.optString("orderBill");
-                int tableId = jsonObject.optInt("tableId");
-
-                Order order = new Gson().fromJson(orderData, Order.class);
-                //Log.wtf("Test_sendOrderToOtherRVC_order", "result_transfer_"+tableId+" - " + new Gson().toJson(order));
-                order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                order.setTableId(tableId);
-                OrderSQL.addOrder(order);
-                Order last = OrderSQL.getLastOrderatTabel(tableId);
-
-                try {
-                    List<OrderDetail> orderDetails = gson.fromJson(orderDetail,
-                            new TypeToken<List<OrderDetail>>() {
-                            }.getType());
-                    for(OrderDetail orderDetail1 : orderDetails){
-                        orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
-                        orderDetail1.setOrderId(last.getId());
-                        OrderDetailSQL.addOrderDetailETC(orderDetail1);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                if(!TextUtils.isEmpty(kotSummary)){
-                    KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
-                    if(kot!=null) {
-                        kot.setOrderId(last.getId());
-                        kot.setNumTag(last.getNumTag());
-                        List<KotSummary> kots = new ArrayList<>();
-                        kots.add(kot);
-                        KotSummarySQL.addKotSummaryList(kots);
-                    }
-                }
-//
-//                List<OrderBill> orderbill = OrderBillSQL.getAllOrderBillByOrder(currentOrder);
-//                parameters.put("orderBill", new Gson().toJson(orderbill));
-                try {
-                    List<OrderBill> orderbills = gson.fromJson(orderbill,
-                            new TypeToken<List<OrderBill>>() {
-                            }.getType());
-                    for(OrderBill orderbill1 : orderbills){
-                        orderbill1.setOrderId(last.getId());
-                        OrderBillSQL.add(orderbill1);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
 
 
-                TableInfo tableInfo = TableInfoSQL.getTableById(tableId);
-                //Log.wtf("Test_sendOrderToOtherRVC_tableinfo", "result_transfer_"+tableId+" - " + new Gson().toJson(tableInfo));
-                setTablePacks(tableInfo, String.valueOf(order.getPersons()));
                 break;
             default:
                 break;

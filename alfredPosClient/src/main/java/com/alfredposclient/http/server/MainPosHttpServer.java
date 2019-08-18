@@ -5,7 +5,6 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -1364,6 +1363,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 if (order != null && TableInfoSQL.getTableById(tableId) != null) {
                     App.getTopActivity().httpRequestAction(
                             MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
+                    handlerTransferFromOtherRvc(jsonObject);
                 } else {
                     result.put("resultCode", ResultCode.UNKNOW_ERROR);
                 }
@@ -3565,5 +3565,162 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         return resp;
     }
+
+    private void handlerTransferFromOtherRvc(JSONObject jsonObject) {
+        String orderData = jsonObject.optString("order");
+        String orderDetail = jsonObject.optString("orderDetail");
+        String kotSummary = jsonObject.optString("kotSummary");
+        String orderbill = jsonObject.optString("orderBill");
+        int targetTableId = jsonObject.optInt("tableId");
+        int transferType = jsonObject.optInt("transferType");
+
+        String orderModifier = jsonObject.optString("orderModifier");
+        String orderSplit = jsonObject.optString("orderSplit");
+
+
+        if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
+            Order order = new Gson().fromJson(orderData, Order.class);
+            order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+            order.setTableId(targetTableId);
+            OrderSQL.addOrder(order);
+            Order last = OrderSQL.getLastOrderatTabel(targetTableId);
+
+
+            addOrderDetailFromOtherRVC(last, orderDetail, kotSummary, orderbill, orderModifier, orderSplit);
+
+            TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
+            MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
+
+            //todo add KOT on KDS
+        } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
+            Order order = new Gson().fromJson(orderData, Order.class);
+            order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+            order.setTableId(-1);
+            OrderSQL.addOrder(order);
+            Order last = OrderSQL.getLastOrderatTabel(-1);
+
+            addOrderDetailFromOtherRVC(last, orderDetail, kotSummary, orderbill, orderModifier, orderSplit);
+
+            List<OrderDetail> orderDetails = new ArrayList<>();
+
+            List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(last.getId().intValue());
+            StringBuffer orderSplitIds = new StringBuffer();
+            if (orderSplits != null && orderSplits.size() > 0) {
+                for (int i = 0; i < orderSplits.size(); i++) {
+                    orderSplitIds.append(orderSplits.get(i).getId());
+                    if (i < orderSplits.size() - 1) {
+                        orderSplitIds.append(',');
+                    }
+                }
+            }
+            if (orderSplitIds.length() > 0) {
+                orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(last, orderSplitIds.toString()));
+            } else {
+                orderDetails.addAll(OrderDetailSQL
+                        .getUnFreeOrderDetails(last));
+            }
+
+            Order newOrder = OrderSQL.getUnfinishedOrderAtTable(targetTableId, last.getBusinessDate(), App.instance.getSessionStatus());
+            if (!orderDetails.isEmpty()) {
+                for (OrderDetail orderDetailNewOrder : orderDetails) {
+                    OrderDetail newOrderDetail = ObjectFactory.getInstance()
+                            .getOrderDetailForTransferTable(newOrder, orderDetailNewOrder);
+                    OrderDetailSQL.addOrderDetailETC(newOrderDetail);
+                    List<OrderModifier> orderModifiers = OrderModifierSQL
+                            .getOrderModifiers(orderDetailNewOrder);
+                    if (orderModifiers.isEmpty()) {
+                        continue;
+                    }
+                    for (OrderModifier orderModif : orderModifiers) {
+                        OrderModifier newOrderModifier = ObjectFactory
+                                .getInstance().getOrderModifier(
+                                        newOrder,
+                                        newOrderDetail,
+                                        CoreData.getInstance().getModifier(
+                                                orderModif.getModifierId()),
+                                        orderModif.getPrinterId().intValue());
+                        OrderModifierSQL.addOrderModifier(newOrderModifier);
+                    }
+                }
+            }
+
+
+            TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
+            int pax = tableInfo.getPacks() + last.getPersons();
+            MainPage.setTablePacks(tableInfo, String.valueOf(pax));
+
+            //todo add KOT on KDS
+
+
+        }
+
+    }
+
+    private void addOrderDetailFromOtherRVC(Order last, String orderDetail, String kotSummary, String orderbill, String orderModifier, String orderSplit) {
+        try {
+            List<OrderDetail> orderDetails = gson.fromJson(orderDetail,
+                    new TypeToken<List<OrderDetail>>() {
+                    }.getType());
+            for (OrderDetail orderDetail1 : orderDetails) {
+                orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
+                orderDetail1.setOrderId(last.getId());
+                OrderDetailSQL.addOrderDetailETC(orderDetail1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (!TextUtils.isEmpty(kotSummary)) {
+            KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
+            if (kot != null) {
+                kot.setOrderId(last.getId());
+                kot.setNumTag(last.getNumTag());
+                List<KotSummary> kots = new ArrayList<>();
+                kots.add(kot);
+                KotSummarySQL.addKotSummaryList(kots);
+            }
+        }
+
+        try {
+            List<OrderBill> orderbills = gson.fromJson(orderbill,
+                    new TypeToken<List<OrderBill>>() {
+                    }.getType());
+            for (OrderBill orderbill1 : orderbills) {
+                orderbill1.setOrderId(last.getId());
+                orderbill1.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                OrderBillSQL.add(orderbill1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
+                    new TypeToken<List<OrderModifier>>() {
+                    }.getType());
+            for (OrderModifier data : orderModifiers) {
+                data.setOrderId(last.getId());
+                OrderModifierSQL.addOrderModifier(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            List<OrderSplit> orderSplits = gson.fromJson(orderSplit,
+                    new TypeToken<List<OrderSplit>>() {
+                    }.getType());
+            for (OrderSplit data : orderSplits) {
+                data.setOrderId(last.getId());
+                data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                OrderSplitSQL.add(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
 }

@@ -795,9 +795,9 @@ public class SyncCentre {
         }
     }
 
-    public void sendOrderToOtherRVC(Context context, String url, Order currentOrder, int tableId, Handler handler) {
+    public void sendOrderToOtherRVC(Context context, String url, int transferType, Order currentOrder, int tableId, Handler handler) {
         HttpAPI.sendOrderToOtherRVC(context,
-                getAbsoluteUrl(url, APIName.SEND_ORDER_TO_OTHER_RVC), currentOrder, tableId, httpClient, handler);
+                getAbsoluteUrl(url, APIName.SEND_ORDER_TO_OTHER_RVC),transferType, currentOrder, tableId, httpClient, handler);
 
     }
 
