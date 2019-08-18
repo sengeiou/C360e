@@ -122,18 +122,16 @@ public class KotJobManager {
                 // physical printer
                 PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
                         .getId());
-                if (prntd == null) {
+                if (kds1 == null && prntd == null) {
                     if (context != null)
                         context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
                     continue;
                 }
-
                 if (kds1 != null) {
                     KotJob kotjob = new KotJob(kds1, kotSummary,
                             kots.get(prgid), mods.get(prgid), method, orderMap);
                     kotJobManager.addJob(kotjob);
                 }
-
                 if (prntd != null) {
                     prntd.setGroupId(prgid.intValue());
 
