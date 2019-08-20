@@ -977,7 +977,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
         if (!bitmap.isRecycled())
             bitmap.recycle();
         ll_menu.setVisibility(View.GONE);
-        ((TextView) findViewById(R.id.tv_item_name)).setText(CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemName());
+        ((TextView) findViewById(R.id.tv_item_name)).setText(CoreData.getInstance().getItemDetailById(orderDetail.getItemId(),orderDetail.getItemName()).getItemName());
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_up, "y",
                 iv_up.getY(), iv_up.getY() - iv_up.getHeight()).setDuration(
                 OPEN_DELAY);

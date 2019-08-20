@@ -224,7 +224,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 			String modifiers = getItemModifiers(orderDetail);
 			
 			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-					orderDetail.getItemId());
+					orderDetail.getItemId(),orderDetail.getItemName());
 			if (modifiers != null) {
 				holder.modifier.setText(modifiers);
 			}

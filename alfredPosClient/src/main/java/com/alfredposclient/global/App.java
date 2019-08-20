@@ -3237,7 +3237,7 @@ public class App extends BaseApplication {
             Payment payment = ObjectFactory.getInstance().getPayment(order, orderBill);
             PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_PAYPAL, payment.getPaymentAmount());
             for (AppOrderDetail appOrderDetail : appOrderDetailList) {
-                if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue()) == null)
+                if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue(),appOrderDetail.getItemName()) == null)
                     continue;
                 OrderDetail orderDetail = ObjectFactory
                         .getInstance()
@@ -3304,8 +3304,7 @@ public class App extends BaseApplication {
                                     orderDetail,
                                     CoreData.getInstance()
                                             .getItemDetailById(
-                                                    orderDetail
-                                                            .getItemId()),
+                                                    orderDetail.getItemId(), orderDetail.getItemName()),
                                     kotSummary,
                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                     kotItemDetail.setItemNum(orderDetail

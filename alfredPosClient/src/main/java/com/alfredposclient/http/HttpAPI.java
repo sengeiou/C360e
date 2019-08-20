@@ -11,6 +11,8 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
@@ -29,6 +31,8 @@ import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
@@ -54,6 +58,7 @@ import com.alfredposclient.activity.XZReportHtml;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.BinaryHttpResponseHandler;
@@ -2861,8 +2866,12 @@ public class HttpAPI {
                                 handler.sendMessage(message);
                                 handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
                             } else {
-                                String body = new String(responseBody);
-                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
+                                Message message = new Message();
+                                message.obj = null;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_GET_OTHER_RVC;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, null));
                             }
 
                         }
@@ -2870,8 +2879,12 @@ public class HttpAPI {
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
-                            error.printStackTrace();
-                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            Message message = new Message();
+                            message.obj = null;
+                            message.arg2 = -1;
+                            message.what = App.HANDLER_GET_OTHER_RVC;
+                            handler.sendMessage(message);
+                            handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, null));
                             super.onFailure(statusCode, headers, responseBody, error);
 
                         }
@@ -2882,9 +2895,80 @@ public class HttpAPI {
     }
 
 
+    public static void getOtherRVCTable(Context context,
+                                        final String url,
+                                        int placeId,
+                                        AsyncHttpClient httpClient, final Handler handler) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("appVersion", App.instance.VERSION);
+        parameters.put("placeId", placeId);
+
+
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+
+                            Message message = new Message();
+                            try {
+                                JSONObject object = new JSONObject(new String(responseBody));
+                                if (resultCode == ResultCode.SUCCESS) {
+                                    message.obj = object.get("data");
+                                } else {
+                                    message.obj = null;
+                                }
+                            } catch (JSONException e) {
+                                message.obj = null;
+                                e.printStackTrace();
+                            }
+                            message.arg2 = -1;
+                            message.what = App.HANDLER_GET_OTHER_TABLE;
+
+                            handler.sendMessage(message);
+                            handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            Message message = new Message();
+                            message.obj = null;
+                            message.arg2 = -1;
+                            message.what = App.HANDLER_GET_OTHER_TABLE;
+                            handler.sendMessage(message);
+                            handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, null));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+
+
+                        @Override
+                        public boolean getUseSynchronousMode() {
+                            return false;
+                        }
+
+                    });
+        } catch (Exception e) {
+            Message message = new Message();
+            message.obj = null;
+            message.arg2 = -1;
+            message.what = App.HANDLER_GET_OTHER_TABLE;
+            handler.sendMessage(message);
+            handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, null));
+            e.printStackTrace();
+        }
+    }
+
     public static void sendOrderToOtherRVC(Context context,
                                            final String url, int transferType, Order currentOrder, int tableId,
-                                             AsyncHttpClient httpClient, final Handler handler) {
+                                           AsyncHttpClient httpClient, final Handler handler) {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("appVersion", App.instance.VERSION);
@@ -2897,6 +2981,19 @@ public class HttpAPI {
         KotSummary kot = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
         parameters.put("kotSummary", new Gson().toJson(kot));
 
+        ArrayList<KotItemDetail> kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderId(currentOrder.getId());
+        parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+
+        ArrayList<ArrayList<KotItemModifier>> kotItemModifiers = new ArrayList<>();
+        for (KotItemDetail itemDetail : kotItemDetail) {
+            ArrayList<KotItemModifier> kotItemModifier = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(itemDetail.getId());
+            kotItemModifiers.add(kotItemModifier);
+
+        }
+        parameters.put("kotItemModifier", new Gson().toJson(kotItemModifiers));
+
+
+
         List<OrderBill> orderbill = OrderBillSQL.getAllOrderBillByOrder(currentOrder);
         parameters.put("orderBill", new Gson().toJson(orderbill));
 
@@ -2908,7 +3005,6 @@ public class HttpAPI {
 
         parameters.put("tableId", tableId); //selected tableId
 
-//        Log.wtf("Test_send",""+new Gson().toJson(parameters));
         try {
             httpClient.post(context, url,
                     new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
@@ -2917,13 +3013,13 @@ public class HttpAPI {
                         public void onSuccess(int statusCode, Header[] headers,
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
-                            //Log.wtf("Test_sendOrderToOtherRVC","result_success_"+resultCode);
+//                            Log.wtf("Test_sendOrderToOtherRVC", "result_success_" + resultCode);
                             if (resultCode == ResultCode.SUCCESS) {
                                 String body = new String(responseBody);
                                 Message message = new Message();
                                 message.obj = body;
                                 message.arg2 = -1;
-                                message.what = App.HANDLER_SEND_ORDER_TO_OTHER_RVC;
+                                message.what = App.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC;
                                 handler.sendMessage(message);
                                 handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
                             } else {
@@ -2933,10 +3029,11 @@ public class HttpAPI {
 
                         }
 
+
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
-                            //Log.wtf("Test_sendOrderToOtherRVC","result_failed_"+new String(responseBody));
+//                            Log.wtf("Test_sendOrderToOtherRVC", "result_failed_" + new String(responseBody));
                             error.printStackTrace();
                             handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
                             super.onFailure(statusCode, headers, responseBody, error);
@@ -2949,11 +3046,68 @@ public class HttpAPI {
                         }
                     });
         } catch (Exception e) {
-            //Log.wtf("Test_sendOrderExcep",""+e.getMessage());
+//            Log.wtf("Test_sendOrderExcep",""+e.getMessage());
             e.printStackTrace();
         }
     }
 
+
+    public static void transferItemToOtherRVC(Context context, String url, Order oldOrder, OrderDetail transfItemOrderDetail, int tableId, int pack, AsyncHttpClient httpClient, final Handler handler) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("appVersion", App.instance.VERSION);
+        parameters.put("order", new Gson().toJson(oldOrder));
+        parameters.put("orderDetail", new Gson().toJson(transfItemOrderDetail));
+        parameters.put("tableId", tableId); //selected tableId
+        parameters.put("pack", pack); //selected tableId
+
+
+        Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            Log.wtf("Test_transfer_item_to_other", "result_success_" + resultCode);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
+                                Message message = new Message();
+                                message.obj = body;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+                            } else {
+                                String body = new String(responseBody);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            Log.wtf("Test_transfer_item_to_other", "result_failed_" + new String(responseBody));
+                            error.printStackTrace();
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+
+                        @Override
+                        public boolean getUseSynchronousMode() {
+                            return false;
+                        }
+                    });
+        } catch (Exception e) {
+            Log.wtf("Test_sendOrderExcep",""+e.getMessage());
+
+            e.printStackTrace();
+        }
+    }
 
 
     //end connection multi rvc

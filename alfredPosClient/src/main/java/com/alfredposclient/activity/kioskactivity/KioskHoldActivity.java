@@ -400,8 +400,8 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                                         orderDetail,
                                         CoreData.getInstance()
                                                 .getItemDetailById(
-                                                        orderDetail
-                                                                .getItemId()),
+                                                        orderDetail.getItemId(),
+                                                        orderDetail.getItemName()),
                                         kotSummary,
                                         App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                         kotItemDetail.setItemNum(orderDetail

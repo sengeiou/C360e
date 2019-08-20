@@ -369,8 +369,8 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                                                     orderDetail,
                                                                     CoreData.getInstance()
                                                                             .getItemDetailById(
-                                                                                    orderDetail
-                                                                                            .getItemId()),
+                                                                                    orderDetail.getItemId(),
+                                                                                    orderDetail.getItemName()),
                                                                     kotSummary,
                                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                                     kotItemDetail.setItemNum(orderDetail
@@ -623,8 +623,8 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                         orderDetail,
                                         CoreData.getInstance()
                                                 .getItemDetailById(
-                                                        orderDetail
-                                                                .getItemId()),
+                                                        orderDetail.getItemId(),
+                                                        orderDetail.getItemName()),
                                         kotSummary,
                                         App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                         kotItemDetail.setItemNum(orderDetail

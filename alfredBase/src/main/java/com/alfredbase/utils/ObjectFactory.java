@@ -885,7 +885,7 @@ public class ObjectFactory {
                 orderDetail.setRealPrice(appOrderDetail.getTotalItemPrice());
                 orderDetail.setGroupId(0);
                 orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-                ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(appOrderDetail.getItemId().intValue());
+                ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(appOrderDetail.getItemId().intValue(),appOrderDetail.getItemName());
                 orderDetail.setMainCategoryId(itemDetail.getItemMainCategoryId().intValue());
                 orderDetail.setAppOrderDetailId(appOrderDetail.getId());
             }

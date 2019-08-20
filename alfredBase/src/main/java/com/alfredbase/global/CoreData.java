@@ -353,13 +353,34 @@ public class CoreData {
     }
 
 
-    public ItemDetail getItemDetailById(Integer id) {
-        if (id == null)
+    public ItemDetail getItemDetailById(ItemDetail searchItem) {
+        return getItemDetailById(searchItem.getId(), searchItem.getItemName());
+    }
+
+    public ItemDetail getItemDetailById(Integer id, String name) {
+        if (id == null) {
             return null;
+        }
+
         for (ItemDetail itemDetail : getItemDetails()) {
             if (itemDetail.getId().intValue() == id.intValue()) {
-                return itemDetail;
+                if (!TextUtils.isEmpty(name)) {
+                    if (itemDetail.getItemName().equals(name)) {
+                        return itemDetail;
+                    }
+                } else {
+                    return itemDetail;
+                }
+
             }
+
+            if (!TextUtils.isEmpty(name)) {
+                if (itemDetail.getItemName().equals(name)) {
+                    return itemDetail;
+                }
+            }
+
+
         }
         return null;
     }
@@ -1094,7 +1115,7 @@ public class CoreData {
     }
 
     public String getUserKey(Integer revenueId) {
-        ////Log.wtf("Test_getuserKey",""+revenueId+" : "+new Gson().toJson(userKey));
+        //Log.wtf("Test_getuserKey",""+revenueId+" : "+new Gson().toJson(userKey));
         if (revenueId == null) {
             for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
                 return entry.getValue();

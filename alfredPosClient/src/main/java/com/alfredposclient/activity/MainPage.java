@@ -301,6 +301,7 @@ public class MainPage extends BaseActivity {
     private View animatorView;
     private View view_top_line;
     private OrderDetail transfItemOrderDetail;
+    private OrderDetail oldTransItemOrderDetail;
 
     //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
@@ -508,7 +509,10 @@ public class MainPage extends BaseActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            TableInfoSQL.updateTables(tableInfo);
+
+            if (tableInfo.getRevenueId().equals(App.instance.getMainPosInfo().getRevenueId())) {
+                TableInfoSQL.updateTables(tableInfo);
+            }
 //			TablesSQL.updateTables(tableInfo);
         }
     }
@@ -601,7 +605,6 @@ public class MainPage extends BaseActivity {
         //msg.what
         boolean fromThisRVC = checkIfTableFromThisRVC(table);
         if (fromThisRVC) {
-            //Log.wtf("Test_table_1",""+new Gson().toJson(table));
             transferOrder(currentOrder, table.getPosId());
         } else {
             for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
@@ -610,8 +613,6 @@ public class MainPage extends BaseActivity {
                     break;
                 }
             }
-
-
         }
 
     }
@@ -694,7 +695,6 @@ public class MainPage extends BaseActivity {
 
             initOrder(currentTable);
         } else {
-//            Log.wtf("Test_", "TMERGER");
             for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
                 if (currentTable.getRevenueId().equals(otherPlace.getRevenueId())) {
                     SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), ACTION_MERGE_TABLE, oldOrder, currentTable.getPosId(), handler);
@@ -1285,8 +1285,9 @@ public class MainPage extends BaseActivity {
                     final TableInfo newTable = (TableInfo) msg.obj;
                     final boolean fromThisRVC = checkIfTableFromThisRVC(newTable);
                     boolean showDialog = true;
-                    if (newTable.getPosId().intValue() == oldTable.getPosId()
-                            .intValue()) {
+                    if (newTable.getPosId().intValue() == oldTable.getPosId().intValue() &&
+                            newTable.getRevenueId().intValue() == oldTable.getRevenueId().intValue()
+                    ) {
                         showDialog = false;
                         currentTable = newTable;
                         if (fromThisRVC) {
@@ -1355,7 +1356,6 @@ public class MainPage extends BaseActivity {
                                 DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.please_select_empty_table), null);
                             }
                         } else {
-                            //Log.wtf("test_", "T1"); //saat mau order
                             transferOrder(currentTable, ACTION_TRANSFER_TABLE);
                             handler.sendMessage(handler
                                     .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER));
@@ -1368,6 +1368,7 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -1409,12 +1410,10 @@ public class MainPage extends BaseActivity {
                                                 }
                                             }
                                         } else {
-                                            //Log.wtf("test_", "Tx : transfer table ke kursi kosong, sudah place order");
                                             transferOrder(currentTable, ACTION_TRANSFER_TABLE);
                                         }
 
                                     } else {
-                                        //Log.wtf("test_", "T3 : transfer table ke kursi kosong, belum place order");
                                         transferOrder(currentTable, ACTION_TRANSFER_TABLE);
                                     }
                                     handler.sendMessage(handler
@@ -1460,13 +1459,11 @@ public class MainPage extends BaseActivity {
                                                             toKotSummary,
                                                             fromKotSummary, parameters);
                                         } else {
-                                            //Log.wtf("test_", "T4 : transfer table ke kursi terisi, sudah place order");
                                             mergerOrder();
                                             handler.sendMessage(handler
                                                     .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER));
                                         }
                                     } else {
-                                        //Log.wtf("test_", "T5 : transfer table ke kursi yg telah terisi, belum place order");
                                         mergerOrder();
                                         handler.sendMessage(handler
                                                 .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER));
@@ -1476,8 +1473,13 @@ public class MainPage extends BaseActivity {
                                 }
                                 if (oldTable != null) {
                                     oldTable.setStatus(ParamConst.TABLE_STATUS_IDLE);
-                                    TableInfoSQL.updateTables(oldTable);
+                                    if (checkIfTableFromThisRVC(oldTable)) {
+                                        TableInfoSQL.updateTables(oldTable);
+                                    } else {
+                                        TableInfoSQL.updateTables(currentTable);
+                                    }
                                 }
+
                             }
                         }).start();
                     }
@@ -1566,7 +1568,9 @@ public class MainPage extends BaseActivity {
                                             OrderSQL.deleteOrder(oldOrder);
                                             TableInfo tables = TableInfoSQL.getTableById(oldOrder.getTableId().intValue());
                                             tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
-                                            TableInfoSQL.updateTables(tables);
+                                            if (checkIfTableFromThisRVC(tables)) {
+                                                TableInfoSQL.updateTables(tables);
+                                            }
                                             try {
                                                 JSONObject jsonObject = new JSONObject();
                                                 jsonObject.put("tableId", tables.getPosId().intValue());
@@ -1584,8 +1588,7 @@ public class MainPage extends BaseActivity {
                                                         fromKotSummary, parameters, kotItemDetail);
                                     }
                                 } else {
-                                    Log.wtf("test_", "T6 :  transfer item, kursi kosong, blm place order");
-                                    //todo other
+                                    transferItemOtherRVC();
                                 }
                                 handler.sendEmptyMessage(VIEW_EVENT_DISMISS_TABLES);
                             }
@@ -1752,10 +1755,7 @@ public class MainPage extends BaseActivity {
                                     String kotCommitStatus = ParamConst.JOB_VOID_KOT;
                                     KotSummary kotSummary = KotSummarySQL.getKotSummary(orderDetail
                                             .getOrderId(), "");
-
-                                    KotItemDetail kotItemDetail = KotItemDetailSQL
-                                            .getMainKotItemDetailByOrderDetailId(kotSummary.getId(), orderDetail
-                                                    .getId());
+                                    KotItemDetail kotItemDetail = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummary.getId(), orderDetail.getId());
                                     kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);
 
                                     KotItemDetailSQL.update(kotItemDetail);
@@ -1871,6 +1871,7 @@ public class MainPage extends BaseActivity {
                     break;
                 case VIEW_EVENT_TANSFER_ITEM: {
                     transfItemOrderDetail = (OrderDetail) msg.obj;
+                    oldTransItemOrderDetail = (OrderDetail) msg.obj;
                     transfItemOrderDetail.setTransferFromDetailId(transfItemOrderDetail.getId().intValue());
                     transfItemOrderDetail.setTransferFromDetailNum(transfItemOrderDetail.getItemNum().intValue());
                     verifyDialog.show(HANDLER_MSG_OBJECT_TRANSFER_ITEM, null);
@@ -2260,10 +2261,42 @@ public class MainPage extends BaseActivity {
                     closeTables();
                     setDataWaitingList();
                     break;
-                case BaseApplication.HANDLER_SEND_ORDER_TO_OTHER_RVC:
+                case BaseApplication.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC:
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
                     unseat();
+                    onBackPressed();
+                    showTables();
+                    break;
+                case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
+                    final OrderDetail orderDetail = transfItemOrderDetail;
+                    if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
+
+                    } else if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
+
+                    } else if (orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0) {
+                        OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
+                        if (orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
+
+                        }
+                    }
+
+                    if (orderDetail.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+                        removeItemLogic(orderDetail);
+                    } else if (App.instance.getSystemSettings().isRemoveToVoid()) {
+                        handler.sendMessage(handler.obtainMessage(MainPage.ACTION_CANCEL_ORDER_DETAIL, orderDetail));
+                    } else if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+                        Map<String, Object> map = new HashMap<String, Object>();
+                        map.put("orderDetail", orderDetail);
+                        map.put("type", new Integer(
+                                ParamConst.ORDERDETAIL_TYPE_VOID));
+                        handler.sendMessage(handler.obtainMessage(
+                                MainPage.VIEW_EVENT_VOID_OR_FREE, map));
+                        handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_MODIFIER_VIEW);
+                    }
+
+
+                    showTables();
                     onBackPressed();
                     break;
                 default:
@@ -2289,7 +2322,9 @@ public class MainPage extends BaseActivity {
 
         TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
         tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
-        TableInfoSQL.updateTables(tables);
+        if (checkIfTableFromThisRVC(tables)) {
+            TableInfoSQL.updateTables(tables);
+        }
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("tableId", currentTable.getPosId().intValue());
@@ -2530,6 +2565,16 @@ public class MainPage extends BaseActivity {
 
     }
 
+    private void transferItemOtherRVC() {
+        oldOrder = currentOrder;
+        for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
+            if (currentTable.getRevenueId().equals(otherPlace.getRevenueId())) {
+                SyncCentre.getInstance().transferItemToOtherRVC(context, otherPlace.getIp(), oldOrder, transfItemOrderDetail, currentTable, handler);
+                break;
+            }
+        }
+    }
+
     private void closeTables() {
 //		ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
 //				web_tables.getY(), web_tables.getY() + web_tables.getHeight())
@@ -2567,7 +2612,9 @@ public class MainPage extends BaseActivity {
 //        List<OrderSplit> orderSplits  = OrderSplitSQL.getAllOrderSplits(currentOrder);
 //        //update tabels orders
         currentTable.setOrders(orderDetails.size());
-        TableInfoSQL.updateTables(currentTable);
+        if (checkIfTableFromThisRVC(currentTable)) {
+            TableInfoSQL.updateTables(currentTable);
+        }
         mainPageMenuView.setParam(currentOrder, handler);
         orderView.setParam(this, currentOrder, orderDetails, handler);
 
@@ -2587,7 +2634,9 @@ public class MainPage extends BaseActivity {
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
         //update tabels orders
         currentTable.setOrders(orderDetails.size());
-        TableInfoSQL.updateTables(currentTable);
+        if (checkIfTableFromThisRVC(currentTable)) {
+            TableInfoSQL.updateTables(currentTable);
+        }
         mainPageMenuView.setParam(currentOrder, handler);
         orderView.setParam(this, currentOrder, orderDetails, handler);
 
@@ -2623,7 +2672,7 @@ public class MainPage extends BaseActivity {
         List<ItemModifier> itemModifiers = CoreData.getInstance()
                 .getItemModifiers(
                         CoreData.getInstance().getItemDetailById(
-                                orderDetail.getItemId()));
+                                orderDetail.getItemId(), orderDetail.getItemName()));
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         if (currentTable.getPosId() < 0) {
             setDataWaitingList();
@@ -2711,7 +2760,7 @@ public class MainPage extends BaseActivity {
                                 .getIncludedTax().getTax(), appOrderId, "");
                 List<TempOrderDetail> tempOrderDetails = TempOrderDetailSQL.getTempOrderDetailByAppOrderId(appOrderId);
                 for (TempOrderDetail tempOrderDetail : tempOrderDetails) {
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId());
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId(), tempOrderDetail.getItemName());
                     if (itemDetail == null) {
                         continue;
                     }
@@ -2778,8 +2827,7 @@ public class MainPage extends BaseActivity {
                 handler.sendEmptyMessage(action);
                 break;
             case SERVER_TRANSFER_TABLE_FROM_OTHER_RVC:
-
-
+                handler.sendEmptyMessage(REFRESH_TABLES_STATUS);
                 break;
             default:
                 break;
@@ -2796,49 +2844,54 @@ public class MainPage extends BaseActivity {
 
                         @Override
                         public void onClick(View arg0) {
-                            final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
-                            RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
-                            if (remainingStock != null) {
-                                int num = tag.getItemNum();
-                                RemainingStockHelper.updateRemainingStockNum(remainingStock, num, true, new StockCallBack() {
-                                    @Override
-                                    public void onSuccess(Boolean isStock) {
-                                        if (isStock) {
-                                            App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
-                                        }
-
-                                    }
-                                });
-
-                            }
-
-//
-//                            RemainingStockSQL.updateRemainingNum(num,itemTempId);
-                            OrderDetailSQL.deleteOrderDetail(tag);
-                            OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
-                            ModifierCheckSql.deleteModifierCheck(tag.getId(), tag.getOrderId());
-
-                            try {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("orderId", tag.getOrderId().intValue());
-                                jsonObject.put("RX", RxBus.RX_REFRESH_ORDER);
-                                TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            if (!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && !IntegerUtils.isEmptyOrZero(tag.getGroupId())) {
-                                int count = OrderDetailSQL.getOrderDetailCountByGroupId(tag.getGroupId().intValue(), currentOrder.getId().intValue());
-                                if (count == 0) {
-                                    OrderSplitSQL.deleteOrderSplitByOrderAndGroupId(currentOrder.getId().intValue(), tag.getGroupId().intValue());
-                                }
-                            }
-                            handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_MODIFIER_VIEW);
-                            handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-
+                            removeItemLogic(tag);
                         }
                     });
         }
     }
+
+    private void removeItemLogic(OrderDetail tag) {
+        final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId(), tag.getItemName()).getItemTemplateId();
+        RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
+        if (remainingStock != null) {
+            int num = tag.getItemNum();
+            RemainingStockHelper.updateRemainingStockNum(remainingStock, num, true, new StockCallBack() {
+                @Override
+                public void onSuccess(Boolean isStock) {
+                    if (isStock) {
+                        App.instance.getSyncJob().updateRemainingStockNum(itemTempId);
+                    }
+
+                }
+            });
+
+        }
+
+//
+//                            RemainingStockSQL.updateRemainingNum(num,itemTempId);
+        OrderDetailSQL.deleteOrderDetail(tag);
+        OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
+        ModifierCheckSql.deleteModifierCheck(tag.getId(), tag.getOrderId());
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("orderId", tag.getOrderId().intValue());
+            jsonObject.put("RX", RxBus.RX_REFRESH_ORDER);
+            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!IntegerUtils.isEmptyOrZero(tag.getOrderSplitId()) && !IntegerUtils.isEmptyOrZero(tag.getGroupId())) {
+            int count = OrderDetailSQL.getOrderDetailCountByGroupId(tag.getGroupId().intValue(), currentOrder.getId().intValue());
+            if (count == 0) {
+                OrderSplitSQL.deleteOrderSplitByOrderAndGroupId(currentOrder.getId().intValue(), tag.getGroupId().intValue());
+            }
+        }
+        handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_MODIFIER_VIEW);
+        handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+
+    }
+
 
     public void kotPrintStatus(int action, Object obj) {
         switch (action) {
@@ -2880,7 +2933,9 @@ public class MainPage extends BaseActivity {
 //			TablesSQL.updateTables(tables);
             TableInfo tableInfo = TableInfoSQL.getTableById(currentTable.getPosId().intValue());
             tableInfo.setStatus(ParamConst.TABLE_STATUS_IDLE);
-            TableInfoSQL.updateTables(tableInfo);
+            if (checkIfTableFromThisRVC(tableInfo)) {
+                TableInfoSQL.updateTables(tableInfo);
+            }
             try {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("tableId", currentTable.getPosId().intValue());
@@ -2947,5 +3002,6 @@ public class MainPage extends BaseActivity {
 //			}, 500);
         }
     }
+
 
 }

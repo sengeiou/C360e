@@ -341,7 +341,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         List<ItemModifier> itemModifiers = CoreData.getInstance()
                 .getItemModifiers(
                         CoreData.getInstance().getItemDetailById(
-                                orderDetail.getItemId()));
+                                orderDetail.getItemId(), orderDetail.getItemName()));
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         //    setData();
         if (itemModifiers.size() > 0) {

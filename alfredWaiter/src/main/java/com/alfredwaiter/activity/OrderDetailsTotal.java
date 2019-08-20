@@ -888,7 +888,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 
             final OrderDetail orderDetail = orderDetails.get(position);
             final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-                    orderDetail.getItemId());
+                    orderDetail.getItemId(),orderDetail.getItemName());
 
             final List<OrderModifier> modifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
             StringBuffer stringBuffer = new StringBuffer();
@@ -937,7 +937,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     textView.setBackgroundColor(context
                                             .getResources().getColor(
                                                     R.color.white));
-                                    final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
+                                    final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName()).getItemTemplateId();
                                     final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                                     int detailNum = OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(), tag.getItemId());
                                     if (remainingStock != null) {
@@ -958,7 +958,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     if (num == 0) {
                                         updateOrderDetail(tag, num);
                                         final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-                                                orderDetail.getItemId());
+                                                orderDetail.getItemId(),orderDetail.getItemName());
                                         ModifierCheckSql.deleteModifierCheck(orderDetail.getId(), currentOrder.getId());
                                     }
                                     refreshList();

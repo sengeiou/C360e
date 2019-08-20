@@ -11,10 +11,12 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.SyncMsg;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
@@ -795,15 +797,29 @@ public class SyncCentre {
         }
     }
 
-    public void sendOrderToOtherRVC(Context context, String url, int transferType, Order currentOrder, int tableId, Handler handler) {
-        HttpAPI.sendOrderToOtherRVC(context,
-                getAbsoluteUrl(url, APIName.SEND_ORDER_TO_OTHER_RVC),transferType, currentOrder, tableId, httpClient, handler);
+    public void getOtherRVCTable(Context context, String url, int placeId,Handler handler) {
+            HttpAPI.getOtherRVCTable(context,
+                    getAbsoluteUrl(url, APIName.GET_OTHER_RVC_TABLE), placeId,httpClient, handler);
 
     }
+
+
+    public void sendOrderToOtherRVC(Context context, String url, int transferType, Order currentOrder, int tableId, Handler handler) {
+        HttpAPI.sendOrderToOtherRVC(context,
+                getAbsoluteUrl(url, APIName.TRANSFER_TABLE_TO_OTHER_RVC),transferType, currentOrder, tableId, httpClient, handler);
+
+    }
+
+    public void transferItemToOtherRVC(Context context, String url, Order oldOrder, OrderDetail transfItemOrderDetail, TableInfo targetTable, Handler handler) {
+        HttpAPI.transferItemToOtherRVC(context,
+                getAbsoluteUrl(url, APIName.TRANSFER_ITEM_TO_OTHER_RVC), oldOrder, transfItemOrderDetail, targetTable.getPosId(), targetTable.getPacks(), httpClient, handler);
+    }
+
 
     private String getAbsoluteUrl(String url, String subUrl) {
         return "http://" + url + ":" + APPConfig.HTTP_SERVER_PORT + "/" + subUrl;
     }
+
 
     //end conenction multi RVC
 }

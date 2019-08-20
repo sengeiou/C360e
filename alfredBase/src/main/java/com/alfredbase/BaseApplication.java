@@ -546,5 +546,8 @@ public class BaseApplication extends Application {
 
     public static final int HANDLER_REFRESH_LANGUAGE = 772;
     public static final int HANDLER_GET_OTHER_RVC = 773;
-    public static final int HANDLER_SEND_ORDER_TO_OTHER_RVC = 774;
+    public static final int HANDLER_GET_OTHER_TABLE = 776;
+    public static final int HANDLER_TRANSFER_TABLE_TO_OTHER_RVC = 774;
+    public static final int HANDLER_TRANSFER_ITEM_TO_OTHER_RVC = 775;
+
 }

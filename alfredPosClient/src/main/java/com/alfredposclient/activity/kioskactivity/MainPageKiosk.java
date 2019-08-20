@@ -861,8 +861,8 @@ public class MainPageKiosk extends BaseActivity {
                                                 orderDetail,
                                                 CoreData.getInstance()
                                                         .getItemDetailById(
-                                                                orderDetail
-                                                                        .getItemId()),
+                                                                orderDetail.getItemId(),
+                                                                orderDetail.getItemName()),
                                                 kotSummary,
                                                 App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                 kotItemDetail.setItemNum(orderDetail
@@ -1957,7 +1957,7 @@ public class MainPageKiosk extends BaseActivity {
         List<ItemModifier> itemModifiers = CoreData.getInstance()
                 .getItemModifiers(
                         CoreData.getInstance().getItemDetailById(
-                                orderDetail.getItemId()));
+                                orderDetail.getItemId(), orderDetail.getItemName()));
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         setData();
         if (itemModifiers.size() > 0) {
@@ -2106,7 +2106,7 @@ public class MainPageKiosk extends BaseActivity {
                                 .getIncludedTax().getTax(),"");
                 List<TempOrderDetail> tempOrderDetails = TempOrderDetailSQL.getTempOrderDetailByAppOrderId(appOrderId);
                 for (TempOrderDetail tempOrderDetail : tempOrderDetails) {
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId());
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId(),tempOrderDetail.getItemName());
                     if (itemDetail == null) {
                         continue;
                     }

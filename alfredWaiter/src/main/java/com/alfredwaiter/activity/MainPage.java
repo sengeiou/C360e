@@ -843,7 +843,7 @@ public class MainPage extends BaseActivity implements CheckListener, CallBackMov
                 break;
             case R.id.tv_more_detail: {
                 OrderDetail orderDetail = (OrderDetail) v.getTag();
-                ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId().intValue());
+                ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId().intValue(), orderDetail.getItemName());
                 List<Integer> modifierIds = OrderModifierSQL.getOrderModifierIdsByOrderDetailId(orderDetail.getId());
                 modifierWindow.show(itemDetail, modifierIds, currentOrder, orderDetail);
             }

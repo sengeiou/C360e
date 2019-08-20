@@ -1212,7 +1212,7 @@ public class OrderSQL {
 		return order;
 	}
 
-	public static Order getWaitingListOrderByTableId(int tableId) {
+	public static Order getOrderByTableId(int tableId) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order
 				+ " where tableId = ? order by id DESC";

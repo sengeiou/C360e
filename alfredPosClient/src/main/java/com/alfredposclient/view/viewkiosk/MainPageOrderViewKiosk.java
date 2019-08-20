@@ -273,8 +273,8 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                                     orderDetail,
                                                     CoreData.getInstance()
                                                             .getItemDetailById(
-                                                                    orderDetail
-                                                                            .getItemId()),
+                                                                    orderDetail.getItemId(),
+                                                                    orderDetail.getItemName()),
                                                     kotSummary,
                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                     kotItemDetail.setItemNum(orderDetail
@@ -565,7 +565,8 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                     List<ItemModifier> itemModifiers = CoreData.getInstance()
                             .getItemModifiers(
                                     CoreData.getInstance().getItemDetailById(
-                                            orderDetail.getItemId()));
+                                            orderDetail.getItemId(),
+                                            orderDetail.getItemName()));
                     if (itemModifiers.size() > 0) {
                         Message msg = handler.obtainMessage();
                         msg.what = MainPage.VIEW_EVENT_OPEN_MODIFIERS;
@@ -581,7 +582,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
             });
 
             ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-                    orderDetail.getItemId());
+                    orderDetail.getItemId(),orderDetail.getItemName());
             //  itemDetails will be null in case that wait app keep old
             // wrong menu
             // if (itemDetail == null) {
@@ -625,7 +626,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                             if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                                 if (num < 1) {
 
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -656,7 +657,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 //									OrderModifierSQL.updateOrderModifierNum(tag, 999);
                                     OrderHelper.setOrderModifierPirceAndNum(tag, 999);
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -739,7 +740,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                     // kotCommitStatus, null);
 
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -1141,7 +1142,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
                                         @Override
                                         public void onClick(View arg0) {
-                                            final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
+                                            final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName()).getItemTemplateId();
                                             RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                                             if (remainingStock != null) {
                                                 int num = tag.getItemNum();

@@ -406,7 +406,7 @@ public class SelfOrderHelper {
         List<OrderDetail> orderDetailList = OrderDetailSQL.getOrderDetails(order.getId());
 
         for(OrderDetail orderDetail: orderDetailList) {
-            int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+            int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(),orderDetail.getItemName()).getItemTemplateId();
             RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
 
             if (remainingStock != null) {

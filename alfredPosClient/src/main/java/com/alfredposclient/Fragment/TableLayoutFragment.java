@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
@@ -64,6 +65,7 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.javabean.MultiRVCPlacesDao;
 import com.alfredposclient.utils.ImageUtils;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -287,20 +289,29 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         boolean isPlaceInfoExist = PlaceInfoSQL.checkPlaceInfoExistByName(placeName);
         if (isPlaceInfoExist) {
             newTables = TableInfoSQL.getTableInfosByPlaces(places.get(selectPlaceIndex));
+            changeLayoutStatus();
+            rl_tables.removeAllViews();
+            for (TableInfo newTable : newTables) {
+                addTable(newTable);
+            }
         } else { //from other RVC
+
             for (MultiRVCPlacesDao.Places other : otherRVCPlaces) {
                 if (other.getPlaceName().equals(placeName)) {
-                    newTables = other.getTables();
+                    if (loadingDialog == null) {
+                        loadingDialog = new LoadingDialog(mainPage);
+                        loadingDialog.setTitle(mainPage.getResources().getString(R.string.loading));
+                    }
+                    loadingDialog.show();
+                    changeLayoutStatus();
+                    rl_tables.removeAllViews();
+
+                    SyncCentre.getInstance().getOtherRVCTable(mainPage, other.getIp(), other.getPosId(), handler);
                 }
             }
         }
 
-        changeLayoutStatus();
-        rl_tables.removeAllViews();
 
-        for (TableInfo newTable : newTables) {
-            addTable(newTable);
-        }
     }
 
     @Override
@@ -832,35 +843,50 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
                     break;
                 case com.alfredbase.BaseApplication.HANDLER_GET_OTHER_RVC:
-                    try {
-
-                        MultiRVCPlacesDao dao = new Gson().fromJson((String) msg.obj, MultiRVCPlacesDao.class);
-                        if (dao != null) {
-                            if (dao.getResultCode() == ResultCode.SUCCESS) {
-                                for (MultiRVCPlacesDao.Places daoPlace : dao.getData().getPlaces()) {
-                                    otherRVCPlaces.add(daoPlace);
+                    if (msg.obj != null) {
+                        try {
+                            MultiRVCPlacesDao dao = new Gson().fromJson((String) msg.obj, MultiRVCPlacesDao.class);
+                            if (dao != null) {
+                                if (dao.getResultCode() == ResultCode.SUCCESS) {
+                                    for (MultiRVCPlacesDao.Places daoPlace : dao.getData().getPlaces()) {
+                                        otherRVCPlaces.add(daoPlace);
+                                    }
                                 }
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+                        if (otherRVCrunnable != null) {
+                            otherRVChandler.removeCallbacks(otherRVCrunnable);
+                        }
+                        otherRVCrunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                App.instance.getOtherRVCPlaces().clear();
+                                App.instance.getOtherRVCPlaces().addAll(otherRVCPlaces);
+                                loadingDialog.dismiss();
+                                refreshView();
+                            }
+                        };
+                        otherRVChandler.postDelayed(otherRVCrunnable, 300);
+                    } else {
+                        loadingDialog.dismiss();
+                        refreshView();
                     }
 
-                    if (otherRVCrunnable != null) {
-                        otherRVChandler.removeCallbacks(otherRVCrunnable);
-                    }
-                    otherRVCrunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            App.instance.getOtherRVCPlaces().clear();
-                            App.instance.getOtherRVCPlaces().addAll(otherRVCPlaces);
-                            loadingDialog.dismiss();
-                            refreshView();
+                    break;
+                case BaseApplication.HANDLER_GET_OTHER_TABLE:
+                    dismissDialog();
+                    if (msg.obj != null) {
+                        newTables = new Gson().fromJson((String) msg.obj, new TypeToken<List<TableInfo>>() {
+                        }.getType());
+                        changeLayoutStatus();
+                        rl_tables.removeAllViews();
+                        for (TableInfo newTable : newTables) {
+                            addTable(newTable);
                         }
-                    };
-                    otherRVChandler.postDelayed(otherRVCrunnable, 300);
-
-
+                    }
                     break;
             }
         }
@@ -1292,7 +1318,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                                         @Override
                                         public void onClick(View v) {
                                             TableInfoSQL.deleteTableInfo(tableInfo.getPosId());
-                                            Order order = OrderSQL.getWaitingListOrderByTableId(tableInfo.getPosId());
+                                            Order order = OrderSQL.getOrderByTableId(tableInfo.getPosId());
                                             if (order != null) {
                                                 OrderDetailSQL.deleteOrderDetailByOrder(order);
                                                 OrderSQL.deleteOrder(order);
@@ -1352,7 +1378,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         if (!IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
                             tableInfo.setName(v.getText().toString());
                             TableInfoSQL.updateTables(tableInfo);
-                            Order order = OrderSQL.getWaitingListOrderByTableId(tableInfo.getPosId());
+                            Order order = OrderSQL.getOrderByTableId(tableInfo.getPosId());
                             if (order != null) {
                                 OrderSQL.updateOrderTableName(v.getText().toString(), order.getId());
                             }

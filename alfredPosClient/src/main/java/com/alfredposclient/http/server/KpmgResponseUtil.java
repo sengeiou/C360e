@@ -283,7 +283,7 @@ public class KpmgResponseUtil {
             if(orderDetails!=null){
                 for (int i = 0; i <orderDetails.size() ; i++) {
                     OrderDetail orderDetail=orderDetails.get(i);
-                    final int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+                    final int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName()).getItemTemplateId();
                     RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                     if(remainingStock!=null){
                         int num=orderDetail.getItemNum();
@@ -342,8 +342,8 @@ public class KpmgResponseUtil {
                                                     orderDetail,
                                                     CoreData.getInstance()
                                                             .getItemDetailById(
-                                                                    orderDetail
-                                                                            .getItemId()),
+                                                                    orderDetail.getItemId(),
+                                                                    orderDetail.getItemName()),
                                                     kotSummary,
                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                     kotItemDetail.setItemNum(orderDetail
