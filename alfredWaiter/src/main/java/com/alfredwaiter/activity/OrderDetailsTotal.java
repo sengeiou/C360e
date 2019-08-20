@@ -209,7 +209,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case GET_PRINT_KOT_DATA_SUCCESS:
-                    printKOT(isRePrintKOT, isPrintLocal);
+                    //printKOT(isRePrintKOT, isPrintLocal);
                     break;
                 case GET_PRINT_KOT_DATA_FAILED:
                     //get data kot failed
