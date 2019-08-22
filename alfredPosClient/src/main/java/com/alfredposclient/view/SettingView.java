@@ -312,7 +312,7 @@ public class SettingView extends LinearLayout implements OnClickListener {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
 //            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
-            return "http://18.138.225.241/alfred-api/" + relativeUrl;//staging
+            return "http://18.138.252.241/alfred-api/" + relativeUrl;//staging
         } else if (App.instance.isOpenLog) {
 
             return "http://139.224.17.126/" + relativeUrl;

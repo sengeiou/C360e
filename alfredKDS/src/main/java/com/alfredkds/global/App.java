@@ -65,13 +65,15 @@ public class App extends BaseApplication {
     public static final int HANDLER_NEW_KOT = 20;
     public static final int HANDLER_UPDATE_KOT = 8;
     public static final int HANDLER_DELETE_KOT = 2;
+    public static final int HANDLER_REFRESH_LOG = 107;
     private static final String DATABASE_NAME = "com.alfredkds";
     public static App instance;
     //for pairing
-    private String pairingIp;
+    private List<String> pairingIps = new ArrayList<>();
     private User user;
     private KDSDevice kdsDevice;
-    private Map<Integer, MainPosInfo> mainPosInfos = new HashMap<Integer, MainPosInfo>();
+    private Map<Integer, MainPosInfo> mainPosInfos = new HashMap<>();
+    private List<Integer> posIdConnected = new ArrayList<>();
     private Integer currentMainPosId = -1;
     public RingUtil ringUtil;
     private Printer printer;
@@ -124,12 +126,23 @@ public class App extends BaseApplication {
 //		Store.saveObject(this, Store.KDS_DEVICE, this.kdsDevice);
 //	}
 
+    public boolean isBalancer() {
+        return getKdsDevice() != null && getKdsDevice().getKdsType() == Printer.KDS_BALANCER;
+    }
+
     @Override
     protected void onIPChanged() {
         super.onIPChanged();
-        if (getCurrentConnectedMainPos() == null || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
-            return;
+        if (isBalancer()) {
+            if (getCurrentConnectedMainPosList().size() <= 0 || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
+                return;
+            }
+        } else {
+            if (getCurrentConnectedMainPos() == null || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
+                return;
+            }
         }
+
         if (getKdsDevice() != null) {
             this.kdsDevice.setIP(CommonUtil.getLocalIpAddress());
             this.setKdsDevice(kdsDevice);
@@ -192,6 +205,12 @@ public class App extends BaseApplication {
         currentMainPosId = mainPosInfo.getRevenueId();
         Store.saveObject(instance, Store.MAINPOSINFO_MAP, this.mainPosInfos);
         Store.putInt(this, Store.CURRENT_MAIN_POS_ID_CONNECTED, currentMainPosId);
+
+        //this for balancer
+        if (getKdsDevice().getKdsType() == Printer.KDS_BALANCER) {
+            posIdConnected.add(currentMainPosId);
+            Store.saveObject(instance, Store.CURRENT_MAIN_POS_IDS_CONNECTED, posIdConnected);
+        }
     }
 
     public MainPosInfo getCurrentConnectedMainPos() {
@@ -203,7 +222,22 @@ public class App extends BaseApplication {
             return null;
         }
 
+    }
 
+    public List<MainPosInfo> getCurrentConnectedMainPosList() {
+        getMainPosInfos();
+        List<Integer> cids = Store.getObject(this, Store.CURRENT_MAIN_POS_IDS_CONNECTED,
+                new TypeToken<List<Integer>>() {
+                }.getType());
+        List<MainPosInfo> mainPosInfoList = new ArrayList<>();
+
+        if (cids != null) {
+            for (Integer cid : cids) {
+                mainPosInfoList.add(this.mainPosInfos.get(cid));
+            }
+        }
+
+        return mainPosInfoList;
     }
 
     public Printer getPrinter() {
@@ -218,12 +252,23 @@ public class App extends BaseApplication {
         Store.saveObject(this, Store.KDS_PRINTER, printer);
     }
 
+    public List<String> getAllPairingIp() {
+        return pairingIps;
+    }
+
+    public void setAllPairingIp(List<String> pairingIps) {
+        this.pairingIps = pairingIps;
+    }
+
     public String getPairingIp() {
-        return pairingIp;
+        if (pairingIps.size() > 0)
+            return pairingIps.get(0);
+        return "";
     }
 
     public void setPairingIp(String pairingIp) {
-        this.pairingIp = pairingIp;
+        this.pairingIps.clear();
+        this.pairingIps.add(pairingIp);
     }
 
     public SessionStatus getSessionStatus() {
@@ -467,9 +512,18 @@ public class App extends BaseApplication {
         parameters.put("password", Store.getString(context, Store.PASSWORD));
         parameters.put("type", ParamConst.USER_TYPE_KOT);
         parameters.put("device", App.instance.getKdsDevice());
-        MainPosInfo currentOne = App.instance.getCurrentConnectedMainPos();
-        if (currentOne != null) {
-            SyncCentre.getInstance().login(context, currentOne.getIP(), parameters, handler);
+
+        List<MainPosInfo> connectedMainPos = new ArrayList<>();
+        if (isBalancer()) {
+            connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+        } else {
+            connectedMainPos.add(App.instance.getCurrentConnectedMainPos());
+        }
+
+        if (connectedMainPos.size() > 0) {
+            for (MainPosInfo mainPosInfo : connectedMainPos) {
+                SyncCentre.getInstance().login(context, mainPosInfo.getIP(), parameters, handler);
+            }
         } else {
             UIHelp.showToast(context, context.getResources().getString(R.string.reconn_pos));
         }

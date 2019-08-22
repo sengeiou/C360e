@@ -3,7 +3,7 @@
     xmlns:widget="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rl_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
+    android:layout_height="match_parent"
     android:background="@color/white">
 
     <com.alfredkds.view.TopBarView
@@ -12,7 +12,7 @@
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:background="@color/white"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/tv_order_qyt"
@@ -21,28 +21,26 @@
         android:layout_alignParentTop="@+id/tv_title"
         android:layout_alignParentBottom="@+id/tv_title"
         android:layout_marginLeft="50dp"
-        android:textSize="40sp"
         android:gravity="center"
-        android:textStyle="bold"
         android:text="0"
         android:textColor="@android:color/holo_orange_dark"
-        />
+        android:textSize="40sp"
+        android:textStyle="bold" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true"
         android:layout_below="@id/tv_title"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        >
-    <include
-        layout="@layout/kot_array_landscape_title"
-        >
-        ></include>
-    <!--<com.alfredkds.view.HorizontalListView-->
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <include layout="@layout/kot_array_landscape_title">
+            >
+        </include>
+        <!--<com.alfredkds.view.HorizontalListView-->
         <!--android:id="@+id/ll_orders"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"-->
@@ -54,27 +52,27 @@
         <!--android:layout_alignParentBottom="true"-->
         <!--android:layout_alignParentLeft="true"-->
         <!--android:layout_alignParentStart="true">-->
-    <!--</com.alfredkds.view.HorizontalListView>-->
+        <!--</com.alfredkds.view.HorizontalListView>-->
 
-    <android.support.v7.widget.RecyclerView
+        <android.support.v7.widget.RecyclerView
 
-        android:id="@+id/ll_orders"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="#e00"
-        android:fadingEdgeLength="5dp"
-        android:requiresFadingEdge="horizontal"
-        android:background="@color/white"
-        widget:dividerWidth="3dp"
+            android:id="@+id/ll_orders"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:divider="#e00"
+            android:fadingEdgeLength="5dp"
+            android:requiresFadingEdge="horizontal"
+            widget:dividerWidth="3dp"
 
-        />
+            />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/iv_shadow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/shadow"
+        android:layout_below="@+id/tv_title"
         android:scaleType="fitXY"
-        android:layout_below="@+id/tv_title"/>
+        android:src="@drawable/shadow" />
 </RelativeLayout>

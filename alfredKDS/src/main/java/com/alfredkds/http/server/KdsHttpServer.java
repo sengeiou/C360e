@@ -6,25 +6,33 @@ import android.view.View.OnClickListener;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
+import com.alfredbase.KDSLog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.http.AlfredHttpServer;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KDSHistory;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.activity.Login;
 import com.alfredkds.global.App;
+import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
+import com.alfredkds.http.HttpAnalysis;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -55,32 +63,248 @@ public class KdsHttpServer extends AlfredHttpServer {
             if (!validMessageFromConnectedPOS(body)) {
                 return invalidDeviceResponse();
             }
-            if (uri.equals(APIName.SUBMIT_NEW_KOT)) {
-                //handlerSubmitNewKot
-                resp = handlerSubmitNewKot(body);
-            } else if (uri.equals(APIName.TRANSFER_KOT)) {
-                App.instance.ringUtil.playRingOnce();
-                resp = handlerTransferKot(body);
-            } else if (uri.equals(APIName.TRANSFER_ITEM_KOT)) {
-                App.instance.ringUtil.playRingOnce();
-                resp = handlerTransferKotItem(body);
-            } else if (uri.equals(APIName.CLOSE_SESSION)) {
-                App.instance.ringUtil.playRingOnce();
-                resp = handlerSessionClose(body);
-            } else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
-                resp = handlerTmpKot(body);
-            } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
-                App.instance.ringUtil.playRingOnce();
-                resp = handlerNextKot(body);
-            } else if (uri.equals(APIName.DELETE_KOT_KDS)) {
-                resp = handlerDeleteKot(body);
-            } else if (uri.equals(APIName.SUBMIT_SUMMARY_KDS)) {
-                resp = handlerSubmitSummary(body);
-            } else if (uri.equals(APIName.UPDATE_ORDER_COUNT)) {
-                resp = handlerUpdateOrderCount(body);
+
+            if (App.instance.isBalancer()) {
+                if (uri.equals(APIName.UPDATE_CONNECTED_KDS)) {
+                    resp = handlerUpdateConnectedKDS(body);
+                }
+                if (uri.equals(APIName.SUBMIT_NEW_KOT)) {
+                    resp = handlerSubmitNewKotBalancer(body);
+                } else {
+                    resp = getNotFoundResponse();
+                }
             } else {
-                resp = getNotFoundResponse();
+                if (uri.equals(APIName.SUBMIT_NEW_KOT)) {
+                    //handlerSubmitNewKot
+                    resp = handlerSubmitNewKot(body);
+                } else if (uri.equals(APIName.TRANSFER_KOT)) {
+                    App.instance.ringUtil.playRingOnce();
+                    resp = handlerTransferKot(body);
+                } else if (uri.equals(APIName.TRANSFER_ITEM_KOT)) {
+                    App.instance.ringUtil.playRingOnce();
+                    resp = handlerTransferKotItem(body);
+                } else if (uri.equals(APIName.CLOSE_SESSION)) {
+                    App.instance.ringUtil.playRingOnce();
+                    resp = handlerSessionClose(body);
+                } else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
+                    resp = handlerTmpKot(body);
+                } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
+                    App.instance.ringUtil.playRingOnce();
+                    resp = handlerNextKot(body);
+                } else if (uri.equals(APIName.DELETE_KOT_KDS)) {
+                    resp = handlerDeleteKot(body);
+                } else if (uri.equals(APIName.SUBMIT_SUMMARY_KDS)) {
+                    resp = handlerSubmitSummary(body);
+                } else if (uri.equals(APIName.UPDATE_ORDER_COUNT)) {
+                    resp = handlerUpdateOrderCount(body);
+                } else {
+                    resp = getNotFoundResponse();
+                }
             }
+        }
+
+        return resp;
+    }
+
+    private Response handlerSubmitNewKotBalancer(final String params) {
+        Response resp = null;
+        Map<String, Object> result = new HashMap<>();
+        List<Integer> revenueCenterIds = new ArrayList<>();
+        if (App.instance.isBalancer()) {
+            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+                revenueCenterIds.add(mainPosInfo.getRevenueId());
+            }
+        } else {
+            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        }
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final Gson gson = new Gson();
+            final String method = jsonObject.optString("method");
+            final Boolean isFire = jsonObject.getBoolean("isFire");
+            final String mainPosInfo = jsonObject.getString("mainpos");
+            final KDSDevice kdsDevice = gson.fromJson(jsonObject.optString("kds"), KDSDevice.class);
+            final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
+            }.getType());
+            final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>() {
+            }.getType());
+
+            final List<Integer> orderDetailIds = new ArrayList<Integer>();
+            if (TextUtils.isEmpty(method)) {
+                resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+                return resp;
+            }
+
+            final KotSummary kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
+            if (kotSummary == null) {
+                resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+                return resp;
+            } else {
+                if (!revenueCenterIds.contains(kotSummary.getRevenueCenterId())) {
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                    result.put("resultCode", ResultCode.CONNECTION_FAILED);
+                    resp = getJsonResponse(new Gson().toJson(result));
+                    return resp;
+                }
+            }
+
+            //region new kot
+            if (method.equals(ParamConst.JOB_NEW_KOT)) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        //TODO: mapping kds depend on queue type
+
+                        int printerGroupId = kotItemDetails.size() > 0 ? kotItemDetails.get(0).getPrinterGroupId() : 0;
+
+                        List<Printer> printerList = CoreData.getInstance()
+                                .getPrintersInGroup(printerGroupId);
+                        KDSLog kdsLog = gson.fromJson(Store.getString(App.instance, Store.KDS_LOGS), KDSLog.class);
+                        List<KDSHistory> kdsHistoryList = new ArrayList<>();
+
+                        for (Printer printer : printerList) {
+                            for (KDSHistory kdsHistory : kdsLog.kdsHistories) {
+                                if (kdsHistory.kdsDevice.getDevice_id() == printer.getId()) {
+                                    kdsHistoryList.add(kdsHistory);
+                                    break;
+                                }
+                            }
+                        }
+
+                        int index = 0;
+                        int i = 0;
+                        int min = kdsHistoryList.get(index).kotItemDetails.size();
+
+                        for (KDSHistory kdsHistory : kdsHistoryList) {
+                            //region check if seem item
+                            for (KotItemDetail kotItemDetail : kdsHistory.kotItemDetails) {
+                                for (KotItemDetail kid : kotItemDetails) {
+                                    if (kotItemDetail.getId().equals(kid.getId())) {
+                                        return;
+                                    }
+                                }
+                            }
+                            //endregion
+
+                            if (kdsHistory.kotItemDetails.size() < min) {
+                                min = kdsHistory.kotItemDetails.size();
+                                index = i;
+                            }
+                            i++;
+                        }
+
+                        KDSDevice selectedKds = kdsHistoryList.get(index).kdsDevice;
+                        if (selectedKds.getDevice_id() == kdsDevice.getDevice_id() &&
+                                selectedKds.getIP().equals(kdsDevice.getIP())) {
+                            try {
+                                String logs = KDSLogUtil.putItemKdsLog(Store.getString(App.instance, Store.KDS_LOGS), kdsDevice, kotItemDetails);
+                                Store.putString(App.instance, Store.KDS_LOGS, logs);
+
+                                Map<String, Object> data = new HashMap<>();
+                                data.put("kotItemDetails", kotItemDetails);
+                                data.put("kotItemModifiers", kotItemModifiers);
+                                data.put("kotSummary", kotSummary);
+                                data.put("method", method);
+                                data.put("isFire", isFire);
+                                data.put("mainpos", mainPosInfo);
+
+                                SyncCentre.getInstance().syncSubmitKotToKDS(selectedKds, App.instance, data, null);
+                            } catch (Throwable throwable) {
+                                throwable.printStackTrace();
+                            }
+                        }
+
+                        if (App.getTopActivity() != null)
+                            App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
+                    }
+                }).start();
+
+                result.put("resultCode", ResultCode.SUCCESS);
+                result.put("method", method);
+                result.put("kotSummary", kotSummary);
+                result.put("orderId", kotSummary.getOrderId());
+                resp = getJsonResponse(new Gson().toJson(result));
+            }
+            //endregion
+
+            //region update kot
+            if (method.equals(ParamConst.JOB_UPDATE_KOT)) {
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (App.getTopActivity() != null)
+                            App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
+
+                    }
+                }).start();
+
+                result.put("resultCode", ResultCode.SUCCESS);
+                result.put("method", method);
+                result.put("kotSummary", kotSummary);
+                result.put("orderDetailIds", orderDetailIds);
+                resp = getJsonResponse(new Gson().toJson(result));
+            }
+            //endregion
+
+            if (method.equals(ParamConst.JOB_DELETE_KOT)) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        KotItemDetailSQL.deleteKotItemDetail(kotItemDetails);
+                        if (App.getTopActivity() != null)
+                            App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
+                    }
+                }).start();
+                result.put("resultCode", ResultCode.SUCCESS);
+                resp = getJsonResponse(new Gson().toJson(result));
+            }
+            if (method.equals(ParamConst.JOB_VOID_KOT)) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                }).start();
+                result.put("resultCode", ResultCode.SUCCESS);
+                resp = getJsonResponse(new Gson().toJson(result));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+        }
+        return resp;
+    }
+
+    private Response handlerUpdateConnectedKDS(String params) {
+        Response resp;
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final Gson gson = new Gson();
+            final KDSDevice kdsDevice = gson.fromJson(jsonObject.getString("kds"), KDSDevice.class);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    List<KDSDevice> kdsDeviceList = new ArrayList<>();
+                    kdsDeviceList.add(kdsDevice);
+                    HttpAnalysis.saveConnectedKDS(kdsDeviceList);
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
+                }
+            }).start();
+
+            result.put("resultCode", ResultCode.SUCCESS);
+            resp = getJsonResponse(gson.toJson(result));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
         }
 
         return resp;
@@ -89,7 +313,15 @@ public class KdsHttpServer extends AlfredHttpServer {
     private Response handlerUpdateOrderCount(String params) {
         Response resp;
         Map<String, Object> result = new HashMap<>();
-        int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
+        List<Integer> revenueCenterIds = new ArrayList<>();
+
+        if (App.instance.isBalancer()) {
+            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+                revenueCenterIds.add(mainPosInfo.getRevenueId());
+            }
+        } else {
+            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        }
 
         try {
             JSONObject jsonObject = new JSONObject(params);
@@ -108,8 +340,9 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
             } else {
-                if (revenueCenterId != kotSummary.getRevenueCenterId()) {
-                    App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                if (!revenueCenterIds.contains(kotSummary.getRevenueCenterId())) {
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
                     resp = getJsonResponse(new Gson().toJson(result));
                     return resp;
@@ -144,7 +377,14 @@ public class KdsHttpServer extends AlfredHttpServer {
     private Response handlerSubmitSummary(String params) {
         Response resp;
         Map<String, Object> result = new HashMap<>();
-        int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
+        List<Integer> revenueCenterIds = new ArrayList<>();
+        if (App.instance.isBalancer()) {
+            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+                revenueCenterIds.add(mainPosInfo.getRevenueId());
+            }
+        } else {
+            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        }
 
         try {
             JSONObject jsonObject = new JSONObject(params);
@@ -163,8 +403,9 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
             } else {
-                if (revenueCenterId != kotSummary.getRevenueCenterId()) {
-                    App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
+                if (!revenueCenterIds.contains(kotSummary.getRevenueCenterId())) {
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
                     resp = getJsonResponse(new Gson().toJson(result));
                     return resp;
@@ -220,8 +461,16 @@ public class KdsHttpServer extends AlfredHttpServer {
                 return resp;
             }
 
-            int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
-            if (revenueCenterId != kotSummary.getRevenueCenterId()) {
+            List<Integer> revenueCenterIds = new ArrayList<>();
+            if (App.instance.isBalancer()) {
+                for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+                    revenueCenterIds.add(mainPosInfo.getRevenueId());
+                }
+            } else {
+                revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+            }
+
+            if (!revenueCenterIds.contains(kotSummary.getRevenueCenterId())) {
                 if (App.getTopActivity() != null)
                     App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                 result.put("resultCode", ResultCode.CONNECTION_FAILED);
@@ -256,7 +505,14 @@ public class KdsHttpServer extends AlfredHttpServer {
     private Response handlerNextKot(String params) {
         Response resp;
         Map<String, Object> result = new HashMap<>();
-        int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
+        List<Integer> revenueCenterIds = new ArrayList<>();
+        if (App.instance.isBalancer()) {
+            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+                revenueCenterIds.add(mainPosInfo.getRevenueId());
+            }
+        } else {
+            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        }
 
         try {
             JSONObject jsonObject = new JSONObject(params);
@@ -275,7 +531,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
             } else {
-                if (revenueCenterId != kotSummary.getRevenueCenterId()) {
+                if (!revenueCenterIds.contains(kotSummary.getRevenueCenterId())) {
                     if (App.getTopActivity() != null)
                         App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
@@ -339,7 +595,14 @@ public class KdsHttpServer extends AlfredHttpServer {
     private Response handlerTmpKot(String params) {
         Response resp;
         Map<String, Object> result = new HashMap<>();
-        int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
+        List<Integer> revenueCenterIds = new ArrayList<>();
+        if (App.instance.isBalancer()) {
+            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+                revenueCenterIds.add(mainPosInfo.getRevenueId());
+            }
+        } else {
+            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        }
 
         try {
             JSONObject jsonObject = new JSONObject(params);
@@ -357,7 +620,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
             } else {
-                if (revenueCenterId != kotSummary.getRevenueCenterId()) {
+                if (!revenueCenterIds.contains(kotSummary.getRevenueCenterId())) {
                     if (App.getTopActivity() != null)
                         App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
@@ -527,7 +790,14 @@ public class KdsHttpServer extends AlfredHttpServer {
     private Response handlerSubmitNewKot(String params) {
         Response resp = null;
         Map<String, Object> result = new HashMap<>();
-        int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
+        List<Integer> revenueCenterIds = new ArrayList<>();
+        if (App.instance.isBalancer()) {
+            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+                revenueCenterIds.add(mainPosInfo.getRevenueId());
+            }
+        } else {
+            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        }
         try {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
@@ -543,7 +813,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
             } else {
-                if (revenueCenterId != kotSummary.getRevenueCenterId()) {
+                if (!revenueCenterIds.contains(kotSummary.getRevenueCenterId())) {
                     if (App.getTopActivity() != null)
                         App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
@@ -762,20 +1032,27 @@ public class KdsHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             MainPosInfo pos = gson.fromJson(
                     jsonObject.optString("mainpos"), MainPosInfo.class);
-            MainPosInfo connectedPos = App.instance.getCurrentConnectedMainPos();
+            List<MainPosInfo> mainPosInfoList = new ArrayList<>();
+
+            if (App.instance.isBalancer()) {
+                mainPosInfoList = App.instance.getCurrentConnectedMainPosList();
+            } else {
+                mainPosInfoList.add(App.instance.getCurrentConnectedMainPos());
+            }
 
             //old POS version(<1.0.1) POS dont have mainpos object in request
             if (pos == null)
                 return true;
-            if (connectedPos != null &&
-                    pos.getRestId().intValue() == connectedPos.getRestId().intValue()
-                    && pos.getRevenueId().intValue() == connectedPos.getRevenueId().intValue()) {
-                ret = true;
+
+            for (MainPosInfo connectedPos : mainPosInfoList) {
+                if (pos.getRestId().intValue() == connectedPos.getRestId().intValue()
+                        && pos.getRevenueId().intValue() == connectedPos.getRevenueId().intValue()) {
+                    ret = true;
+                    break;
+                }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-            ret = false;
         }
 
         return ret;

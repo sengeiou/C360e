@@ -222,6 +222,17 @@ public class HttpAnalysis {
 //                    printer.setPrinterUsageType(Printer.KDS_NORMAL);
 //                }
 //            }
+
+            Printer printer = new Printer();
+            printer.setId(123);
+            printer.setPrinterUsageType(Printer.KDS_BALANCER);
+            printer.setPrinterName("Balancer");
+            printer.setType(0);
+            printer.setCompanyId(0);
+            printer.setIsCashdrawer(0);
+            printer.setIsLablePrinter(0);
+            printer.setRestaurantId(0);
+            printers.add(printer);
             //endregion
 
             CoreData.getInstance().setPrinters(printers);

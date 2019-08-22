@@ -276,7 +276,7 @@ public class CoreData {
         List<Printer> summaryPrinter = new ArrayList<>();
         List<Printer> expediterPrinter = new ArrayList<>();
 
-        for (PrinterGroup pg : this.printerGroups) {
+        for (PrinterGroup pg : getPrinterGroups()) {
             if (pg.getPrinterGroupId().intValue() == groupid) {
                 Printer pt = this.getPrinterById(pg.getPrinterId().intValue());
                 if (pt == null) continue;

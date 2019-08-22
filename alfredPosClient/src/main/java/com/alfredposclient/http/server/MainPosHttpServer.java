@@ -1323,6 +1323,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             return handlerPairingComplete(body);
         } else if (apiName.equals(APIName.TEMPORARY_DISH)) {//waiter 端添加临时菜通知pos端
             return handlerTemporaryDish(body);
+        } else if (apiName.equals(APIName.GET_CONNECTED_KDS)) {
+            return handleConnectedKDSData(body);
         } else {
             String userKey = jsonObject.optString("userKey");
             if (TextUtils.isEmpty(userKey)
@@ -1371,6 +1373,18 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return this.getNotFoundResponse();
             }
         }
+    }
+
+    private Response handleConnectedKDSData(String params) {
+        Map<String, Object> result = new HashMap<>();
+        Gson gson = new Gson();
+
+        List<KDSDevice> kdsDeviceList = new ArrayList<>(App.instance.getKDSDevices().values());
+
+        result.put("kdsList", gson.toJson(kdsDeviceList));
+        result.put("resultCode", ResultCode.SUCCESS);
+        return this.getJsonResponse(gson.toJson(result));
+
     }
 
     private Response handlePrintKOTData(String params) {
@@ -1617,6 +1631,17 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                     App.instance.addKDSDevice(kdsDevice.getDevice_id(),
                             kdsDevice);
+
+                    //region add connected kds to balancer
+                    final KDSDevice finalKdsDevice1 = kdsDevice;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            addConnectedKDSToBalancer(finalKdsDevice1);
+                        }
+                    }).start();
+                    //endregion
+
                     final LocalDevice localDevice = ObjectFactory.getInstance()
                             .getLocalDevice(kdsDevice.getName(), "kds",
                                     ParamConst.DEVICE_TYPE_KDS,
@@ -1653,6 +1678,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
         return resp;
     }
 
+    private void addConnectedKDSToBalancer(KDSDevice kdsDevice) {
+        try {
+            Map<String, Object> param = new HashMap<>();
+            param.put("kds", kdsDevice);
+            KDSDevice balancerKds = App.instance.getBalancerKDSDevice();
+            SyncCentre.getInstance().syncSubmitConnectedKDS(balancerKds, App.instance, param, null);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
 
     private Response handlerTemporaryDish(String params) {
         Response resp;
@@ -2509,8 +2544,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 if (isPermitted) {
                     List<Printer> printers = PrinterSQL
                             .getAllPrinterByType(printerType);
-                    LogUtil.i("http printers", PrinterSQL.getAllPrinter().toString());
+                    printers.add(App.instance.getPrinterBalancer());
+
+                    List<PrinterGroup> printerGroups = PrinterGroupSQL.getAllPrinterGroup();
+
+                    LogUtil.i("http printers", printers.toString());
                     result.put("printers", printers);
+                    result.put("printer_group", printerGroups);
                     result.put("user", usr);
                     result.put("resultCode", ResultCode.SUCCESS);
                 } else {

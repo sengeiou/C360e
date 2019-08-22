@@ -20,6 +20,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -208,6 +209,7 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", kotSummary);
                             parameters.put("kotItemDetails", itemDetails);
+
                             SyncCentre.getInstance().kotComplete(parent,
                                     App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
                         } else {
@@ -222,6 +224,7 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", kotSummary);
                             parameters.put("kotItemDetails", itemDetails);
+
                             SyncCentre.getInstance().kotComplete(parent,
                                     App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
                         }

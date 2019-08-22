@@ -69,13 +69,24 @@ public class SelectKitchen extends BaseActivity {
                 kdsDevice.setIP(CommonUtil.getLocalIpAddress());
                 kdsDevice.setMac(CommonUtil.getLocalMacAddress(context));
                 kdsDevice.setKdsType(printer.getPrinterUsageType());
+
                 App.instance.setPrinter(printer);
                 App.instance.setKdsDevice(kdsDevice);
+
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("device", kdsDevice);
                 parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
-                SyncCentre.getInstance().pairingComplete(context, App.instance.getPairingIp(), parameters,
-                        handler);
+
+                List<String> ips = new ArrayList<>();
+                if (App.instance.isBalancer()) {
+                    ips.addAll(App.instance.getAllPairingIp());
+                } else {
+                    ips.add(App.instance.getPairingIp());
+                }
+
+                for (String ip : ips) {
+                    SyncCentre.getInstance().pairingComplete(context, ip, parameters, handler);
+                }
             }
         });
 

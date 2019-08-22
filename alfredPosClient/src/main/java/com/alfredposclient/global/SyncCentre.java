@@ -424,7 +424,7 @@ public class SyncCentre {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
 //            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
-            return "http://18.138.225.241/alfred-api/" + relativeUrl;//staging
+            return "http://18.138.252.241/alfred-api/" + relativeUrl;//staging
         } else if (App.instance.isOpenLog) {
 
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
@@ -535,7 +535,9 @@ public class SyncCentre {
     /* sync KOT data to KDS */
     public void syncSubmitKotToKDS(KDSDevice kdsDevice, BaseActivity context,
                                    Map<String, Object> parameters, Handler handler) throws Throwable {
-        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
+
+//        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
+        String url = getAbsoluteKDSUrlForJob(App.instance.getBalancerKDSDevice(), APIName.SUBMIT_NEW_KOT);
         HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
 
@@ -553,6 +555,14 @@ public class SyncCentre {
                                        Map<String, Object> parameters, Handler handler) throws Throwable {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEXT_KOT);
         HTTPKDSRequest.syncSubmitKotToNextKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void syncSubmitConnectedKDS(KDSDevice kdsDevice, Context context,
+                                       Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.UPDATE_CONNECTED_KDS);
+        HTTPKDSRequest.syncSubmitConnectedKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
 
     }

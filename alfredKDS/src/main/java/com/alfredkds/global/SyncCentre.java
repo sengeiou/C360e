@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.alfredbase.APPConfig;
+import com.alfredbase.BaseActivity;
 import com.alfredbase.http.APIName;
+import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredkds.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
@@ -51,11 +53,26 @@ public class SyncCentre {
                 getAbsolutePOSUrlByIp(posIp, APIName.LOGIN_LOGINVERIFY), httpClient, handler);
     }
 
+    public void syncSubmitKotToKDS(KDSDevice kdsDevice, Context context,
+                                   Map<String, Object> parameters, Handler handler) throws Throwable {
+
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
+        HttpAPI.syncSubmitKot(context, parameters, url, httpClient,
+                handler);
+
+    }
+
     //get All printer during pairing
     public void getPrinters(Context context, String posIp, Map<String, Object> parameters,
                             Handler handler) {
         HttpAPI.getPrinters(context, parameters,
                 getAbsolutePOSUrlByIp(posIp, APIName.GET_PRINTERS), httpClient, handler);
+    }
+
+    public void getConnectedKDS(Context context, String posIp, Map<String, Object> parameters,
+                                Handler handler) {
+        HttpAPI.getConnectedKDS(context, parameters,
+                getAbsolutePOSUrlByIp(posIp, APIName.GET_CONNECTED_KDS), httpClient, handler);
     }
 
     public void pairingComplete(Context context, String posIp, Map<String, Object> parameters,
@@ -128,6 +145,12 @@ public class SyncCentre {
     private String getAbsolutePOSUrlByIp(String ip, String url) {
         return "http://" + ip + ":" + APPConfig.HTTP_SERVER_PORT + "/"
                 + url;
+    }
+
+    private String getAbsoluteKDSUrlForJob(KDSDevice kdsDevice,
+                                           String relativeUrl) {
+        return "http://" + kdsDevice.getIP() + ":"
+                + APPConfig.KDS_HTTP_SERVER_PORT + "/" + relativeUrl;
     }
 
     public String getIp(MainPosInfo mainPosInfo) {

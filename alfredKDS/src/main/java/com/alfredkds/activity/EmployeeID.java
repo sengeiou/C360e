@@ -1,6 +1,7 @@
 package com.alfredkds.activity;
 
 import android.os.Handler;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
@@ -22,6 +23,7 @@ import com.alfredkds.global.UIHelp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
@@ -73,23 +75,34 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
         textTypeFace.setTrajanProRegular(tv_id_5);
     }
 
+    ArrayList<Printer> printerList = new ArrayList<>();
+    int pairingCount = 0;
 
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case ResultCode.SUCCESS: {
-                    loadingDialog.dismiss();
+                    pairingCount++;
+
                     ArrayList<Printer> printers = (ArrayList<Printer>) msg.obj;
-                    ArrayList<Printer> printerList = new ArrayList<Printer>();
+
                     for (Printer printer : printers) {//为cashier时不显示
                         if (!(printer.getIsCashdrawer().intValue() == 1)) {
                             printerList.add(printer);
                         }
                     }
-                    UIHelp.startSelectKitchen(context, printerList);
-                    finish();
+
+                    if (pairingCount >= App.instance.getAllPairingIp().size()) {
+                        pairingCount = 0;
+                        loadingDialog.dismiss();
+
+                        UIHelp.startSelectKitchen(context, printerList);
+                        finish();
+                    }
+
                     break;
                 }
+
                 case ResultCode.USER_NO_PERMIT:
                     loadingDialog.dismiss();
                     UIHelp.showToast(context, context.getResources().getString(R.string.pairing_fails));
@@ -104,7 +117,6 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
             }
         }
 
-        ;
     };
 
     private static final int KEY_LENGTH = 5;
@@ -125,6 +137,7 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
         }
         int key_len = keyBuf.length();
         setPassword(key_len);
+
         if (key_len == KEY_LENGTH) {
             employee_ID = keyBuf.toString();
             keyBuf.delete(0, key_len);
@@ -135,7 +148,22 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
             map.put("printerType", ParamConst.PRINTER_TYPE_UNGROUP);
             map.put("employeeId", employee_ID);
             //Verify employee and load all printers/KDS from POS
-            SyncCentre.getInstance().getPrinters(context, App.instance.getPairingIp(), map, handler);
+
+            List<String> ips = new ArrayList<>();
+            if (App.instance.isBalancer()) {
+                ips.addAll(App.instance.getAllPairingIp());
+            } else {
+                ips.add(App.instance.getPairingIp());
+            }
+
+            for (String ip : App.instance.getAllPairingIp()) {
+                if (TextUtils.isEmpty(ip)) continue;
+                SyncCentre.getInstance().getPrinters(context, ip, map, handler);
+
+                if (App.instance.isBalancer()) {
+                    SyncCentre.getInstance().getConnectedKDS(context, ip, map, handler);
+                }
+            }
         }
     }
 

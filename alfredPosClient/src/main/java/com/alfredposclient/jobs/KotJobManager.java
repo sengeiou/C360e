@@ -69,9 +69,8 @@ public class KotJobManager {
         ArrayList<Printer> printersData = CoreData.getInstance()
                 .getPrintersInGroup(printerGroupId);
 
-//        isAssemblyLine = true;//dummy
-
         if (isAssemblyLine) {
+            //region assemblyline
             Printer printer = null;
 
             if (kdsId > 0) {
@@ -121,18 +120,11 @@ public class KotJobManager {
             }
 
             if (printer != null) {
-//                printer.kdsType = kdsType;
-
-//                if (printer.getPrinterUsageType() == Printer.KDS_EXPEDITER) {
-//                    printerResult.addAll(getPrinterEx(printerGroupId));
-//                } else {
                 printerResult.add(printer);
-//                }
             }
+            //endregion
         } else {
-//            for (Printer printer : printersData) {
-//                printer.kdsType = kdsType;
-//            }
+            //normal behavior
             printerResult.addAll(printersData);
         }
 
@@ -690,8 +682,6 @@ public class KotJobManager {
         if (modCombo.size() > 0)
             sendModifierToKds(modCombo, kotSummary, method, orderMap, 0, "");
 
-
-//        List<Integer> doStockMap = new ArrayList<>();
         // add job to send it to KDS
         for (Integer prgid : printerGrougIds) {
 

@@ -4,16 +4,21 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.alfredbase.KDSLog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KDSHistory;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
@@ -21,6 +26,9 @@ import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.PrinterGroupSQL;
+import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredkds.global.App;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -82,7 +90,6 @@ public class HttpAnalysis {
 
                     boolean flag = false;
                     KotSummary kotSummary = kotSummaryList.get(i);
-                    ;
 
                     for (int j = 0; j < kotItemDetails.size(); j++) {
                         KotItemDetail kotItemDetail = kotItemDetails.get(j);
@@ -136,6 +143,28 @@ public class HttpAnalysis {
         return null;
     }
 
+    public static void saveConnectedKDS(int statusCode,
+                                        Header[] headers, byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            List<KDSDevice> kdsDeviceList = gson.fromJson(object.getString("kdsList"),
+                    new TypeToken<List<KDSDevice>>() {
+                    }.getType());
+
+            saveConnectedKDS(kdsDeviceList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveConnectedKDS(List<KDSDevice> kdsDeviceList) {
+        //TODO: not support multi pos yet
+        String kdsLogs = Store.getString(App.instance, Store.KDS_LOGS);
+        String kdsLogsStr = KDSLogUtil.putKdsLog(kdsLogs, kdsDeviceList);
+        Store.putString(App.instance, Store.KDS_LOGS, kdsLogsStr);
+    }
+
     public static List<Printer> getPrinterList(int statusCode,
                                                Header[] headers, byte[] responseBody) {
         List<Printer> printers = new ArrayList<Printer>();
@@ -146,6 +175,21 @@ public class HttpAnalysis {
                     object.getString("printers"),
                     new TypeToken<ArrayList<Printer>>() {
                     }.getType());
+
+            CoreData.getInstance().setPrinters(printers);
+            PrinterSQL.deleteAllPrinter();
+            PrinterSQL.addPrinters(printers);
+
+            List<PrinterGroup> printerGroups = gson.fromJson(object.getString("printer_group"),
+                    new TypeToken<ArrayList<PrinterGroup>>() {
+                    }.getType());
+
+            if (printerGroups != null) {
+                PrinterGroupSQL.deletePrinter();
+                PrinterGroupSQL.addPrinterGroups(printerGroups);
+                CoreData.getInstance().setPrinterGroups(printerGroups);
+            }
+
             User user = gson.fromJson(object.getString("user"), User.class);
             Store.saveObject(App.instance, Store.KDS_USER, user);
             return printers;
@@ -162,7 +206,9 @@ public class HttpAnalysis {
             JSONObject object = new JSONObject(new String(responseBody));
             MainPosInfo mainPosInfo = gson.fromJson(
                     object.optString("mainPosInfo"), MainPosInfo.class);
+
             App.instance.addMainPosInfo(mainPosInfo);
+
             handler.sendEmptyMessage(ResultCode.SUCCESS);
         } catch (JSONException e) {
             e.printStackTrace();

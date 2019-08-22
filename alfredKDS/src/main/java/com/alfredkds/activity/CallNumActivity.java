@@ -10,6 +10,7 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredkds.R;
 import com.alfredkds.global.App;

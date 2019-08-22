@@ -1,6 +1,7 @@
 package com.alfredkds.activity;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.UIHelp;
@@ -20,6 +22,7 @@ import com.moonearly.utils.service.UdpServiceCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -35,6 +38,7 @@ public class SelectRevenue extends BaseActivity {
     private RevenueListAdapter revenueListAdapter;
     private TextTypeFace textTypeFace;
     private Observable<UdpMsg> observable;
+
     @Override
     protected void initView() {
         super.initView();
@@ -42,9 +46,10 @@ public class SelectRevenue extends BaseActivity {
         listView = (ListView) findViewById(R.id.lv_revenue_centre);
         findViewById(R.id.btn_manually).setOnClickListener(this);
         findViewById(R.id.iv_refresh).setOnClickListener(this);
+        findViewById(R.id.tvConnect).setOnClickListener(this);
         revenueListAdapter = new RevenueListAdapter(this);
         listView.setAdapter(revenueListAdapter);
-        ((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
+        ((TextView) findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
         initTextTypeFace();
         loadingDialog = new LoadingDialog(this);
         loadingDialog.setTitle("Search Revenue ...");
@@ -53,8 +58,8 @@ public class SelectRevenue extends BaseActivity {
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
             @Override
             public void call(UdpMsg udpMsg) {
-                for(UdpMsg udpMsg1 : udpMsgList){
-                    if(udpMsg1.getIp().equals(udpMsg.getIp())){
+                for (UdpMsg udpMsg1 : udpMsgList) {
+                    if (udpMsg1.getIp().equals(udpMsg.getIp())) {
                         return;
                     }
                 }
@@ -73,15 +78,16 @@ public class SelectRevenue extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if(observable != null)
+        if (observable != null)
             RxBus.getInstance().unregister("RECEIVE_IP_ACTION", observable);
         super.onDestroy();
     }
 
     private void initTextTypeFace() {
         textTypeFace = TextTypeFace.getInstance();
-        textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_app_version));
-        textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_select_rev_tips));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_app_version));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_select_rev_tips));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tvConnect));
     }
 
     @Override
@@ -96,6 +102,23 @@ public class SelectRevenue extends BaseActivity {
                 loadingDialog.showByTime(5000);
                 App.instance.searchRevenueIp();
                 break;
+            case R.id.tvConnect:
+                List<UdpMsg> selectedRvc = revenueListAdapter.getSelectedRVC();
+
+                if (selectedRvc.size() > 0) {
+                    List<String> pairingIpList = new ArrayList<>();
+
+                    for (UdpMsg udpMsg : selectedRvc) {
+                        pairingIpList.add(udpMsg.getIp());
+                    }
+
+                    App.instance.setAllPairingIp(pairingIpList);
+                    UIHelp.startEmployeeID(SelectRevenue.this);
+
+                } else {
+                    ToastUtils.showToast(this, "Please select at least one of revenue center");
+                }
+                break;
             default:
                 break;
         }
@@ -103,11 +126,13 @@ public class SelectRevenue extends BaseActivity {
 
     class RevenueListAdapter extends BaseAdapter {
         private Context context;
-
+        private List<UdpMsg> selectedUdpMsg = new ArrayList<>();
 
         private LayoutInflater inflater;
+
         public RevenueListAdapter(Context context) {
             inflater = LayoutInflater.from(context);
+            this.context = context;
         }
 
         @Override
@@ -139,14 +164,30 @@ public class SelectRevenue extends BaseActivity {
             final UdpMsg udpMsg = udpMsgList.get(arg0);
             textTypeFace.setTrajanProRegular(holder.tv_text);
             holder.tv_text.setText(udpMsg.getName() + "\n" + udpMsg.getIp());
+
+            if (selectedUdpMsg.contains(udpMsg))
+                holder.tv_text.setBackgroundColor(context.getResources().getColor(R.color.gray));
+            else
+                holder.tv_text.setBackgroundColor(context.getResources().getColor(R.color.white));
+
             arg1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    App.instance.setPairingIp(udpMsg.getIp());
-                    UIHelp.startEmployeeID(SelectRevenue.this);
+                    if (!selectedUdpMsg.contains(udpMsg)) {
+                        selectedUdpMsg.add(udpMsg);
+                        notifyDataSetChanged();
+                    } else {
+                        selectedUdpMsg.remove(udpMsg);
+                        notifyDataSetChanged();
+                    }
+
                 }
             });
             return arg1;
+        }
+
+        public List<UdpMsg> getSelectedRVC() {
+            return selectedUdpMsg;
         }
 
         class ViewHolder {

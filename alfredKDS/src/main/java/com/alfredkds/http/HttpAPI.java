@@ -3,6 +3,7 @@ package com.alfredkds.http;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.alfredbase.ParamConst;
@@ -12,25 +13,33 @@ import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.KDSLogUtil;
+import com.alfredbase.utils.LogUtil;
 import com.alfredkds.activity.KotHistory;
 import com.alfredkds.activity.Login;
 import com.alfredkds.activity.SelectKitchen;
 import com.alfredkds.activity.Setting;
 import com.alfredkds.global.App;
+import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.ConnectException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,6 +88,32 @@ public class HttpAPI {
         }
     }
 
+    public static void syncSubmitKot(Context context, Map<String, Object> parameters, String url,
+                                     AsyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+
+        syncHttpClient.post(context, url,
+                new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
+                        "UTF-8"), CONTENT_TYPE,
+                new AsyncHttpResponseHandlerEx() {
+                    @Override
+                    public void onSuccess(final int statusCode, final Header[] headers,
+                                          final byte[] responseBody) {
+                        super.onSuccess(statusCode, headers, responseBody);
+                        if (resultCode == ResultCode.SUCCESS) {
+                        } else if (resultCode == ResultCode.INVALID_DEVICE) {
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        if (error.getCause() instanceof ConnectException) {
+                            throw new RuntimeException(error);
+                        }
+                    }
+                });
+    }
+
     public static void getPrinters(final Context context,
                                    Map<String, Object> parameters, String url,
                                    AsyncHttpClient httpClient, final Handler handler) {
@@ -97,6 +132,44 @@ public class HttpAPI {
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS,
                                         HttpAnalysis.getPrinterList(statusCode, headers, responseBody)));
+                            } else if (resultCode == ResultCode.USER_NO_PERMIT) {
+                                handler.sendEmptyMessage(ResultCode.USER_NO_PERMIT);
+                            } else {
+                                elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getConnectedKDS(final Context context,
+                                       Map<String, Object> parameters, String url,
+                                       AsyncHttpClient httpClient, final Handler handler) {
+        if (parameters != null) {
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters) + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+//                                handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                HttpAnalysis.saveConnectedKDS(statusCode, headers, responseBody);
                             } else if (resultCode == ResultCode.USER_NO_PERMIT) {
                                 handler.sendEmptyMessage(ResultCode.USER_NO_PERMIT);
                             } else {

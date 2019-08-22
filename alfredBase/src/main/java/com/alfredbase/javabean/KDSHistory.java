@@ -10,5 +10,6 @@ import java.util.List;
  */
 public class KDSHistory {
     public KDSDevice kdsDevice;
+    public KDSDevice kdsDeviceDest;
     public List<KotItemDetail> kotItemDetails = new ArrayList<>();
 }

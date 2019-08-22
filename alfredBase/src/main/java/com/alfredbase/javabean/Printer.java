@@ -13,6 +13,7 @@ public class Printer implements Serializable {
     public static final int KDS_NORMAL = 0;
     public static final int KDS_EXPEDITER = 1;
     public static final int KDS_SUMMARY = 2;
+    public static final int KDS_BALANCER = 3;
 
     private Integer id;
 

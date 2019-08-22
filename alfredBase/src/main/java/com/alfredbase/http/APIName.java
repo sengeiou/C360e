@@ -85,6 +85,8 @@ public class APIName {
     public static final String CALL_SPECIFY_THE_NUMBER = "call_specify_the_number";
     public static final String KOT_OUT_OF_STOCK = "kot_out_of_stock";
     public static final String KOT_NEXT_KDS = "kot_next_kds";
+    public static final String CONNECTED_KDS = "connected_kds";
+    public static final String GET_CONNECTED_KDS = "get_connected_kds";
 
     // 以下是桌面设备专用
 
@@ -134,6 +136,7 @@ public class APIName {
     public static final String DELETE_KOT_KDS = "delete_kot_kds";
     public static final String SUBMIT_SUMMARY_KDS = "submit_summary_kds";
     public static final String UPDATE_ORDER_COUNT = "update_order_count";
+    public static final String UPDATE_CONNECTED_KDS = "update_connected_kds";
 
     /**
      * 以waiter作为服务器

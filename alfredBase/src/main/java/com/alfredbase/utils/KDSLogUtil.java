@@ -1,11 +1,14 @@
 package com.alfredbase.utils;
 
+import com.alfredbase.KDSLog;
 import com.alfredbase.javabean.KDSHistory;
 import com.alfredbase.javabean.KDSTracking;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.store.Store;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,114 @@ import java.util.List;
  * Created by Arif S. on 7/18/19
  */
 public class KDSLogUtil {
+
+    public static String putItemKdsLog(String kdsLogStr, KDSDevice kdsDevice, List<KotItemDetail> kotItemDetailList) {
+        Gson gson = new Gson();
+        KDSLog kdsLogs = gson.fromJson(kdsLogStr, new TypeToken<KDSLog>() {
+        }.getType());
+
+        KDSHistory selectedKdsHistory = getKdsHistoryByKDS(kdsDevice, kdsLogs);
+
+        if (selectedKdsHistory != null) {
+            selectedKdsHistory.kotItemDetails.addAll(kotItemDetailList);
+        }
+
+        return gson.toJson(kdsLogs);
+    }
+
+    public static String removeItemKdsLog(String kdsLogStr, KDSDevice kdsDevice, List<KotItemDetail> kotItemDetailList) {
+        Gson gson = new Gson();
+        KDSLog kdsLogs = gson.fromJson(kdsLogStr, new TypeToken<KDSLog>() {
+        }.getType());
+
+        KDSHistory selectedKdsHistory = getKdsHistoryByKDS(kdsDevice, kdsLogs);
+
+        if (selectedKdsHistory != null) {
+
+            for (KotItemDetail kotItemDetail : kotItemDetailList) {
+                for (KotItemDetail kid : selectedKdsHistory.kotItemDetails) {
+                    if (kid.getId().equals(kotItemDetail.getId())) {
+                        selectedKdsHistory.kotItemDetails.remove(kid);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return gson.toJson(kdsLogs);
+    }
+
+    public static String putDestKdsLog(String kdsLogStr, KDSDevice kdsDevice, KDSDevice kdsDeviceDest) {
+        Gson gson = new Gson();
+        KDSLog kdsLogs = gson.fromJson(kdsLogStr, new TypeToken<KDSLog>() {
+        }.getType());
+
+        KDSHistory selectedKdsHistory = getKdsHistoryByKDS(kdsDevice, kdsLogs);
+
+        if (selectedKdsHistory != null) {
+            selectedKdsHistory.kdsDeviceDest = kdsDeviceDest;
+        }
+
+        return gson.toJson(kdsLogs);
+    }
+
+    private static KDSHistory getKdsHistoryByKDS(KDSDevice kdsDevice, KDSLog kdsLogs) {
+
+        for (KDSHistory kdsHistory : kdsLogs.kdsHistories) {
+            KDSDevice kds = kdsHistory.kdsDevice;
+
+            if (kds.getDevice_id() == kdsDevice.getDevice_id() &&
+                    kds.getIP().equals(kdsDevice.getIP())) {
+                return kdsHistory;
+            }
+        }
+
+        return null;
+    }
+
+    public static String putKdsLog(String kdsLogStr, List<KDSDevice> kdsDeviceList) {
+        Gson gson = new Gson();
+        KDSLog kdsLogs = gson.fromJson(kdsLogStr, new TypeToken<KDSLog>() {
+        }.getType());
+
+        if (kdsLogs == null) {
+            kdsLogs = new KDSLog();
+        }
+
+        //region remove existing data
+        if (kdsLogs.kdsHistories != null) {
+            for (KDSHistory kdsHistory : kdsLogs.kdsHistories) {
+                KDSDevice kdsDevice = kdsHistory.kdsDevice;
+
+                List<KDSDevice> kdsRemove = new ArrayList<>();
+                for (KDSDevice kdsDevice1 : kdsDeviceList) {
+                    if (kdsDevice.getDevice_id() == kdsDevice1.getDevice_id() &&
+                            kdsDevice.getIP().equals(kdsDevice1.getIP())) {
+                        kdsRemove.add(kdsDevice1);
+                    }
+                }
+
+                if (kdsRemove.size() > 0) {
+                    kdsDeviceList.removeAll(kdsRemove);
+                }
+            }
+        } else {
+            kdsLogs.kdsHistories = new ArrayList<>();
+        }
+        //endregion
+
+        List<KDSHistory> kdsHistoryList = new ArrayList<>();
+
+        for (KDSDevice kdsDevice : kdsDeviceList) {
+            KDSHistory kdsHistory = new KDSHistory();
+            kdsHistory.kdsDevice = kdsDevice;
+            kdsHistoryList.add(kdsHistory);
+        }
+
+        kdsLogs.kdsHistories.addAll(kdsHistoryList);
+
+        return gson.toJson(kdsLogs);
+    }
 
     public static String initLog(List<KDSDevice> kdsDeviceList) {
         KotSummaryLog kotSummaryLog = new KotSummaryLog();
