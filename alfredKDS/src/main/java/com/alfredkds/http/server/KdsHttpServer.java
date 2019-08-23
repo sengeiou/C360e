@@ -68,8 +68,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                 if (uri.equals(APIName.UPDATE_CONNECTED_KDS)) {
                     resp = handlerUpdateConnectedKDS(body);
                 }
-                if (uri.equals(APIName.SUBMIT_NEW_KOT)) {
-                    resp = handlerSubmitNewKotBalancer(body);
+                if (uri.equals(APIName.CHECK_KDS_BALANCE)) {
+                    resp = handlerCheckKDSBalance(body);
                 } else {
                     resp = getNotFoundResponse();
                 }
@@ -106,7 +106,7 @@ public class KdsHttpServer extends AlfredHttpServer {
         return resp;
     }
 
-    private Response handlerSubmitNewKotBalancer(final String params) {
+    private Response handlerCheckKDSBalance(final String params) {
         Response resp = null;
         Map<String, Object> result = new HashMap<>();
         List<Integer> revenueCenterIds = new ArrayList<>();
@@ -229,49 +229,6 @@ public class KdsHttpServer extends AlfredHttpServer {
             }
             //endregion
 
-            //region update kot
-            if (method.equals(ParamConst.JOB_UPDATE_KOT)) {
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (App.getTopActivity() != null)
-                            App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
-
-                    }
-                }).start();
-
-                result.put("resultCode", ResultCode.SUCCESS);
-                result.put("method", method);
-                result.put("kotSummary", kotSummary);
-                result.put("orderDetailIds", orderDetailIds);
-                resp = getJsonResponse(new Gson().toJson(result));
-            }
-            //endregion
-
-            if (method.equals(ParamConst.JOB_DELETE_KOT)) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        KotItemDetailSQL.deleteKotItemDetail(kotItemDetails);
-                        if (App.getTopActivity() != null)
-                            App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
-                    }
-                }).start();
-                result.put("resultCode", ResultCode.SUCCESS);
-                resp = getJsonResponse(new Gson().toJson(result));
-            }
-            if (method.equals(ParamConst.JOB_VOID_KOT)) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                }).start();
-                result.put("resultCode", ResultCode.SUCCESS);
-                resp = getJsonResponse(new Gson().toJson(result));
-            }
         } catch (JSONException e) {
             e.printStackTrace();
             resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));

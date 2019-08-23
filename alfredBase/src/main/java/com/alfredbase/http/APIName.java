@@ -137,6 +137,7 @@ public class APIName {
     public static final String SUBMIT_SUMMARY_KDS = "submit_summary_kds";
     public static final String UPDATE_ORDER_COUNT = "update_order_count";
     public static final String UPDATE_CONNECTED_KDS = "update_connected_kds";
+    public static final String CHECK_KDS_BALANCE = "check_kds_balance";
 
     /**
      * 以waiter作为服务器

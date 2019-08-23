@@ -39,6 +39,7 @@ public class KotJob extends Job {
     private Map<String, Object> kotMap = new HashMap<String, Object>();
     private Map<String, Object> data = new HashMap<String, Object>();
     private int failCount = 0;
+    private boolean isCheckBalance;
 
     public KotJob(KDSDevice kdsDevice, KotSummary kotSummary, String method, String apiName) {
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
@@ -92,11 +93,16 @@ public class KotJob extends Job {
 
     public KotJob(KDSDevice kds, KotSummary kotSummary, ArrayList<KotItemDetail> itemDetails,
                   ArrayList<KotItemModifier> modifiers, String method, Map<String, Object> kotMap) {
-        this(kds, kotSummary, itemDetails, modifiers, method, kotMap, false);
+        this(kds, kotSummary, itemDetails, modifiers, method, kotMap, false, false);
     }
 
     public KotJob(KDSDevice kds, KotSummary kotSummary, ArrayList<KotItemDetail> itemDetails,
                   ArrayList<KotItemModifier> modifiers, String method, Map<String, Object> kotMap, boolean isFire) {
+        this(kds, kotSummary, itemDetails, modifiers, method, kotMap, isFire, false);
+    }
+
+    public KotJob(KDSDevice kds, KotSummary kotSummary, ArrayList<KotItemDetail> itemDetails,
+                  ArrayList<KotItemModifier> modifiers, String method, Map<String, Object> kotMap, boolean isFire, boolean isCheckBalancer) {
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
         //group the order, we don't want to send two in parallel
         //use a negative id so that it cannot collide w/ twitter ids
@@ -111,6 +117,7 @@ public class KotJob extends Job {
         data.put("isFire", isFire);
         this.kds = kds;
         this.kotMap = kotMap;
+        this.isCheckBalance = isCheckBalancer;
         try {
             KotSummarySQL.updateKotSummaryTimeById(time, kotSummary.getId().intValue());
         } catch (Exception e) {
@@ -190,10 +197,16 @@ public class KotJob extends Job {
                 if (updatedkot.getStatus() == ParamConst.KOTS_STATUS_DONE)
                     return;
 
-                SyncCentre.getInstance().syncSubmitKotToKDS(kds, context, data, null);
+                if (isCheckBalance) {
+                    SyncCentre.getInstance().checkKdsBalance(kds, context, data, null);
+                } else {
+                    SyncCentre.getInstance().syncSubmitKotToKDS(kds, context, data, null);
+                }
+
                 if (kotMap == null) {
                     return;
                 }
+
                 List<Integer> orderDetailIds = (List<Integer>) kotMap.get("orderDetailIds");
                 if (orderDetailIds.size() != 0) {
 

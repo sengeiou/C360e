@@ -532,12 +532,19 @@ public class SyncCentre {
      * for KDS
      */
 
-    /* sync KOT data to KDS */
+    public void checkKdsBalance(KDSDevice kdsDevice, BaseActivity context,
+                                Map<String, Object> parameters, Handler handler) throws Throwable {
+
+        String url = getAbsoluteKDSUrlForJob(App.instance.getBalancerKDSDevice(), APIName.CHECK_KDS_BALANCE);
+        HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
     public void syncSubmitKotToKDS(KDSDevice kdsDevice, BaseActivity context,
                                    Map<String, Object> parameters, Handler handler) throws Throwable {
 
-//        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
-        String url = getAbsoluteKDSUrlForJob(App.instance.getBalancerKDSDevice(), APIName.SUBMIT_NEW_KOT);
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
         HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
 

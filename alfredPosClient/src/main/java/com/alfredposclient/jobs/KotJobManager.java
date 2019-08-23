@@ -145,6 +145,10 @@ public class KotJobManager {
         return printerResult;
     }
 
+    private boolean isBalancerExists() {
+        return App.instance.getBalancerKDSDevice() != null;
+    }
+
     private List<Printer> getPrinterSummary(int printerGroupId) {
         List<Printer> printerResult = new ArrayList<>();
 
@@ -710,6 +714,14 @@ public class KotJobManager {
                         .getPrintersInGroup(prgid);
             }
 
+            boolean isCheckBalancer = false;
+
+            if (isBalancerExists()) {
+                if (ParamConst.JOB_NEW_KOT.equals(method) && printers.size() > 1) {
+                    isCheckBalancer = true;
+                }
+            }
+
             for (Printer printer : printers) {
                 // KDS device
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
@@ -728,7 +740,7 @@ public class KotJobManager {
 
                     KotJob kotjob;
                     kotjob = new KotJob(kdsDevice, kotSummary,
-                            kots.get(prgid), mods.get(prgid), method, orderMap);
+                            kots.get(prgid), mods.get(prgid), method, orderMap, false, isCheckBalancer);
                     kotJobManager.addJob(kotjob);
                 }
 
@@ -904,6 +916,11 @@ public class KotJobManager {
         }
     }
 
+    public void sendToSelectedKDS(KotSummary kotSummary,
+                                  ArrayList<KotItemDetail> kot, ArrayList<KotItemModifier> modifiers,
+                                  String method, Map<String, Object> orderMap) {
+
+    }
 
     public void tearDownKotFire(KotSummary kotSummary,
                                 ArrayList<KotItemDetail> kot, ArrayList<KotItemModifier> modifiers,
