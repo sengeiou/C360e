@@ -49,6 +49,7 @@ import com.alfredkds.javabean.KotItem;
 import com.alfredkds.view.FinishQtyWindow;
 import com.alfredkds.view.KOTArrayAdapter;
 import com.alfredkds.view.KOTArrayLanAdapter;
+import com.alfredkds.view.PendingListAdapter;
 import com.alfredkds.view.PopItemAdapter;
 import com.alfredkds.view.PopItemListView;
 import com.alfredkds.view.PopItemListView.RemoveDirection;
@@ -72,10 +73,11 @@ public class KitchenOrder extends BaseActivity {
     public static final int HANDLER_TRANSFER_KOT = 3;
     public static final int HANDLER_MERGER_KOT = 4;
 
-    private RecyclerView ll_orders;    //水平列表
+    private RecyclerView ll_orders, rcvPendingList;    //水平列表
     public KOTArrayAdapter adapter;
     public KOTArrayLanAdapter madapter;
     private List<Kot> kots = new ArrayList<Kot>();
+    private PendingListAdapter pendingListAdapter;
 
     private TopBarView topBarView;    //页面顶部view
 
@@ -108,11 +110,21 @@ public class KitchenOrder extends BaseActivity {
         //ll_progress_list = (LinearLayout) findViewById(R.id.ll_progress_list);
         //initProgressList();
         ll_orders = (RecyclerView) findViewById(R.id.ll_orders);
+        rcvPendingList = (RecyclerView) findViewById(R.id.rcvPendingList);
         tv_order_qyt = (TextView) findViewById(R.id.tv_order_qyt);
         li_title = (LinearLayout) findViewById(R.id.li_lan_title);
 
+        pendingListAdapter = new PendingListAdapter(this, new ArrayList<KotItemDetail>());
+        rcvPendingList.setLayoutManager(new LinearLayoutManager(this));
+        rcvPendingList.setAdapter(pendingListAdapter);
 
         finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
+
+        if (App.instance.getSystemSettings().isPendingList()) {
+            rcvPendingList.setVisibility(View.VISIBLE);
+        } else {
+            rcvPendingList.setVisibility(View.GONE);
+        }
 
         initTopBarView();
         initTextTypeFace();
@@ -546,7 +558,6 @@ public class KitchenOrder extends BaseActivity {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
         }
-
 
         doubleBackToExitPressedOnce = false;
 

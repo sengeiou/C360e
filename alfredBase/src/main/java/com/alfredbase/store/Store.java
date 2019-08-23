@@ -17,6 +17,8 @@ public class Store {
 
     private static final String PACK_NAME = Store.class.getPackage().getName();
 
+    public static final String PENDING_LIST = "PENDING_LIST";
+    public static final String MODE_BALANCER = "MODE_BALANCER";
     public static final String POS_TYPE = "POS_TYPE";
     public static final String CURRENT_REVENUE_CENTER = "CURRENT_REVENUE_CENTER";
     public static final String CALL_APP_IP = "CALL_APP_IP";

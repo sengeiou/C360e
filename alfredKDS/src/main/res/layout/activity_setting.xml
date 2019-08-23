@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
@@ -11,85 +11,148 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/setting"
-        android:textStyle="bold"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_size_m"/>
+        android:textSize="@dimen/text_size_m"
+        android:textStyle="bold" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#dedede"/>
-    
-    <LinearLayout 
+        android:background="#dedede" />
+
+    <LinearLayout
+        android:id="@+id/llBalancer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RadioGroup
+            android:id="@+id/rgBalancerMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/rdBalance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sync_box"
+                android:gravity="center"
+                android:text="Balance" />
+
+            <RadioButton
+                android:id="@+id/rdStack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/sync_box"
+                android:gravity="center"
+                android:text="Stack" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llNormal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical">
-    
-    <TextView 
-        android:id="@+id/tv_history"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/kot_history_"
-        android:gravity="center"
-        android:textSize="@dimen/text_size_small"
-        android:textColor="@color/black"/>
-    
-    <TextView 
-        android:id="@+id/tv_reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/reset_kds"
-        android:textSize="@dimen/text_size_small"
-        android:textColor="@color/black"/>
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center"
-    android:layout_marginTop="10dp"
-    >
+        <TextView
+            android:id="@+id/tv_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sync_box"
+            android:gravity="center"
+            android:text="@string/kot_history_"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small" />
 
-    <TextView
-        android:id="@+id/tv_kot_lan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:padding="10dp"
-        android:text="List View"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_m" />
+        <TextView
+            android:id="@+id/tv_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@drawable/sync_box"
+            android:gravity="center"
+            android:text="@string/reset_kds"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small" />
 
-    <com.alfredkds.view.MyToggleButton
-        android:id="@+id/mt_kot_lan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/tvPendingList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:text="Pending List"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_m" />
 
-    <TextView 
-        android:id="@+id/tv_switch_account"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/switch_account"
-        android:layout_marginTop="300dp"
-        android:gravity="center"
-        android:textSize="@dimen/text_size_small"
-        android:textColor="@color/black"/>
-    
-    <TextView 
-        android:id="@+id/tv_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="@dimen/text_size_small"
-        android:textColor="@color/black"/>
-    
+            <com.alfredkds.view.MyToggleButton
+                android:id="@+id/mtPendingList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_kot_lan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:text="List View"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_m" />
+
+            <com.alfredkds.view.MyToggleButton
+                android:id="@+id/mt_kot_lan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_switch_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="300dp"
+            android:background="@drawable/sync_box"
+            android:gravity="center"
+            android:text="@string/switch_account"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small" />
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small" />
+
     </LinearLayout>
 </LinearLayout>

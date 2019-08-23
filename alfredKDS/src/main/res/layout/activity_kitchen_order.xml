@@ -35,11 +35,10 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <include layout="@layout/kot_array_landscape_title">
-            >
-        </include>
+        <include layout="@layout/kot_array_landscape_title" />
+
         <!--<com.alfredkds.view.HorizontalListView-->
         <!--android:id="@+id/ll_orders"-->
         <!--android:layout_width="match_parent"-->
@@ -55,17 +54,27 @@
         <!--</com.alfredkds.view.HorizontalListView>-->
 
         <android.support.v7.widget.RecyclerView
-
             android:id="@+id/ll_orders"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@color/white"
             android:divider="#e00"
             android:fadingEdgeLength="5dp"
             android:requiresFadingEdge="horizontal"
-            widget:dividerWidth="3dp"
+            widget:dividerWidth="3dp" />
 
-            />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rcvPendingList"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_weight=".3"
+            android:background="@color/white"
+            android:divider="#e00"
+            android:fadingEdgeLength="5dp"
+            android:requiresFadingEdge="horizontal"
+            widget:dividerWidth="3dp" />
     </LinearLayout>
 
     <ImageView

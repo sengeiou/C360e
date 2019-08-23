@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -31,12 +33,11 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
     public static final int HANDLER_LOGOUT_SUCCESS = 1;
     public static final int HANDLER_LOGOUT_FAILED = 2;
 
-
     private TextView tv_kot_history;
     private TextView tv_kot_reset;
     private TextView tv_switch_account;
 
-    private MyToggleButton mt_kot_lan;
+    private MyToggleButton mt_kot_lan, mtPendingList;
     private SystemSettings settings;
 
     private Handler handler = new Handler() {
@@ -77,17 +78,42 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         this.tv_kot_history = (TextView) findViewById(R.id.tv_history);
         this.tv_kot_reset = (TextView) findViewById(R.id.tv_reset);
         this.tv_switch_account = (TextView) findViewById(R.id.tv_switch_account);
+        this.mtPendingList = (MyToggleButton) findViewById(R.id.mtPendingList);
         this.mt_kot_lan = (MyToggleButton) findViewById(R.id.mt_kot_lan);
+        this.mtPendingList.setOnStateChangeListeren(this);
         this.mt_kot_lan.setOnStateChangeListeren(this);
         this.tv_kot_history.setOnClickListener(this);
         this.tv_kot_reset.setOnClickListener(this);
         this.tv_switch_account.setOnClickListener(this);
+
+        LinearLayout llNormal = (LinearLayout) findViewById(R.id.llNormal);
+        LinearLayout llBalancer = (LinearLayout) findViewById(R.id.llBalancer);
+
+        if (App.instance.isBalancer()) {
+            llNormal.setVisibility(View.GONE);
+            llBalancer.setVisibility(View.VISIBLE);
+
+            RadioGroup radioGroup = (RadioGroup) findViewById(R.id.rgBalancerMode);
+
+            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+                    if (checkedId == R.id.rdBalance) {
+                        settings.setBalancerMode(SystemSettings.MODE_BALANCE);
+                    } else if (checkedId == R.id.rdStack) {
+                        settings.setBalancerMode(SystemSettings.MODE_STACK);
+                    }
+                }
+            });
+        }
 
         if (settings.isKdsLan()) {
             mt_kot_lan.setChecked(true);
         } else {
             mt_kot_lan.setChecked(false);
         }
+
+        mtPendingList.setChecked(settings.isPendingList());
 
     }
 
@@ -138,12 +164,8 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
 
     @Override
     public void onToggleStateChangeListeren(MyToggleButton Mybutton, Boolean checkState) {
-
-
         switch (Mybutton.getId()) {
             case R.id.mt_kot_lan:
-
-
                 if (checkState) {
                     mt_kot_lan.setChecked(true);
                     settings.setKdsLan(ParamConst.DEFAULT_TRUE);
@@ -152,6 +174,15 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                     settings.setKdsLan(ParamConst.DEFAULT_FALSE);
                 }
 
+                break;
+            case R.id.mtPendingList:
+                if (checkState) {
+                    mtPendingList.setChecked(true);
+                    settings.setPendingList(true);
+                } else {
+                    mtPendingList.setChecked(false);
+                    settings.setPendingList(false);
+                }
                 break;
         }
     }
