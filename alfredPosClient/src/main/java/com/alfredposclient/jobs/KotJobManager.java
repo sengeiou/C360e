@@ -558,7 +558,8 @@ public class KotJobManager {
             boolean isCheckBalancer = false;
 
             if (isBalancerExists()) {
-                if (ParamConst.JOB_NEW_KOT.equals(method) && printers.size() > 1) {
+                if ((ParamConst.JOB_NEW_KOT.equals(method) || ParamConst.JOB_UPDATE_KOT.equals(method))
+                        && printers.size() > 1) {
                     List<KDSDevice> kdsDevicesOnline = new ArrayList<>();
 
                     for (Printer printer : printers) {
@@ -777,7 +778,8 @@ public class KotJobManager {
             boolean isCheckBalancer = false;
 
             if (isBalancerExists()) {
-                if (ParamConst.JOB_NEW_KOT.equals(method) && printers.size() > 1) {
+                if ((ParamConst.JOB_NEW_KOT.equals(method) || ParamConst.JOB_UPDATE_KOT.equals(method))
+                        && printers.size() > 1) {
                     List<KDSDevice> kdsDevicesOnline = new ArrayList<>();
 
                     for (Printer printer : printers) {

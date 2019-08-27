@@ -269,7 +269,7 @@ public class KdsHttpServer extends AlfredHttpServer {
             KDSLog kdsLog = gson.fromJson(Store.getString(App.instance, Store.KDS_LOGS), KDSLog.class);
 
             //region new kot
-            if (method.equals(ParamConst.JOB_NEW_KOT)) {
+//            if (method.equals(ParamConst.JOB_NEW_KOT) || method.equals(ParamConst.JOB_NEW_KOT)) {
 
                 int printerGroupId = kotItemDetails.size() > 0 ? kotItemDetails.get(0).getPrinterGroupId() : 0;
 
@@ -352,7 +352,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 }).start();
 
                 resp = getJsonResponse(new Gson().toJson(result));
-            }
+//            }
             //endregion
 
         } catch (JSONException e) {
