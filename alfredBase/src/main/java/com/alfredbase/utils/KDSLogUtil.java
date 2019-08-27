@@ -74,10 +74,8 @@ public class KDSLogUtil {
         }.getType());
 
         for (KDSHistory kdsHistory : kdsLogs.kdsHistories) {
-            int size = kdsHistory.kotItemDetails.size();
-            for (int i = 0; i < size; i++) {
-                kdsHistory.kotItemDetails.remove(i);
-            }
+            if (kdsHistory.kotItemDetails != null)
+                kdsHistory.kotItemDetails.clear();
         }
 
         return gson.toJson(kdsLogs);

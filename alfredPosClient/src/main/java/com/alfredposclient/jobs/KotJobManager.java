@@ -555,6 +555,26 @@ public class KotJobManager {
                         .getPrintersInGroup(printerGroupId);
             }
 
+            boolean isCheckBalancer = false;
+
+            if (isBalancerExists()) {
+                if (ParamConst.JOB_NEW_KOT.equals(method) && printers.size() > 1) {
+                    List<KDSDevice> kdsDevicesOnline = new ArrayList<>();
+
+                    for (Printer printer : printers) {
+                        KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
+                        if (kdsDevice.getKdsStatus() == 0) {
+                            kdsDevicesOnline.add(kdsDevice);
+                        }
+
+                        if (kdsDevicesOnline.size() > 1) {
+                            isCheckBalancer = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
             for (Printer printer : printers) {
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
                 PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer.getId());
@@ -564,6 +584,8 @@ public class KotJobManager {
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
+                    if (kdsDevice.getKdsStatus() == -1) continue;//offline kds
+
                     kdsDevice.setKdsType(printer.getPrinterUsageType());
                     kotSummary.setNext(printer.isShowNext);//don't save to db here
 
@@ -581,6 +603,8 @@ public class KotJobManager {
 
                     kotJobManager.addJob(kotjob);
                 }
+
+                if (isCheckBalancer) break;
             }
         }
     }
