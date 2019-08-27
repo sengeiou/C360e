@@ -2145,6 +2145,7 @@ public class ObjectFactory {
                 kotItemDetail.setOrderDetailId(orderDetail.getId());
                 kotItemDetail.setPrinterGroupId(itemDetail.getPrinterId());
                 kotItemDetail.setKotSummaryId(kotSummary.getId());
+                kotItemDetail.setItemId(itemDetail.getId());
                 kotItemDetail.setItemName(itemDetail.getItemName());
                 kotItemDetail.setItemNum(orderDetail.getItemNum());
                 kotItemDetail.setFinishQty(0); // 新创建的都0
@@ -2177,6 +2178,7 @@ public class ObjectFactory {
             kotItemDetail.setOrderDetailId(orderDetail.getId());
             kotItemDetail.setPrinterGroupId(cpKotItemDetail.getPrinterGroupId());
             kotItemDetail.setKotSummaryId(cpKotItemDetail.getKotSummaryId());
+            kotItemDetail.setItemId(cpKotItemDetail.getId());
             kotItemDetail.setItemName(cpKotItemDetail.getItemName());
             kotItemDetail.setItemNum(orderDetail.getItemNum());
             kotItemDetail.setFinishQty(0); // 新创建的都0
@@ -2209,6 +2211,7 @@ public class ObjectFactory {
                 kotItemDetail.setOrderDetailId(mainKotItemDetail.getOrderDetailId());
                 kotItemDetail.setPrinterGroupId(mainKotItemDetail.getPrinterGroupId());
                 kotItemDetail.setKotSummaryId(mainKotItemDetail.getKotSummaryId());
+                kotItemDetail.setItemId(mainKotItemDetail.getId());
                 kotItemDetail.setItemName(mainKotItemDetail.getItemName());
                 kotItemDetail.setItemNum(mainKotItemDetail.getItemNum());
                 kotItemDetail.setFinishQty(mainKotItemDetail.getFinishQty());

@@ -27,8 +27,8 @@ public class KotItemDetailSQL {
                     + TableNames.KotItemDetail
                     + "(id, restaurantId, revenueId, orderId, orderDetailId, printerGroupId, kotSummaryId, "
                     + "itemName,itemNum,finishQty,sessionStatus,kotStatus,specialInstractions ,version,createTime,"
-                    + "updateTime, unFinishQty, categoryId,isTakeAway, fireStatus,callType,expectedTime,startTime,endTime,itemType)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "updateTime, unFinishQty, categoryId,isTakeAway, fireStatus,callType,expectedTime,startTime,endTime,itemType,itemId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{kotItemDetail.getId(),
@@ -55,7 +55,8 @@ public class KotItemDetailSQL {
                             kotItemDetail.getExpectedTime(),
                             kotItemDetail.getStartTime(),
                             kotItemDetail.getEndTime(),
-                            kotItemDetail.getItemType()
+                            kotItemDetail.getItemType(),
+                            kotItemDetail.getItemId()
                     });
             kotItemDetail.getCallType();
         } catch (Exception e) {
@@ -85,8 +86,8 @@ public class KotItemDetailSQL {
                     + "(id, restaurantId, revenueId, orderId, orderDetailId,  printerGroupId, kotSummaryId, "
                     + "itemName,itemNum,finishQty,sessionStatus,"
                     + "kotStatus,specialInstractions ,version," +
-                    "createTime,updateTime, unFinishQty, categoryId,isTakeAway, fireStatus,callType,expectedTime,startTime,endTime,itemType)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    "createTime,updateTime, unFinishQty, categoryId,isTakeAway, fireStatus,callType,expectedTime,startTime,endTime,itemType,itemId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(sql);
             for (KotItemDetail kotItemDetail : kotItemDetails) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
@@ -139,6 +140,8 @@ public class KotItemDetailSQL {
                         kotItemDetail.getEndTime());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 25,
                         kotItemDetail.getItemType());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
+                        kotItemDetail.getItemId());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -190,6 +193,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -244,6 +248,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -290,6 +295,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -336,6 +342,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -381,6 +388,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -435,6 +443,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -490,6 +499,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -544,6 +554,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -593,6 +604,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -641,6 +653,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -689,6 +702,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 kotItemDetails.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -744,6 +758,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -868,6 +883,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -922,6 +938,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {
@@ -976,6 +993,7 @@ public class KotItemDetailSQL {
                 kotItemDetail.setStartTime(cursor.getInt(22));
                 kotItemDetail.setEndTime(cursor.getInt(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
+                kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
             }
         } catch (Exception e) {

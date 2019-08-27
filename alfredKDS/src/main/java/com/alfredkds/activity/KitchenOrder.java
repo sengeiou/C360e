@@ -114,7 +114,7 @@ public class KitchenOrder extends BaseActivity {
         tv_order_qyt = (TextView) findViewById(R.id.tv_order_qyt);
         li_title = (LinearLayout) findViewById(R.id.li_lan_title);
 
-        pendingListAdapter = new PendingListAdapter(this, new ArrayList<KotItemDetail>());
+        pendingListAdapter = new PendingListAdapter(this, getKotItemsData());
         rcvPendingList.setLayoutManager(new LinearLayoutManager(this));
         rcvPendingList.setAdapter(pendingListAdapter);
 
@@ -131,8 +131,28 @@ public class KitchenOrder extends BaseActivity {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    private List<KotItem> getKotItemsData() {
+        kots = App.instance.getRefreshKots();
+        Map<Integer, KotItem> map = new HashMap<>();
+
+        for (KotItem kotItem : getKotItem(kots)) {
+            if (map.containsKey(kotItem.getItemId())) {
+                int qty = map.get(kotItem.getItemId()).getQty() + kotItem.getQty();
+                map.get(kotItem.getItemId()).setQty(qty);
+            } else {
+                map.put(kotItem.getItemId(), kotItem);
+            }
+        }
+
+        return new ArrayList<>(map.values());
+    }
+
     public Handler handler = new Handler() {
         public void handleMessage(Message msg) {
+            if (pendingListAdapter != null) {
+                pendingListAdapter.setData(getKotItemsData());
+            }
+
             switch (msg.what) {
                 case App.HANDLER_NEW_KOT:
                     kots = App.instance.getRefreshKots();
@@ -624,6 +644,7 @@ public class KitchenOrder extends BaseActivity {
                         item.setCallType(kotItemDetail.getCallType());
                         item.setQty(unFinishQty);
                         item.setItemDetailId(kotItemDetail.getId());
+                        item.setItemId(kotItemDetail.getItemId());
                         List<KotItemModifier> itemModifierlist = kot.getKotItemModifiers();
                         if (itemModifierlist != null && itemModifierlist.size() > 0) {
                             for (int s = 0; s < itemModifierlist.size(); s++) {
@@ -685,6 +706,19 @@ public class KitchenOrder extends BaseActivity {
             adapter.setKots(kots);
             ll_orders.setAdapter(adapter);
             tv_order_qyt.setText(kots.size() + "");
+
+            if (pendingListAdapter == null) {
+                pendingListAdapter = new PendingListAdapter(context, getKotItemsData());
+                rcvPendingList.setAdapter(pendingListAdapter);
+            }
+
+            if (App.instance.getSystemSettings().isPendingList()) {
+                rcvPendingList.setVisibility(View.VISIBLE);
+            } else {
+                rcvPendingList.setVisibility(View.GONE);
+            }
+
+            pendingListAdapter.setData(getKotItemsData());
         }
 
     }

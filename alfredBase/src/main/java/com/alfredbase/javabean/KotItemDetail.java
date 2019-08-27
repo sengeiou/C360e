@@ -67,6 +67,8 @@ public class KotItemDetail implements Serializable {
 
     private int itemType;
 
+    private Integer itemId;
+
     public boolean isChecklist;
 
     public KotItemDetail() {
@@ -274,6 +276,14 @@ public class KotItemDetail implements Serializable {
         this.itemType = itemType;
     }
 
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
+    }
+
     @Override
     public String toString() {
         return "KotItemDetail{" +
@@ -297,9 +307,13 @@ public class KotItemDetail implements Serializable {
                 ", categoryId=" + categoryId +
                 ", isTakeAway=" + isTakeAway +
                 ", fireStatus=" + fireStatus +
+                ", callType=" + callType +
                 ", expectedTime=" + expectedTime +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
+                ", itemType=" + itemType +
+                ", itemId=" + itemId +
+                ", isChecklist=" + isChecklist +
                 '}';
     }
 }

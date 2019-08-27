@@ -28,36 +28,21 @@
         android:textStyle="bold" />
 
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tv_title"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
+        android:layout_alignParentBottom="true">
 
         <include layout="@layout/kot_array_landscape_title" />
 
-        <!--<com.alfredkds.view.HorizontalListView-->
-        <!--android:id="@+id/ll_orders"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:divider="#e00"-->
-        <!--android:fadingEdgeLength="5dp"-->
-        <!--android:requiresFadingEdge="horizontal"-->
-        <!--android:background="@color/white"-->
-        <!--widget:dividerWidth="3dp"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true">-->
-        <!--</com.alfredkds.view.HorizontalListView>-->
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/ll_orders"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_toLeftOf="@+id/rcvPendingList"
             android:background="@color/white"
             android:divider="#e00"
             android:fadingEdgeLength="5dp"
@@ -66,16 +51,14 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rcvPendingList"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/dp200"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_weight=".3"
-            android:background="@color/white"
+            android:background="@drawable/bg_kitchen_order"
             android:divider="#e00"
-            android:fadingEdgeLength="5dp"
             android:requiresFadingEdge="horizontal"
             widget:dividerWidth="3dp" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/iv_shadow"

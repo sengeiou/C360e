@@ -784,7 +784,7 @@ public class KotJobManager {
 
                     for (Printer printer : printers) {
                         KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
-                        if (kdsDevice.getKdsStatus() == 0) {
+                        if (kdsDevice != null && kdsDevice.getKdsStatus() == 0) {
                             kdsDevicesOnline.add(kdsDevice);
                         }
 

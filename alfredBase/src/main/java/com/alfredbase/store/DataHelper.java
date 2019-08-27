@@ -1661,6 +1661,9 @@ public class DataHelper {
             db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
                     + " ADD COLUMN  itemType INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  itemId INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN kotSummaryLog TEXT");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
