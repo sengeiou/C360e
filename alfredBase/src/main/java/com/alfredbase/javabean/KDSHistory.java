@@ -1,6 +1,7 @@
 package com.alfredbase.javabean;
 
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.javabean.model.MainPosInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,5 +12,6 @@ import java.util.List;
 public class KDSHistory {
     public KDSDevice kdsDevice;
     public KDSDevice kdsDeviceDest;
+    public MainPosInfo mainPosInfo;
     public List<KotItemDetail> kotItemDetails = new ArrayList<>();
 }

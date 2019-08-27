@@ -542,4 +542,40 @@ public class App extends BaseApplication {
         }
         return false;
     }
+
+    public int getBalancerMode() {
+        SystemSettings settings = App.instance.getSystemSettings();
+        int mode = settings.getBalancerMode();
+        int selectedMode = -1;
+
+        LogUtil.log("Balancer Time : " + settings.getBalancerTime());
+        LogUtil.log("Balancer Time has come : " + settings.isBalancerTimeHasCome());
+        LogUtil.log("Balancer Stack Count : " + settings.getStackCount());
+
+        if (mode == SystemSettings.MODE_BALANCE) {
+            if (settings.getBalancerTime() > 0) {
+                if (settings.isBalancerTimeHasCome())
+                    selectedMode = SystemSettings.MODE_BALANCE;
+            } else {
+                selectedMode = SystemSettings.MODE_BALANCE;
+            }
+        } else if (mode == SystemSettings.MODE_STACK) {
+            int stackCount = settings.getStackCount();
+
+            if (stackCount > 0) {
+                if (settings.getBalancerTime() > 0) {
+                    if (settings.isBalancerTimeHasCome())
+                        selectedMode = SystemSettings.MODE_STACK;
+                } else {
+                    selectedMode = SystemSettings.MODE_STACK;
+                }
+            }
+        }
+
+        if (selectedMode < 0) {
+            selectedMode = SystemSettings.MODE_BALANCE;
+        }
+
+        return selectedMode;
+    }
 }

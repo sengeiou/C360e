@@ -39,7 +39,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/sync_box"
                 android:gravity="center"
-                android:text="Balance" />
+                android:text="Balance"
+                android:textColor="@color/black" />
 
             <RadioButton
                 android:id="@+id/rdStack"
@@ -48,8 +49,54 @@
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:background="@drawable/sync_box"
                 android:gravity="center"
-                android:text="Stack" />
+                android:text="Stack"
+                android:textColor="@color/black" />
         </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/llStackCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/etStackCount"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:padding="10dp" />
+
+            <Button
+                android:id="@+id/btSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_vertical_margin"
+                android:text="SAVE" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@drawable/sync_box"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="00:00"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@drawable/sync_box"
+            android:gravity="center"
+            android:text="RESET KDS" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -127,6 +174,33 @@
 
             <com.alfredkds.view.MyToggleButton
                 android:id="@+id/mt_kot_lan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvKdsOnline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:text="KDS Online"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_m" />
+
+            <com.alfredkds.view.MyToggleButton
+                android:id="@+id/mtKdsOnline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

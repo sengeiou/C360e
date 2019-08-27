@@ -2624,6 +2624,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
         }
 
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                KotSummary kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
+//                App.instance.getKdsJobManager().deleteKotItemDetailLogOnBalancer(kotSummary);
+//            }
+//        }).start();
+
     }
 
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {

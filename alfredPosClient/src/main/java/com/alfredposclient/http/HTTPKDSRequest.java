@@ -5,26 +5,34 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.User;
+import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.UserRestaurantSQL;
+import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.ConnectException;
 import java.util.ArrayList;
@@ -209,6 +217,61 @@ public class HTTPKDSRequest {
                 });
     }
 
+    public static void deleteKdsLogOnBalancer(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
+                                              SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+
+        parameters.put("mainpos", App.instance.getMainPosInfo());
+
+        syncHttpClient.post(context, url,
+                new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
+                        "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                new AsyncHttpResponseHandlerEx() {
+                    @Override
+                    public void onSuccess(final int statusCode, final Header[] headers,
+                                          final byte[] responseBody) {
+                        super.onSuccess(statusCode, headers, responseBody);
+                        if (resultCode == ResultCode.INVALID_DEVICE) {
+                        } else if (resultCode == ResultCode.SUCCESS) {
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        if (error.getCause() instanceof ConnectException) {
+                            throw new RuntimeException(error);
+                        }
+                    }
+                });
+    }
+
+    public static void updateKdsStatus(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
+                                       SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+
+        parameters.put("mainpos", App.instance.getMainPosInfo());
+
+        syncHttpClient.post(context, url,
+                new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
+                        "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                new AsyncHttpResponseHandlerEx() {
+                    @Override
+                    public void onSuccess(final int statusCode, final Header[] headers,
+                                          final byte[] responseBody) {
+                        super.onSuccess(statusCode, headers, responseBody);
+                        if (resultCode == ResultCode.SUCCESS) {
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        if (error.getCause() instanceof ConnectException) {
+                            throw new RuntimeException(error);
+                        }
+                    }
+                });
+    }
+
     public static void deleteKotSummary(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
                                         SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
 
@@ -243,8 +306,10 @@ public class HTTPKDSRequest {
                                      SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
 
         if (parameters != null) {
-            parameters.put("mainpos", App.instance.getMainPosInfo());
-            parameters.put("kds", kds);
+            if (!parameters.containsKey("mainpos"))
+                parameters.put("mainpos", App.instance.getMainPosInfo());
+            if (!parameters.containsKey("kds"))
+                parameters.put("kds", kds);
         }
 
         final KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
@@ -295,6 +360,62 @@ public class HTTPKDSRequest {
                         } else if (resultCode == ResultCode.INVALID_DEVICE) {
                             // if kds device is invadate, POS need remove it.
 //									App.instance.removeKDSDevice(kds.getDevice_id());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        if (error.getCause() instanceof ConnectException) {
+                            throw new RuntimeException(error);
+                        }
+                    }
+                });
+    }
+
+    public static void checkKdsBalance(Context context, final Map<String, Object> parameters, String url, final KDSDevice kds,
+                                       SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+
+        if (parameters != null) {
+            parameters.put("mainpos", App.instance.getMainPosInfo());
+            parameters.put("kds", kds);
+        }
+
+        syncHttpClient.post(context, url,
+                new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
+                        "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                new AsyncHttpResponseHandlerEx() {
+                    @Override
+                    public void onSuccess(final int statusCode, final Header[] headers,
+                                          final byte[] responseBody) {
+                        super.onSuccess(statusCode, headers, responseBody);
+                        if (resultCode == ResultCode.SUCCESS) {
+
+                            try {
+                                JSONObject object = new JSONObject(new String(responseBody));
+                                Gson gson = new Gson();
+                                String params = object.getString("params");
+                                KDSDevice selectedKds = gson.fromJson(object.optString("kds"), KDSDevice.class);
+                                object = new JSONObject(params);
+
+                                KotSummary kotSummary = gson.fromJson(object.getString("kotSummary"), KotSummary.class);
+                                ArrayList<KotItemDetail> kotItemDetails = gson.fromJson(object.getString("kotItemDetails"),
+                                        new TypeToken<ArrayList<KotItemDetail>>() {
+                                        }.getType());
+                                ArrayList<KotItemModifier> kotItemModifiers = gson.fromJson(object.getString("kotItemModifiers"),
+                                        new TypeToken<ArrayList<KotItemModifier>>() {
+                                        }.getType());
+                                String method = object.getString("method");
+
+                                App.instance.getKdsJobManager().sendToSelectedKDS(
+                                        kotSummary, kotItemDetails,
+                                        kotItemModifiers, method, null, selectedKds);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        } else if (resultCode == ResultCode.INVALID_DEVICE) {
                         }
                     }
 

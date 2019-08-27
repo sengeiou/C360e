@@ -122,12 +122,17 @@
             android:name="UMENG_CHANNEL"
             android:value="Umeng" />
 
-        <activity android:name=".activity.CallNumActivity"
+        <activity
+            android:name=".activity.CallNumActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
-            android:theme="@style/MainActivityTheme"/>
-        <activity android:name=".activity.LogActivity" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+            android:theme="@style/MainActivityTheme" />
+        <activity
+            android:name=".activity.LogActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@style/MainActivityTheme" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

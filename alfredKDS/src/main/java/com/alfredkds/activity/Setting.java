@@ -1,17 +1,18 @@
 package com.alfredkds.activity;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.CompoundButton;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.ToggleButton;
+import android.widget.TimePicker;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
@@ -20,13 +21,20 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.TimeUtil;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 import com.alfredkds.view.MyToggleButton;
 import com.alfredkds.view.SystemSettings;
+
+import java.sql.Time;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Setting extends BaseActivity implements MyToggleButton.OnToggleStateChangeListeren {
     public static final String TAG = Setting.class.getSimpleName();
@@ -36,8 +44,12 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
     private TextView tv_kot_history;
     private TextView tv_kot_reset;
     private TextView tv_switch_account;
+    private EditText etStackCount;
+    private TextView tvTime;
+    private LinearLayout llStackCount;
 
     private MyToggleButton mt_kot_lan, mtPendingList;
+    private MyToggleButton mtKdsOnline;
     private SystemSettings settings;
 
     private Handler handler = new Handler() {
@@ -77,10 +89,15 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         super.initView();
         this.tv_kot_history = (TextView) findViewById(R.id.tv_history);
         this.tv_kot_reset = (TextView) findViewById(R.id.tv_reset);
+        this.tvTime = (TextView) findViewById(R.id.tvTime);
         this.tv_switch_account = (TextView) findViewById(R.id.tv_switch_account);
         this.mtPendingList = (MyToggleButton) findViewById(R.id.mtPendingList);
         this.mt_kot_lan = (MyToggleButton) findViewById(R.id.mt_kot_lan);
+        this.mtKdsOnline = (MyToggleButton) findViewById(R.id.mtKdsOnline);
+        this.etStackCount = (EditText) findViewById(R.id.etStackCount);
+        this.llStackCount = (LinearLayout) findViewById(R.id.llStackCount);
         this.mtPendingList.setOnStateChangeListeren(this);
+        this.mtKdsOnline.setOnStateChangeListeren(this);
         this.mt_kot_lan.setOnStateChangeListeren(this);
         this.tv_kot_history.setOnClickListener(this);
         this.tv_kot_reset.setOnClickListener(this);
@@ -89,22 +106,55 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         LinearLayout llNormal = (LinearLayout) findViewById(R.id.llNormal);
         LinearLayout llBalancer = (LinearLayout) findViewById(R.id.llBalancer);
 
+        mtKdsOnline.setChecked(settings.isKdsOnline() == 0);
+
         if (App.instance.isBalancer()) {
             llNormal.setVisibility(View.GONE);
             llBalancer.setVisibility(View.VISIBLE);
+            llStackCount.setVisibility(View.GONE);
 
             RadioGroup radioGroup = (RadioGroup) findViewById(R.id.rgBalancerMode);
+            RadioButton rdBalance = (RadioButton) findViewById(R.id.rdBalance);
+            RadioButton rdStack = (RadioButton) findViewById(R.id.rdStack);
+            Button btnSave = (Button) findViewById(R.id.btSave);
+
+            int mode = settings.getBalancerMode();
+
+            if (mode == SystemSettings.MODE_BALANCE)
+                rdBalance.setChecked(true);
+            else if (mode == SystemSettings.MODE_STACK) {
+                rdStack.setChecked(true);
+                llStackCount.setVisibility(View.VISIBLE);
+                etStackCount.setText(settings.getStackCount() + "");
+            }
+
+            if (mode >= 0) {
+                tvTime.setVisibility(View.VISIBLE);
+                tvTime.setText(TimeUtil.getTimeByFormat(settings.getBalancerTime(), TimeUtil.PRINTER_FORMAT_TIME));
+            }
 
             radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                     if (checkedId == R.id.rdBalance) {
                         settings.setBalancerMode(SystemSettings.MODE_BALANCE);
+                        tvTime.setVisibility(View.VISIBLE);
+                        llStackCount.setVisibility(View.GONE);
                     } else if (checkedId == R.id.rdStack) {
                         settings.setBalancerMode(SystemSettings.MODE_STACK);
+                        tvTime.setVisibility(View.VISIBLE);
+                        llStackCount.setVisibility(View.VISIBLE);
                     }
+
                 }
             });
+
+            tvTime.setOnClickListener(this);
+            btnSave.setOnClickListener(this);
+            findViewById(R.id.tvReset).setOnClickListener(this);
+        } else {
+            llNormal.setVisibility(View.VISIBLE);
+            llBalancer.setVisibility(View.GONE);
         }
 
         if (settings.isKdsLan()) {
@@ -155,11 +205,40 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
                 SyncCentre.getInstance().Logout(context, App.instance.getCurrentConnectedMainPos(), parameters, handler);
                 break;
+            case R.id.btSave:
+                int stackCount = !TextUtils.isEmpty(etStackCount.getText()) ? Integer.parseInt(etStackCount.getText().toString()) : 0;
+                settings.setStackCount(stackCount);
+                break;
+            case R.id.tvTime:
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+
+                TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        String timeFormatted = selectedHour + ":" + selectedMinute;
+
+                        if (tvTime != null) {
+                            tvTime.setText(timeFormatted);
+
+//                            long timeMillis = TimeUtil.getTimeFromString(timeFormatted, TimeUtil.PRINTER_FORMAT_TIME);
+
+                            settings.setBalancerTime(TimeUtil.getMillisOfTime(selectedHour, selectedMinute));
+                        }
+
+                    }
+                }, hour, minute, true);
+                timePickerDialog.setTitle("Select Time");
+                timePickerDialog.show();
+                break;
+            case R.id.tvReset:
+                String kdsLLogs = KDSLogUtil.resetKdsLog(Store.getString(this, Store.KDS_LOGS));
+                Store.putString(this, Store.KDS_LOGS, kdsLLogs);
+                break;
             default:
                 break;
         }
-
-
     }
 
     @Override
@@ -182,6 +261,27 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 } else {
                     mtPendingList.setChecked(false);
                     settings.setPendingList(false);
+                }
+                break;
+            case R.id.mtKdsOnline:
+                mtKdsOnline.setChecked(checkState);
+                settings.setPendingList(checkState);
+
+                int status;
+                if (!checkState)
+                    status = -1;
+                else
+                    status = 0;
+
+                settings.setKdsOnline(status);
+                KDSDevice kdsDevice = App.instance.getKdsDevice();
+                kdsDevice.setKdsStatus(status);
+                App.instance.setKdsDevice(kdsDevice);
+
+                for (String ip : App.instance.getAllPairingIp()) {
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("kds", kdsDevice);
+                    SyncCentre.getInstance().updateKdsStatus(this, ip, params, null);
                 }
                 break;
         }

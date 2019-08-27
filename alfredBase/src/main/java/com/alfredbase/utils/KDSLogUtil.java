@@ -49,6 +49,35 @@ public class KDSLogUtil {
                     }
                 }
             }
+        } else {
+            for (KDSHistory kdsHistory : kdsLogs.kdsHistories) {
+                List<KotItemDetail> kidToDelete = new ArrayList<>();
+
+                for (KotItemDetail kid : kdsHistory.kotItemDetails) {
+                    for (KotItemDetail kotItemDetail : kotItemDetailList) {
+                        if (kid.getId().equals(kotItemDetail.getId())) {
+                            kidToDelete.add(kid);
+                        }
+                    }
+                }
+
+                kdsHistory.kotItemDetails.removeAll(kidToDelete);
+            }
+        }
+
+        return gson.toJson(kdsLogs);
+    }
+
+    public static String resetKdsLog(String kdsLogStr) {
+        Gson gson = new Gson();
+        KDSLog kdsLogs = gson.fromJson(kdsLogStr, new TypeToken<KDSLog>() {
+        }.getType());
+
+        for (KDSHistory kdsHistory : kdsLogs.kdsHistories) {
+            int size = kdsHistory.kotItemDetails.size();
+            for (int i = 0; i < size; i++) {
+                kdsHistory.kotItemDetails.remove(i);
+            }
         }
 
         return gson.toJson(kdsLogs);
@@ -69,6 +98,8 @@ public class KDSLogUtil {
     }
 
     private static KDSHistory getKdsHistoryByKDS(KDSDevice kdsDevice, KDSLog kdsLogs) {
+
+        if (kdsDevice == null) return null;
 
         for (KDSHistory kdsHistory : kdsLogs.kdsHistories) {
             KDSDevice kds = kdsHistory.kdsDevice;

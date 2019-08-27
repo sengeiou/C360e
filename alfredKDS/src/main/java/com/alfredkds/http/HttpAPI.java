@@ -190,6 +190,37 @@ public class HttpAPI {
         }
     }
 
+    public static void updateKdsStatus(final Context context,
+                                       Map<String, Object> parameters, String url,
+                                       AsyncHttpClient httpClient, final Handler handler) {
+        if (parameters != null) {
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters) + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /* Send KDS device details to POS when pairing completes */
     public static void pairingComplete(final Context context,
                                        Map<String, Object> parameters, String url, AsyncHttpClient httpClient, final Handler handler) {

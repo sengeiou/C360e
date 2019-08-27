@@ -14,6 +14,11 @@ public class KDSDevice implements Serializable {
     String IP;
     int kdsType;
 
+    /**
+     * 0 online, -1 offline
+     */
+    int kdsStatus;
+
     public int getDevice_id() {
         return device_id;
     }
@@ -54,6 +59,14 @@ public class KDSDevice implements Serializable {
         this.kdsType = kdsType;
     }
 
+    public int getKdsStatus() {
+        return kdsStatus;
+    }
+
+    public void setKdsStatus(int kdsStatus) {
+        this.kdsStatus = kdsStatus;
+    }
+
     @Override
     public String toString() {
         return "KDSDevice{" +
@@ -61,7 +74,8 @@ public class KDSDevice implements Serializable {
                 ", name='" + name + '\'' +
                 ", mac='" + mac + '\'' +
                 ", IP='" + IP + '\'' +
-                ", kdsType='" + kdsType + '\'' +
+                ", kdsType=" + kdsType +
+                ", kdsStatus=" + kdsStatus +
                 '}';
     }
 
@@ -72,6 +86,7 @@ public class KDSDevice implements Serializable {
         newone.setMac(this.mac);
         newone.setIP(this.IP);
         newone.setKdsType(this.kdsType);
+        newone.setKdsStatus(this.kdsStatus);
         return newone;
 
     }
@@ -83,6 +98,7 @@ public class KDSDevice implements Serializable {
         map.put("ip", this.IP);
         map.put("name", this.name);
         map.put("kdsType", this.kdsType);
+        map.put("kdsStatus", this.kdsStatus);
         return map;
     }
 }

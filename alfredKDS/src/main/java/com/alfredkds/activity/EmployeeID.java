@@ -149,12 +149,12 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
             map.put("employeeId", employee_ID);
             //Verify employee and load all printers/KDS from POS
 
-            List<String> ips = new ArrayList<>();
-            if (App.instance.isBalancer()) {
-                ips.addAll(App.instance.getAllPairingIp());
-            } else {
-                ips.add(App.instance.getPairingIp());
-            }
+//            List<String> ips = new ArrayList<>();
+//            if (App.instance.isBalancer()) {
+//                ips.addAll(App.instance.getAllPairingIp());
+//            } else {
+//                ips.add(App.instance.getPairingIp());
+//            }
 
             for (String ip : App.instance.getAllPairingIp()) {
                 if (TextUtils.isEmpty(ip)) continue;

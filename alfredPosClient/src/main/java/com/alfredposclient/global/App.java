@@ -1364,6 +1364,15 @@ public class App extends BaseApplication {
         return this.kdsDevices.get(deviceid);
     }
 
+    public void setKdsDevice(KDSDevice kdsDevice) {
+        for (KDSDevice kdsDeviceLocal : getKDSDevices().values()) {
+            if (kdsDeviceLocal.getDevice_id() == kdsDevice.getDevice_id()) {
+                kdsDeviceLocal.setKdsStatus(kdsDevice.getKdsStatus());
+                break;
+            }
+        }
+    }
+
     public Map<Integer, KDSDevice> getKDSDevices() {
         return this.kdsDevices;
     }
@@ -1382,6 +1391,7 @@ public class App extends BaseApplication {
         }
         return printerBalancer;
     }
+
     public KDSDevice getBalancerKDSDevice() {
         if (kdsBalancer == null) {
             int printerBalancerId = getPrinterBalancer().getId();

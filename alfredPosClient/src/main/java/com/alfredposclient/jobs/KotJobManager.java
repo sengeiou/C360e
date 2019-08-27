@@ -255,12 +255,39 @@ public class KotJobManager {
         //endregion
     }
 
+    public void updateKDSStatus(KDSDevice kdsDevice) {
+        Printer printerBalancer = App.instance.getPrinterBalancer();
+        if (printerBalancer != null) {
+            KDSDevice kdsDeviceBalancer = App.instance.getKDSDevice(printerBalancer.getId());
+            if (kdsDevice == null) return;
+
+            KotJob kotjob = new KotJob(kdsDeviceBalancer, kdsDevice, APIName.UPDATE_KDS_STATUS);
+            kotJobManager.addJob(kotjob);
+        }
+    }
+
     /**
      * Delete kot summary
      *
      * @param kotSummary
      * @param kotItemDetails
      */
+    public void deleteKotItemDetailLogOnBalancer(KotSummary kotSummary, List<KotItemDetail> kotItemDetails, KDSDevice deletedKdsLog) {
+        Printer printerBalancer = App.instance.getPrinterBalancer();
+        if (printerBalancer != null) {
+            KDSDevice kdsDevice = App.instance.getKDSDevice(printerBalancer.getId());
+            if (kdsDevice == null) return;
+
+            KotJob kotjob = new KotJob(kdsDevice, deletedKdsLog, kotSummary, kotItemDetails, APIName.DELETE_KDS_LOG_BALANCER);
+            kotJobManager.addJob(kotjob);
+        }
+    }
+
+    public void deleteKotItemDetailLogOnBalancer(KotSummary kotSummary) {
+        List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+        deleteKotItemDetailLogOnBalancer(kotSummary, kotItemDetails, null);
+    }
+
     public void deleteKotSummary(KotSummary kotSummary, List<KotItemDetail> kotItemDetails) {
         ArrayList<Integer> printerGroupIds = new ArrayList<>();
 
@@ -558,6 +585,15 @@ public class KotJobManager {
         }
     }
 
+    public void sendToSelectedKDS(KotSummary kotSummary,
+                                  ArrayList<KotItemDetail> kotItemDetails, ArrayList<KotItemModifier> modifiers,
+                                  String method, Map<String, Object> orderMap, KDSDevice kdsDevice) {
+        KotJob kotjob = new KotJob(kdsDevice, kotSummary,
+                kotItemDetails, modifiers, method, orderMap, false, false);
+        kotJobManager.addJob(kotjob);
+
+    }
+
     /* convert KOT to kot jobs */
     public void tearDownKot(KotSummary kotSummary,
                             ArrayList<KotItemDetail> kot, ArrayList<KotItemModifier> modifiers,
@@ -718,7 +754,19 @@ public class KotJobManager {
 
             if (isBalancerExists()) {
                 if (ParamConst.JOB_NEW_KOT.equals(method) && printers.size() > 1) {
-                    isCheckBalancer = true;
+                    List<KDSDevice> kdsDevicesOnline = new ArrayList<>();
+
+                    for (Printer printer : printers) {
+                        KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
+                        if (kdsDevice.getKdsStatus() == 0) {
+                            kdsDevicesOnline.add(kdsDevice);
+                        }
+
+                        if (kdsDevicesOnline.size() > 1) {
+                            isCheckBalancer = true;
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -735,6 +783,8 @@ public class KotJobManager {
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
+                    if (kdsDevice.getKdsStatus() == -1) continue;//kds device offline
+
                     kdsDevice.setKdsType(printer.getPrinterUsageType());
                     kotSummary.setNext(printer.isShowNext);//don't save to db here
 
@@ -794,6 +844,9 @@ public class KotJobManager {
 //
 //                    }
                 }
+
+                //send it just once for balancer
+                if (isCheckBalancer) break;
             }
 
         }
@@ -914,12 +967,6 @@ public class KotJobManager {
             }
 
         }
-    }
-
-    public void sendToSelectedKDS(KotSummary kotSummary,
-                                  ArrayList<KotItemDetail> kot, ArrayList<KotItemModifier> modifiers,
-                                  String method, Map<String, Object> orderMap) {
-
     }
 
     public void tearDownKotFire(KotSummary kotSummary,

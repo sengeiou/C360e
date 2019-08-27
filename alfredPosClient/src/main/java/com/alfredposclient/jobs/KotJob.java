@@ -41,6 +41,22 @@ public class KotJob extends Job {
     private int failCount = 0;
     private boolean isCheckBalance;
 
+    public KotJob(KDSDevice kdsDevice, KDSDevice updatedKds, String apiName) {
+        super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
+        this.kds = kdsDevice;
+        this.apiName = apiName;
+        data.put("kds", updatedKds);
+    }
+
+    public KotJob(KDSDevice kdsDevice, KDSDevice deletedKdsLog, KotSummary kotSummary, List<KotItemDetail> kotItemDetails, String apiName) {
+        super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
+        this.kds = kdsDevice;
+        this.apiName = apiName;
+        data.put("kotSummary", kotSummary);
+        data.put("kotItemDetails", kotItemDetails);
+        data.put("deletedKds", deletedKdsLog);
+    }
+
     public KotJob(KDSDevice kdsDevice, KotSummary kotSummary, String method, String apiName) {
         super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
         this.kds = kdsDevice;
@@ -296,6 +312,10 @@ public class KotJob extends Job {
                 SyncCentre.getInstance().syncSubmitKotToSummaryKDS(kds, context, data, null);
             } else if (APIName.UPDATE_ORDER_COUNT.equals(apiName)) {
                 SyncCentre.getInstance().updateOrderCount(kds, context, data, null);
+            } else if (APIName.DELETE_KDS_LOG_BALANCER.equals(apiName)) {
+                SyncCentre.getInstance().deleteKdsLogOnBalancer(kds, context, data, null);
+            } else if (APIName.UPDATE_KDS_STATUS.equals(apiName)) {
+                SyncCentre.getInstance().updateKdsStatus(kds, context, data, null);
             }
             LogUtil.d(TAG, "KOT JOB Successful");
         } catch (Throwable e) {

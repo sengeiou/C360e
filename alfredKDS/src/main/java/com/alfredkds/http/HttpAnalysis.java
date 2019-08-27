@@ -159,7 +159,6 @@ public class HttpAnalysis {
     }
 
     public static void saveConnectedKDS(List<KDSDevice> kdsDeviceList) {
-        //TODO: not support multi pos yet
         String kdsLogs = Store.getString(App.instance, Store.KDS_LOGS);
         String kdsLogsStr = KDSLogUtil.putKdsLog(kdsLogs, kdsDeviceList);
         Store.putString(App.instance, Store.KDS_LOGS, kdsLogsStr);

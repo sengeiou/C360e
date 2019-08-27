@@ -2,13 +2,17 @@ package com.alfredkds.activity;
 
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.KDSLog;
 import com.alfredbase.store.Store;
+import com.alfredbase.utils.TextTypeFace;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
+import com.alfredkds.global.UIHelp;
 import com.google.gson.Gson;
 
 /**
@@ -16,7 +20,8 @@ import com.google.gson.Gson;
  */
 public class LogActivity extends BaseActivity {
 
-    TextView tvLog;
+    TextView tvLog, kitchName;
+    ImageView iv_refresh, iv_setting;
 
     @Override
     protected void initView() {
@@ -24,6 +29,14 @@ public class LogActivity extends BaseActivity {
         setContentView(R.layout.activity_log);
 
         tvLog = (TextView) findViewById(R.id.tvLog);
+        kitchName = (TextView) findViewById(R.id.title_kitchen);
+        iv_refresh = (ImageView) findViewById(R.id.iv_refresh);
+        iv_setting = (ImageView) findViewById(R.id.iv_setting);
+        kitchName.setText(App.instance.getPrinter().getPrinterName());
+        TextTypeFace textTypeFace = TextTypeFace.getInstance();
+        textTypeFace.setTrajanProBlod(kitchName);
+        iv_refresh.setOnClickListener(this);
+        iv_setting.setOnClickListener(this);
 
         updateLog();
     }
@@ -48,4 +61,18 @@ public class LogActivity extends BaseActivity {
             }
         }
     };
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_refresh:
+                updateLog();
+                break;
+            case R.id.iv_setting:
+                UIHelp.startSetting(this);
+                break;
+            default:
+                break;
+        }
+    }
 }

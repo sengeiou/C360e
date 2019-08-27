@@ -87,6 +87,7 @@ public class APIName {
     public static final String KOT_NEXT_KDS = "kot_next_kds";
     public static final String CONNECTED_KDS = "connected_kds";
     public static final String GET_CONNECTED_KDS = "get_connected_kds";
+    public static final String UPDATE_KDS_STATUS = "update_kds_status";
 
     // 以下是桌面设备专用
 
@@ -138,6 +139,7 @@ public class APIName {
     public static final String UPDATE_ORDER_COUNT = "update_order_count";
     public static final String UPDATE_CONNECTED_KDS = "update_connected_kds";
     public static final String CHECK_KDS_BALANCE = "check_kds_balance";
+    public static final String DELETE_KDS_LOG_BALANCER = "delete_kds_log_balancer";
 
     /**
      * 以waiter作为服务器

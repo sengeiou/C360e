@@ -1325,6 +1325,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             return handlerTemporaryDish(body);
         } else if (apiName.equals(APIName.GET_CONNECTED_KDS)) {
             return handleConnectedKDSData(body);
+        } else if (apiName.equals(APIName.UPDATE_KDS_STATUS)) {
+            return handleUpdateKDSStatus(body);
         } else {
             String userKey = jsonObject.optString("userKey");
             if (TextUtils.isEmpty(userKey)
@@ -1373,6 +1375,38 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 return this.getNotFoundResponse();
             }
         }
+    }
+
+    private Response handleUpdateKDSStatus(String params) {
+        Response resp;
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            Gson gson = new Gson();
+            JSONObject jsonObject = new JSONObject(params);
+            KDSDevice kdsDevice = gson.fromJson(jsonObject.optString("kds"), KDSDevice.class);
+
+            final KDSDevice kdsDevicesLocal = App.instance.getKDSDevice(kdsDevice.getDevice_id());
+
+            if (kdsDevicesLocal != null) {
+                kdsDevicesLocal.setKdsStatus(kdsDevice.getKdsStatus());
+                App.instance.setKdsDevice(kdsDevicesLocal);
+            }
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    App.instance.getKdsJobManager().updateKDSStatus(kdsDevicesLocal);
+                }
+            }).start();
+
+            result.put("resultCode", ResultCode.SUCCESS);
+            resp = this.getJsonResponse(new Gson().toJson(result));
+        } catch (JSONException e) {
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.internal_error));
+        }
+
+        return resp;
     }
 
     private Response handleConnectedKDSData(String params) {
@@ -2771,6 +2805,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }).start();
 
+            deleteKdsLogs(kotSummary, kotItemDetails, App.instance.getKDSDevice(kdsId));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -2781,6 +2816,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
             @Override
             public void run() {
                 App.instance.getKdsJobManager().deleteKotSummary(kotSummary, kotItemDetails);
+            }
+        }).start();
+    }
+
+    private void deleteKdsLogs(final KotSummary kotSummary, final List<KotItemDetail> kotItemDetails, final KDSDevice deleteKdsLog) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                App.instance.getKdsJobManager().deleteKotItemDetailLogOnBalancer(kotSummary, kotItemDetails, deleteKdsLog);
             }
         }).start();
     }
@@ -2931,8 +2975,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     }
                 }).start();
 
-                //delete kot on summary kds and expediter
+                //delete kot on summary kds
                 deleteKotSummary(localKotSummary, kotItemDetails);
+                deleteKdsLogs(localKotSummary, kotItemDetails, App.instance.getKDSDevice(kdsId));
                 resp = this.getJsonResponse(new Gson().toJson(result));
             } else {
                 result.put("resultCode", ResultCode.KOT_COMPLETE_FAILED);

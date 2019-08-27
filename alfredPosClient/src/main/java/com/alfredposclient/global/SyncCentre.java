@@ -536,7 +536,7 @@ public class SyncCentre {
                                 Map<String, Object> parameters, Handler handler) throws Throwable {
 
         String url = getAbsoluteKDSUrlForJob(App.instance.getBalancerKDSDevice(), APIName.CHECK_KDS_BALANCE);
-        HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+        HTTPKDSRequest.checkKdsBalance(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
 
     }
@@ -586,6 +586,22 @@ public class SyncCentre {
                                  Map<String, Object> parameters, Handler handler) throws Throwable {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.UPDATE_ORDER_COUNT);
         HTTPKDSRequest.updateOrderCount(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void updateKdsStatus(KDSDevice kdsDevice, BaseActivity context,
+                                Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.UPDATE_KDS_STATUS);
+        HTTPKDSRequest.updateKdsStatus(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void deleteKdsLogOnBalancer(KDSDevice kdsDevice, BaseActivity context,
+                                       Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.DELETE_KDS_LOG_BALANCER);
+        HTTPKDSRequest.deleteKdsLogOnBalancer(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
 
     }

@@ -75,6 +75,12 @@ public class SyncCentre {
                 getAbsolutePOSUrlByIp(posIp, APIName.GET_CONNECTED_KDS), httpClient, handler);
     }
 
+    public void updateKdsStatus(Context context, String posIp, Map<String, Object> parameters,
+                                Handler handler) {
+        HttpAPI.updateKdsStatus(context, parameters,
+                getAbsolutePOSUrlByIp(posIp, APIName.UPDATE_KDS_STATUS), httpClient, handler);
+    }
+
     public void pairingComplete(Context context, String posIp, Map<String, Object> parameters,
                                 Handler handler) {
         HttpAPI.pairingComplete(context, parameters,

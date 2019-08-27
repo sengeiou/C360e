@@ -26,6 +26,7 @@ import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.KDSLogUtil;
+import com.alfredbase.utils.LogUtil;
 import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.activity.Login;
@@ -33,6 +34,7 @@ import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 import com.alfredkds.http.HttpAnalysis;
+import com.alfredkds.view.SystemSettings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -70,6 +72,10 @@ public class KdsHttpServer extends AlfredHttpServer {
                 }
                 if (uri.equals(APIName.CHECK_KDS_BALANCE)) {
                     resp = handlerCheckKDSBalance(body);
+                } else if (uri.equals(APIName.DELETE_KDS_LOG_BALANCER)) {
+                    resp = handlerDeletKdsLog(body);
+                } else if (uri.equals(APIName.UPDATE_KDS_STATUS)) {
+                    resp = handlerUpdateKdsStatus(body);
                 } else {
                     resp = getNotFoundResponse();
                 }
@@ -106,6 +112,117 @@ public class KdsHttpServer extends AlfredHttpServer {
         return resp;
     }
 
+    private Response handlerUpdateKdsStatus(final String params) {
+        Response resp;
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final Gson gson = new Gson();
+
+            final KDSDevice updatedKds = gson.fromJson(jsonObject.optString("kds"), KDSDevice.class);
+
+            String kdsLogStr = Store.getString(App.instance, Store.KDS_LOGS);
+            KDSLog kdsLog = gson.fromJson(kdsLogStr, KDSLog.class);
+
+            for (KDSHistory kdsHistory : kdsLog.kdsHistories) {
+                if (kdsHistory.kdsDevice.getDevice_id() == updatedKds.getDevice_id()) {
+                    kdsHistory.kdsDevice.setKdsStatus(updatedKds.getKdsStatus());
+                    break;
+                }
+            }
+
+            final String kdsLogStrFinal = gson.toJson(kdsLog);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Store.putString(App.instance, Store.KDS_LOGS, kdsLogStrFinal);
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
+
+                }
+            }).start();
+
+            result.put("resultCode", ResultCode.SUCCESS);
+            resp = getJsonResponse(new Gson().toJson(result));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+        }
+        return resp;
+    }
+
+    private Response handlerDeletKdsLog(final String params) {
+        Response resp = null;
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(params);
+            final Gson gson = new Gson();
+
+            final KDSDevice deletedKds = gson.fromJson(jsonObject.optString("deletedKds"), KDSDevice.class);
+            final List<KotItemDetail> deleteKotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
+            }.getType());
+            final KotSummary kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);
+
+            String kdsLogStr = Store.getString(App.instance, Store.KDS_LOGS);
+            KDSLog kdsLog = gson.fromJson(kdsLogStr, KDSLog.class);
+
+//            for (KDSHistory kdsHistory : kdsLog.kdsHistories) {
+//                if (deletedKds != null) {
+////                    if (kdsHistory.kdsDevice.getDevice_id() == deletedKds.getDevice_id() &&
+////                            kdsHistory.kdsDevice.getIP().equals(deletedKds.getIP())) {
+////
+////                        for (KotItemDetail kotItemDetail : deleteKotItemDetails) {
+////                            for (KotItemDetail kid : kdsHistory.kotItemDetails) {
+////                                if (kotItemDetail.getId().equals(kid.getId())) {
+////                                    kdsHistory.kotItemDetails.remove(kid);
+////                                    break;
+////                                }
+////                            }
+////                        }
+////
+////                        break;
+////                    }
+//
+//                    kdsLogStr = KDSLogUtil.removeItemKdsLog(kdsLogStr, deletedKds, deleteKotItemDetails);
+//
+//                } else {
+//                    for (KotItemDetail kotItemDetail : deleteKotItemDetails) {
+//                        for (KotItemDetail kid : kdsHistory.kotItemDetails) {
+//                            if (kotItemDetail.getId().equals(kid.getId())) {
+//                                kdsHistory.kotItemDetails.remove(kid);
+//                            }
+//                        }
+//                    }
+//                }
+
+//            }
+
+            final String kdsLogStrFinal = KDSLogUtil.removeItemKdsLog(kdsLogStr, deletedKds, deleteKotItemDetails);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Store.putString(App.instance, Store.KDS_LOGS, kdsLogStrFinal);
+                    if (App.getTopActivity() != null)
+                        App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
+
+                }
+            }).start();
+
+            result.put("resultCode", ResultCode.SUCCESS);
+            resp = getJsonResponse(new Gson().toJson(result));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
+        }
+        return resp;
+    }
+
     private Response handlerCheckKDSBalance(final String params) {
         Response resp = null;
         Map<String, Object> result = new HashMap<>();
@@ -121,15 +238,14 @@ public class KdsHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
             final String method = jsonObject.optString("method");
-            final Boolean isFire = jsonObject.getBoolean("isFire");
-            final String mainPosInfo = jsonObject.getString("mainpos");
+//            final Boolean isFire = jsonObject.getBoolean("isFire");
+//            final String mainPosInfo = jsonObject.getString("mainpos");
             final KDSDevice kdsDevice = gson.fromJson(jsonObject.optString("kds"), KDSDevice.class);
             final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
             }.getType());
             final List<KotItemModifier> kotItemModifiers = gson.fromJson(jsonObject.optString("kotItemModifiers"), new TypeToken<List<KotItemModifier>>() {
             }.getType());
 
-            final List<Integer> orderDetailIds = new ArrayList<Integer>();
             if (TextUtils.isEmpty(method)) {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
@@ -149,82 +265,92 @@ public class KdsHttpServer extends AlfredHttpServer {
                 }
             }
 
+            KDSDevice selectedKds = null;
+            KDSLog kdsLog = gson.fromJson(Store.getString(App.instance, Store.KDS_LOGS), KDSLog.class);
+
             //region new kot
             if (method.equals(ParamConst.JOB_NEW_KOT)) {
+
+                int printerGroupId = kotItemDetails.size() > 0 ? kotItemDetails.get(0).getPrinterGroupId() : 0;
+
+                List<Printer> printerList = CoreData.getInstance()
+                        .getPrintersInGroup(printerGroupId);
+                List<KDSHistory> kdsHistoryList = new ArrayList<>();
+
+                //region get the history by kds
+                for (Printer printer : printerList) {
+                    for (KDSHistory kdsHistory : kdsLog.kdsHistories) {
+                        if (kdsHistory.kdsDevice.getDevice_id() == printer.getId() &&
+                                kdsHistory.kdsDevice.getKdsStatus() == 0) {
+                            kdsHistoryList.add(kdsHistory);
+                            break;
+                        }
+                    }
+                }
+                //endregion
+
+                int balancerMode = App.instance.getBalancerMode();
+
+                if (balancerMode == SystemSettings.MODE_BALANCE) {
+                    int index = 0;
+                    int i = 0;
+                    int min = kdsHistoryList.get(index).kotItemDetails.size();
+
+                    for (KDSHistory kdsHistory : kdsHistoryList) {
+                        //region check if seam kot item
+//                        for (KotItemDetail kotItemDetail : kdsHistory.kotItemDetails) {
+//                            for (KotItemDetail kid : kotItemDetails) {
+//                                if (kotItemDetail.getId().equals(kid.getId())) {
+//                                    result.put("resultCode", ResultCode.INVALID_DEVICE);
+//                                    resp = getJsonResponse(new Gson().toJson(result));
+//                                    return resp;
+//                                }
+//                            }
+//                        }
+                        //endregion
+
+                        if (kdsHistory.kotItemDetails.size() < min) {
+                            min = kdsHistory.kotItemDetails.size();
+                            index = i;
+                        }
+                        i++;
+                    }
+
+                    selectedKds = kdsHistoryList.get(index).kdsDevice;
+
+                } else if (balancerMode == SystemSettings.MODE_STACK) {
+                    SystemSettings settings = App.instance.getSystemSettings();
+                    int stackCount = settings.getStackCount();
+
+                    for (KDSHistory kdsHistory : kdsHistoryList) {
+                        if (kdsHistory.kotItemDetails.size() < stackCount) {
+                            selectedKds = kdsHistory.kdsDevice;
+                            break;
+                        }
+                    }
+                }
+
+                if (selectedKds != null) {
+
+                    String logs = KDSLogUtil.putItemKdsLog(gson.toJson(kdsLog), selectedKds, kotItemDetails);
+                    Store.putString(App.instance, Store.KDS_LOGS, logs);
+
+                    result.put("params", params);
+                    result.put("kds", selectedKds);
+                    result.put("resultCode", ResultCode.SUCCESS);
+                } else {
+                    result.put("resultCode", ResultCode.INVALID_DEVICE);
+                }
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-
-                        //TODO: mapping kds depend on queue type
-
-                        int printerGroupId = kotItemDetails.size() > 0 ? kotItemDetails.get(0).getPrinterGroupId() : 0;
-
-                        List<Printer> printerList = CoreData.getInstance()
-                                .getPrintersInGroup(printerGroupId);
-                        KDSLog kdsLog = gson.fromJson(Store.getString(App.instance, Store.KDS_LOGS), KDSLog.class);
-                        List<KDSHistory> kdsHistoryList = new ArrayList<>();
-
-                        for (Printer printer : printerList) {
-                            for (KDSHistory kdsHistory : kdsLog.kdsHistories) {
-                                if (kdsHistory.kdsDevice.getDevice_id() == printer.getId()) {
-                                    kdsHistoryList.add(kdsHistory);
-                                    break;
-                                }
-                            }
-                        }
-
-                        int index = 0;
-                        int i = 0;
-                        int min = kdsHistoryList.get(index).kotItemDetails.size();
-
-                        for (KDSHistory kdsHistory : kdsHistoryList) {
-                            //region check if seem item
-                            for (KotItemDetail kotItemDetail : kdsHistory.kotItemDetails) {
-                                for (KotItemDetail kid : kotItemDetails) {
-                                    if (kotItemDetail.getId().equals(kid.getId())) {
-                                        return;
-                                    }
-                                }
-                            }
-                            //endregion
-
-                            if (kdsHistory.kotItemDetails.size() < min) {
-                                min = kdsHistory.kotItemDetails.size();
-                                index = i;
-                            }
-                            i++;
-                        }
-
-                        KDSDevice selectedKds = kdsHistoryList.get(index).kdsDevice;
-                        if (selectedKds.getDevice_id() == kdsDevice.getDevice_id() &&
-                                selectedKds.getIP().equals(kdsDevice.getIP())) {
-                            try {
-                                String logs = KDSLogUtil.putItemKdsLog(Store.getString(App.instance, Store.KDS_LOGS), kdsDevice, kotItemDetails);
-                                Store.putString(App.instance, Store.KDS_LOGS, logs);
-
-                                Map<String, Object> data = new HashMap<>();
-                                data.put("kotItemDetails", kotItemDetails);
-                                data.put("kotItemModifiers", kotItemModifiers);
-                                data.put("kotSummary", kotSummary);
-                                data.put("method", method);
-                                data.put("isFire", isFire);
-                                data.put("mainpos", mainPosInfo);
-
-                                SyncCentre.getInstance().syncSubmitKotToKDS(selectedKds, App.instance, data, null);
-                            } catch (Throwable throwable) {
-                                throwable.printStackTrace();
-                            }
-                        }
-
                         if (App.getTopActivity() != null)
                             App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_LOG, null);
+
                     }
                 }).start();
 
-                result.put("resultCode", ResultCode.SUCCESS);
-                result.put("method", method);
-                result.put("kotSummary", kotSummary);
-                result.put("orderId", kotSummary.getOrderId());
                 resp = getJsonResponse(new Gson().toJson(result));
             }
             //endregion

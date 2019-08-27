@@ -17,6 +17,9 @@ public class Store {
 
     private static final String PACK_NAME = Store.class.getPackage().getName();
 
+    public static final String KDS_ONLINE = "KDS_ONLINE";
+    public static final String BALANCER_TIME = "BALANCER_TIME";
+    public static final String STACK_COUNT = "STACK_COUNT";
     public static final String PENDING_LIST = "PENDING_LIST";
     public static final String MODE_BALANCER = "MODE_BALANCER";
     public static final String POS_TYPE = "POS_TYPE";
