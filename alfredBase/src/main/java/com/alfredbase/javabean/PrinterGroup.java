@@ -9,7 +9,7 @@ public class PrinterGroup {
 
     private Integer printerGroupId;
 
-    private Integer printerId;
+    private Integer printerId;//can be group id and regular printer id
 
     private String printerName; //not used in DB
 
@@ -24,6 +24,7 @@ public class PrinterGroup {
      */
     private Integer printerType;
 
+    private int isChildGroup;
 
     public String getPrinterName() {
         return printerName;
@@ -79,5 +80,13 @@ public class PrinterGroup {
 
     public void setPrinterType(Integer printerType) {
         this.printerType = printerType;
+    }
+
+    public int getIsChildGroup() {
+        return isChildGroup;
+    }
+
+    public void setIsChildGroup(int isChildGroup) {
+        this.isChildGroup = isChildGroup;
     }
 }

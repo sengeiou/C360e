@@ -293,6 +293,16 @@ public class CoreData {
         return result;
     }
 
+    public ArrayList<PrinterGroup> getPrinterGroupInGroup(int groupid) {
+        ArrayList<PrinterGroup> result = new ArrayList<>();
+        for (PrinterGroup pg : getPrinterGroups()) {
+            if (pg.getPrinterGroupId().intValue() == groupid && pg.getIsChildGroup() == 1) {
+                result.add(pg);
+            }
+        }
+        return result;
+    }
+
     public Printer getPrinterByGroupId(int printerGroupId) {
         for (Printer printer : getPrinters()) {
             if (printer.getId() == printerGroupId) {
@@ -319,6 +329,16 @@ public class CoreData {
             }
         }
         return null;
+    }
+
+    public List<PrinterGroup> getAllPrinterGroup(int printerGroupId) {
+        List<PrinterGroup> printerGroups = new ArrayList<>();
+        for (PrinterGroup pg : this.printerGroups) {
+            if (pg.getPrinterGroupId().equals(printerGroupId)) {
+                printerGroups.add(pg);
+            }
+        }
+        return printerGroups;
     }
 
     public Modifier getModifier(ItemModifier itemModifier) {

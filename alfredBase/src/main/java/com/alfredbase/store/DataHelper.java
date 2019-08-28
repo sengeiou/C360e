@@ -1644,6 +1644,9 @@ public class DataHelper {
                     + TableNames.PrinterGroup
                     + " ADD COLUMN  printerType INTEGER default 0");
             db.execSQL("ALTER TABLE "
+                    + TableNames.PrinterGroup
+                    + " ADD COLUMN  isChildGroup INTEGER default 0");
+            db.execSQL("ALTER TABLE "
                     + TableNames.Printer
                     + " ADD COLUMN  printerUsageType INTEGER default 0");
             db.execSQL("ALTER TABLE "

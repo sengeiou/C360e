@@ -2578,7 +2578,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 if (isPermitted) {
                     List<Printer> printers = PrinterSQL
                             .getAllPrinterByType(printerType);
-                    printers.add(App.instance.getPrinterBalancer());
 
                     List<PrinterGroup> printerGroups = PrinterGroupSQL.getAllPrinterGroup();
 

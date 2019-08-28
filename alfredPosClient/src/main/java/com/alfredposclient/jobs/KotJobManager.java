@@ -548,11 +548,31 @@ public class KotJobManager {
                 kotItemDetails.add(map.getValue());
             }
 
-            List<Printer> printers = getPrinters(printerGroupId, kdsId, isAssemblyLine(printerGroupId));
+            PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(printerGroupId);
+            List<PrinterGroup> printerGroupAsChildes = CoreData.getInstance()
+                    .getPrinterGroupInGroup(printerGroup.getPrinterGroupId());//group printer as child
+
+            List<Printer> printers = new ArrayList<>();
 
             if (ParamConst.JOB_VOID_KOT.equals(method)) {
-                printers = CoreData.getInstance()
-                        .getPrintersInGroup(printerGroupId);
+
+                if (printerGroupAsChildes.size() > 0) {//printer group
+                    for (PrinterGroup pg : printerGroupAsChildes) {
+                        printers.addAll(CoreData.getInstance().getPrintersInGroup(pg.getPrinterId()));
+                    }
+                } else {
+                    printers = CoreData.getInstance()
+                            .getPrintersInGroup(printerGroupId);
+                }
+
+            } else {
+                if (printerGroupAsChildes.size() > 0) {//printer group
+                    for (PrinterGroup pg : printerGroupAsChildes) {
+                        printers.addAll(getPrinters(pg.getPrinterGroupId(), 0, isAssemblyLine(pg.getPrinterId())));
+                    }
+                } else {
+                    printers = getPrinters(printerGroupId, 0, isAssemblyLine(printerGroupId));
+                }
             }
 
             boolean isCheckBalancer = false;
@@ -580,9 +600,7 @@ public class KotJobManager {
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
                 PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer.getId());
 
-                if (kdsDevice == null && printerDevice == null) {
-                    continue;
-                }
+                if (kdsDevice == null && printerDevice == null) continue;
 
                 if (kdsDevice != null && kotSummary != null) {
                     if (kdsDevice.getKdsStatus() == -1) continue;//offline kds
@@ -636,6 +654,7 @@ public class KotJobManager {
         int kotSize = 0;
         int kotVoidSize = 0;
 
+        //region Collect Printer group
         for (KotItemDetail items : kot) {
 
             Integer pgid = items.getPrinterGroupId();
@@ -706,7 +725,9 @@ public class KotJobManager {
                 mods.put(items.getPrinterGroupId(), tmp);
             }
         }
+        //endregion
 
+        //region modify kotsummary
         if (kotSummary != null) {
             KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
 
@@ -743,6 +764,7 @@ public class KotJobManager {
             }
             //endregion
         }
+        //endregion
 
         if (modCombo.size() > 0)
             sendModifierToKds(modCombo, kotSummary, method, orderMap, 0, "");
@@ -751,8 +773,21 @@ public class KotJobManager {
         for (Integer prgid : printerGrougIds) {
 
             PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
-            List<Printer> printers = getPrinters(printerGroup.getPrinterGroupId(), 0, isAssemblyLine(prgid));
-            List<Printer> exPrinters = getPrinterEx(prgid);
+            List<PrinterGroup> printerGroupAsChildes = CoreData.getInstance()
+                    .getPrinterGroupInGroup(printerGroup.getPrinterGroupId());//group printer as child
+
+            List<Printer> printers = new ArrayList<>();
+            List<Printer> exPrinters = new ArrayList<>();
+
+            if (printerGroupAsChildes.size() > 0) {//printer group
+                for (PrinterGroup pg : printerGroupAsChildes) {
+                    printers.addAll(getPrinters(pg.getPrinterId(), 0, isAssemblyLine(pg.getPrinterId())));//printer id is groupId
+                    exPrinters.addAll(getPrinterEx(pg.getPrinterId()));
+                }
+            } else {
+                printers = getPrinters(prgid, 0, isAssemblyLine(prgid));
+                exPrinters = getPrinterEx(prgid);
+            }
 
             //region Broadcast data to expediter printer
             for (int i = 0; i < exPrinters.size() - 1; i++) {//exclude last position
@@ -772,7 +807,7 @@ public class KotJobManager {
 
             if (ParamConst.JOB_VOID_KOT.equals(method)) {
                 printers = CoreData.getInstance()
-                        .getPrintersInGroup(prgid);
+                        .getPrintersInGroup(printerGroup.getPrinterGroupId());
             }
 
             boolean isCheckBalancer = false;
@@ -797,6 +832,7 @@ public class KotJobManager {
             }
 
             for (Printer printer : printers) {
+
                 // KDS device
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
                 // physical printer

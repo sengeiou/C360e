@@ -233,8 +233,16 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 timePickerDialog.show();
                 break;
             case R.id.tvReset:
-                String kdsLLogs = KDSLogUtil.resetKdsLog(Store.getString(this, Store.KDS_LOGS));
-                Store.putString(this, Store.KDS_LOGS, kdsLLogs);
+                DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reset),
+                        getString(R.string.cancel), getString(R.string.ok), null,
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String kdsLLogs = KDSLogUtil.resetKdsLog(Store.getString(Setting.this, Store.KDS_LOGS));
+                                Store.putString(Setting.this, Store.KDS_LOGS, kdsLLogs);
+                            }
+                        });
+
                 break;
             default:
                 break;
@@ -242,7 +250,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
     }
 
     @Override
-    public void onToggleStateChangeListeren(MyToggleButton Mybutton, Boolean checkState) {
+    public void onToggleStateChangeListeren(MyToggleButton Mybutton, final Boolean checkState) {
         switch (Mybutton.getId()) {
             case R.id.mt_kot_lan:
                 if (checkState) {
@@ -264,26 +272,46 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 }
                 break;
             case R.id.mtKdsOnline:
-                mtKdsOnline.setChecked(checkState);
-                settings.setPendingList(checkState);
+                DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reset),
+                        getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mtKdsOnline.setChecked(!checkState);
+                            }
+                        },
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                updateStatus(checkState);
 
-                int status;
-                if (!checkState)
-                    status = -1;
-                else
-                    status = 0;
+                                if (!checkState)
+                                    UIHelp.startWelcome(context);
+                            }
+                        });
 
-                settings.setKdsOnline(status);
-                KDSDevice kdsDevice = App.instance.getKdsDevice();
-                kdsDevice.setKdsStatus(status);
-                App.instance.setKdsDevice(kdsDevice);
-
-                for (String ip : App.instance.getAllPairingIp()) {
-                    Map<String, Object> params = new HashMap<>();
-                    params.put("kds", kdsDevice);
-                    SyncCentre.getInstance().updateKdsStatus(this, ip, params, null);
-                }
                 break;
+        }
+    }
+
+    private void updateStatus(boolean checkState) {
+        mtKdsOnline.setChecked(checkState);
+        settings.setPendingList(checkState);
+
+        int status;
+        if (!checkState)
+            status = -1;
+        else
+            status = 0;
+
+        settings.setKdsOnline(status);
+        KDSDevice kdsDevice = App.instance.getKdsDevice();
+        kdsDevice.setKdsStatus(status);
+        App.instance.setKdsDevice(kdsDevice);
+
+        for (String ip : App.instance.getAllPairingIp()) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("kds", kdsDevice);
+            SyncCentre.getInstance().updateKdsStatus(this, ip, params, handler);
         }
     }
 }
