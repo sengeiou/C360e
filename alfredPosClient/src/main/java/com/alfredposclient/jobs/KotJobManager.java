@@ -465,7 +465,21 @@ public class KotJobManager {
         //region add job to send it to KDS
         for (Integer prgid : printerGroupIds) {
 
-            ArrayList<Printer> printers = getPrinters(prgid, kdsId, isAssemblyLine(prgid));//if isAssemblyLine = true, will return 1 printer
+            PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
+            List<PrinterGroup> printerGroupAsChildes = CoreData.getInstance()
+                    .getPrinterGroupInGroup(printerGroup.getPrinterGroupId());//group printer as child
+
+            List<Printer> printers = new ArrayList<>();
+
+            if (printerGroupAsChildes.size() > 0) {//printer group
+                for (PrinterGroup pg : printerGroupAsChildes) {
+                    printers.addAll(getPrinters(pg.getPrinterId(), kdsId, isAssemblyLine(pg.getPrinterId())));
+                }
+            } else {
+                printers = getPrinters(prgid, kdsId, isAssemblyLine(prgid));
+            }
+
+//            ArrayList<Printer> printers = getPrinters(prgid, kdsId, isAssemblyLine(prgid));//if isAssemblyLine = true, will return 1 printer
 
             for (Printer printer : printers) {
                 if (printer == null) continue;
@@ -568,7 +582,7 @@ public class KotJobManager {
             } else {
                 if (printerGroupAsChildes.size() > 0) {//printer group
                     for (PrinterGroup pg : printerGroupAsChildes) {
-                        printers.addAll(getPrinters(pg.getPrinterGroupId(), 0, isAssemblyLine(pg.getPrinterId())));
+                        printers.addAll(getPrinters(pg.getPrinterId(), 0, isAssemblyLine(pg.getPrinterId())));
                     }
                 } else {
                     printers = getPrinters(printerGroupId, 0, isAssemblyLine(printerGroupId));
@@ -806,8 +820,17 @@ public class KotJobManager {
             //endregion
 
             if (ParamConst.JOB_VOID_KOT.equals(method)) {
-                printers = CoreData.getInstance()
-                        .getPrintersInGroup(printerGroup.getPrinterGroupId());
+                if (printerGroupAsChildes.size() > 0) {//printer group
+                    printers.clear();
+
+                    for (PrinterGroup pg : printerGroupAsChildes) {
+                        printers.addAll(CoreData.getInstance()
+                                .getPrintersInGroup(pg.getPrinterId()));//printer id is groupId
+                    }
+                } else {
+                    printers = CoreData.getInstance()
+                            .getPrintersInGroup(prgid);
+                }
             }
 
             boolean isCheckBalancer = false;
