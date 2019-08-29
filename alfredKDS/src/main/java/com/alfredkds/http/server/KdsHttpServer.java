@@ -163,7 +163,12 @@ public class KdsHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
 
-            final KDSDevice deletedKds = gson.fromJson(jsonObject.optString("deletedKds"), KDSDevice.class);
+            final KDSDevice deletedKds = null;
+
+            if (jsonObject.has("deletedKds")) {
+                gson.fromJson(jsonObject.optString("deletedKds"), KDSDevice.class);
+            }
+
             final List<KotItemDetail> deleteKotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
             }.getType());
             final KotSummary kotSummary = gson.fromJson(jsonObject.optString("kotSummary"), KotSummary.class);

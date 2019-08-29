@@ -10,6 +10,7 @@ import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.store.sql.KotItemDetailSQL;
@@ -206,6 +207,7 @@ public class KotJob extends Job {
                 /*check the latest KOT summary status*/
                 KotSummary kotsmy = (KotSummary) data.get("kotSummary");
                 KotSummary updatedkot = KotSummarySQL.getKotSummaryById(kotsmy.getId());
+                String method = (String) data.get("method");
 
                 /*if the kotsummary removed or have been done, no need send it to KDS*/
                 if (updatedkot == null)
@@ -216,7 +218,10 @@ public class KotJob extends Job {
                 if (isCheckBalance) {
                     SyncCentre.getInstance().checkKdsBalance(kds, context, data, null);
                 } else {
-                    SyncCentre.getInstance().syncSubmitKotToKDS(kds, context, data, null);
+                    if (kds.getKdsType() == Printer.KDS_BALANCER && ParamConst.JOB_VOID_KOT.equals(method))
+                        SyncCentre.getInstance().deleteKdsLogOnBalancer(kds, context, data, null);
+                    else
+                        SyncCentre.getInstance().syncSubmitKotToKDS(kds, context, data, null);
                 }
 
                 if (kotMap == null) {

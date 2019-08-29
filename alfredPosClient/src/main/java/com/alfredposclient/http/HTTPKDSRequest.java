@@ -220,7 +220,9 @@ public class HTTPKDSRequest {
     public static void deleteKdsLogOnBalancer(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
                                               SyncHttpClient syncHttpClient, final Handler handler) throws Exception {
 
-        parameters.put("mainpos", App.instance.getMainPosInfo());
+        if (parameters != null) {
+            parameters.put("mainpos", App.instance.getMainPosInfo());
+        }
 
         syncHttpClient.post(context, url,
                 new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,

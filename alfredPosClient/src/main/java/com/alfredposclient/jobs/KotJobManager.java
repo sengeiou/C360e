@@ -572,13 +572,14 @@ public class KotJobManager {
 
                 if (printerGroupAsChildes.size() > 0) {//printer group
                     for (PrinterGroup pg : printerGroupAsChildes) {
-                        printers.addAll(CoreData.getInstance().getPrintersInGroup(pg.getPrinterId()));
+                        printers.addAll(CoreData.getInstance().getPrintersInGroup(pg.getPrinterId()));//printerId is group id
                     }
                 } else {
                     printers = CoreData.getInstance()
                             .getPrintersInGroup(printerGroupId);
                 }
 
+                printers.add(App.instance.getPrinterBalancer());
             } else {
                 if (printerGroupAsChildes.size() > 0) {//printer group
                     for (PrinterGroup pg : printerGroupAsChildes) {
@@ -831,6 +832,9 @@ public class KotJobManager {
                     printers = CoreData.getInstance()
                             .getPrintersInGroup(prgid);
                 }
+
+                //also delete one balancer
+                printers.add(App.instance.getPrinterBalancer());
             }
 
             boolean isCheckBalancer = false;
@@ -855,7 +859,6 @@ public class KotJobManager {
             }
 
             for (Printer printer : printers) {
-
                 // KDS device
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
                 // physical printer
@@ -864,7 +867,7 @@ public class KotJobManager {
                 if (kdsDevice == null && printerDevice == null) {
                     if (context != null)
                         context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
-                    continue;
+                    return;
                 }
 
                 if (kdsDevice != null && kotSummary != null) {
@@ -1110,8 +1113,22 @@ public class KotJobManager {
 
         // add job to send it to KDS
         for (Integer prgid : printerGrougIds) {
-            ArrayList<Printer> printers = CoreData.getInstance()
-                    .getPrintersInGroup(prgid.intValue());
+
+            PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(prgid);
+            List<PrinterGroup> printerGroupAsChildes = CoreData.getInstance()
+                    .getPrinterGroupInGroup(printerGroup.getPrinterGroupId());//group printer as child
+
+            List<Printer> printers = new ArrayList<>();
+
+            if (printerGroupAsChildes.size() > 1) {
+                for (PrinterGroup pg : printerGroupAsChildes) {
+                    printers.addAll(CoreData.getInstance().getPrintersInGroup(pg.getPrinterId()));//printer id is groupId
+                }
+            } else {
+                printers = CoreData.getInstance()
+                        .getPrintersInGroup(prgid.intValue());
+            }
+
             for (Printer prnt : printers) {
                 // KDS device
                 KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
