@@ -13,6 +13,7 @@ import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
@@ -84,7 +85,10 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
                 case ResultCode.SUCCESS: {
                     pairingCount++;
 
-                    ArrayList<Printer> printers = (ArrayList<Printer>) msg.obj;
+//                    ArrayList<Printer> printers = (ArrayList<Printer>) msg.obj;
+
+                    List<Printer> printers = PrinterSQL
+                            .getAllPrinterByType(1);//get printer device
 
                     for (Printer printer : printers) {//为cashier时不显示
                         if (!(printer.getIsCashdrawer().intValue() == 1)) {

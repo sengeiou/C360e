@@ -2576,12 +2576,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         .checkUserKDSAccessInRevcenter(usr.getId(),
                                 rc.getRestaurantId(), rc.getId());
                 if (isPermitted) {
-                    List<Printer> printers = PrinterSQL
-                            .getAllPrinterByType(printerType);
+                    List<Printer> printers = PrinterSQL.getAllPrinter();
+//                    List<Printer> printers = PrinterSQL
+//                            .getAllPrinterByType(printerType);
 
                     List<PrinterGroup> printerGroups = PrinterGroupSQL.getAllPrinterGroup();
 
-                    LogUtil.i("http printers", printers.toString());
+                    LogUtil.log("http printers : " + printers.toString());
                     result.put("printers", printers);
                     result.put("printer_group", printerGroups);
                     result.put("user", usr);

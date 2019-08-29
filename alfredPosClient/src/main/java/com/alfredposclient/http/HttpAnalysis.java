@@ -243,6 +243,7 @@ public class HttpAnalysis {
                     object.getString("printerGroupList"),
                     new TypeToken<ArrayList<PrinterGroup>>() {
                     }.getType());
+
             CoreData.getInstance().setPrinterGroups(printerGroups);
             PrinterGroupSQL.deletePrinter();
             PrinterGroupSQL.addPrinterGroups(printerGroups);
