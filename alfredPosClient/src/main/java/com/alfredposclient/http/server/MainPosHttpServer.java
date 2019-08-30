@@ -1392,36 +1392,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
         try {
             JSONObject jsonObject = new JSONObject(params);
             Order order = gson.fromJson(jsonObject.optString("order"), Order.class);
-            int deviceId = 0;
 
-            Map<Integer, KDSDevice> kdsDevices = App.instance.getKDSDevices();
-
-            for (Map.Entry<Integer, KDSDevice> entry : kdsDevices.entrySet()) {
-                deviceId = entry.getKey();
-            }
-
-            KotSummary kotSummary = ObjectFactory.getInstance()
-                    .getKotSummaryForPlace(
-                            TableInfoSQL.getTableById(
-                                    order.getTableId()).getName(), order,
-                            App.instance.getRevenueCenter(),
-                            App.instance.getBusinessDate());
-
-            List<KotItemDetail> kotItemDetails = new ArrayList<>();
+            KotSummary kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
+            ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(order.getId());
             List<KotItemModifier> kotItemModifiers = new ArrayList<>();
-
-            List<PrinterGroup> printerGroupList = CoreData
-                    .getInstance().getPrinterGroupByPrinter(
-                            deviceId);
-
-            for (PrinterGroup printerGroup : printerGroupList) {
-                kotItemDetails
-                        .addAll(KotItemDetailSQL
-                                .getKotItemDetailByKotSummaryAndPrinterGroup(
-                                        kotSummary.getId(),
-                                        printerGroup
-                                                .getPrinterGroupId()));
-            }
 
             for (KotItemDetail kotItemDetail : kotItemDetails) {
                 kotItemModifiers

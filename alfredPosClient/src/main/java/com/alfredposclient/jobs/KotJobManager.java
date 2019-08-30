@@ -123,7 +123,8 @@ public class KotJobManager {
                 PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
                         .getId());
                 if (kds1 == null && prntd == null) {
-                    context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
+                    if (context != null)
+                        context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
                     return;
                 }
                 if (kds1 != null) {
@@ -622,7 +623,7 @@ public class KotJobManager {
                     if (prntd != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
-                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from)+" "+ fromTableName);
+                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from) + " " + fromTableName);
                         printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 
@@ -679,7 +680,7 @@ public class KotJobManager {
                 .getKotItemModifiersByKotItemDetail(kotItemDetail
                         .getId()));
         List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
-        if(kotItemDetails == null || kotItemDetails.size() == 0) {
+        if (kotItemDetails == null || kotItemDetails.size() == 0) {
             KotSummarySQL.deleteKotSummary(fromKotSummary);
         }
         context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
@@ -733,7 +734,7 @@ public class KotJobManager {
                     if (prntd != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
-                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from)+" "+ fromTableName);
+                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from) + " " + fromTableName);
                         printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 
