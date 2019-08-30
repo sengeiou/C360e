@@ -168,9 +168,6 @@ public class BaseApplication extends Application {
 //		}else{//小于23版本直接使用
 //			// startScan();
 //		}
-
-        BugseeHelper.init(this);
-
     }
 
 

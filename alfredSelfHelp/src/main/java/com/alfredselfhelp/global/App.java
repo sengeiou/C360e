@@ -22,6 +22,7 @@ import com.alfred.remote.printservice.RemotePrintServiceCallback;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.LocalDevice;
@@ -111,6 +112,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        BugseeHelper.init(this, "ff9e1000-0bf4-4ecd-9c3b-2c8e5485ebdf");
         VERSION = getAppVersionName();
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         TvPref.init();

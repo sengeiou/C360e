@@ -7,6 +7,7 @@ import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.http.server.CallNumHttpServer;
 import com.alfred.callnum.utils.TvPref;
 import com.alfredbase.BaseApplication;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.google.gson.Gson;
@@ -34,19 +35,20 @@ public class App extends BaseApplication {
     SharedPreferences sp;
 
     private List<CallBean> save;
-    private List<CallBean> callList ;
+    private List<CallBean> callList;
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
+        BugseeHelper.init(this, "5120444a-07e0-497f-a0c0-084bbf906b47");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         TvPref.init();
 
         mbPlayIMG = TvPref.readPlayIMGEn();
         VERSION = getAppVersionName();
         CallNumHttpServer callNumHttpServer = new CallNumHttpServer();
-         sp = getSharedPreferences("call", Activity.MODE_PRIVATE);
+        sp = getSharedPreferences("call", Activity.MODE_PRIVATE);
         callList = new ArrayList<CallBean>();
         try {
             if (!callNumHttpServer.isAlive()) {
@@ -66,7 +68,7 @@ public class App extends BaseApplication {
 
     public void setCall(CallBean call) {
 
-        if(callList!=null){
+        if (callList != null) {
             callList.add(call);
             if (callList.size() > 30) {
                 callList.remove(0);

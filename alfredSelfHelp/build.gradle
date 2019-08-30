@@ -5,11 +5,9 @@ apply plugin: 'bugsee'
 import com.android.build.gradle.api.BaseVariant
 
 bugsee {
-//    appToken '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
-//    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
-            case 'release': '9290f896-1a2e-4b70-b1fa-46823bb4398c'
+            case 'release': 'ff9e1000-0bf4-4ecd-9c3b-2c8e5485ebdf'
                 break
             case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
                 break
@@ -47,6 +45,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        }
+        debug {
         }
     }
 //    android.applicationVariants.all { variant ->

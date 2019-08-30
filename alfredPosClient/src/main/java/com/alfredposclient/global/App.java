@@ -31,6 +31,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.javabean.CashInOut;
@@ -354,6 +355,7 @@ public class App extends BaseApplication {
         super.onCreate();
 
         instance = this;
+        BugseeHelper.init(this, "5f8647d4-30e6-4599-8dd0-ab8c5bd39f84");
         int train = SharedPreferencesHelper.getInt(this, SharedPreferencesHelper.TRAINING_MODE);
         if (train == 1) {
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);

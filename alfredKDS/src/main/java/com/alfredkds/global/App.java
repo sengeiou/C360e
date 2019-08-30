@@ -7,6 +7,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.UnCEHandler;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
@@ -88,6 +89,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        BugseeHelper.init(this, "47ab1db5-0e6a-4396-ae4c-0bb5f33d3134");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
 
         systemSettings = new SystemSettings(this);
