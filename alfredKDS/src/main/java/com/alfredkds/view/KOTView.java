@@ -29,6 +29,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KDSTracking;
@@ -48,6 +49,7 @@ import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredkds.R;
 import com.alfredkds.activity.KitchenOrder;
 import com.alfredkds.global.App;
@@ -677,6 +679,11 @@ public class KOTView extends LinearLayout implements AnimationListener,
                     kotItemModifiers.addAll(kims);
                 }
 
+            } else {
+                BaseActivity baseActivity = App.getTopActivity();
+                if (baseActivity != null)
+                    ToastUtils.showToast(baseActivity, "Please select at least one item to bump!");
+                return;
             }
         } else {
             kotItemDetails = this.kotItemDetails;
