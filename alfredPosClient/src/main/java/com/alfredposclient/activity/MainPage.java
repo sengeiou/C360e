@@ -767,6 +767,10 @@ public class MainPage extends BaseActivity {
 //						RoundAmount roundAmount = ObjectFactory.getInstance()
 //								.getRoundAmount(currentOrder, orderBill, App.instance.getLocalRestaurantConfig().getRoundType());
 //						OrderHelper.setOrderTotalAlfterRound(currentOrder, roundAmount);
+
+                            orderBill.setPrintTime(System.currentTimeMillis());
+                            OrderBillSQL.updatePrintTime(orderBill);
+
                             PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
                                     context);
                             printerLoadingDialog.setTitle(context.getResources().getString(R.string.bill_printing));

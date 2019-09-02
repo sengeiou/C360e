@@ -2870,9 +2870,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 kotItemDetailsCopy.add(kidLocal);
             }
 
+            localKotSummary.setCompleteTime(System.currentTimeMillis());
             localKotSummary.setKotSummaryLog(KDSLogUtil.putLog(localKotSummary.getKotSummaryLog(), kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
             localKotSummary.setKotSummaryLog(KDSLogUtil.removeTrackerLog(localKotSummary.getKotSummaryLog(), kotItemDetailsCopy, App.instance.getKDSDevice(kdsId)));
             KotSummarySQL.updateKotSummaryLog(localKotSummary);
+            KotSummarySQL.updateKotCompleteTime(localKotSummary);
 
             // : fix bug: filter out old data that may be in KDS
             ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();

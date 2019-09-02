@@ -155,5 +155,10 @@ public class APIName {
     public static final String CALL_POS_NUM = "call_pos_num";
     public static final String POS_CLOSE_SESSION = "pos_close_session";
 
+    /**
+     * KotItemDetail sync cloud
+     */
+    public static final String SYNC_KOT_ITEM_DETAIL = "kot/kotItemDetail/create";
+
 
 }

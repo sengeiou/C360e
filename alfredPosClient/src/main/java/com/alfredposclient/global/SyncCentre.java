@@ -223,6 +223,11 @@ public class SyncCentre {
 
     }
 
+    public void syncKotItemDetail(BaseActivity context, SyncMsg syncMsg, Handler handler) {
+        HttpAPI.syncKotItemDetail(context, syncMsg,
+                getAbsoluteUrl(APIName.SYNC_KOT_ITEM_DETAIL), bigSyncHttpClient);
+    }
+
     public void cloudSyncUploadOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
         //orderDataMsg

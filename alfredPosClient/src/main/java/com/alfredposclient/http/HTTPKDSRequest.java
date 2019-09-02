@@ -343,6 +343,8 @@ public class HTTPKDSRequest {
                                         kotItemDetail.setStartTime(System.currentTimeMillis());
                                         KotItemDetailSQL.update(kotItemDetail);
                                         kotItemDetailsCopy.add(kotItemDetail);
+                                        KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                                        LogUtil.log("start time : " + kidLocal.getStartTime());
                                     }
                                 }
 
@@ -369,6 +371,7 @@ public class HTTPKDSRequest {
                     public void onFailure(int statusCode, Header[] headers,
                                           byte[] responseBody, Throwable error) {
                         if (error.getCause() instanceof ConnectException) {
+                            LogUtil.log("Kds Submit failed : " + error.getCause().getMessage());
                             throw new RuntimeException(error);
                         }
                     }

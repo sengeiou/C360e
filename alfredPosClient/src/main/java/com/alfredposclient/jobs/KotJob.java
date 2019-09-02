@@ -323,8 +323,10 @@ public class KotJob extends Job {
                 SyncCentre.getInstance().updateKdsStatus(kds, context, data, null);
             }
             LogUtil.d(TAG, "KOT JOB Successful");
+            LogUtil.log("KOT JOB Successful");
         } catch (Throwable e) {
             LogUtil.d(TAG, "KOT JOB Failed:" + e.getMessage());
+            LogUtil.log("KOT JOB Failed:" + e.getMessage());
             if (failCount < 2) {
                 failCount++;
                 if (context != null)

@@ -189,9 +189,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
@@ -244,9 +244,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
@@ -291,9 +291,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
             }
@@ -338,9 +338,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
             }
@@ -384,9 +384,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
             }
@@ -439,9 +439,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
@@ -495,9 +495,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
@@ -550,9 +550,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
@@ -600,9 +600,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
             }
@@ -649,9 +649,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
             }
@@ -698,9 +698,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 kotItemDetails.add(kotItemDetail);
@@ -754,9 +754,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
@@ -879,9 +879,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
@@ -934,9 +934,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);
@@ -989,9 +989,9 @@ public class KotItemDetailSQL {
                 kotItemDetail.setIsTakeAway(cursor.getInt(18));
                 kotItemDetail.setFireStatus(cursor.getInt(19));
                 kotItemDetail.setCallType(cursor.getInt(20));
-                kotItemDetail.setExpectedTime(cursor.getInt(21));
-                kotItemDetail.setStartTime(cursor.getInt(22));
-                kotItemDetail.setEndTime(cursor.getInt(23));
+                kotItemDetail.setExpectedTime(cursor.getLong(21));
+                kotItemDetail.setStartTime(cursor.getLong(22));
+                kotItemDetail.setEndTime(cursor.getLong(23));
                 kotItemDetail.setItemType(cursor.getInt(24));
                 kotItemDetail.setItemId(cursor.getInt(25));
                 result.add(kotItemDetail);

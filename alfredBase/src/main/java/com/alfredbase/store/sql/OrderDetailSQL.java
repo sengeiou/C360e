@@ -11,6 +11,7 @@ import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
@@ -867,7 +868,7 @@ public class OrderDetailSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId+""});
+            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId + ""});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -895,7 +896,7 @@ public class OrderDetailSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId+""});
+            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId + ""});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -922,7 +923,7 @@ public class OrderDetailSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId+""});
+            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId + ""});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -2291,7 +2292,7 @@ public class OrderDetailSQL {
     }
 
     public static OrderDetail getPromotionOrderDetail(int orderId,
-                                            int fromOrderDetailId) {
+                                                      int fromOrderDetailId) {
         OrderDetail orderDetail = null;
         String sql = "select * from " + TableNames.OrderDetail
                 + " where orderId = ? and fromOrderDetailId = ? ";
@@ -2631,7 +2632,7 @@ public class OrderDetailSQL {
         return count;
     }
 
-    public static int getNoVoidCountByOrderId(int orderId){
+    public static int getNoVoidCountByOrderId(int orderId) {
         String sql = "select count(*) from "
                 + TableNames.OrderDetail
                 + " where orderId = ? and orderDetailType <> " + ParamConst.ORDERDETAIL_TYPE_VOID;
@@ -3738,4 +3739,5 @@ public class OrderDetailSQL {
             e.printStackTrace();
         }
     }
+
 }

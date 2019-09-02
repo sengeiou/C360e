@@ -535,6 +535,8 @@ public class KotJobManager {
     private void sendModifierToKds(Map<Integer, ArrayList<KotItemModifier>> modCombo,
                                    KotSummary kotSummary, String method, Map<String, Object> orderMap, int kdsId, String url) {
 
+        BaseActivity context = App.getTopActivity();
+
         for (Map.Entry<Integer, ArrayList<KotItemModifier>> entry : modCombo.entrySet()) {
             int printerGroupId = entry.getKey();
             ArrayList<KotItemModifier> kotItemModifiers = entry.getValue();
@@ -615,7 +617,11 @@ public class KotJobManager {
                 KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
                 PrinterDevice printerDevice = App.instance.getPrinterDeviceById(printer.getId());
 
-                if (kdsDevice == null && printerDevice == null) continue;
+                if (kdsDevice == null && printerDevice == null) {
+                    if (context != null)
+                        context.kotPrintStatus(MainPage.KOT_PRINT_NULL, null);
+                    return;
+                }
 
                 if (kdsDevice != null && kotSummary != null) {
                     if (kdsDevice.getKdsStatus() == -1) continue;//offline kds
@@ -702,7 +708,7 @@ public class KotJobManager {
                     if (context != null)
                         context.kotPrintStatus(MainPage.KOT_ITEM_PRINT_NULL,
                                 items.getItemName());
-                    continue;
+                    return;
                 }
             }
 

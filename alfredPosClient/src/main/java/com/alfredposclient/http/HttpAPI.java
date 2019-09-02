@@ -1188,6 +1188,37 @@ public class HttpAPI {
 
     }
 
+    public static void syncKotItemDetail(Context context, SyncMsg syncMsg,
+                                         String url, SyncHttpClient httpClient) {
+        StringEntity entity = null;
+        try {
+            entity = HttpAssembling.getUploadOrderInfoParam(syncMsg);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (entity != null) {
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                            } else {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            throw new RuntimeException(error);
+                        }
+                    });
+        }
+    }
+
     /*
      * Sync order and XZReport data from POS to Cloud
      */

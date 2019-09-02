@@ -1654,13 +1654,13 @@ public class DataHelper {
                     + " ADD COLUMN  printerGroupType INTEGER default 0");
             db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
-                    + " ADD COLUMN  expectedTime INTEGER default 0");
+                    + " ADD COLUMN  expectedTime LONG default 0");
             db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
-                    + " ADD COLUMN  startTime INTEGER default 0");
+                    + " ADD COLUMN  startTime LONG default 0");
             db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
-                    + " ADD COLUMN  endTime INTEGER default 0");
+                    + " ADD COLUMN  endTime LONG default 0");
             db.execSQL("ALTER TABLE "
                     + TableNames.KotItemDetail
                     + " ADD COLUMN  itemType INTEGER default 0");
@@ -1677,6 +1677,10 @@ public class DataHelper {
                     + " ADD COLUMN originalId INTEGER default 0");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN isNext INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN completeTime LONG default 0");
+            db.execSQL("ALTER TABLE " + TableNames.OrderBill
+                    + " ADD COLUMN printTime LONG default 0");
         }
     }
 }

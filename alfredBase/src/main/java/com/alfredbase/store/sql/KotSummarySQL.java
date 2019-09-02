@@ -32,8 +32,8 @@ public class KotSummarySQL {
                     + TableNames.KotSummary
                     + "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
                     + " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, " +
-                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId,isNext)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId,isNext,completeTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{kotSummary.getId(),
@@ -62,7 +62,8 @@ public class KotSummarySQL {
                             kotSummary.getKdsType(),
                             kotSummary.getOrderDetailCount(),
                             kotSummary.getOriginalId(),
-                            kotSummary.isNext()
+                            kotSummary.isNext(),
+                            kotSummary.getCompleteTime()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,8 +81,8 @@ public class KotSummarySQL {
                     + TableNames.KotSummary
                     + "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
                     + " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, " +
-                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId,isNext,completeTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
@@ -136,6 +137,10 @@ public class KotSummarySQL {
                     kotSummary.getOrderDetailCount());
             SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
                     kotSummary.getOriginalId());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 27,
+                    kotSummary.isNext());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 28,
+                    kotSummary.getCompleteTime());
 
             sqLiteStatement.executeInsert();
             db.setTransactionSuccessful();
@@ -157,8 +162,8 @@ public class KotSummarySQL {
                     + TableNames.KotSummary
                     + "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
                     + " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, " +
-                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId,isNext,completeTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (KotSummary kotSummary : kotSummarys) {
@@ -214,6 +219,10 @@ public class KotSummarySQL {
                         kotSummary.getOrderDetailCount());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
                         kotSummary.getOriginalId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 27,
+                        kotSummary.isNext());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 28,
+                        kotSummary.getCompleteTime());
 
                 sqLiteStatement.executeInsert();
             }
@@ -266,6 +275,8 @@ public class KotSummarySQL {
                 kotSummary.setKdsType(cursor.getInt(23));
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
+                kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -321,6 +332,7 @@ public class KotSummarySQL {
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
                 kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -376,6 +388,7 @@ public class KotSummarySQL {
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
                 kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -431,6 +444,7 @@ public class KotSummarySQL {
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
                 kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -486,6 +500,7 @@ public class KotSummarySQL {
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
                 kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -533,6 +548,8 @@ public class KotSummarySQL {
                 kotSummary.setKdsType(cursor.getInt(23));
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
+                kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -586,6 +603,8 @@ public class KotSummarySQL {
                 kotSummary.setKdsType(cursor.getInt(23));
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
+                kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -633,6 +652,8 @@ public class KotSummarySQL {
                 kotSummary.setKdsType(cursor.getInt(23));
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
+                kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -679,6 +700,8 @@ public class KotSummarySQL {
                 kotSummary.setKdsType(cursor.getInt(23));
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
+                kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -732,6 +755,8 @@ public class KotSummarySQL {
                 kotSummary.setKdsType(cursor.getInt(23));
                 kotSummary.setOrderDetailCount(cursor.getInt(24));
                 kotSummary.setOriginalId(cursor.getInt(25));
+                kotSummary.setNext(cursor.getInt(26));
+                kotSummary.setCompleteTime(cursor.getLong(27));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -843,6 +868,15 @@ public class KotSummarySQL {
         String sql = "update " + TableNames.KotSummary + " set kotSummaryLog = ? where id = ?";
         try {
             SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getKotSummaryLog(), kotSummary.getId()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKotCompleteTime(KotSummary kotSummary) {
+        String sql = "update " + TableNames.KotSummary + " set completeTime = ? where id = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getCompleteTime(), kotSummary.getId()});
         } catch (Exception e) {
             e.printStackTrace();
         }
