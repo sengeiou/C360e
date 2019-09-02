@@ -205,7 +205,7 @@ public class KDSLogUtil {
                     }
                 }
             } else {
-                kdsHistory.kotItemDetails.addAll(kotItemDetailListCopy);
+                kdsHistory.kotItemDetails.addAll(kotItemDetails);
             }
         } else {
             kdsHistory = new KDSHistory();
@@ -238,7 +238,7 @@ public class KDSLogUtil {
                     }
                 }
             } else {
-                kdsTracking.kotItemDetails.addAll(kotItemDetailListCopy);
+                kdsTracking.kotItemDetails.addAll(kotItemDetails);
             }
         } else {
             kdsTracking = new KDSTracking();
