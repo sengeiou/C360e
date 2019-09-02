@@ -3602,6 +3602,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             Order order = new Gson().fromJson(orderData, Order.class);
             order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
             order.setTableId(targetTableId);
+            order.setBusinessDate(App.instance.getBusinessDate());
             OrderSQL.addOrder(order);
             Order last = OrderSQL.getLastOrderatTabel(targetTableId);
 
