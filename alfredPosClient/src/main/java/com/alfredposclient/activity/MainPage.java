@@ -2354,7 +2354,7 @@ public class MainPage extends BaseActivity {
                                 orderDetail.getItemId()));
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         setData();
-        sendKOTTmpToKDS(orderDetail);
+//        sendKOTTmpToKDS(orderDetail);
         if (itemModifiers.size() > 0) {
             for (ItemModifier itemModifier : itemModifiers) {
 
@@ -2373,7 +2373,7 @@ public class MainPage extends BaseActivity {
     }
 
     private void sendKOTTmpToKDS(final OrderDetail orderDetail) {
-        sendKOTTmpToKDS(orderDetail, null, ParamConst.JOB_TMP_KOT);
+//        sendKOTTmpToKDS(orderDetail, null, ParamConst.JOB_TMP_KOT);
     }
 
     private void sendKOTTmpToKDS(final OrderDetail orderDetail, final KotItemDetail mKotItemDetail, final String method) {
@@ -2646,7 +2646,7 @@ public class MainPage extends BaseActivity {
                             KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
                             KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(kotSummary.getId(), tag.getId());
 
-                            sendKOTTmpToKDS(tag, kotItemDetail, ParamConst.JOB_DELETE_TMP_ITEM_KOT);
+//                            sendKOTTmpToKDS(tag, kotItemDetail, ParamConst.JOB_DELETE_TMP_ITEM_KOT);
 //
 //                            RemainingStockSQL.updateRemainingNum(num,itemTempId);
                             OrderDetailSQL.deleteOrderDetail(tag);

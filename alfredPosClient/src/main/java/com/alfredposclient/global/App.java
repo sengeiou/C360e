@@ -1396,7 +1396,8 @@ public class App extends BaseApplication {
 
     public KDSDevice getBalancerKDSDevice() {
         if (kdsBalancer == null) {
-            int printerBalancerId = getPrinterBalancer().getId();
+            Printer printer = getPrinterBalancer();
+            int printerBalancerId = printer != null ? printer.getId() : 0;
             this.kdsBalancer = this.kdsDevices.get(printerBalancerId);
         }
 

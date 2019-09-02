@@ -1936,7 +1936,7 @@ public class MainPageKiosk extends BaseActivity {
                                 orderDetail.getItemId()));
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         setData();
-        sendKOTTmpToKDS(orderDetail);
+//        sendKOTTmpToKDS(orderDetail);
         if (itemModifiers.size() > 0) {
             for (ItemModifier itemModifier : itemModifiers) {
 

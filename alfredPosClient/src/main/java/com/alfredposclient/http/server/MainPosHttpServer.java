@@ -1717,7 +1717,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             Map<String, Object> param = new HashMap<>();
             param.put("kds", kdsDevice);
             KDSDevice balancerKds = App.instance.getBalancerKDSDevice();
-            SyncCentre.getInstance().syncSubmitConnectedKDS(balancerKds, App.instance, param, null);
+            if (balancerKds != null)
+                SyncCentre.getInstance().syncSubmitConnectedKDS(balancerKds, App.instance, param, null);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

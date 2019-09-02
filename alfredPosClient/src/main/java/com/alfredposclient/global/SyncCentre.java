@@ -540,7 +540,9 @@ public class SyncCentre {
     public void checkKdsBalance(KDSDevice kdsDevice, BaseActivity context,
                                 Map<String, Object> parameters, Handler handler) throws Throwable {
 
-        String url = getAbsoluteKDSUrlForJob(App.instance.getBalancerKDSDevice(), APIName.CHECK_KDS_BALANCE);
+        KDSDevice kdsBalancer = App.instance.getBalancerKDSDevice();
+        if (kdsBalancer == null) return;
+        String url = getAbsoluteKDSUrlForJob(kdsBalancer, APIName.CHECK_KDS_BALANCE);
         HTTPKDSRequest.checkKdsBalance(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
 
