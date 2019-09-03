@@ -26,6 +26,8 @@ public class PrinterGroup {
 
     private int isChildGroup;
 
+    private int sequenceNumber;
+
     public String getPrinterName() {
         return printerName;
     }
@@ -88,5 +90,13 @@ public class PrinterGroup {
 
     public void setIsChildGroup(int isChildGroup) {
         this.isChildGroup = isChildGroup;
+    }
+
+    public int getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(int sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
 }

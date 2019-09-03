@@ -74,7 +74,6 @@ public class App extends BaseApplication {
     private User user;
     private KDSDevice kdsDevice;
     private Map<Integer, MainPosInfo> mainPosInfos = new HashMap<>();
-    private List<Integer> posIdConnected = new ArrayList<>();
     private Integer currentMainPosId = -1;
     public RingUtil ringUtil;
     private Printer printer;
@@ -84,6 +83,7 @@ public class App extends BaseApplication {
     private Long businessDate;
     private SystemSettings systemSettings;
     public String VERSION = "0.0.0";
+    private Map<Integer, KDSDevice> kdsDeviceRVCMap = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -169,6 +169,16 @@ public class App extends BaseApplication {
         return user;
     }
 
+    public Map<Integer, KDSDevice> getKdsDeviceRVCMap() {
+        return kdsDeviceRVCMap;
+    }
+
+    public void setKdsDeviceRVCMap(Integer id, KDSDevice kdsDevice) {
+        if (!kdsDeviceRVCMap.containsKey(id)) {
+            kdsDeviceRVCMap.put(id, kdsDevice);
+        }
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -208,10 +218,14 @@ public class App extends BaseApplication {
         Store.saveObject(instance, Store.MAINPOSINFO_MAP, this.mainPosInfos);
         Store.putInt(this, Store.CURRENT_MAIN_POS_ID_CONNECTED, currentMainPosId);
 
-        //this for balancer
-        if (getKdsDevice().getKdsType() == Printer.KDS_BALANCER) {
-            posIdConnected.add(currentMainPosId);
-            Store.saveObject(instance, Store.CURRENT_MAIN_POS_IDS_CONNECTED, posIdConnected);
+        List<Integer> connectedRVCIds = getRVCConnectedId();
+        if (connectedRVCIds == null) {
+            connectedRVCIds = new ArrayList<>();
+        }
+
+        if (!connectedRVCIds.contains(currentMainPosId)) {
+            connectedRVCIds.add(currentMainPosId);
+            Store.saveObject(instance, Store.CURRENT_MAIN_POS_IDS_CONNECTED, connectedRVCIds);
         }
     }
 
@@ -226,11 +240,20 @@ public class App extends BaseApplication {
 
     }
 
-    public List<MainPosInfo> getCurrentConnectedMainPosList() {
+    public MainPosInfo getCurrentConnectedMainPos(int rvcId) {
         getMainPosInfos();
-        List<Integer> cids = Store.getObject(this, Store.CURRENT_MAIN_POS_IDS_CONNECTED,
+        return this.mainPosInfos.get(rvcId);
+    }
+
+    public List<Integer> getRVCConnectedId() {
+        return Store.getObject(this, Store.CURRENT_MAIN_POS_IDS_CONNECTED,
                 new TypeToken<List<Integer>>() {
                 }.getType());
+    }
+
+    public List<MainPosInfo> getCurrentConnectedMainPosList() {
+        getMainPosInfos();
+        List<Integer> cids = getRVCConnectedId();
         List<MainPosInfo> mainPosInfoList = new ArrayList<>();
 
         if (cids != null) {
@@ -548,7 +571,7 @@ public class App extends BaseApplication {
     public int getBalancerMode() {
         SystemSettings settings = App.instance.getSystemSettings();
         int mode = settings.getBalancerMode();
-        int selectedMode = -1;
+        int selectedMode = SystemSettings.MODE_NORMAL;
 
         LogUtil.log("Balancer Time : " + settings.getBalancerTime());
         LogUtil.log("Balancer Time has come : " + settings.isBalancerTimeHasCome());
@@ -572,10 +595,6 @@ public class App extends BaseApplication {
                     selectedMode = SystemSettings.MODE_STACK;
                 }
             }
-        }
-
-        if (selectedMode < 0) {
-            selectedMode = SystemSettings.MODE_BALANCE;
         }
 
         return selectedMode;

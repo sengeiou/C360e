@@ -242,19 +242,14 @@ public class KdsHttpServer extends AlfredHttpServer {
         Response resp = null;
         Map<String, Object> result = new HashMap<>();
         List<Integer> revenueCenterIds = new ArrayList<>();
-        if (App.instance.isBalancer()) {
-            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
-                revenueCenterIds.add(mainPosInfo.getRevenueId());
-            }
-        } else {
-            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+            revenueCenterIds.add(mainPosInfo.getRevenueId());
         }
         try {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
             final String method = jsonObject.optString("method");
-//            final Boolean isFire = jsonObject.getBoolean("isFire");
-//            final String mainPosInfo = jsonObject.getString("mainpos");
+//            final String mainPosInfo = jsonObject.getString("mainposIfo");
             final KDSDevice kdsDevice = gson.fromJson(jsonObject.optString("kds"), KDSDevice.class);
             final List<KotItemDetail> kotItemDetails = gson.fromJson(jsonObject.optString("kotItemDetails"), new TypeToken<List<KotItemDetail>>() {
             }.getType());
@@ -337,6 +332,7 @@ public class KdsHttpServer extends AlfredHttpServer {
             int balancerMode = App.instance.getBalancerMode();
 
             if (balancerMode == SystemSettings.MODE_BALANCE) {
+                //region Mode Balance
                 int index = 0;
                 int i = 0;
                 int min = kdsHistoryList.get(index).kotItemDetails.size();
@@ -362,8 +358,10 @@ public class KdsHttpServer extends AlfredHttpServer {
                 }
 
                 selectedKds = kdsHistoryList.get(index).kdsDevice;
+                //endregion
 
             } else if (balancerMode == SystemSettings.MODE_STACK) {
+                //region Mode Stack
                 SystemSettings settings = App.instance.getSystemSettings();
                 int stackCount = settings.getStackCount();
 
@@ -373,6 +371,36 @@ public class KdsHttpServer extends AlfredHttpServer {
                         break;
                     }
                 }
+                //endregion
+            } else {
+                //region Mode Normal
+                int rvcId = kotSummary.getRevenueCenterId();
+                Map<Integer, KDSDevice> kdsPerRvc = App.instance.getKdsDeviceRVCMap();
+
+                if (!kdsPerRvc.containsKey(rvcId)) {
+                    for (KDSHistory kdsHistory : kdsHistoryList) {
+                        if (kdsPerRvc.size() > 0) {
+
+                            boolean isExist = false;
+                            for (Map.Entry<Integer, KDSDevice> map : kdsPerRvc.entrySet()) {
+                                if (kdsHistory.kdsDevice.getDevice_id() == map.getValue().getDevice_id()) {
+                                    isExist = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isExist) {
+                                kdsPerRvc.put(rvcId, kdsHistory.kdsDevice);
+                            }
+                        } else {
+                            kdsPerRvc.put(rvcId, kdsHistory.kdsDevice);
+                            break;
+                        }
+                    }
+                }
+
+                selectedKds = kdsPerRvc.get(rvcId);
+                //endregion
             }
 
             if (selectedKds != null) {
@@ -442,13 +470,8 @@ public class KdsHttpServer extends AlfredHttpServer {
         Response resp;
         Map<String, Object> result = new HashMap<>();
         List<Integer> revenueCenterIds = new ArrayList<>();
-
-        if (App.instance.isBalancer()) {
-            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
-                revenueCenterIds.add(mainPosInfo.getRevenueId());
-            }
-        } else {
-            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+            revenueCenterIds.add(mainPosInfo.getRevenueId());
         }
 
         try {
@@ -506,12 +529,8 @@ public class KdsHttpServer extends AlfredHttpServer {
         Response resp;
         Map<String, Object> result = new HashMap<>();
         List<Integer> revenueCenterIds = new ArrayList<>();
-        if (App.instance.isBalancer()) {
-            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
-                revenueCenterIds.add(mainPosInfo.getRevenueId());
-            }
-        } else {
-            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+            revenueCenterIds.add(mainPosInfo.getRevenueId());
         }
 
         try {
@@ -590,12 +609,8 @@ public class KdsHttpServer extends AlfredHttpServer {
             }
 
             List<Integer> revenueCenterIds = new ArrayList<>();
-            if (App.instance.isBalancer()) {
-                for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
-                    revenueCenterIds.add(mainPosInfo.getRevenueId());
-                }
-            } else {
-                revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+                revenueCenterIds.add(mainPosInfo.getRevenueId());
             }
 
             if (!revenueCenterIds.contains(kotSummary.getRevenueCenterId())) {
@@ -634,12 +649,8 @@ public class KdsHttpServer extends AlfredHttpServer {
         Response resp;
         Map<String, Object> result = new HashMap<>();
         List<Integer> revenueCenterIds = new ArrayList<>();
-        if (App.instance.isBalancer()) {
-            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
-                revenueCenterIds.add(mainPosInfo.getRevenueId());
-            }
-        } else {
-            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+            revenueCenterIds.add(mainPosInfo.getRevenueId());
         }
 
         try {
@@ -724,12 +735,8 @@ public class KdsHttpServer extends AlfredHttpServer {
         Response resp;
         Map<String, Object> result = new HashMap<>();
         List<Integer> revenueCenterIds = new ArrayList<>();
-        if (App.instance.isBalancer()) {
-            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
-                revenueCenterIds.add(mainPosInfo.getRevenueId());
-            }
-        } else {
-            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
+        for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+            revenueCenterIds.add(mainPosInfo.getRevenueId());
         }
 
         try {
@@ -919,13 +926,9 @@ public class KdsHttpServer extends AlfredHttpServer {
         Response resp = null;
         Map<String, Object> result = new HashMap<>();
         List<Integer> revenueCenterIds = new ArrayList<>();
-        if (App.instance.isBalancer()) {
             for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
                 revenueCenterIds.add(mainPosInfo.getRevenueId());
             }
-        } else {
-            revenueCenterIds.add(App.instance.getCurrentConnectedMainPos().getRevenueId());
-        }
         try {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
@@ -1014,7 +1017,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                         } else {//sub kds with fake id
                             int KotSummaryId = CommonSQL.isFakeId(kotSummary.getId()) ? kotSummary.getOriginalId() : kotSummary.getId();
-                            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(KotSummaryId);
+                            KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(KotSummaryId, kotSummary.getRevenueCenterId());
 
                             if (kotSummaryLocal != null) {
                                 KotSummarySQL.updateKotSummaryOrderCountById(kotSummary.getOrderDetailCount(),
@@ -1162,11 +1165,11 @@ public class KdsHttpServer extends AlfredHttpServer {
                     jsonObject.optString("mainpos"), MainPosInfo.class);
             List<MainPosInfo> mainPosInfoList = new ArrayList<>();
 
-            if (App.instance.isBalancer()) {
+//            if (App.instance.isBalancer()) {
                 mainPosInfoList = App.instance.getCurrentConnectedMainPosList();
-            } else {
-                mainPosInfoList.add(App.instance.getCurrentConnectedMainPos());
-            }
+//            } else {
+//                mainPosInfoList.add(App.instance.getCurrentConnectedMainPos());
+//            }
 
             //old POS version(<1.0.1) POS dont have mainpos object in request
             if (pos == null)

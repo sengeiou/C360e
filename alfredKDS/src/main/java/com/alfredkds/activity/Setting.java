@@ -114,24 +114,11 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
             llStackCount.setVisibility(View.GONE);
 
             RadioGroup radioGroup = (RadioGroup) findViewById(R.id.rgBalancerMode);
+            RadioButton rbNormal = (RadioButton) findViewById(R.id.rbNormal);
             RadioButton rdBalance = (RadioButton) findViewById(R.id.rdBalance);
             RadioButton rdStack = (RadioButton) findViewById(R.id.rdStack);
             Button btnSave = (Button) findViewById(R.id.btSave);
-
-            int mode = settings.getBalancerMode();
-
-            if (mode == SystemSettings.MODE_BALANCE)
-                rdBalance.setChecked(true);
-            else if (mode == SystemSettings.MODE_STACK) {
-                rdStack.setChecked(true);
-                llStackCount.setVisibility(View.VISIBLE);
-                etStackCount.setText(settings.getStackCount() + "");
-            }
-
-            if (mode >= 0) {
-                tvTime.setVisibility(View.VISIBLE);
-                tvTime.setText(TimeUtil.getTimeByFormat(settings.getBalancerTime(), TimeUtil.PRINTER_FORMAT_TIME));
-            }
+            tvTime.setVisibility(View.GONE);
 
             radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
@@ -144,10 +131,35 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                         settings.setBalancerMode(SystemSettings.MODE_STACK);
                         tvTime.setVisibility(View.VISIBLE);
                         llStackCount.setVisibility(View.VISIBLE);
+                    } else {
+                        settings.setBalancerMode(SystemSettings.MODE_NORMAL);
+                        tvTime.setVisibility(View.GONE);
+                        llStackCount.setVisibility(View.GONE);
                     }
 
                 }
             });
+
+            int mode = settings.getBalancerMode();
+
+            if (mode == SystemSettings.MODE_BALANCE) {
+                rdBalance.setChecked(true);
+                etStackCount.setVisibility(View.GONE);
+                llStackCount.setVisibility(View.GONE);
+            } else if (mode == SystemSettings.MODE_STACK) {
+                rdStack.setChecked(true);
+                llStackCount.setVisibility(View.VISIBLE);
+                etStackCount.setText(settings.getStackCount() + "");
+            } else {
+                rbNormal.setChecked(true);
+                etStackCount.setVisibility(View.GONE);
+                llStackCount.setVisibility(View.GONE);
+            }
+
+            if (mode >= 0) {
+                tvTime.setVisibility(View.VISIBLE);
+                tvTime.setText(TimeUtil.getTimeByFormat(settings.getBalancerTime(), TimeUtil.PRINTER_FORMAT_TIME));
+            }
 
             tvTime.setOnClickListener(this);
             btnSave.setOnClickListener(this);

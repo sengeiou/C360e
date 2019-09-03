@@ -11,8 +11,9 @@ import java.util.Calendar;
 public class SystemSettings {
     private Context context;
 
-    public static final int MODE_BALANCE = 0;
-    public static final int MODE_STACK = 1;
+    public static final int MODE_NORMAL = 0;
+    public static final int MODE_BALANCE = 1;
+    public static final int MODE_STACK = 2;
     private boolean islandscape = false;
 
     public SystemSettings(Context context) {

@@ -351,6 +351,8 @@ public class HttpAPI {
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_SUCCESS, null));
                             } else if (resultCode == ResultCode.KOTSUMMARY_IS_UNREAL) {
                                 HttpAnalysis.deleteKot(statusCode, headers, responseBody, handler);
+                            } else if (resultCode == ResultCode.USER_NO_PERMIT) {
+                                handler.sendMessage(handler.obtainMessage(ResultCode.USER_NO_PERMIT, null));
                             } else {
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_FAILED, null));
                             }

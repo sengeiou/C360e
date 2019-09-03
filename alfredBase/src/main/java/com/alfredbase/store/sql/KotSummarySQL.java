@@ -667,11 +667,27 @@ public class KotSummarySQL {
     }
 
     public static KotSummary getKotSummaryById(int id) {
+        return getKotSummaryById(id, 0);
+    }
+
+    public static KotSummary getKotSummaryById(int id, int rvcId) {
         KotSummary kotSummary = null;
-        String sql = "select * from " + TableNames.KotSummary + " where id = ?";
+        String sql;
+
+        if (rvcId > 0) {
+            sql = "select * from " + TableNames.KotSummary + " where id = ? AND revenueCenterId = ?";
+        } else {
+            sql = "select * from " + TableNames.KotSummary + " where id = ?";
+        }
+
         Cursor cursor = null;
         try {
-            cursor = SQLExe.getDB().rawQuery(sql, new String[]{id + ""});
+            if (rvcId > 0) {
+                cursor = SQLExe.getDB().rawQuery(sql, new String[]{id + "", rvcId + ""});
+            } else {
+                cursor = SQLExe.getDB().rawQuery(sql, new String[]{id + ""});
+            }
+
             if (cursor.moveToFirst()) {
                 kotSummary = new KotSummary();
                 kotSummary.setId(cursor.getInt(0));

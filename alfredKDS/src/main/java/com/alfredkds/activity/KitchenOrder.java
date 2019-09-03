@@ -154,6 +154,10 @@ public class KitchenOrder extends BaseActivity {
             }
 
             switch (msg.what) {
+                case ResultCode.USER_NO_PERMIT:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, context.getResources().getString(R.string.pairing_fails));
+                    break;
                 case App.HANDLER_NEW_KOT:
                     kots = App.instance.getRefreshKots();
                     if (App.instance.getSystemSettings().isKdsLan()) {
@@ -466,9 +470,15 @@ public class KitchenOrder extends BaseActivity {
                                     parameters.put("kotModifiers", kotItemModifiers);
                                     parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                                     parameters.put("type", 1);
-                                    SyncCentre.getInstance().kotNextKDS(KitchenOrder.this,
-                                            App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
-                                    loadingDialog.show();
+
+                                    MainPosInfo mainPosInfo = App.instance.getCurrentConnectedMainPos(kot.getKotSummary().getRevenueCenterId());
+
+                                    if (mainPosInfo != null) {
+                                        SyncCentre.getInstance().kotNextKDS(KitchenOrder.this,
+                                                mainPosInfo, parameters, handler, -1);
+
+                                        loadingDialog.show();
+                                    }
                                 }
                             });
                     //endregion

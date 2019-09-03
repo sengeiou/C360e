@@ -78,11 +78,11 @@ public class SelectKitchen extends BaseActivity {
                 parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
 
                 List<String> ips = new ArrayList<>();
-                if (App.instance.isBalancer()) {
+//                if (App.instance.isBalancer()) {
                     ips.addAll(App.instance.getAllPairingIp());
-                } else {
-                    ips.add(App.instance.getPairingIp());
-                }
+//                } else {
+//                    ips.add(App.instance.getPairingIp());
+//                }
 
                 for (String ip : ips) {
                     SyncCentre.getInstance().pairingComplete(context, ip, parameters, handler);
@@ -104,6 +104,9 @@ public class SelectKitchen extends BaseActivity {
     public void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
     }
+
+    private int pairingSize = App.instance.getAllPairingIp().size();
+    private int pairingCount = 0;
 
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
@@ -130,9 +133,12 @@ public class SelectKitchen extends BaseActivity {
                 // break;
                 case ResultCode.SUCCESS:
                     // Store POS device Info once pairing success
-                    loadingDialog.dismiss();
-                    UIHelp.startLogin(context);
-                    finish();
+                    pairingCount++;
+                    if (pairingCount >= pairingSize) {
+                        loadingDialog.dismiss();
+                        UIHelp.startLogin(context);
+                        finish();
+                    }
                     break;
                 case HANDLER_ERROR:
                     loadingDialog.dismiss();

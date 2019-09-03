@@ -21,16 +21,19 @@ public class PrinterGroupSQL {
         try {
             String sql = "replace into "
                     + TableNames.PrinterGroup
-                    + "(id, printerGroupId,printerId,companyId,restaurantId,printerType,isChildGroup)"
-                    + " values (?,?,?,?,?,?,?)";
+                    + "(id, printerGroupId,printerId,companyId,restaurantId,printerType,isChildGroup,sequenceNumber)"
+                    + " values (?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
-                    new Object[]{printerGroup.getId(), printerGroup.getPrinterGroupId(),
+                    new Object[]{printerGroup.getId(),
+                            printerGroup.getPrinterGroupId(),
                             printerGroup.getPrinterId(),
                             printerGroup.getCompanyId(),
                             printerGroup.getRestaurantId(),
                             printerGroup.getPrinterType(),
-                            printerGroup.getIsChildGroup()});
+                            printerGroup.getIsChildGroup(),
+                            printerGroup.getSequenceNumber()
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,8 +48,8 @@ public class PrinterGroupSQL {
             db.beginTransaction();
             String sql = "replace into "
                     + TableNames.PrinterGroup
-                    + "(id,printerGroupId,printerId,companyId,restaurantId,printerType,isChildGroup)"
-                    + " values (?,?,?,?,?,?,?)";
+                    + "(id,printerGroupId,printerId,companyId,restaurantId,printerType,isChildGroup,sequenceNumber)"
+                    + " values (?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (PrinterGroup printer : printerGroups) {
@@ -64,6 +67,8 @@ public class PrinterGroupSQL {
                         printer.getPrinterType());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
                         printer.getIsChildGroup());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
+                        printer.getSequenceNumber());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -95,6 +100,7 @@ public class PrinterGroupSQL {
                 pg.setRestaurantId(cursor.getInt(4));
                 pg.setPrinterType(cursor.getInt(5));
                 pg.setIsChildGroup(cursor.getInt(6));
+                pg.setSequenceNumber(cursor.getInt(7));
                 result.add(pg);
             }
         } catch (Exception e) {

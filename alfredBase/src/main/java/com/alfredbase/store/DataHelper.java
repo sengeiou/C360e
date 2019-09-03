@@ -1681,6 +1681,8 @@ public class DataHelper {
                     + " ADD COLUMN completeTime LONG default 0");
             db.execSQL("ALTER TABLE " + TableNames.OrderBill
                     + " ADD COLUMN printTime LONG default 0");
+            db.execSQL("ALTER TABLE " + TableNames.PrinterGroup
+                    + " ADD COLUMN sequenceNumber INTEGER default 0");
         }
     }
 }
