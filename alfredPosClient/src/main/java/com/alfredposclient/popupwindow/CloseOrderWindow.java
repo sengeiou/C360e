@@ -1460,7 +1460,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     break;
                 case R.id.tv_cash_200:
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
-                    //selectNumberAction(200);
+                    selectNumberAction(200);
                     isFirstClickCash = true;
                     break;
                 case R.id.tv_cash_150:
