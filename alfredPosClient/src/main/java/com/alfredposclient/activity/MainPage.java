@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -2288,16 +2287,23 @@ public class MainPage extends BaseActivity {
                     } else if (orderDetail.getOrderDetailStatus() >= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                         Map<String, Object> map = new HashMap<String, Object>();
                         map.put("orderDetail", orderDetail);
-                        map.put("type", new Integer(
-                                ParamConst.ORDERDETAIL_TYPE_VOID));
-                        handler.sendMessage(handler.obtainMessage(
-                                MainPage.VIEW_EVENT_VOID_OR_FREE, map));
+                        map.put("type", new Integer(ParamConst.ORDERDETAIL_TYPE_VOID));
+                        handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_VOID_OR_FREE, map));
                         handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_MODIFIER_VIEW);
+                        List<OrderDetail> ordersDetail = OrderDetailSQL.getOrderDetails(oldOrder.getId());
+                        if (ordersDetail.size() > 0) {
+                            removeItemLogic(orderDetail);
+                            showTables();
+                            onBackPressed();
+                            ordersDetail = OrderDetailSQL.getOrderDetails(oldOrder.getId());
+                            if (ordersDetail.size() <= 0){
+                                unseat(oldOrder);
+                            } else {
+
+                            }
+                        }
                     }
 
-
-                    showTables();
-                    onBackPressed();
                     break;
                 default:
                     break;
@@ -2308,19 +2314,22 @@ public class MainPage extends BaseActivity {
     };
 
     private void unseat() {
-        OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
-        KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
-        OrderModifierSQL.deleteOrderModifierByOrder(currentOrder);
-        List<OrderSplit> splits = OrderSplitSQL.getAllOrderSplits(currentOrder);
+        unseat(currentOrder);
+    }
+    private void unseat(Order order) {
+        OrderDetailSQL.deleteOrderDetailByOrder(order);
+        KotSummarySQL.deleteKotSummaryByOrder(order);
+        OrderModifierSQL.deleteOrderModifierByOrder(order);
+        List<OrderSplit> splits = OrderSplitSQL.getAllOrderSplits(order);
         if (splits.size() > 0) {
             for (OrderSplit split : splits) {
                 OrderSplitSQL.delete(split);
             }
         }
-        OrderBillSQL.deleteOrderBillByOrder(currentOrder);
-        OrderSQL.deleteOrder(currentOrder);
+        OrderBillSQL.deleteOrderBillByOrder(order);
+        OrderSQL.deleteOrder(order);
 
-        TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
+        TableInfo tables = TableInfoSQL.getTableById(order.getTableId().intValue());
         tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
         if (checkIfTableFromThisRVC(tables)) {
             TableInfoSQL.updateTables(tables);
@@ -2338,6 +2347,7 @@ public class MainPage extends BaseActivity {
         activityRequestCode = 0;
         selectOrderSplitDialog.dismiss();
         tableShowAction = SHOW_TABLES;
+        order = null;
         currentOrder = null;
         showTables();
     }
