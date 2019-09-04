@@ -726,9 +726,11 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
             App.instance.getNewOrderDetail().clear();
             App.instance.printKOT(printerDevice, kotsummary, printKOTItemDetails, kotItemModifiers);
         } else {//print remote
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("orderId", currentOrder.getId().intValue());
-            SyncCentre.getInstance().rePrintKOT(context, parameters, handler);
+            if (isRePrintKOT) {
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("orderId", currentOrder.getId().intValue());
+                SyncCentre.getInstance().rePrintKOT(context, parameters, handler);
+            }
         }
     }
 

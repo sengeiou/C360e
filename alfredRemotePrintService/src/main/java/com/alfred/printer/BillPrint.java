@@ -779,7 +779,7 @@ public class BillPrint extends PrintJob {
             discount = NumberFormat.getNumberInstance(Locale.US).format(new Double(discount.replace(",", "")).intValue());
         }
         String discountStr = StringUtil.padLeft(discount, this.FIXED_COL4_TOTAL);
-        String padDiscount = PrintService.instance.getResources().getString(R.string.discount) + currencySymbol + discountStr + reNext;
+        String padDiscount = PrintService.instance.getResources().getString(R.string.discount) + " :" + currencySymbol + discountStr + reNext;
         discPrint.setDataFormat(PrintData.FORMAT_TXT);
         discPrint.setTextAlign(PrintData.ALIGN_RIGHT);
         discPrint.setText(padDiscount);
@@ -850,19 +850,22 @@ public class BillPrint extends PrintJob {
                 new TypeToken<Map<String, String>>() {
                 }.getType());
         PrintData totalPrint = new PrintData();
-        String totalStr = StringUtil.padLeft(BH.formatMoney(BH.getBD(roundMap.get("Total")).toString()).toString(),
-                this.FIXED_COL4_TOTAL);
-        if (splitByPax > 0) {
-            totalStr = StringUtil.padLeft(BH.getBD(total).toString(),
-                    this.FIXED_COL4_TOTAL);
-        }
+        String totalStr = StringUtil.padLeft(BH.formatMoney(BH.getBD(roundMap.get("Total")).toString()), this.FIXED_COL4_TOTAL);
         if(currencySymbol.equals("Rp"))
         {
             totalStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(roundMap.get("Total"))),
                     this.FIXED_COL4_TOTAL);
             if (splitByPax > 0) {
-                totalStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(total)),
-                        this.FIXED_COL4_TOTAL);
+                totalStr = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(BH.getBD(total)), this.FIXED_COL4_TOTAL);
+            }
+        }
+        else
+        {
+            if (splitByPax > 0)
+            {
+                DecimalFormat df = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+                df.setRoundingMode(RoundingMode.HALF_UP);
+                totalStr = StringUtil.padLeft(df.format(Double.parseDouble(total)), this.FIXED_COL4_TOTAL);
             }
         }
         String totaling = PrintService.instance.getResources().getString(R.string.total_) + currencySymbol + totalStr + reNext;
@@ -903,6 +906,12 @@ public class BillPrint extends PrintJob {
         {
             grandTotal =  NumberFormat.getNumberInstance(Locale.US).format(new Double(grandTotal.replace(",", "")));
         }
+        else
+        {
+            DecimalFormat df = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            grandTotal = StringUtil.padLeft(df.format(Double.parseDouble(grandTotal)), this.FIXED_COL4_TOTAL);
+        }
         String gtotalStr = StringUtil.padLeft(grandTotal, this.FIXED_COL4_TOTAL);
         String padTotal = PrintService.instance.getResources().getString(R.string.grand_total) + " : " + currencySymbol + gtotalStr + reNext;
         if (splitByPax > 0) {
@@ -929,21 +938,21 @@ public class BillPrint extends PrintJob {
                 PrintData toPrint = new PrintData();
                 String lable;
                 String toPrintStr;
-                if(currencySymbol.equals("Rp"))
-                {
-                    lable = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(Double.parseDouble(entry.getValue())), this.FIXED_COL4_TOTAL);
-                }
-                else
-                {
-                    DecimalFormat df = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
-                    df.setRoundingMode(RoundingMode.HALF_UP);
-                    lable = StringUtil.padLeft(df.format(Double.parseDouble(entry.getValue())), this.FIXED_COL4_TOTAL);
-                }
                 if (PrintService.instance.getResources().getString(R.string.card_no).equals(entry.getKey())) {
-                    //lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
+                    lable = StringUtil.padLeft(entry.getValue().toString(), this.FIXED_COL4_TOTAL);
                     toPrintStr = entry.getKey() + " : " + lable + reNext;
                 } else {
-                    //lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
+//                    lable = StringUtil.padLeft(BH.getBD(entry.getValue()).toString(), this.FIXED_COL4_TOTAL);
+                    if(currencySymbol.equals("Rp"))
+                    {
+                        lable = StringUtil.padLeft(NumberFormat.getNumberInstance(Locale.US).format(Double.parseDouble(entry.getValue())), this.FIXED_COL4_TOTAL);
+                    }
+                    else
+                    {
+                        DecimalFormat df = new DecimalFormat("0.00", new DecimalFormatSymbols(Locale.US));
+                        df.setRoundingMode(RoundingMode.HALF_UP);
+                        lable = StringUtil.padLeft(df.format(Double.parseDouble(entry.getValue())), this.FIXED_COL4_TOTAL);
+                    }
                     toPrintStr = entry.getKey() + " : " + currencySymbol + lable + reNext;
                 }
                 toPrint.setDataFormat(PrintData.FORMAT_TXT);
