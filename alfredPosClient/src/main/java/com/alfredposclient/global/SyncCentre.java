@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
@@ -425,17 +426,21 @@ public class SyncCentre {
 
     // Backend Server IP
     private String getAbsoluteUrl(String relativeUrl) {
-        if (App.instance.isDebug) {
+        if (BaseApplication.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
 //            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
-            return "http://18.140.71.198/alfred-api/" + relativeUrl;//staging
-        } else if (App.instance.isOpenLog) {
+            return "http://18.138.252.241/alfred-api/" + relativeUrl;
+        } else if (BaseApplication.isOpenLog) {
 
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
+            if (BaseApplication.isZeeposDev) {
+                return "http://18.140.71.198/alfred-api/" + relativeUrl;//staging
+            } else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-            return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+                return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
+            }
         }
     }
 

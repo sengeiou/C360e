@@ -70,8 +70,12 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class CoreData {
     private static CoreData instance;
@@ -108,6 +112,7 @@ public class CoreData {
     private List<UserRestaurant> userRestaurant;
     private List<KotNotification> kotNotifications;
     private List<LocalDevice> localDevices;
+    private Map<Integer, List<PrinterGroup>> printerGroupMap = new HashMap<>();
 
     private SubPosBean subPosBean;
 
@@ -276,7 +281,7 @@ public class CoreData {
         List<Printer> summaryPrinter = new ArrayList<>();
         List<Printer> expediterPrinter = new ArrayList<>();
 
-        for (PrinterGroup pg : getPrinterGroups()) {
+        for (PrinterGroup pg : getPrinterGroupsById(groupid)) {
             if (pg.getPrinterGroupId().intValue() == groupid) {
                 Printer pt = this.getPrinterById(pg.getPrinterId().intValue());
                 if (pt == null) continue;
@@ -295,7 +300,7 @@ public class CoreData {
 
     public ArrayList<PrinterGroup> getPrinterGroupInGroup(int groupid) {
         ArrayList<PrinterGroup> result = new ArrayList<>();
-        for (PrinterGroup pg : getPrinterGroups()) {
+        for (PrinterGroup pg : getPrinterGroupsById(groupid)) {
             if (pg.getPrinterGroupId().intValue() == groupid && pg.getIsChildGroup() == 1) {
                 result.add(pg);
             }
@@ -841,6 +846,29 @@ public class CoreData {
         if (printerGroups == null)
             return Collections.emptyList();
         return printerGroups;
+    }
+
+    public List<PrinterGroup> getPrinterGroupsById(int printerGroupId) {
+        if (!printerGroupMap.containsKey(printerGroupId)) {
+            SortedMap<Integer, PrinterGroup> sortedMap = new TreeMap<>();
+
+            int seqNumber = 0;
+            for (PrinterGroup pg : getPrinterGroups()) {
+                seqNumber++;
+
+                if (pg.getPrinterGroupId().equals(printerGroupId)) {
+                    if (pg.getSequenceNumber() == null)
+                        pg.setSequenceNumber(seqNumber);
+
+                    sortedMap.put(pg.getSequenceNumber(), pg);
+                }
+            }
+
+            List<PrinterGroup> printerGroupList = new ArrayList<>(sortedMap.values());
+            printerGroupMap.put(printerGroupId, printerGroupList);
+        }
+
+        return printerGroupMap.get(printerGroupId);
     }
 
     public void setPrinterGroups(List<PrinterGroup> printerGroups) {

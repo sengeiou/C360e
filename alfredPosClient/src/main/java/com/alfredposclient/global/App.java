@@ -1332,6 +1332,7 @@ public class App extends BaseApplication {
 
     /* Get all users currently connected to POS */
     public void addActiveUser(String userKey, User user) {
+        getActiveUser();
         activeUsers.put(userKey, user);
         Store.saveObject(this, Store.USER_AND_KEY, activeUsers);
     }

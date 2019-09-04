@@ -581,7 +581,9 @@ public class KotJobManager {
                             .getPrintersInGroup(printerGroupId);
                 }
 
-                printers.add(App.instance.getPrinterBalancer());
+                Printer printerBalancer = App.instance.getPrinterBalancer();
+                if (printerBalancer != null)
+                    printers.add(printerBalancer);
             } else {
                 if (printerGroupAsChildes.size() > 0) {//printer group
                     for (PrinterGroup pg : printerGroupAsChildes) {
@@ -839,8 +841,10 @@ public class KotJobManager {
                             .getPrintersInGroup(prgid);
                 }
 
-                //also delete one balancer
-                printers.add(App.instance.getPrinterBalancer());
+                //also delete on balancer
+                Printer printerBalancer = App.instance.getPrinterBalancer();
+                if (printerBalancer != null)
+                    printers.add(printerBalancer);
             }
 
             boolean isCheckBalancer = false;
