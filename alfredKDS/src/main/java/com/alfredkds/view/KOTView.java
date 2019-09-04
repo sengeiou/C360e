@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KDSTracking;
 import com.alfredbase.javabean.KotItemDetail;
@@ -634,9 +635,10 @@ public class KOTView extends LinearLayout implements AnimationListener,
                     parameters.put("kotSummary", kot.getKotSummary());
                     parameters.put("kotItemDetails", kotItemDetails);
                     parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+                    parameters.put("userKey", CoreData.getInstance().getUserKey(kot.getKotSummary().getRevenueCenterId()));
 
                     SyncCentre.getInstance().kotComplete(context,
-                            App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                            App.instance.getCurrentConnectedMainPos(kot.getKotSummary().getRevenueCenterId()), parameters, handler, -1);
 
                 } else {
                     if (kot.getKotSummary().isNext() == 1) {

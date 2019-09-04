@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
@@ -403,8 +404,10 @@ public class Summary extends BaseActivity {
 						Map<String, Object> parameters = new HashMap<String, Object>();
 						parameters.put("kotSummary", kotSummary);
 						parameters.put("kotItemDetails", itemDetails);
+						parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
+
 						SyncCentre.getInstance().kotComplete(context, 
-								App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
+								App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler,-1);
 						
 //						kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(kotItemDetail.getItemName()));
 //						kotdetailsAdapter.notifyDataSetChanged();
@@ -485,8 +488,9 @@ public class Summary extends BaseActivity {
 						Map<String, Object> parameters = new HashMap<String, Object>();
 						parameters.put("kotSummary", kot.getKotSummary());
 						parameters.put("kotItemDetails", itemDetails);
+						parameters.put("userKey", CoreData.getInstance().getUserKey(kot.getKotSummary().getRevenueCenterId()));
 						SyncCentre.getInstance().kotComplete(context, 
-								App.instance.getCurrentConnectedMainPos(),parameters, handler,-1);
+								App.instance.getCurrentConnectedMainPos(kot.getKotSummary().getRevenueCenterId()),parameters, handler,-1);
 					}
 					break;
 				default:

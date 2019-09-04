@@ -5,6 +5,7 @@ import android.os.Handler;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
@@ -94,6 +95,7 @@ public class SyncCentre {
         Map<Integer, MainPosInfo> mainPOS = App.instance.getMainPosInfos();
         for (Map.Entry<Integer, MainPosInfo> entry : mainPOS.entrySet()) {
             MainPosInfo pos = entry.getValue();
+            parameters.put("userKey", CoreData.getInstance().getUserKey(pos.getRevenueId()));
             HttpAPI.kdsIpChange(context, parameters,
                     getUrl(pos.getIP(), APIName.KDS_IP_CHANGE), httpClient, handler);
 
@@ -121,6 +123,8 @@ public class SyncCentre {
 
     public void callSpecifyNum(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
                                Handler handler, int id) {
+        if (parameters != null)
+            parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
         HttpAPI.callSpecifyNum(context, parameters,
                 getAbsoluteUrl(mainPosInfo, APIName.CALL_SPECIFY_THE_NUMBER), httpClient, handler, id);
     }
@@ -134,6 +138,8 @@ public class SyncCentre {
 
     public void Logout(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
                        Handler handler) {
+        if (parameters != null)
+            parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
         HttpAPI.Logout(context, parameters,
                 getAbsoluteUrl(mainPosInfo, APIName.LOGIN_LOGOUT), httpClient, handler);
     }

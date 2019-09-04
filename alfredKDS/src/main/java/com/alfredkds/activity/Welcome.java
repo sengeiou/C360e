@@ -129,16 +129,15 @@ public class Welcome extends BaseActivity {
 
     private void startNextActivity() {
 
-        List<MainPosInfo> connectedMainPos = new ArrayList<>();
+        List<MainPosInfo> connectedMainPos = App.instance.getCurrentConnectedMainPosList();
 
-        if (App.instance.isBalancer()) {
-            CoreData.getInstance().init(context);
-            connectedMainPos = App.instance.getCurrentConnectedMainPosList();
-        } else {
-            MainPosInfo mainPosInfo = App.instance.getCurrentConnectedMainPos();
-            if (mainPosInfo != null)
-                connectedMainPos.add(mainPosInfo);
-        }
+//        if (App.instance.isBalancer()) {
+        CoreData.getInstance().init(context);
+//        } else {
+//            MainPosInfo mainPosInfo = App.instance.getCurrentConnectedMainPos();
+//            if (mainPosInfo != null)
+//                connectedMainPos.add(mainPosInfo);
+//        }
 
         User user = Store.getObject(context, Store.KDS_USER, User.class);
         List<String> ipList = new ArrayList<>();

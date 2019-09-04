@@ -262,7 +262,7 @@ public class HttpAPI {
                                    Map<String, Object> parameters, String url,
                                    AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey());
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -297,7 +297,7 @@ public class HttpAPI {
                                             final Map<String, Object> parameters, String url,
                                             AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey());
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -334,7 +334,7 @@ public class HttpAPI {
                                   final Map<String, Object> parameters, String url,
                                   AsyncHttpClient httpClient, final Handler handler, final int id) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey());
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -378,7 +378,7 @@ public class HttpAPI {
                                    final Map<String, Object> parameters, String url,
                                    AsyncHttpClient httpClient, final Handler handler, final int id) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey());
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -457,7 +457,7 @@ public class HttpAPI {
                                       final Map<String, Object> parameters, String url,
                                       AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey());
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -510,7 +510,7 @@ public class HttpAPI {
                                       final Map<String, Object> parameters, String url,
                                       AsyncHttpClient httpClient, final Handler handler, final int id) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey());
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -552,7 +552,7 @@ public class HttpAPI {
                               final Map<String, Object> parameters, String url,
                               AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey());
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {

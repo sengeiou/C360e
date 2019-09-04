@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.global.BugseeHelper;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.MainPosInfo;

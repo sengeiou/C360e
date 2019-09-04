@@ -18,6 +18,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.model.MainPosInfo;
@@ -209,9 +210,10 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", kotSummary);
                             parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
 
                             SyncCentre.getInstance().kotComplete(parent,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                    App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler, -1);
                         } else {
                             kotItemDetail.setUnFinishQty(Integer.parseInt(str) - Integer.parseInt(itemnum));
 //						kotItemDetail.setFinishQty(kotItemDetail.getFinishQty()+Integer.parseInt(itemnum));
@@ -224,9 +226,10 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", kotSummary);
                             parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
 
                             SyncCentre.getInstance().kotComplete(parent,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                    App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler, -1);
                         }
                     }
                 }

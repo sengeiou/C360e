@@ -131,7 +131,7 @@ public class HttpAnalysis {
             // }
             // }
             App.instance.addMainPosInfo(mainPosInfo);
-            CoreData.getInstance().setUserKey(userKey);
+            CoreData.getInstance().setUserKey(mainPosInfo.getRevenueId(), userKey);
             // check business data and session
             // Long bizDate = object.optLong("businessDate");
             // SessionStatus session =

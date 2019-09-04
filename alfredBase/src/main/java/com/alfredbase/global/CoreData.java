@@ -80,7 +80,7 @@ import java.util.TreeMap;
 public class CoreData {
     private static CoreData instance;
 
-    private String userKey;
+    private Map<Integer, String> userKey = new HashMap<>();
 
     private List<User> users;
     private List<RevenueCenter> revenueCenters;
@@ -328,7 +328,7 @@ public class CoreData {
     }
 
     public PrinterGroup getPrinterGroup(int printerGroupId) {
-        for (PrinterGroup pg : this.printerGroups) {
+        for (PrinterGroup pg : getPrinterGroupsById(printerGroupId)) {
             if (pg.getPrinterGroupId().equals(printerGroupId)) {
                 return pg;
             }
@@ -849,24 +849,24 @@ public class CoreData {
     }
 
     public List<PrinterGroup> getPrinterGroupsById(int printerGroupId) {
-        if (!printerGroupMap.containsKey(printerGroupId)) {
-            SortedMap<Integer, PrinterGroup> sortedMap = new TreeMap<>();
+//        if (!printerGroupMap.containsKey(printerGroupId)) {
+        SortedMap<Integer, PrinterGroup> sortedMap = new TreeMap<>();
 
-            int seqNumber = 0;
-            for (PrinterGroup pg : getPrinterGroups()) {
+        int seqNumber = 0;
+        for (PrinterGroup pg : getPrinterGroups()) {
+
+            if (pg.getPrinterGroupId().equals(printerGroupId)) {
                 seqNumber++;
+                if (pg.getSequenceNumber() == null || pg.getSequenceNumber() <= 0)
+                    pg.setSequenceNumber(seqNumber);
 
-                if (pg.getPrinterGroupId().equals(printerGroupId)) {
-                    if (pg.getSequenceNumber() == null)
-                        pg.setSequenceNumber(seqNumber);
-
-                    sortedMap.put(pg.getSequenceNumber(), pg);
-                }
+                sortedMap.put(pg.getSequenceNumber(), pg);
             }
-
-            List<PrinterGroup> printerGroupList = new ArrayList<>(sortedMap.values());
-            printerGroupMap.put(printerGroupId, printerGroupList);
         }
+
+        List<PrinterGroup> printerGroupList = new ArrayList<>(sortedMap.values());
+        printerGroupMap.put(printerGroupId, printerGroupList);
+//        }
 
         return printerGroupMap.get(printerGroupId);
     }
@@ -1129,12 +1129,12 @@ public class CoreData {
         this.happyHours = happyHours;
     }
 
-    public String getUserKey() {
-        return userKey;
+    public String getUserKey(int revId) {
+        return userKey.get(revId) != null ? userKey.get(revId) : "";
     }
 
-    public void setUserKey(String userKey) {
-        this.userKey = userKey;
+    public void setUserKey(int revId, String userKey) {
+        this.userKey.put(revId, userKey);
     }
 
     public List<UserRestaurant> getUserRestaurant() {

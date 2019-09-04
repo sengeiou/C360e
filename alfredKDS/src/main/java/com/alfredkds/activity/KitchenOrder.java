@@ -27,6 +27,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
@@ -392,8 +393,10 @@ public class KitchenOrder extends BaseActivity {
                             parameters.put("kotItemDetails", itemDetails);
                             parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                             parameters.put("type", 1);
+                            parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
+
                             SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                    App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler, -1);
                             loadingDialog.show();
                         }
                     });
@@ -434,8 +437,9 @@ public class KitchenOrder extends BaseActivity {
                             parameters.put("kotItemDetails", itemDetails);
                             parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                             parameters.put("type", 1);
+                            parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary1.getRevenueCenterId()));
                             SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, 1);
+                                    App.instance.getCurrentConnectedMainPos(kotSummary1.getRevenueCenterId()), parameters, handler, 1);
                             loadingDialog.show();
                         }
                     });
@@ -474,6 +478,7 @@ public class KitchenOrder extends BaseActivity {
                                     MainPosInfo mainPosInfo = App.instance.getCurrentConnectedMainPos(kot.getKotSummary().getRevenueCenterId());
 
                                     if (mainPosInfo != null) {
+                                        parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
                                         SyncCentre.getInstance().kotNextKDS(KitchenOrder.this,
                                                 mainPosInfo, parameters, handler, -1);
 
@@ -781,8 +786,9 @@ public class KitchenOrder extends BaseActivity {
                         parameters.put("kotItemDetails", itemDetails);
                         parameters.put("type", 1);
                         parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+                        parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
                         SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler, -1);
                         loadingDialog.show();
 
 
@@ -954,8 +960,9 @@ public class KitchenOrder extends BaseActivity {
                             parameters.put("kotSummary", popKot.getKotSummary());
                             parameters.put("kotItemDetails", itemDetails);
                             parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+                            parameters.put("userKey", CoreData.getInstance().getUserKey(popKot.getKotSummary().getRevenueCenterId()));
                             SyncCentre.getInstance().kotComplete(context,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                    App.instance.getCurrentConnectedMainPos(popKot.getKotSummary().getRevenueCenterId()), parameters, handler, -1);
                         }
 
                         break;
@@ -975,8 +982,13 @@ public class KitchenOrder extends BaseActivity {
                                         Map<String, Object> parameters = new HashMap<String, Object>();
                                         parameters.put("orderDetailId", orderDetailId);
 
-                                        SyncCentre.getInstance().updateRemainingStock(context,
-                                                App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                                        List<MainPosInfo> connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+                                        for (MainPosInfo mainPosInfo : connectedMainPos) {
+                                            parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
+
+                                            SyncCentre.getInstance().updateRemainingStock(context,
+                                                    App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                                        }
                                     }
                                 });
                         break;
@@ -1085,8 +1097,13 @@ public class KitchenOrder extends BaseActivity {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("orderDetailId", orderDetailId);
 
-                            SyncCentre.getInstance().updateRemainingStock(context,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                            List<MainPosInfo> connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+                            for (MainPosInfo mainPosInfo : connectedMainPos) {
+                                parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
+
+                                SyncCentre.getInstance().updateRemainingStock(context,
+                                        App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                            }
                         }
                     });
 
@@ -1120,8 +1137,10 @@ public class KitchenOrder extends BaseActivity {
                 parameters.put("kotSummary", popKot.getKotSummary());
                 parameters.put("kotItemDetails", itemDetails);
                 parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+                parameters.put("userKey", CoreData.getInstance().getUserKey(popKot.getKotSummary().getRevenueCenterId()));
                 SyncCentre.getInstance().kotComplete(context,
-                        App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                        App.instance.getCurrentConnectedMainPos(popKot.getKotSummary().getRevenueCenterId()),
+                        parameters, handler, -1);
             }
         }
     };

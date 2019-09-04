@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
@@ -212,8 +213,9 @@ public class KotHistory extends BaseActivity{
 						Map<String, Object> parameters = new HashMap<String, Object>();
 						parameters.put("kotSummary", kotSummary);
 						parameters.put("kotItemDetail", kotItemDetail);
+						parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
 						SyncCentre.getInstance().cancelComplete(context, 
-								App.instance.getCurrentConnectedMainPos(), parameters, handler);
+								App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler);
 						
 						adapter.setKotHistory(App.instance.getKotHistoryData());
 						adapter.notifyDataSetChanged();

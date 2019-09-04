@@ -135,20 +135,21 @@ public class App extends BaseApplication {
     @Override
     protected void onIPChanged() {
         super.onIPChanged();
-        if (isBalancer()) {
-            if (getCurrentConnectedMainPosList().size() <= 0 || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
-                return;
-            }
-        } else {
-            if (getCurrentConnectedMainPos() == null || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
-                return;
-            }
+//        if (isBalancer()) {
+        if (getCurrentConnectedMainPosList().size() <= 0 || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
+            return;
         }
+//        } else {
+//            if (getCurrentConnectedMainPos() == null || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
+//                return;
+//            }
+//        }
 
         if (getKdsDevice() != null) {
             this.kdsDevice.setIP(CommonUtil.getLocalIpAddress());
             this.setKdsDevice(kdsDevice);
             LogUtil.d(TAG, "onIPChanged: " + this.kdsDevice.toString());
+
             SyncCentre.getInstance().kdsIpChange(this.getApplicationContext(),
                     this.kdsDevice.toMap(), null);
         }
@@ -539,11 +540,11 @@ public class App extends BaseApplication {
         parameters.put("device", App.instance.getKdsDevice());
 
         List<MainPosInfo> connectedMainPos = new ArrayList<>();
-        if (isBalancer()) {
+//        if (isBalancer()) {
             connectedMainPos = App.instance.getCurrentConnectedMainPosList();
-        } else {
-            connectedMainPos.add(App.instance.getCurrentConnectedMainPos());
-        }
+//        } else {
+//            connectedMainPos.add(App.instance.getCurrentConnectedMainPos());
+//        }
 
         if (connectedMainPos.size() > 0) {
             for (MainPosInfo mainPosInfo : connectedMainPos) {
