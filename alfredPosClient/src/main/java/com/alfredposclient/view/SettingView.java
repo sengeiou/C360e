@@ -458,7 +458,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
         } else {
 
             if (App.instance.isCartenzLog) {
-                return "http://18.138.252.241/" + relativeUrl;
+                return "http://18.138.252.241:180/" + relativeUrl;
             } else {
                 return "http://www.servedbyalfred.biz/" + relativeUrl;
             }

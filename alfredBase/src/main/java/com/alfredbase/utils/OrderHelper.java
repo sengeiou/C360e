@@ -1,6 +1,7 @@
 package com.alfredbase.utils;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
@@ -38,6 +39,7 @@ import com.alfredbase.store.sql.PromotionWeekSQL;
 import com.bugsee.library.serverapi.data.Environment;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -638,6 +640,9 @@ public class OrderHelper {
 		order.setSubTotal(BH.getBD(subTotal).toString());
 		}
 
+	// Buy X Item and get Cheapest Item Free
+	// If you buy X items, cheapest food will be free
+	// This part has no issues.
 	private static BigDecimal promotionAndFree(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total) {
 		BigDecimal   promotionPrice=BH.getBD(ParamConst.DOUBLE_ZERO);
           int itemNum=0;
@@ -707,24 +712,23 @@ public class OrderHelper {
 
 			}
 		}
-
-
-
 		return total;
 	}
 
-	private static BigDecimal promotionAndPax(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total, int pax) {
+	// Pax Promotion
+	// If pax in backend set to 5, total price will have Discount Rate
+	// Current Issue: If in Order table you change pax, price not updated [If you add new item, price changes though)
+	// This part has minor issues.
+	private static BigDecimal promotionAndPax(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total, int pax)
+	{
 
 		BigDecimal   promotionPrice=BH.getBD(ParamConst.DOUBLE_ZERO);
-		if(total.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) >0&&pax>=promotion.getGuestNum()){
-//			subTotal = BH.sub(BH.getBD(subTotal),
-//					BH.getBD(promotion.getDiscountPrice()), false);
-
+		if(total.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) >0&&pax>=promotion.getGuestNum())
+		{
 			BigDecimal discount = BH.divThirdFormat(BH.getBD(promotion.getDiscountPercentage()), BH.getBD(100), false);
 
-			promotionPrice = BH.mul(promotionPrice, discount, false);
-			total = BH.sub(BH.getBD(total),promotionPrice
-					, false);
+			promotionPrice = BH.mul(total, discount, false);
+			total = BH.sub(BH.getBD(total),promotionPrice, false);
 			addPromotion(order, promotion, null,promotionPrice.toString());
 		}else {
 			deletePromotion(order,promotion);
@@ -733,153 +737,105 @@ public class OrderHelper {
 		return total;
 	}
 
-	private static BigDecimal promotionAndTotalDiscount(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total) {
+	// Buy X Total Price, get Y%
+	// If you purchase the item Xs exceeding Base Price, Discount will be applied onto Grand Total.
+	// This part has no issues.
+	private static BigDecimal promotionAndTotalDiscount(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total)
+	{
+		BigDecimal promotionPrice;
+		BigDecimal promotionTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
 
-		BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
+		for(OrderDetail orderDetail : orderDetails)
+		{
+			ItemDetail itemDetail= CoreData.getInstance().getItemDetailById(orderDetail.getItemId().intValue());
 
-	    	BigDecimal  promotionTotal=BH.getBD(ParamConst.DOUBLE_ZERO);
-		for(OrderDetail orderDetail : orderDetails){
-			ItemDetail itemDetail= CoreData.getInstance()
-					.getItemDetailById(orderDetail.getItemId().intValue());
-
-
-			if (promotion.getItemId()>0) {
-				if (promotion.getItemId().intValue() ==itemDetail.getItemTemplateId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE) {
-				//	CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
-					promotionTotal=BH.add(promotionPrice,BH.getBD(orderDetail.getRealPrice()),false);
-					//itemNum = itemNum + orderDetail.getItemNum();
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//						//orderDetailMin=orderDetail;
-//						}
+			if (promotion.getItemId()>0)
+			{
+				if (promotion.getItemId().intValue() ==itemDetail.getItemTemplateId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE)
+				{
+					promotionTotal=BH.add(promotionTotal,BH.getBD(orderDetail.getRealPrice()),false);
 				}
 			}
 
-
-			if (promotion.getItemId()<=0&&promotion.getItemCategoryId()>0) {
-				if (promotion.getItemCategoryId().intValue() ==itemDetail.getItemCategoryId()&&orderDetail.getIsFree()!=ParamConst.FREE) {
+			if (promotion.getItemId()<=0&&promotion.getItemCategoryId()>0)
+			{
+				if (promotion.getItemCategoryId().intValue() ==itemDetail.getItemCategoryId()&&orderDetail.getIsFree()!=ParamConst.FREE)
+				{
 					CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
-					promotionTotal=BH.add(promotionPrice,BH.getBD(orderDetail.getRealPrice()),false);
-				//	itemNum = itemNum + orderDetail.getItemNum();
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//						//orderDetailMin=orderDetail;
-//						}
-
+					promotionTotal=BH.add(promotionTotal,BH.getBD(orderDetail.getRealPrice()),false);
 				}
 			}
 			// 最后按照主分类找
-			if (promotion.getItemId()<=0&& promotion.getItemCategoryId()<=0) {
-				if (promotion.getItemMainCategoryId().intValue() == itemDetail
-						.getItemMainCategoryId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE) {
-					promotionTotal=BH.add(promotionPrice,BH.getBD(orderDetail.getRealPrice()),false);
-				//	itemNum = itemNum + orderDetail.getItemNum();
-
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//							//orderDetailMin=orderDetail;
-//						}
+			if (promotion.getItemId()<=0&& promotion.getItemCategoryId()<=0)
+			{
+				if (promotion.getItemMainCategoryId().intValue() == itemDetail.getItemMainCategoryId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE)
+				{
+					promotionTotal=BH.add(promotionTotal,BH.getBD(orderDetail.getRealPrice()),false);
 				}
-
 			}
-
-//
 		}
 
-		if(promotionTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) == 0 ) {
-			if (total.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0 && total.compareTo(BH.getBD(promotion.getBasePrice())) >= 0) {
-				if (BH.getBD(promotion.getDiscountPercentage()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0&&promotion.getItemMainCategoryId()==0) {
+		if(promotionTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) == 0 )
+		{
+			if (total.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0 && total.compareTo(BH.getBD(promotion.getBasePrice())) >= 0)
+			{
+				if (BH.getBD(promotion.getDiscountPercentage()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0&&promotion.getItemMainCategoryId()==0)
+				{
 
 					BigDecimal discount = BH.divThirdFormat(BH.getBD(promotion.getDiscountPercentage()), BH.getBD(100), false);
-
-					promotionPrice = BH.mul(BH.getBD(promotionTotal),
-							BH.getBD(discount),
-							false);
-
-				     total = BH.sub(BH.getBD(total),promotionPrice
-						, false);
-
-
-					promotionPrice = BH.add(promotionPrice, promotionPrice, false);
+					promotionPrice = BH.mul(BH.getBD(promotionTotal), BH.getBD(discount), false);
+					total = BH.sub(BH.getBD(total),promotionPrice, false);
 					addPromotion(order, promotion, null, promotionPrice.toString());
 				}
-
-
-			} else {
+			}
+			else
+			{
 				deletePromotion(order, promotion);
 			}
-		}else {
-			if ( promotionTotal.compareTo(BH.getBD(promotion.getBasePrice())) >= 0) {
-				if (BH.getBD(promotion.getDiscountPercentage()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-
+		}
+		else
+		{
+			if ( promotionTotal.compareTo(BH.getBD(promotion.getBasePrice())) >= 0)
+			{
+				if (BH.getBD(promotion.getDiscountPercentage()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0)
+				{
 					BigDecimal discount = BH.divThirdFormat(BH.getBD(promotion.getDiscountPercentage()), BH.getBD(100), false);
-
-					promotionPrice = BH.mul(BH.getBD(promotionTotal),
-							BH.getBD(discount),
-							false);
-
-				total = BH.sub(BH.getBD(total),promotionPrice
-						, false);
-
-
-					promotionPrice = BH.add(promotionPrice, promotionPrice, false);
+					promotionPrice = BH.mul(BH.getBD(promotionTotal), BH.getBD(discount), false);
+					total = BH.sub(BH.getBD(total),promotionPrice, false);
 					addPromotion(order, promotion, null, promotionPrice.toString());
 				}
 
-			} else {
+			}
+			else
+			{
 				deletePromotion(order, promotion);
 			}
 		}
 		return total;
 	}
 
-
+	// Buy X Total Price, get Y Item Free
+	// If you purchase item Xs exceeding Base Price, you will get FreeItem.
+	// This part has no issues.
 	private static BigDecimal promotionAndTotalFree(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total) {
 		BigDecimal promotionTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
 		BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
-//		if (subTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0 && subTotal.compareTo(BH.getBD(promotion.getBasePrice())) >= 0) {
-//			if (BH.getBD(promotion.getDiscountPercentage()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-//
-////				subTotal = BH.sub(BH.getBD(subTotal),
-////						BH.getBD(promotion.getDiscountPrice()), false);
-////
-////				promotionPrice = BH.add(promotionPrice, BH.getBDNoFormat(promotion.getDiscountPrice()), false);
-//				addPromotion(order, promotion,null,promotionPrice.toString());
-//			}
 
-		for(OrderDetail orderDetail : orderDetails){
+		for(OrderDetail orderDetail : orderDetails)
+		{
 			ItemDetail itemDetail= CoreData.getInstance()
 					.getItemDetailById(orderDetail.getItemId().intValue());
 
-
 			if (promotion.getItemId()>0) {
 				if (promotion.getItemId().intValue() ==itemDetail.getItemTemplateId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE) {
-					//	CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
 					promotionTotal=BH.add(promotionTotal,BH.getBD(orderDetail.getRealPrice()),false);
-					//itemNum = itemNum + orderDetail.getItemNum();
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//						//orderDetailMin=orderDetail;
-//						}
 				}
 			}
-
 
 			if (promotion.getItemId()<=0&&promotion.getItemCategoryId()>0) {
 				if (promotion.getItemCategoryId().intValue() ==itemDetail.getItemCategoryId()&&orderDetail.getIsFree()!=ParamConst.FREE) {
 					CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
 					promotionTotal=BH.add(promotionTotal,BH.getBD(orderDetail.getRealPrice()),false);
-					//	itemNum = itemNum + orderDetail.getItemNum();
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//						//orderDetailMin=orderDetail;
-//						}
-
 				}
 			}
 			// 最后按照主分类找
@@ -887,396 +843,253 @@ public class OrderHelper {
 				if (promotion.getItemMainCategoryId().intValue() == itemDetail
 						.getItemMainCategoryId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE) {
 					promotionTotal=BH.add(promotionTotal,BH.getBD(orderDetail.getRealPrice()),false);
-					//	itemNum = itemNum + orderDetail.getItemNum();
-
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//							//orderDetailMin=orderDetail;
-//						}
 				}
-
 			}
 
-//
+			if(promotion.getFreeItemId().intValue() == itemDetail.getItemTemplateId().intValue() && orderDetail.getIsFree()==ParamConst.FREE)
+			{
+				deletePromotion(order, promotion);
+			}
+		}
+
+		int promoCount = 0;
+		for(BigDecimal tempValue = promotionTotal; tempValue.compareTo(BigDecimal.valueOf(Long.parseLong(promotion.getBasePrice()))) == 1; tempValue = tempValue.subtract(BH.getBD(promotion.getBasePrice())))
+		{
+			deletePromotion(order, promotion);
+			promoCount++;
 		}
 
 		if(promotion.getItemMainCategoryId()>0) {
-
-
-			if (promotionTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0 && promotionTotal.compareTo(BH.getBD(promotion.getBasePrice())) >= 0) {
-
-				if (promotion.getFreeNum() > 0) {
-					ItemDetail itemDetailFree = CoreData.getInstance()
-							.getItemDetailByTemplateId(promotion.getFreeItemId());
-					if (itemDetailFree == null) {
-						return total;
+			if (promotionTotal.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
+				for(int x = 0; x < promoCount; x++)
+				{
+					ItemDetail itemDetailFree = CoreData.getInstance().getItemDetailByTemplateId(promotion.getFreeItemId());
+					if (promotion.getFreeNum() > 0)
+					{
+						if (itemDetailFree == null)
+						{
+							return total;
+						}
+						OrderDetail proOrderDetail = ObjectFactory.getInstance().getOrderDetailAndPromotion(order, itemDetailFree, 0, promotion);
+						proOrderDetail.setItemNum(promotion.getFreeNum());
+						proOrderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+						OrderDetailSQL.updateOrderDetail(proOrderDetail);
+						total = BH.sub(BH.getBD(total), promotionPrice, false);
+						addPromotion(order, promotion, proOrderDetail, promotionPrice.toString());
 					}
-					OrderDetail proOrderDetail = ObjectFactory.getInstance()
-							.getOrderDetailAndPromotion(order, itemDetailFree
-									,0,promotion);
-					proOrderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
-					OrderDetailSQL.updateOrderDetail(proOrderDetail);
-
-
-					promotionPrice = BH.mul(BH.getBD(proOrderDetail.getItemPrice()),
-							BH.getBD(promotion.getFreeNum()),
-							false);
-
-					total = BH.sub(BH.getBD(total),promotionPrice
-							, false);
-
-
-					promotionPrice = BH.add(promotionPrice, promotionPrice, false);
-					//addPromotion(order, promotion, null, promotionPrice.toString());
-					addPromotion(order, promotion, proOrderDetail, promotionPrice.toString());
-
 				}
-			} else {
+			}
+			else  if (promoCount == 0 || promotionTotal.compareTo(BigDecimal.valueOf(Long.parseLong(promotion.getBasePrice()))) == 1)
+			{
 				deletePromotion(order, promotion);
 			}
-		}else {
-			 if (total.compareTo(BH.getBD(promotion.getBasePrice())) >= 0 ) {
-
-				if (promotion.getFreeNum() > 0) {
-					ItemDetail itemDetailFree = CoreData.getInstance()
-							.getItemDetailByTemplateId(promotion.getFreeItemId());
-					if (itemDetailFree == null) {
-						return total;
-					}
-					OrderDetail proOrderDetail = ObjectFactory.getInstance()
-							.getOrderDetailAndPromotion(order, itemDetailFree,0,
-									promotion);
-
-					proOrderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
-					OrderDetailSQL.updateOrderDetail(proOrderDetail);
-
-
-					promotionPrice = BH.mul(BH.getBD(proOrderDetail.getItemPrice()),
-							BH.getBD(promotion.getFreeNum()),
-							false);
-
-					total = BH.sub(BH.getBD(total),promotionPrice
-							, false);
-
-					//OrderDetailSQL.updateOrderDetail(freeOrderDetail);
-					addPromotion(order, promotion, proOrderDetail, promotionPrice.toString());
-
-				}
-			}else {
-				 deletePromotion(order, promotion);
-			 }
 		}
 		return total;
 	}
 
-    private static BigDecimal promotionAndItemFree(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total) {
-//
-//        int itemNum = 0;
-//        int secondItemNum = 0;
-//        BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
-//        if (orderDetails.size() > 0) {
-//            for (OrderDetail orderDetail : orderDetails) {
-//                if (orderDetail.getItemId() == promotion.getItemId()) {
-//                    itemNum = itemNum + orderDetail.getItemNum();
-//                } else if (orderDetail.getItemId() == promotion.getSecondItemId()) {
-//                    secondItemNum = secondItemNum + orderDetail.getItemNum();
-//                }
-//            }
-
+	// Buy X Item and get Y Item Free
+	// If you buy X items, you will get FreeNum number of FreeItem
+	// This part has no issues.
+    private static BigDecimal promotionAndItemFree(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total)
+	{
 		int itemNum = 0;
 
-		BigDecimal   promotionPrice=BH.getBD(ParamConst.DOUBLE_ZERO);
-		for(OrderDetail orderDetail : orderDetails){
+		BigDecimal promotionPrice=BH.getBD(ParamConst.DOUBLE_ZERO);
+		for(OrderDetail orderDetail : orderDetails)
+		{
 			ItemDetail itemDetail= CoreData.getInstance()
 					.getItemDetailById(orderDetail.getItemId().intValue());
 
-
 			if (promotion.getItemId()>0) {
-				if (promotion.getItemId().intValue() ==itemDetail.getItemTemplateId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE) {
+				if (promotion.getItemId().intValue() == itemDetail.getItemTemplateId().intValue() && orderDetail.getIsFree()!=ParamConst.FREE)
+				{
 					CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
 					itemNum = itemNum + orderDetail.getItemNum();
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//						//orderDetailMin=orderDetail;
-//						}
 				}
 			}
-
 
 			if (promotion.getItemId()<=0&&promotion.getItemCategoryId()>0) {
 				if (promotion.getItemCategoryId().intValue() ==itemDetail.getItemCategoryId()&&orderDetail.getIsFree()!=ParamConst.FREE) {
 					CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
 					itemNum = itemNum + orderDetail.getItemNum();
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//						//orderDetailMin=orderDetail;
-//						}
-
 				}
 			}
+
 			// 最后按照主分类找
 			if (promotion.getItemId()<=0&& promotion.getItemCategoryId()<=0) {
 				if (promotion.getItemMainCategoryId().intValue() == itemDetail
 						.getItemMainCategoryId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE) {
 					itemNum = itemNum + orderDetail.getItemNum();
-
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//							//orderDetailMin=orderDetail;
-//						}
 				}
-
 			}
 
-
-     //       if (itemNum >= promotion.getItemNum() ) {
-                //折扣
-//                if (BH.getBD(promotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-//
-//                    subTotal = BH.sub(BH.getBD(subTotal), BH
-//                            .mul(BH.getBD(subTotal),
-//                                    BH.getBD(promotion.getDiscountPercentage()),
-//                                    false), false);
-//
-//                    promotionPrice = BH.add(promotionPrice, BH.mul(BH.getBD(subTotal),
-//                            BH.getBD(promotion.getDiscountPercentage()),
-//                            false), false);
-//                    addPromotion(order, promotion, promotionPrice);
-//                }
-//                    //免费菜
-//                    if (promotion != null && promotion.getFreeNum().intValue() > 0) {
-////						ItemDetail itemDetails= CoreData.getInstance()
-////								.getItemDetailById(promotion.getFreeItemId().intValue());
-//                        ItemDetail itemDetails = CoreData.getInstance()
-//                                .getItemDetailByTemplateId(promotion.getFreeItemId().intValue());
-//                        if (itemDetails == null) {
-//
-//							OrderDetail freeOrderDetail = ObjectFactory.getInstance()
-//									.getPromotionFreeOrderDetail(order, itemDetails,
-//											promotion);
-//
-//							List<OrderDetail>	orderDetaillist = OrderDetailSQL.getOrderDetails(order.getId());
-//							// OrderDetailSQL.updateOrderDetail(freeOrderDetail);
-//
-//
-//							addPromotion(order, promotion, freeOrderDetail,null);
-//
-//						}
-//					}else  if (itemNum < promotion.getItemNum() ){
-//						deletePromotion(order, promotion);
-//					}              return subTotal;
-//                        }
-//
+			if(promotion.getFreeItemId().intValue() == itemDetail.getItemTemplateId().intValue() && orderDetail.getIsFree()==ParamConst.FREE)
+			{
+				deletePromotion(order, promotion);
+			}
        }
-		if (itemNum >= promotion.getItemNum() ) {
-			//折扣
-//                if (BH.getBD(promotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-//
-//                    subTotal = BH.sub(BH.getBD(subTotal), BH
-//                            .mul(BH.getBD(subTotal),
-//                                    BH.getBD(promotion.getDiscountPercentage()),
-//                                    false), false);
-//
-//                    promotionPrice = BH.add(promotionPrice, BH.mul(BH.getBD(subTotal),
-//                            BH.getBD(promotion.getDiscountPercentage()),
-//                            false), false);
-//                    addPromotion(order, promotion, promotionPrice);
-//                }
-//                    //免费菜
-			if (promotion != null && promotion.getFreeNum().intValue() > 0) {
-//						ItemDetail itemDetails= CoreData.getInstance()
-//								.getItemDetailById(promotion.getFreeItemId().intValue());
-				ItemDetail itemDetails = CoreData.getInstance()
-						.getItemDetailByTemplateId(promotion.getFreeItemId().intValue());
-				if (itemDetails == null) {
-					return total;
-				}
-				OrderDetail proOrderDetail = ObjectFactory.getInstance()
-						.getOrderDetailAndPromotion(order, itemDetails
-								,0,promotion);
-				proOrderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
-				OrderDetailSQL.updateOrderDetail(proOrderDetail);
-				promotionPrice=BH.mul(BH.getBD(proOrderDetail.getItemPrice()),BH.getBD(promotion.getFreeNum()) ,false);
-				total = BH.sub(BH.getBD(total),promotionPrice, false);
-			  // List<OrderDetail>	orderDetaillist = OrderDetailSQL.getOrderDetails(order.getId());
-				// OrderDetailSQL.updateOrderDetail(freeOrderDetail);
 
-
-				addPromotion(order, promotion, proOrderDetail,promotionPrice.toString());
-
-			}
-		}else  if (itemNum < promotion.getItemNum() ){
+		int promoCount = 0;
+		for(int tempValue = itemNum; tempValue >= promotion.getItemNum(); tempValue = tempValue - promotion.getItemNum())
+		{
 			deletePromotion(order, promotion);
+			promoCount++;
 		}
+
+		if (itemNum >= promotion.getItemNum())
+		{
+			for(int x = 0; x < promoCount; x++)
+			{
+				if (promotion.getFreeNum() > 0)
+				{
+					ItemDetail itemDetails = CoreData.getInstance().getItemDetailByTemplateId(promotion.getFreeItemId());
+					if (itemDetails == null) {
+						return total;
+					}
+					OrderDetail proOrderDetail = ObjectFactory.getInstance().getOrderDetailAndPromotion(order, itemDetails,0,promotion);
+					proOrderDetail.setItemNum(promotion.getFreeNum());
+					proOrderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
+					OrderDetailSQL.updateOrderDetail(proOrderDetail);
+					total = BH.sub(BH.getBD(total),promotionPrice, false);
+					proOrderDetail.setPromoID(promotion.getItemId());
+					addPromotion(order, promotion, proOrderDetail,promotionPrice.toString());
+				}
+			}
+		}
+
+		if (itemNum < promotion.getItemNum() || promoCount == 0 )
+		{
+			for(int x = 0; x < promoCount; promoCount--)
+			{
+				deletePromotion(order, promotion);
+			}
+		}
+
         return total;
     }
 
+    // Buy X Item, get Y Price
+	// If you buy X Quantity you will get the DiscountPrice whereby Total Price - DiscountPrice
+	// Not sure however if it should be setting the price to DiscountPrice.
+	// Can be circumvented by simply deducting the value user wants.
     private static BigDecimal  promotionAndItemPrice(Order order,List<OrderDetail> orderDetails,Promotion promotion,BigDecimal total)
+	{
+		int itemNum = 0;
+		BigDecimal itemPrice = null;
+		BigDecimal promotionPrice=BH.getBD(ParamConst.DOUBLE_ZERO);
+		for(OrderDetail orderDetail : orderDetails)
+		{
+			ItemDetail itemDetail= CoreData.getInstance().getItemDetailById(orderDetail.getItemId());
+
+			if (promotion.getItemId()>0)
+			{
+				if (promotion.getItemId().intValue() ==itemDetail.getItemTemplateId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE)
+				{
+					itemNum = itemNum + orderDetail.getItemNum();
+					itemPrice = BH.getBD(orderDetail.getItemPrice());
+				}
+			}
+			if (promotion.getItemId()<=0&&promotion.getItemCategoryId()>0)
+			{
+				if (promotion.getItemCategoryId().intValue() ==itemDetail.getItemCategoryId()&&orderDetail.getIsFree()!=ParamConst.FREE)
+				{
+					CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
+					itemNum = itemNum + orderDetail.getItemNum();
+                    itemPrice = BH.getBD(orderDetail.getItemPrice());
+				}
+			}
+			// 最后按照主分类找
+			if (promotion.getItemId()<=0&& promotion.getItemCategoryId()<=0)
+			{
+				if (promotion.getItemMainCategoryId().intValue() == itemDetail.getItemMainCategoryId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE)
+				{
+					itemNum = itemNum + orderDetail.getItemNum();
+                    itemPrice = BH.getBD(orderDetail.getItemPrice());
+				}
+			}
+		}
+        int tempValue = itemNum;
+        int promoCount = 0;
+        for(int x = 0; tempValue >= promotion.getItemNum(); x++)
         {
+            tempValue = tempValue - promotion.getItemNum();
+            promoCount++;
+        }
 
-			int itemNum = 0;
-
-			BigDecimal   promotionPrice=BH.getBD(ParamConst.DOUBLE_ZERO);
-			for(OrderDetail orderDetail : orderDetails){
-				ItemDetail itemDetail= CoreData.getInstance()
-						.getItemDetailById(orderDetail.getItemId().intValue());
-
-
-				if (promotion.getItemId()>0) {
-					if (promotion.getItemId().intValue() ==itemDetail.getItemTemplateId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE) {
-						//CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
-						itemNum = itemNum + orderDetail.getItemNum();
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//						//orderDetailMin=orderDetail;
-//						}
-					}
-					}
-
-
-				if (promotion.getItemId()<=0&&promotion.getItemCategoryId()>0) {
-					if (promotion.getItemCategoryId().intValue() ==itemDetail.getItemCategoryId()&&orderDetail.getIsFree()!=ParamConst.FREE) {
-						CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
-						itemNum = itemNum + orderDetail.getItemNum();
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//						//orderDetailMin=orderDetail;
-//						}
-
-					}
+		if (itemNum >= promotion.getItemNum() )
+		{
+//			while(promoCount > freeItemNum) {
+			for(int x = 0; x < promoCount; x++)
+			{
+				BigDecimal priceToDeduct = BH.sub(BH.mul(itemPrice, BigDecimal.valueOf(promotion.getItemNum()),false), BH.getBD(promotion.getDiscountPrice()), false);
+				if (BH.getBD(promotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
+					total = BH.sub(total, priceToDeduct, false);
+					promotionPrice = BH.add(promotionPrice, BH.getBD(promotion.getDiscountPrice()), false);
+					addPromotion(order, promotion, null, promotionPrice.toString());
 				}
-				// 最后按照主分类找
-				if (promotion.getItemId()<=0&& promotion.getItemCategoryId()<=0) {
-					if (promotion.getItemMainCategoryId().intValue() == itemDetail
-							.getItemMainCategoryId().intValue()&&orderDetail.getIsFree()!=ParamConst.FREE) {
-						itemNum = itemNum + orderDetail.getItemNum();
-
-//						if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO))==0||promotionPrice.compareTo(BH.getBD(orderDetail.getItemPrice()))>0)
-//						{
-//							promotionPrice= BH.getBD(orderDetail.getItemPrice());
-//							//orderDetailMin=orderDetail;
-//						}
-					}
-
-				}}
-
-				if (itemNum >= promotion.getItemNum() ) {
-//////                    //折扣
-					if (BH.getBD(promotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-
-						total = BH.sub(BH.getBD(total), BH.getBD(promotion.getDiscountPrice()), false);
-						promotionPrice = BH.add(promotionPrice, BH.getBD(promotion.getDiscountPrice()), false);
-						addPromotion(order, promotion, null, promotionPrice.toString());
-					}
-				} else  if (itemNum < promotion.getItemNum() ){
-                	deletePromotion(order, promotion);
-				}
-
-
-//            int itemNum = 0;
-////            int secondItemNum = 0;
-////            BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
-////            if (orderDetails.size() > 0) {
-////                for (OrderDetail orderDetail : orderDetails) {
-////                    if (orderDetail.getItemId() == promotion.getItemId()&&orderDetail.getIsFree()!=ParamConst.FREE) {
-////                        itemNum = itemNum + orderDetail.getItemNum();
-////                    } else if (orderDetail.getItemId() == promotion.getSecondItemId()&&orderDetail.getIsFree()!=ParamConst.FREE) {
-////                        secondItemNum = secondItemNum + orderDetail.getItemNum();
-////                    }
-////                }
-////                if (itemNum == promotion.getItemNum() && secondItemNum == promotion.getSecondItemNum()) {
-//////                    //折扣
-////                    if (BH.getBD(promotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
-////
-////                        subTotal = BH.sub(BH.getBD(subTotal), BH.getBD(promotion.getDiscountPrice()), false);
-////                        promotionPrice = BH.add(promotionPrice, BH.getBD(promotion.getDiscountPrice()), false);
-////                        addPromotion(order, promotion, null,promotionPrice.toString());
-////                    }
-//////                    //免费菜
-//////                    if (promotion != null && promotion.getFreeNum().intValue() > 0) {
-//////                        ItemDetail itemDetail = CoreData.getInstance()
-//////                                .getItemDetailByTemplateId(promotion.getFreeItemId());
-//////                        if (itemDetail == null) {
-//////                            return subTotal;
-//////                        }
-//////                        OrderDetail freeOrderDetail = ObjectFactory.getInstance()
-//////                                .getPromotionFreeOrderDetail(order, itemDetail,
-//////                                        promotion);
-//////                        OrderDetailSQL.updateOrderDetail(freeOrderDetail);
-//////                        addPromotion(order, promotion,freeOrderDetail);
-//////                    }
-////                }else {
-////                	deletePromotion(order, promotion);
-////				}
-////
-////            }
+			}
+		}
+		else if (itemNum < promotion.getItemNum() )
+		{
+			deletePromotion(order, promotion);
+		}
 
 	    return total;
     }
 
-    private static void addPromotion(Order order,Promotion promotion,OrderDetail freeOrderDetail,String price) {
-	                     long nowTime = System.currentTimeMillis();
-						 OrderPromotion promotionData = PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId());
-						if (promotionData == null) {
-							promotionData = new OrderPromotion();
-							promotionData.setPromotionType(0);
-							if(!TextUtils.isEmpty(price)){
-								promotionData.setPromotionAmount(price);
-							}
-
-							if(freeOrderDetail!=null){
-								promotionData.setOrderDetailId(freeOrderDetail.getId());
-							}
-
-							promotionData.setOrderId(order.getId());
-							promotionData.setCreateTime(nowTime);
-							promotionData.setPromotionId(promotion.getId());
-							promotionData.setPromotionName(promotion.getPromotionName());
-							promotionData.setBusinessDate(order.getBusinessDate());
-							promotionData.setFreeItemName(promotion.getFreeItemName());
-							promotionData.setFreeItemId(promotion.getFreeItemId());
-							promotionData.setFreeNum(promotion.getFreeNum());
-							promotionData.setDiscountPrice(promotion.getDiscountPrice());
-							promotionData.setDiscountPercentage(promotion.getDiscountPercentage());
-							promotionData.setSessionStatus(order.getSessionStatus());
-                            promotionData.setUpdateTime(nowTime);
-							//promotionData.setPromotionAmount(promotion.getDiscountPrice());
-							PromotionDataSQL.addPromotionData(promotionData);
-						} else {
-							if(freeOrderDetail!=null){
-								promotionData.setOrderDetailId(freeOrderDetail.getId());
-							}
-							if(!TextUtils.isEmpty(price)){
-								promotionData.setPromotionAmount(price);
-							}
-
-
-							//	promotionData.setPromotionAmount(promotionPrice.toString());
-							promotionData.setUpdateTime(nowTime);
-							PromotionDataSQL.updatePromotionData(promotionData);
-						}
-					}
-
-
-
-	private static void deletePromotion(Order order,Promotion promotion) {
-
+    private static void addPromotion(Order order,Promotion promotion,OrderDetail freeOrderDetail,String price)
+	{
+		long nowTime = System.currentTimeMillis();
 		OrderPromotion promotionData = PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId());
-		if (promotionData != null) {
+		if (promotionData == null || freeOrderDetail!=null)
+		{
+			promotionData = new OrderPromotion();
+			promotionData.setPromotionType(0);
+			if(!TextUtils.isEmpty(price)){
+				promotionData.setPromotionAmount(price);
+			}
 
+			if(freeOrderDetail!=null){
+				promotionData.setOrderDetailId(freeOrderDetail.getId());
+			}
+
+			promotionData.setOrderId(order.getId());
+			promotionData.setCreateTime(nowTime);
+			promotionData.setPromotionId(promotion.getId());
+			promotionData.setPromotionName(promotion.getPromotionName());
+			promotionData.setBusinessDate(order.getBusinessDate());
+			promotionData.setFreeItemName(promotion.getFreeItemName());
+			promotionData.setFreeItemId(promotion.getFreeItemId());
+			promotionData.setFreeNum(promotion.getFreeNum());
+			promotionData.setDiscountPrice(promotion.getDiscountPrice());
+			promotionData.setDiscountPercentage(promotion.getDiscountPercentage());
+			promotionData.setSessionStatus(order.getSessionStatus());
+			promotionData.setUpdateTime(nowTime);
+			//promotionData.setPromotionAmount(promotion.getDiscountPrice());
+			PromotionDataSQL.addPromotionData(promotionData);
+		}
+		else
+		{
+			if(!TextUtils.isEmpty(price)){
+				promotionData.setPromotionAmount(price);
+			}
+
+
+			//	promotionData.setPromotionAmount(promotionPrice.toString());
+			promotionData.setUpdateTime(nowTime);
+			PromotionDataSQL.updatePromotionData(promotionData);
+		}
+	}
+
+	private static void deletePromotion(Order order,Promotion promotion)
+	{
+		OrderPromotion promotionData = PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId());
+		if (promotionData != null)
+		{
 			PromotionDataSQL.deletePromotionAndFree(promotionData);
 			//PromotionDataSQL.deletePromotionData(promotionData);
 		}
 	}
-
-
-
 
 	public static void setPromotion(Order order,List<OrderDetail> orderDetails) {
 		BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
@@ -1284,7 +1097,7 @@ public class OrderHelper {
 		total=BH.getBD(order.getTotal());
 
 	List<OrderSplit> orderSplits =OrderSplitSQL.getUnFinishedOrderSplits(order.getId());
-     PromotionDataSQL.deletePromotionDataOrderId(order);
+//     PromotionDataSQL.deletePromotionDataOrderId(order);
 	if(orderSplits== null||orderSplits.size()==0){
 		List<Promotion>  promotionList =PromotionSQL.getAllPromotion();
 

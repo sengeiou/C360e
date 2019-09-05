@@ -444,7 +444,7 @@ public class SyncCentre {
         } else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
             if (App.instance.isCartenzLog) {
-                return "http://18.138.252.241/alfred-api/" + relativeUrl;
+                return "http://18.138.252.241:180/alfred-api/" + relativeUrl;
             } else {
                 return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
             }
@@ -670,7 +670,7 @@ public class SyncCentre {
                 url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
                 if (App.instance.isCartenzLog) {
-                    url = "http://18.138.252.241/alfred-api/" + APIName.REQUEST_ALIPAY;
+                    url = "http://18.138.252.241:180/alfred-api/" + APIName.REQUEST_ALIPAY;
                 } else {
                     url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
                 }
