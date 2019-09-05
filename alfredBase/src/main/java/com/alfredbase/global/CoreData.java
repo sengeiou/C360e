@@ -844,7 +844,7 @@ public class CoreData {
 
     public List<PrinterGroup> getPrinterGroups() {
         if (printerGroups == null)
-            return Collections.emptyList();
+            printerGroups = PrinterGroupSQL.getAllPrinterGroup();
         return printerGroups;
     }
 

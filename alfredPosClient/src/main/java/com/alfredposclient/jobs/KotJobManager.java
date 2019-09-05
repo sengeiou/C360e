@@ -299,7 +299,6 @@ public class KotJobManager {
 
         for (int pgId : printerGroupIds) {
             List<Printer> printerList = getPrinterSummary(pgId);
-//            printerList.addAll(getPrinterEx(pgId));//also delete from all expediter
 
             for (Printer printer : printerList) {
                 if (printer == null) continue;
@@ -311,6 +310,31 @@ public class KotJobManager {
                 kotJobManager.addJob(kotjob);
             }
         }
+    }
+
+    public void deleteKotSummaryAllKds(KotSummary kotSummary, List<KotItemDetail> kotItemDetails) {
+//        KotSummaryLog kotSummaryLogs = new Gson().fromJson(kotSummary.getKotSummaryLog(), KotSummaryLog.class);
+//        ArrayList<Integer> printerGroupIds = new ArrayList<>();
+//
+//        for (KotItemDetail kotItemDetail : kotItemDetails) {
+//            int pgId = kotItemDetail.getPrinterGroupId();
+//            if (!printerGroupIds.contains(pgId))
+//                printerGroupIds.add(pgId);
+//        }
+//
+//        for (int pgId : printerGroupIds) {
+//            List<Printer> printerList = getPrinterSummary(pgId);
+//
+//            for (Printer printer : printerList) {
+//                if (printer == null) continue;
+//
+//                KDSDevice kdsDevice = App.instance.getKDSDevice(printer.getId());
+//                if (kdsDevice == null) continue;
+//
+//                KotJob kotjob = new KotJob(kdsDevice, kotSummary, ParamConst.JOB_DELETE_KOT_SUMMARY, APIName.DELETE_KOT_KDS);
+//                kotJobManager.addJob(kotjob);
+//            }
+//        }
     }
 
     public void sendKOTToKDSSummary(KotSummary kotSummary,
@@ -366,7 +390,18 @@ public class KotJobManager {
         //region add job to send it to KDS
         for (Integer prgid : printerGroupIds) {
 
-            List<Printer> printers = getPrinterSummary(prgid);
+            List<PrinterGroup> printerGroupAsChildes = CoreData.getInstance()
+                    .getPrinterGroupInGroup(prgid);//group printer as child
+
+            List<Printer> printers = new ArrayList<>();
+
+            if (printerGroupAsChildes.size() > 0) {//printer group
+                for (PrinterGroup pg : printerGroupAsChildes) {
+                    printers.addAll(getPrinterSummary(pg.getPrinterId()));
+                }
+            } else {
+                printers = getPrinterSummary(prgid);
+            }
 
             for (Printer printer : printers) {
                 if (printer == null) continue;
@@ -407,7 +442,7 @@ public class KotJobManager {
 
             OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(items.getOrderDetailId());
             ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
-            if (itemDetail.getItemType() == 3) {//package item
+            if (itemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {//package item
                 modCombo = getComboModifiers(items, modifiers, modCombo);
                 continue;
             } else {

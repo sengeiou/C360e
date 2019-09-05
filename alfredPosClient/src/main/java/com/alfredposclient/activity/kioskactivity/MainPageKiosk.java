@@ -1640,6 +1640,20 @@ public class MainPageKiosk extends BaseActivity {
                     KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
                     OrderBillSQL.deleteOrderBillByOrder(currentOrder);
                     OrderSQL.deleteOrder(currentOrder);
+
+                    if (currentOrder != null) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(),
+                                        currentOrder.getNumTag());
+                                if (kotSummary != null)
+                                    App.instance.getKdsJobManager().deleteKotSummaryAllKds(kotSummary,
+                                            KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId()));
+                            }
+                        }).start();
+                    }
+
                     setData();
                     break;
                 case VIEW_EVENT_TAKE_AWAY: {
