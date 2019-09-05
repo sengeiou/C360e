@@ -142,11 +142,13 @@ public class SelectKitchen extends BaseActivity {
                     break;
                 case HANDLER_ERROR:
                     loadingDialog.dismiss();
+                    pairingCount = 0;
                     //remove KDS info
                     Store.remove(context, Store.KDS_DEVICE);
                     break;
                 case ResultCode.CONNECTION_FAILED:
                     loadingDialog.dismiss();
+                    pairingCount = 0;
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
                             context.getResources().getString(R.string.revenue_center)));
                     break;

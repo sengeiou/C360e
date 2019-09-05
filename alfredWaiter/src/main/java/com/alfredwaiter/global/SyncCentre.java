@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 
 import com.alfredbase.APPConfig;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredwaiter.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;

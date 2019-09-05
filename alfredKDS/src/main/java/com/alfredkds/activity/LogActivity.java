@@ -2,12 +2,15 @@ package com.alfredkds.activity;
 
 import android.os.Handler;
 import android.os.Message;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.KDSLog;
+import com.alfredbase.javabean.KDSHistory;
+import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredkds.R;
@@ -38,13 +41,41 @@ public class LogActivity extends BaseActivity {
         iv_refresh.setOnClickListener(this);
         iv_setting.setOnClickListener(this);
 
+        tvLog.setMovementMethod(new ScrollingMovementMethod());
+
         updateLog();
     }
 
     private void updateLog() {
+        tvLog.setText(getLogs());
+    }
+
+    private String getLogs() {
         Gson gson = new Gson();
         KDSLog kdsLog = gson.fromJson(Store.getString(this, Store.KDS_LOGS), KDSLog.class);
-        tvLog.setText(Store.getString(this, Store.KDS_LOGS) + "");
+
+        StringBuilder sb = new StringBuilder();
+        for (KDSHistory kdsHistory : kdsLog.kdsHistories) {
+            sb.append(kdsHistory.kdsDevice.getName());
+            sb.append(", ");
+            sb.append(kdsHistory.kdsDevice.getIP());
+            sb.append(", ");
+            sb.append("Status : ");
+            sb.append(kdsHistory.kdsDevice.getKdsStatus());
+            sb.append("\n");
+            sb.append("Items :");
+            sb.append("\n");
+
+            for (KotItemDetail kotItemDetail : kdsHistory.kotItemDetails) {
+                sb.append("- ");
+                sb.append(kotItemDetail.getItemName());
+                sb.append("\n");
+            }
+
+            sb.append("-----------------------------------");
+            sb.append("\n\n");
+        }
+        return sb.toString();
     }
 
     @Override

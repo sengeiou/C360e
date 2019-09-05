@@ -21,9 +21,11 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
+import com.alfredbase.javabean.KDSTracking;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MultiOrderRelation;
@@ -1819,19 +1821,31 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                             .getBusinessDate());
                         }
 
-                        List<PrinterGroup> printerGroupList = CoreData
-                                .getInstance().getPrinterGroupByPrinter(
-                                        dev.getDevice_id());
+//                        List<PrinterGroup> printerGroupList = CoreData
+//                                .getInstance().getPrinterGroupByPrinter(
+//                                        dev.getDevice_id());
 
+                        List<KotSummary> kotSummaries = new ArrayList<>();
                         for (KotSummary kotSummary : kotSummaryList) {
-                            for (PrinterGroup printerGroup : printerGroupList) {
-                                kotItemDetails
-                                        .addAll(KotItemDetailSQL
-                                                .getKotItemDetailByKotSummaryAndPrinterGroup(
-                                                        kotSummary.getId(),
-                                                        printerGroup
-                                                                .getPrinterGroupId()));
+                            KotSummaryLog kotSummaryLogs = new Gson().fromJson(kotSummary.getKotSummaryLog(), KotSummaryLog.class);
+                            for (KDSTracking kdsTracking : kotSummaryLogs.kdsTrackingList) {
+                                if (kdsTracking.kdsDevice.getDevice_id() == dev.getDevice_id() &&
+                                        kdsTracking.kdsDevice.getIP().equals(dev.getIP())) {
+                                    for (KotItemDetail kid : kdsTracking.kotItemDetails) {
+                                        kotItemDetails.add(KotItemDetailSQL.getKotItemDetailById(kid.getId()));
+                                    }
+                                    kotSummaries.add(kotSummary);
+                                }
                             }
+
+//                            for (PrinterGroup printerGroup : printerGroupList) {
+//                                kotItemDetails
+//                                        .addAll(KotItemDetailSQL
+//                                                .getKotItemDetailByKotSummaryAndPrinterGroup(
+//                                                        kotSummary.getId(),
+//                                                        printerGroup
+//                                                                .getPrinterGroupId()));
+//                            }
                         }
                         for (KotItemDetail kotItemDetail : kotItemDetails) {
                             kotItemModifiers
@@ -1840,7 +1854,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                                     .getId()));
                         }
 
-                        result.put("kotSummaryList", kotSummaryList);
+                        result.put("kotSummaryList", kotSummaries);
                         result.put("kotItemDetails", kotItemDetails);
                         result.put("kotItemModifiers", kotItemModifiers);
                         result.put("user", user);

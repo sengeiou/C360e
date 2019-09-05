@@ -79,12 +79,34 @@ public class HttpAnalysis {
                     object.optString("kotItemModifiers"),
                     new TypeToken<ArrayList<KotItemModifier>>() {
                     }.getType());
+
             if (kotSummaryList != null && kotItemDetails != null
                     && kotItemModifiers != null) {
 
-                KotSummarySQL.deleteAllKotSummary();
-                KotItemDetailSQL.deleteAllKotItemDetail();
-                KotItemModifierSQL.deleteAllKotItemModifier();
+                //region delete kot by rvc
+                List<KotSummary> kotSummariesLocal = KotSummarySQL.getUndoneKotSummary(mainPosInfo.getRevenueId(), receiveBusinessDate);
+
+                if (kotSummariesLocal.size() > 0) {
+                    for (KotSummary kotSummary : kotSummariesLocal) {
+                        List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+
+                        for (KotItemDetail kotItemDetail : kotItemDetailList) {
+                            List<KotItemModifier> kotItemModifierList = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                            for (KotItemModifier kotItemModifier : kotItemModifierList) {
+                                KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
+                            }
+                        }
+
+                        KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
+                    }
+                    KotSummarySQL.deleteAllKotSummaryByRvcId(mainPosInfo.getRevenueId());
+                }
+                //endregion
+
+//                KotSummarySQL.deleteAllKotSummary();
+//                KotItemDetailSQL.deleteAllKotItemDetail();
+//                KotItemModifierSQL.deleteAllKotItemModifier();
+
                 for (int i = 0; i < kotSummaryList.size(); i++) {
 
 

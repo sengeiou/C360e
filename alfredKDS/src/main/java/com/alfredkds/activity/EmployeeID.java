@@ -109,10 +109,12 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
 
                 case ResultCode.USER_NO_PERMIT:
                     loadingDialog.dismiss();
+                    pairingCount = 0;
                     UIHelp.showToast(context, context.getResources().getString(R.string.pairing_fails));
                     break;
                 case ResultCode.CONNECTION_FAILED:
                     loadingDialog.dismiss();
+                    pairingCount = 0;
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
                             context.getResources().getString(R.string.revenue_center)));
                     break;
