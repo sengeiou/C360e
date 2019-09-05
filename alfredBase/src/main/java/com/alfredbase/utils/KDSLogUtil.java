@@ -211,8 +211,7 @@ public class KDSLogUtil {
             kdsHistory = new KDSHistory();
             kdsHistory.kdsDevice = kdsDevice;
             kdsHistory.kotItemDetails = new ArrayList<>();
-            if (kotItemDetails != null)
-                kdsHistory.kotItemDetails.addAll(kotItemDetails);
+            kdsHistory.kotItemDetails.addAll(kotItemDetails);
             kotSummaryLog.kdsHistoryList.add(kdsHistory);
         }
 
@@ -246,8 +245,7 @@ public class KDSLogUtil {
             kdsTracking = new KDSTracking();
             kdsTracking.kdsDevice = kdsDevice;
             kdsTracking.kotItemDetails = new ArrayList<>();
-            if (kotItemDetails != null)
-                kdsTracking.kotItemDetails.addAll(kotItemDetails);
+            kdsTracking.kotItemDetails.addAll(kotItemDetails);
             kotSummaryLog.kdsTrackingList.add(kdsTracking);
         }
 

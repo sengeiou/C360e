@@ -410,7 +410,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
                 for (KotItemDetail kotItemDetail : kotItemDetailsLocal) {
 
-                    if (ParamConst.KOT_STATUS_VOID != kotItemDetail.getKotStatus()) {
+                    if (ParamConst.KOT_STATUS_VOID != kotItemDetail.getKotStatus() &&
+                            ParamConst.KOT_STATUS_DONE != kotItemDetail.getKotStatus()) {
                         if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {//package item
                             itemCount += KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId()).size();
                         } else {
