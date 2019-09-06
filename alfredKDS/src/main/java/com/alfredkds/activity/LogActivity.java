@@ -47,7 +47,8 @@ public class LogActivity extends BaseActivity {
     }
 
     private void updateLog() {
-        tvLog.setText(getLogs());
+        if (tvLog != null)
+            tvLog.setText(getLogs());
     }
 
     private String getLogs() {
@@ -105,5 +106,11 @@ public class LogActivity extends BaseActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateLog();
     }
 }

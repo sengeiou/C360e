@@ -56,6 +56,8 @@ public class KotSummary implements Serializable {
 
     private long completeTime;
 
+    private long tagId;
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -328,6 +330,14 @@ public class KotSummary implements Serializable {
         this.completeTime = completeTime;
     }
 
+    public long getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(long tagId) {
+        this.tagId = tagId;
+    }
+
     @Override
     public String toString() {
         return "KotSummary{" +
@@ -362,6 +372,7 @@ public class KotSummary implements Serializable {
                 ", originalId=" + originalId +
                 ", isNext=" + isNext +
                 ", completeTime=" + completeTime +
+                ", tagId=" + tagId +
                 '}';
     }
 }

@@ -84,6 +84,7 @@ public class App extends BaseApplication {
     private SystemSettings systemSettings;
     public String VERSION = "0.0.0";
     private Map<Integer, KDSDevice> kdsDeviceRVCMap = new HashMap<>();
+    private Map<Integer, Integer> rvcIdentifier = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -228,6 +229,19 @@ public class App extends BaseApplication {
             connectedRVCIds.add(currentMainPosId);
             Store.saveObject(instance, Store.CURRENT_MAIN_POS_IDS_CONNECTED, connectedRVCIds);
         }
+    }
+
+    public Integer getRvcIdentifier(int rvcId) {
+        if (rvcIdentifier.size() <= 0) {
+            int i = 0;
+
+            for (int rvcId1 : getRVCConnectedId()) {
+                rvcIdentifier.put(rvcId1, i);
+                i++;
+            }
+        }
+
+        return rvcIdentifier.get(rvcId);
     }
 
     public MainPosInfo getCurrentConnectedMainPos() {
@@ -541,7 +555,7 @@ public class App extends BaseApplication {
 
         List<MainPosInfo> connectedMainPos = new ArrayList<>();
 //        if (isBalancer()) {
-            connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+        connectedMainPos = App.instance.getCurrentConnectedMainPosList();
 //        } else {
 //            connectedMainPos.add(App.instance.getCurrentConnectedMainPos());
 //        }

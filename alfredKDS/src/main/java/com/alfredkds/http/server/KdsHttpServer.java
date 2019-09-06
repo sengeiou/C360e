@@ -692,6 +692,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                     if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUMMARY ||
                             App.instance.getKdsDevice().getKdsType() == Printer.KDS_EXPEDITER ||
                             App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
+
                         if (CommonSQL.isFakeId(kotSummary.getId())) {
                             kotSummary.setId(kotSummary.getOriginalId());
                         }
@@ -926,9 +927,9 @@ public class KdsHttpServer extends AlfredHttpServer {
         Response resp = null;
         Map<String, Object> result = new HashMap<>();
         List<Integer> revenueCenterIds = new ArrayList<>();
-            for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
-                revenueCenterIds.add(mainPosInfo.getRevenueId());
-            }
+        for (MainPosInfo mainPosInfo : App.instance.getCurrentConnectedMainPosList()) {
+            revenueCenterIds.add(mainPosInfo.getRevenueId());
+        }
         try {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
@@ -968,7 +969,21 @@ public class KdsHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
 
-//                        kotSummary.setOrderDetailCount(kotItemDetails.size());
+//                        List<MainPosInfo> mainPosInfoList = App.instance.getCurrentConnectedMainPosList();
+//                        if (mainPosInfoList.size() > 1) {//multiple POS connected
+//                            if (kotSummary.getOriginalId() == null || kotSummary.getOriginalId() <= 0) {
+//                                kotSummary.setOriginalId(kotSummary.getId());
+//                            }
+//
+//                            int fakeId = Integer.parseInt(CommonSQL.getFakeId() + "" + App.instance.getRvcIdentifier(kotSummary.getRevenueCenterId()));
+//
+//                            kotSummary.setId(fakeId);
+//
+//                            for (int i = 0; i < kotItemDetails.size(); i++) {
+//                                kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
+//                            }
+//                        }
+
                         KotSummarySQL.update(kotSummary);
                         if (kotItemDetails != null) {
                             KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -1166,7 +1181,7 @@ public class KdsHttpServer extends AlfredHttpServer {
             List<MainPosInfo> mainPosInfoList = new ArrayList<>();
 
 //            if (App.instance.isBalancer()) {
-                mainPosInfoList = App.instance.getCurrentConnectedMainPosList();
+            mainPosInfoList = App.instance.getCurrentConnectedMainPosList();
 //            } else {
 //                mainPosInfoList.add(App.instance.getCurrentConnectedMainPos());
 //            }

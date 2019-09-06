@@ -117,6 +117,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ObjectFactory {
     private static ObjectFactory instance;
@@ -2024,7 +2025,8 @@ public class ObjectFactory {
             long time = System.currentTimeMillis();
             if (kotSummary == null) {
                 kotSummary = new KotSummary();
-                kotSummary.setId(CommonSQL.getNextSeq(TableNames.KotSummary));
+                Integer id = CommonSQL.getNextSeq(TableNames.KotSummary) + new Random().nextInt(50);
+                kotSummary.setId(id);
                 kotSummary.setOrderId(order.getId());
                 kotSummary.setOrderNo(order.getOrderNo());//流水号
                 kotSummary.setRevenueCenterId(revenueCenter.getId());

@@ -149,6 +149,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
             } else if (mode == SystemSettings.MODE_STACK) {
                 rdStack.setChecked(true);
                 llStackCount.setVisibility(View.VISIBLE);
+                etStackCount.setVisibility(View.VISIBLE);
                 etStackCount.setText(settings.getStackCount() + "");
             } else {
                 rbNormal.setChecked(true);
@@ -202,6 +203,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                                 }
                                 if (cid != null && cid != Store.DEFAULT_INT_TYPE) {
                                     Store.remove(context, Store.CURRENT_MAIN_POS_ID_CONNECTED);
+                                    Store.remove(context, Store.CURRENT_MAIN_POS_IDS_CONNECTED);
                                 }
                                 UIHelp.startWelcome(context);
                             }
@@ -252,6 +254,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                             public void onClick(View v) {
                                 String kdsLLogs = KDSLogUtil.resetKdsLog(Store.getString(Setting.this, Store.KDS_LOGS));
                                 Store.putString(Setting.this, Store.KDS_LOGS, kdsLLogs);
+                                finish();
                             }
                         });
 
@@ -284,7 +287,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 }
                 break;
             case R.id.mtKdsOnline:
-                DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reset),
+                DialogFactory.commonTwoBtnDialog(context, "", "Shutdown KDS?",
                         getString(R.string.cancel), getString(R.string.ok), new OnClickListener() {
                             @Override
                             public void onClick(View view) {
