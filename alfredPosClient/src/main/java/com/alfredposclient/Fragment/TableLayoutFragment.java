@@ -285,7 +285,11 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
         }
 
-        String placeName = places.get(selectPlaceIndex).getPlaceName();
+        String placeName = "";
+        if (places.size() > selectPlaceIndex){
+
+            placeName = places.get(selectPlaceIndex).getPlaceName();
+        }
         boolean isPlaceInfoExist = PlaceInfoSQL.checkPlaceInfoExistByName(placeName);
         if (isPlaceInfoExist) {
             newTables = TableInfoSQL.getTableInfosByPlaces(places.get(selectPlaceIndex));
