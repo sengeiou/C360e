@@ -283,6 +283,14 @@ public class KdsHttpServer extends AlfredHttpServer {
 
             int printerGroupId = kotItemDetails.size() > 0 ? kotItemDetails.get(0).getPrinterGroupId() : 0;
 
+            if (kotItemDetails.size() > 0) {
+                KotItemDetail kotItemDetail = kotItemDetails.get(0);
+
+                if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {
+                    printerGroupId = kotItemModifiers.size() > 0 ? kotItemModifiers.get(0).getPrinterId() : printerGroupId;
+                }
+            }
+
             PrinterGroup printerGroup = CoreData.getInstance().getPrinterGroup(printerGroupId);
             List<PrinterGroup> printerGroupAsChildes = CoreData.getInstance()
                     .getPrinterGroupInGroup(printerGroup.getPrinterGroupId());//group printer as child
@@ -364,12 +372,18 @@ public class KdsHttpServer extends AlfredHttpServer {
                 //region Mode Stack
                 SystemSettings settings = App.instance.getSystemSettings();
                 int stackCount = settings.getStackCount();
+                boolean isKdsSelected = false;
 
                 for (KDSHistory kdsHistory : kdsHistoryList) {
                     if (kdsHistory.kotItemDetails.size() < stackCount) {
                         selectedKds = kdsHistory.kdsDevice;
+                        isKdsSelected = true;
                         break;
                     }
+                }
+
+                if (!isKdsSelected) {
+                    selectedKds = kdsHistoryList.size() > 0 ? kdsHistoryList.get(0).kdsDevice : null;
                 }
                 //endregion
             } else {

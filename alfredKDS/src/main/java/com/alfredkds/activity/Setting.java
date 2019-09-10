@@ -31,7 +31,6 @@ import com.alfredkds.global.UIHelp;
 import com.alfredkds.view.MyToggleButton;
 import com.alfredkds.view.SystemSettings;
 
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,8 +44,10 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
     private TextView tv_kot_reset;
     private TextView tv_switch_account;
     private EditText etStackCount;
-    private TextView tvTime;
+    private TextView tvTimeStart;
+    private TextView tvTimeEnd;
     private LinearLayout llStackCount;
+    private LinearLayout llContTime;
 
     private MyToggleButton mt_kot_lan, mtPendingList;
     private MyToggleButton mtKdsOnline;
@@ -72,7 +73,6 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
             }
         }
 
-        ;
     };
 
     @Override
@@ -89,13 +89,15 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         super.initView();
         this.tv_kot_history = (TextView) findViewById(R.id.tv_history);
         this.tv_kot_reset = (TextView) findViewById(R.id.tv_reset);
-        this.tvTime = (TextView) findViewById(R.id.tvTime);
+        this.tvTimeStart = (TextView) findViewById(R.id.tvTimeStart);
+        this.tvTimeEnd = (TextView) findViewById(R.id.tvTimeEnd);
         this.tv_switch_account = (TextView) findViewById(R.id.tv_switch_account);
         this.mtPendingList = (MyToggleButton) findViewById(R.id.mtPendingList);
         this.mt_kot_lan = (MyToggleButton) findViewById(R.id.mt_kot_lan);
         this.mtKdsOnline = (MyToggleButton) findViewById(R.id.mtKdsOnline);
         this.etStackCount = (EditText) findViewById(R.id.etStackCount);
         this.llStackCount = (LinearLayout) findViewById(R.id.llStackCount);
+        this.llContTime = (LinearLayout) findViewById(R.id.contTime);
         this.mtPendingList.setOnStateChangeListeren(this);
         this.mtKdsOnline.setOnStateChangeListeren(this);
         this.mt_kot_lan.setOnStateChangeListeren(this);
@@ -118,22 +120,22 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
             RadioButton rdBalance = (RadioButton) findViewById(R.id.rdBalance);
             RadioButton rdStack = (RadioButton) findViewById(R.id.rdStack);
             Button btnSave = (Button) findViewById(R.id.btSave);
-            tvTime.setVisibility(View.GONE);
+            llContTime.setVisibility(View.GONE);
 
             radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                     if (checkedId == R.id.rdBalance) {
                         settings.setBalancerMode(SystemSettings.MODE_BALANCE);
-                        tvTime.setVisibility(View.VISIBLE);
+                        llContTime.setVisibility(View.VISIBLE);
                         llStackCount.setVisibility(View.GONE);
                     } else if (checkedId == R.id.rdStack) {
                         settings.setBalancerMode(SystemSettings.MODE_STACK);
-                        tvTime.setVisibility(View.VISIBLE);
+                        llContTime.setVisibility(View.VISIBLE);
                         llStackCount.setVisibility(View.VISIBLE);
                     } else {
                         settings.setBalancerMode(SystemSettings.MODE_NORMAL);
-                        tvTime.setVisibility(View.GONE);
+                        llContTime.setVisibility(View.GONE);
                         llStackCount.setVisibility(View.GONE);
                     }
 
@@ -144,25 +146,32 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
 
             if (mode == SystemSettings.MODE_BALANCE) {
                 rdBalance.setChecked(true);
-                etStackCount.setVisibility(View.GONE);
                 llStackCount.setVisibility(View.GONE);
+                llContTime.setVisibility(View.VISIBLE);
             } else if (mode == SystemSettings.MODE_STACK) {
                 rdStack.setChecked(true);
                 llStackCount.setVisibility(View.VISIBLE);
-                etStackCount.setVisibility(View.VISIBLE);
-                etStackCount.setText(settings.getStackCount() + "");
+                llContTime.setVisibility(View.VISIBLE);
+
+                if (settings.getStackCount() > 0)
+                    etStackCount.setText(settings.getStackCount() + "");
+                else {
+                    etStackCount.setText("10");
+                    settings.setStackCount(10);
+                }
             } else {
                 rbNormal.setChecked(true);
-                etStackCount.setVisibility(View.GONE);
                 llStackCount.setVisibility(View.GONE);
+                llContTime.setVisibility(View.GONE);
             }
 
-            if (mode >= 0) {
-                tvTime.setVisibility(View.VISIBLE);
-                tvTime.setText(TimeUtil.getTimeByFormat(settings.getBalancerTime(), TimeUtil.PRINTER_FORMAT_TIME));
+            if (mode > 0) {
+                tvTimeStart.setText(TimeUtil.getTimeByFormat(settings.getBalancerTime(0), TimeUtil.PRINTER_FORMAT_TIME));
+                tvTimeEnd.setText(TimeUtil.getTimeByFormat(settings.getBalancerTime(1), TimeUtil.PRINTER_FORMAT_TIME));
             }
 
-            tvTime.setOnClickListener(this);
+            tvTimeStart.setOnClickListener(this);
+            tvTimeEnd.setOnClickListener(this);
             btnSave.setOnClickListener(this);
             findViewById(R.id.tvReset).setOnClickListener(this);
         } else {
@@ -223,28 +232,11 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 int stackCount = !TextUtils.isEmpty(etStackCount.getText()) ? Integer.parseInt(etStackCount.getText().toString()) : 0;
                 settings.setStackCount(stackCount);
                 break;
-            case R.id.tvTime:
-                Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
-
-                TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        String timeFormatted = selectedHour + ":" + selectedMinute;
-
-                        if (tvTime != null) {
-                            tvTime.setText(timeFormatted);
-
-//                            long timeMillis = TimeUtil.getTimeFromString(timeFormatted, TimeUtil.PRINTER_FORMAT_TIME);
-
-                            settings.setBalancerTime(TimeUtil.getMillisOfTime(selectedHour, selectedMinute));
-                        }
-
-                    }
-                }, hour, minute, true);
-                timePickerDialog.setTitle("Select Time");
-                timePickerDialog.show();
+            case R.id.tvTimeStart:
+                showTimePicker("Select Start Time", tvTimeStart, 0);
+                break;
+            case R.id.tvTimeEnd:
+                showTimePicker("Select End Time", tvTimeEnd, 1);
                 break;
             case R.id.tvReset:
                 DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reset),
@@ -262,6 +254,27 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
             default:
                 break;
         }
+    }
+
+    private void showTimePicker(String title, final TextView tv, final int type) {
+        Calendar mcurrentTime = Calendar.getInstance();
+        int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        int minute = mcurrentTime.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                String timeFormatted = selectedHour + ":" + selectedMinute;
+
+                if (tv != null) {
+                    tv.setText(timeFormatted);
+                    settings.setBalancerTime(TimeUtil.getMillisOfTime(selectedHour, selectedMinute), type);
+                }
+
+            }
+        }, hour, minute, true);
+        timePickerDialog.setTitle(title);
+        timePickerDialog.show();
     }
 
     @Override

@@ -588,13 +588,9 @@ public class App extends BaseApplication {
         int mode = settings.getBalancerMode();
         int selectedMode = SystemSettings.MODE_NORMAL;
 
-        LogUtil.log("Balancer Time : " + settings.getBalancerTime());
-        LogUtil.log("Balancer Time has come : " + settings.isBalancerTimeHasCome());
-        LogUtil.log("Balancer Stack Count : " + settings.getStackCount());
-
         if (mode == SystemSettings.MODE_BALANCE) {
-            if (settings.getBalancerTime() > 0) {
-                if (settings.isBalancerTimeHasCome())
+            if (settings.getBalancerTime(0) > 0) {
+                if (settings.isBalancerTimeHasCome() && !settings.isBalancerTimeEnded())
                     selectedMode = SystemSettings.MODE_BALANCE;
             } else {
                 selectedMode = SystemSettings.MODE_BALANCE;
@@ -603,8 +599,8 @@ public class App extends BaseApplication {
             int stackCount = settings.getStackCount();
 
             if (stackCount > 0) {
-                if (settings.getBalancerTime() > 0) {
-                    if (settings.isBalancerTimeHasCome())
+                if (settings.getBalancerTime(0) > 0) {
+                    if (settings.isBalancerTimeHasCome() && !settings.isBalancerTimeEnded())
                         selectedMode = SystemSettings.MODE_STACK;
                 } else {
                     selectedMode = SystemSettings.MODE_STACK;

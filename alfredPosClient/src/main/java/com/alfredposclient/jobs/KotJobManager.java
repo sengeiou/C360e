@@ -675,7 +675,7 @@ public class KotJobManager {
                                 kotItemDetails, kotItemModifiers, method, orderMap, url);
                     } else {
                         kotjob = new KotJob(kdsDevice, kotSummary,
-                                kotItemDetails, kotItemModifiers, method, orderMap);
+                                kotItemDetails, kotItemModifiers, method, orderMap, false, isCheckBalancer);
                     }
 
                     kotJobManager.addJob(kotjob);

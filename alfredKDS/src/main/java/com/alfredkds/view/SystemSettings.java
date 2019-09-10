@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.TimeUtil;
-import com.alfredkds.activity.Setting;
 
 import java.util.Calendar;
 
@@ -67,20 +66,34 @@ public class SystemSettings {
         return Store.getInt(this.context, Store.STACK_COUNT, 0);
     }
 
-    public void setBalancerTime(long time) {
-        Store.putLong(this.context, Store.BALANCER_TIME, time);
+    public void setBalancerTime(long time, int type) {
+        if (type == 1)
+            Store.putLong(this.context, Store.BALANCER_TIME_END, time);
+        else
+            Store.putLong(this.context, Store.BALANCER_TIME_START, time);
     }
 
-    public long getBalancerTime() {
-        return Store.getLong(this.context, Store.BALANCER_TIME);
+    public long getBalancerTime(int type) {
+        if (type == 1)
+            return Store.getLong(this.context, Store.BALANCER_TIME_END);
+        else
+            return Store.getLong(this.context, Store.BALANCER_TIME_START);
     }
 
     public boolean isBalancerTimeHasCome() {
         Calendar cal = Calendar.getInstance();
         long timeMillis = TimeUtil.getMillisOfTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
-        long balancerTime = getBalancerTime();
+        long balancerTimeStart = getBalancerTime(0);
 
-        return timeMillis >= balancerTime;
+        return timeMillis >= balancerTimeStart;
+    }
+
+    public boolean isBalancerTimeEnded() {
+        Calendar cal = Calendar.getInstance();
+        long timeMillis = TimeUtil.getMillisOfTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        long balancerTimeEnd = getBalancerTime(1);
+
+        return timeMillis >= balancerTimeEnd;
     }
 
     public void setKdsOnline(int value) {
