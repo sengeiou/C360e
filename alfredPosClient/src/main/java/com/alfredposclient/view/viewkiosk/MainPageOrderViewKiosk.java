@@ -1109,8 +1109,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                 switch (view.getId()) {
                     case R.id.ll_instruction: {
                         final OrderDetail orderDetail = (OrderDetail) view.getTag();
-                        if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
-                        } else if (orderDetail.getOrderDetailStatus() <= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
+                        if (orderDetail.getOrderDetailStatus() <= ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                             handler.sendMessage(handler
                                     .obtainMessage(
                                             MainPage.VIEW_EVENT_SHOW_SPECIAL_INSTRACTIONS_WINDOW,
@@ -1177,9 +1176,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                         break;
                     case R.id.ll_void: {
                         OrderDetail orderDetail = (OrderDetail) view.getTag();
-                        if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
-                            return;
-                        } else if (orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0) {
+                        if (orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0) {
                             OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
                             if (orderSplit.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
                                 UIHelp.showToast(parent, parent.getResources().getString(R.string.order_split_) +

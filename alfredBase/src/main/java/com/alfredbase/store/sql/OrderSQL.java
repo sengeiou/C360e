@@ -212,7 +212,7 @@ public class OrderSQL {
 		}
 	}
 
-	private static void calculate(Order order) {
+	public static void calculate(Order order) {
 
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		OrderHelper.setOrderSubTotal(order, orderDetails);
