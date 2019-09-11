@@ -21,7 +21,6 @@ import com.alfred.printer.KickDrawerPrint;
 import com.alfred.printer.ModifierDetailAnalysisReportPrint;
 import com.alfred.printer.MonthlySalesReportPrint;
 import com.alfred.printer.PromotionSalesReportPrint;
-import com.alfred.printer.ReportBasePrint;
 import com.alfred.printer.StoredCardPrint;
 import com.alfred.printer.SummaryAnalysisReportPrint;
 import com.alfred.printer.TableQRCodePrint;
@@ -82,7 +81,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -3704,7 +3702,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
     @Override
-    public void printTransferOrder(String printer, String fromTable, String toTable, String fromOrder, String toOrder, String orderDetail, String modifier) {
+    public void printTransferOrder(String printer, String rvcName, String fromTable, String toTable, String fromOrder, String toOrder, String orderDetail, String modifier) {
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         Order mFromOrder = gson.fromJson(fromOrder, Order.class);
@@ -3742,15 +3740,36 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
             transferOrder.setPrinterIp(prtDevice.getIP());
 
-            transferOrder.addTitle("From Table : " + fromTable);
+            transferOrder.AddTitle(rvcName, toTable);
             transferOrder.addLineSpace(2);
 
-            transferOrder.addTitle("To Table: " + toTable);
+            transferOrder.addTextHeader("Transferred From Table " + fromTable);
             transferOrder.addLineSpace(2);
+            transferOrder.addTextHeader("From Order No : " + mFromOrder.getOrderNo());
+            transferOrder.addTextHeader("To Order No : " + mToOrder.getOrderNo());
+            transferOrder.addLineSpace(2);
+
+//            transferOrder.addTextHeader("Emp : " + fromTable);
+//            transferOrder.addLineSpace(2);
 
             for (OrderDetail od : orderDetails) {
-                transferOrder.addItem(od.getItemName());
+                transferOrder.addItem(od.getItemName(), od.getItemNum());
+
+                for (OrderModifier kotItemModifier : orderModifiers) {
+//                    if (IntegerUtils.isEmptyOrZero(kotItemModifier.getPrinterId())
+//                            || kotItemModifier.getPrinterId().intValue() == prtDevice.getDevice_id()) {
+//                        if (!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1) {
+//                            kot.AddModifierItem("-" + kotItemModifier.getN() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
+//                        } else {
+//                            kot.AddModifierItem("-" + kotItemModifier.getModifierName(), 1);
+//                        }
+//
+//
+//                    }
+                }
             }
+
+            transferOrder.AddFooter("", "Transfer Time");
 
             pqMgr.queuePrint(transferOrder.getJobForQueue());
             printMgr.addJob(prtDevice.getIP(), transferOrder);

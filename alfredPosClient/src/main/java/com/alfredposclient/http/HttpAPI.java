@@ -2978,6 +2978,7 @@ public class HttpAPI {
         List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
         parameters.put("orderDetail", new Gson().toJson(orderDetails));
 
+
         KotSummary kot = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
         parameters.put("kotSummary", new Gson().toJson(kot));
 
@@ -2992,8 +2993,6 @@ public class HttpAPI {
         }
         parameters.put("kotItemModifier", new Gson().toJson(kotItemModifiers));
 
-
-
         List<OrderBill> orderbill = OrderBillSQL.getAllOrderBillByOrder(currentOrder);
         parameters.put("orderBill", new Gson().toJson(orderbill));
 
@@ -3004,6 +3003,7 @@ public class HttpAPI {
         parameters.put("orderSplit", new Gson().toJson(orderSplit));
 
         parameters.put("tableId", tableId); //selected tableId
+        parameters.put("tableName", currentOrder.getTableName()); //selected tableId
 
         try {
             httpClient.post(context, url,

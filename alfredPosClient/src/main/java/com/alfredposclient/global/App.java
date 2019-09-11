@@ -2491,10 +2491,18 @@ public class App extends BaseApplication {
         String prtStr = gson.toJson(printer);
         String fromOrderStr = gson.toJson(fromOrder);
         String toOrderStr = gson.toJson(toOrder);
-        String details = gson.toJson(fromTable);
+        String details = gson.toJson(orderDetail);
         String mods = gson.toJson(modifier);
 
-        mRemoteService.printTransferOrder(prtStr, fromTable, toTable, fromOrder, toOrder, details, mods);
+        KotSummary kotSummary = KotSummarySQL.getKotSummary(fromOrder.getId(), fromOrder.getNumTag());
+
+        String rvcName = kotSummary != null ? kotSummary.getRevenueCenterName() : "";
+
+        try {
+            mRemoteService.printTransferOrder(prtStr, rvcName, fromTable, toTable, fromOrderStr, toOrderStr, details, mods);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void printQrByBitmap(PrinterDevice printer, PrinterTitle printerTitle, String paymentMethod, String id, String amount, Bitmap bmp) {

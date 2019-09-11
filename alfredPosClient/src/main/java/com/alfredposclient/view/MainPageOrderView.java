@@ -216,8 +216,7 @@ public class MainPageOrderView extends LinearLayout {
                             Order placedOrder = OrderSQL.getOrder(order.getId());
                             List<OrderDetail> placedOrderDetails
                                     = OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
-                            KotSummary kotSummary = ObjectFactory.getInstance()
-                                    .getKotSummaryForPlace(
+                            KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForPlace(
                                             TableInfoSQL.getTableById(
                                                     placedOrder.getTableId()).getName(), placedOrder,
                                             App.instance.getRevenueCenter(),
@@ -313,6 +312,10 @@ public class MainPageOrderView extends LinearLayout {
                                     Map<String, Object> orderMap = new HashMap<String, Object>();
                                     orderMap.put("orderId", order.getId());
                                     orderMap.put("orderDetailIds", orderDetailIds);
+                                    //auto print KOT
+//                                    if(kotSummary.getTableName() ==null){
+//                                        kotSummary.setTableName(placedOrder.getTableName());
+//                                    }
                                     App.instance.getKdsJobManager().tearDownKot(
                                             kotSummary, kotItemDetails,
                                             kotItemModifiers, kotCommitStatus,

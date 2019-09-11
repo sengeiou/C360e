@@ -2264,16 +2264,48 @@ public class MainPage extends BaseActivity {
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
 
-                    App.instance.printTransferOrder(App.instance.getCahierPrinter(), oldTable.getName(), currentTable.getName(),
-                            currentOrder, oldOrder, orderDetails, new ArrayList<OrderModifier>());
+                    TableInfo tableInfo = null;
+                    Order toOrder = null;
+                    List<OrderDetail> orderDetails1 = null;
+                    List<OrderModifier> orderModifiers2 = null;
+                    String data = (String) msg.obj;
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(data);
+
+                        String toOrderStr = jsonObject.optString("toOrder");
+                        String tableInfoStr = jsonObject.optString("tableInfo");
+                        String orderDetail = jsonObject.optString("orderDetail");
+                        String orderModifier = jsonObject.optString("orderModifier");
+
+                        toOrder = new Gson().fromJson(toOrderStr, Order.class);
+                        tableInfo = new Gson().fromJson(tableInfoStr, TableInfo.class);
+
+                        orderDetails1 = gson.fromJson(orderDetail,
+                                new TypeToken<List<OrderDetail>>() {
+                                }.getType());
+                        orderModifiers2 = gson.fromJson(orderModifier,
+                                new TypeToken<List<OrderModifier>>() {
+                                }.getType());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    String tableName = tableInfo != null ? tableInfo.getName() : "";
+
+                    App.instance.printTransferOrder(App.instance.getCahierPrinter(), currentTable.getName(), tableName,
+                            toOrder, currentOrder, orderDetails1, orderModifiers2);
                     unseat(currentOrder);
                     onBackPressed();
 //                    showTables();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
 
+                    List<OrderDetail> orderDetails2 = null;
+                    List<OrderModifier> orderModifiers3 = null;
+
                     App.instance.printTransferOrder(App.instance.getCahierPrinter(), oldTable.getName(), currentTable.getName(),
-                            currentOrder, oldOrder, orderDetails, new ArrayList<OrderModifier>());
+                            currentOrder, oldOrder, orderDetails2, orderModifiers3);
 
                     final OrderDetail orderDetail = transfItemOrderDetail;
                     if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
