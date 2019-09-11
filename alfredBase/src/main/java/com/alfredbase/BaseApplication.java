@@ -18,14 +18,15 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
 import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
 import com.floatwindow.float_lib.FloatActionController;
+import com.google.gson.Gson;
 import com.moonearly.utils.service.TcpUdpFactory;
 import com.moonearly.utils.service.UdpServiceCallBack;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -34,6 +35,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.umeng.analytics.MobclickAgent;
+
+import org.apache.commons.codec.language.bm.Lang;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,7 +49,8 @@ public class BaseApplication extends Application {
     public static BaseApplication instance;
     public static List<BaseActivity> activitys;
     public static final int DATABASE_VERSION = 32;
-    public static final int HANDLER_REFRESH_LANGUAGE = 772;
+
+
 
     /**
      * 注意
@@ -58,7 +62,7 @@ public class BaseApplication extends Application {
 
     public static boolean isDebug = false;    //	Debug开关 release的时候设置为false
     public static boolean isOpenLog = false;    //	release 时设置为false
-    public static boolean isCartenzLog = false;
+    public static boolean isCartenzLog = true;
 
     protected String APPPATH = "sunmi";// sunmi or google or alibaba;
 
@@ -121,7 +125,7 @@ public class BaseApplication extends Application {
 
     @Override
     protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);//LanguageManager.setLocale(base));
+        super.attachBaseContext(base);
         MultiDex.install(this);
     }
 
@@ -539,4 +543,11 @@ public class BaseApplication extends Application {
             this.time = time;
         }
     }
+
+    public static final int HANDLER_REFRESH_LANGUAGE = 772;
+    public static final int HANDLER_GET_OTHER_RVC = 773;
+    public static final int HANDLER_GET_OTHER_TABLE = 776;
+    public static final int HANDLER_TRANSFER_TABLE_TO_OTHER_RVC = 774;
+    public static final int HANDLER_TRANSFER_ITEM_TO_OTHER_RVC = 775;
+
 }

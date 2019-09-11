@@ -8,6 +8,7 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
@@ -54,7 +55,9 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("callnumber", str);
                 parameters.put("numTag", "");
-                SyncCentre.getInstance().callSpecifyNum(CallNumActivity.this, App.instance.getCurrentConnectedMainPos(), parameters, handler,-1);
+                for(MainPosInfo mainPos :  App.instance.getCurrentConnectedMainPos()) {
+                    SyncCentre.getInstance().callSpecifyNum(CallNumActivity.this, mainPos, parameters, handler, -1);
+                }
             }else {
                 UIHelp.showToast(CallNumActivity.this, getString(R.string.order_number_cannot_empty));
             }

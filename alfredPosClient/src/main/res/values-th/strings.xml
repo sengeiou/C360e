@@ -335,5 +335,21 @@
     <string name="turning_on_training_mode">เปิดโหมดการฝึกอบรม</string>
     <string name="turning_on_training_mode_desc">สำหรับผู้ใช้ครั้งแรกการตั้งค่าจะปรากฏขึ้นที่ด้านบน</string>
 
+    <string name="ok">ตกลง</string>
+    <string name="add">ขึ้น</string>
+    <string name="cancel">ยกเลิกมัน</string>
+    <string name="sign_in">การเข้า</string>
+    <string name="sync">ซิงค์</string>
+    <string name="waiting_list">กำลังรอรายการ</string>
+    <string name="queue">คิว</string>
+    <string name="assign_table">ตั้งค่า \nตาราง</string>
+    <string name="summary">ย่อ</string>
+
+    <string name="add_queue">เพิ่มคิวใหม่</string>
+    <string name="queue_name">ชื่อของคิว</string>
+    <string name="ask_save_edit_content">ต้องการบันทึกเนื้อหาที่แก้ไขหรือไม่</string>
+    <string name="ask_delete_queue">คุณแน่ใจที่จะลบคิวนี้?</string>
+    <string name="name_used">มีการใช้ชื่อนี้แล้วลองใช้ชื่ออื่น</string>
+
 
 </resources>

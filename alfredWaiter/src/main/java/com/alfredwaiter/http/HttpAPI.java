@@ -517,7 +517,7 @@ public class HttpAPI {
                             mHandler.sendMessage(mHandler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
                             super.onFailure(statusCode, headers, responseBody, error);
 //							new Thread(new Runnable() {
-//								
+//
 //								@Override
 //								public void run() {
 //									if (error.getClass().equals(

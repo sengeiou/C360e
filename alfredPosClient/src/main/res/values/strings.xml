@@ -337,4 +337,20 @@
     <string name="turning_on_training_mode">Turning on Training Mode</string>
     <string name="turning_on_training_mode_desc">For first time Users, Settings will pop up switch on appear on top</string>
 
+    <string name="ok">OK</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sync">Sync</string>
+    <string name="waiting_list">Waiting List</string>
+    <string name="queue">Queue</string>
+    <string name="assign_table">Assign\nTable</string>
+    <string name="summary">Summary</string>
+
+    <string name="add_queue">Add a new queue</string>
+    <string name="queue_name">Name of queue</string>
+    <string name="ask_save_edit_content">Want to save the edited content?</string>
+    <string name="ask_delete_queue">Are you sure to delete this queue ?</string>
+    <string name="name_used">The name has already been used, try another</string>
+
 </resources>

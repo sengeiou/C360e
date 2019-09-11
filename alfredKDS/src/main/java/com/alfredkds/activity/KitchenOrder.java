@@ -8,17 +8,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.LayoutRes;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -29,11 +28,9 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
-import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.DialogFactory;
@@ -68,8 +65,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class KitchenOrder extends BaseActivity {
     public static final int HANDLER_TRANSFER_KOT = 3;
@@ -86,7 +81,7 @@ public class KitchenOrder extends BaseActivity {
     private KotSummary kotSummary;
     private TextTypeFace textTypeFace;
     private FinishQtyWindow finishQtyPop;
-    private MainPosInfo mainPosInfo;
+    private List<MainPosInfo> mainPosInfo = new ArrayList<>();
     private boolean doubleBackToExitPressedOnce = false;
     private TextView tv_order_qyt;
     private List<KotItem> kotItems = new ArrayList<KotItem>();
@@ -270,13 +265,15 @@ public class KitchenOrder extends BaseActivity {
                     KotItem kotItem = (KotItem) msg.obj;
                     String str = kotItem.getNumTag() + IntegerUtils.formatLocale(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
                     String numTag = kotItem.getNumTag();
+
                     int id = msg.arg2;
                     if (!TextUtils.isEmpty(str)) {
                         loadingDialog.show();
                         Map<String, Object> parameters = new HashMap<String, Object>();
                         parameters.put("callnumber", str);
                         parameters.put("numTag", numTag);
-                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
+                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId());
+                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, pos, parameters, handler, id);
                     } else {
                         UIHelp.showToast(KitchenOrder.this, getString(R.string.order_number_cannot_empty));
                     }
@@ -293,7 +290,9 @@ public class KitchenOrder extends BaseActivity {
                         Map<String, Object> parameters = new HashMap<String, Object>();
                         parameters.put("callnumber", str);
                         parameters.put("numTag", numTag);
-                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
+                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(k.getRevenueCenterId());
+                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, pos, parameters, handler, id);
+
                     } else {
                         UIHelp.showToast(KitchenOrder.this, getString(R.string.order_number_cannot_empty));
                     }
@@ -321,8 +320,10 @@ public class KitchenOrder extends BaseActivity {
                             parameters.put("kotSummary", kotSummary);
                             parameters.put("kotItemDetails", itemDetails);
                             parameters.put("type", 1);
+                            MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId());
                             SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                    pos, parameters, handler, -1);
+
                             loadingDialog.show();
                         }
                     });
@@ -362,8 +363,10 @@ public class KitchenOrder extends BaseActivity {
                             parameters.put("kotSummary", kotSummary1);
                             parameters.put("kotItemDetails", itemDetails);
                             parameters.put("type", 1);
+                            MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary1.getRevenueCenterId());
                             SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, 1);
+                                    pos, parameters, handler, 1);
+
                             loadingDialog.show();
                         }
                     });
@@ -635,8 +638,10 @@ public class KitchenOrder extends BaseActivity {
                         parameters.put("kotSummary", kotSummary);
                         parameters.put("kotItemDetails", itemDetails);
                         parameters.put("type", 1);
+                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId());
                         SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                pos, parameters, handler, -1);
+
                         loadingDialog.show();
 
 
@@ -661,6 +666,7 @@ public class KitchenOrder extends BaseActivity {
         ImageView iv_back = (ImageView) view.findViewById(R.id.iv_back);
         ImageView iv_complete = (ImageView) view.findViewById(R.id.iv_complete);
         iv_back.setOnClickListener(this);
+
         iv_complete.setOnClickListener(this);
         ViewTouchUtil.expandViewTouchDelegate(iv_back);
         ViewTouchUtil.expandViewTouchDelegate(iv_complete);
@@ -678,7 +684,8 @@ public class KitchenOrder extends BaseActivity {
         kitchen_tv_orderremark.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         TextView tv_kiosk_order_id = (TextView) view.findViewById(R.id.tv_kiosk_order_id);
-        if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId());
+        if (pos.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
             tv_kiosk_order_id.setVisibility(View.VISIBLE);
             orderId.setVisibility(View.GONE);
         } else {
@@ -807,8 +814,9 @@ public class KitchenOrder extends BaseActivity {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", popKot.getKotSummary());
                             parameters.put("kotItemDetails", itemDetails);
+                            MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(popKot.getKotSummary().getRevenueCenterId());
                             SyncCentre.getInstance().kotComplete(context,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                    pos, parameters, handler, -1);
                         }
 
                         break;
@@ -828,8 +836,9 @@ public class KitchenOrder extends BaseActivity {
                                         Map<String, Object> parameters = new HashMap<String, Object>();
                                         parameters.put("orderDetailId", orderDetailId);
 
+                                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kot.getKotSummary().getRevenueCenterId());
                                         SyncCentre.getInstance().updateRemainingStock(context,
-                                                App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                                                pos, parameters, handler);
                                     }
                                 });
                         break;
@@ -937,9 +946,10 @@ public class KitchenOrder extends BaseActivity {
                             int orderDetailId = kot.getKotItemDetails().get(position).getOrderDetailId();
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("orderDetailId", orderDetailId);
-
+                            MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kot.getKotSummary().getRevenueCenterId());
                             SyncCentre.getInstance().updateRemainingStock(context,
-                                    App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                                    pos, parameters, handler);
+
                         }
                     });
 
@@ -950,7 +960,7 @@ public class KitchenOrder extends BaseActivity {
         public void onRightMenuClick(String str) {
             int position = Integer.valueOf(str).intValue();
             KotAdapter currentPopItems = (KotAdapter) reKot.getAdapter();
-            Kot popKot = currentPopItems.getKot();
+            final Kot popKot = currentPopItems.getKot();
 
             if (position >= popKot.getKotItemDetails().size()) {
 //						return;
@@ -977,8 +987,10 @@ public class KitchenOrder extends BaseActivity {
 
                     public void run() {
 
+                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(popKot.getKotSummary().getRevenueCenterId());
                         SyncCentre.getInstance().kotComplete(context,
-                                App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                                pos, parameters, handler, -1);
+
 
                     }
 

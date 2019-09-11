@@ -56,7 +56,7 @@ public class OrderHelper {
 				getOrderDetailDiscountPrice(orderDetail), false);
 
 		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-				orderDetail.getItemId());
+				orderDetail.getItemId(), orderDetail.getItemName());
 		BigDecimal taxTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if(itemDetail == null || itemDetail.getTaxCategoryId() == null)
 			return taxTotal;
@@ -166,7 +166,7 @@ public class OrderHelper {
 
 
 		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-				orderDetail.getItemId());
+				orderDetail.getItemId(), orderDetail.getItemName());
 		BigDecimal taxTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if(itemDetail == null || itemDetail.getTaxCategoryId() == null)
 			return taxTotal;
@@ -644,7 +644,7 @@ public class OrderHelper {
           OrderDetail  orderDetailMin = null;
 		for(OrderDetail orderDetail : orderDetails){
 			ItemDetail itemDetail= CoreData.getInstance()
-					.getItemDetailById(orderDetail.getItemId().intValue());
+					.getItemDetailById(orderDetail.getItemId().intValue(), orderDetail.getItemName());
 
 
 			if (promotion.getItemId()<=0&&promotion.getItemCategoryId()>0) {
@@ -740,7 +740,7 @@ public class OrderHelper {
 	    	BigDecimal  promotionTotal=BH.getBD(ParamConst.DOUBLE_ZERO);
 		for(OrderDetail orderDetail : orderDetails){
 			ItemDetail itemDetail= CoreData.getInstance()
-					.getItemDetailById(orderDetail.getItemId().intValue());
+					.getItemDetailById(orderDetail.getItemId().intValue(), orderDetail.getItemName());
 
 
 			if (promotion.getItemId()>0) {
@@ -852,7 +852,7 @@ public class OrderHelper {
 
 		for(OrderDetail orderDetail : orderDetails){
 			ItemDetail itemDetail= CoreData.getInstance()
-					.getItemDetailById(orderDetail.getItemId().intValue());
+					.getItemDetailById(orderDetail.getItemId().intValue(), orderDetail.getItemName());
 
 
 			if (promotion.getItemId()>0) {
@@ -989,7 +989,7 @@ public class OrderHelper {
 		BigDecimal   promotionPrice=BH.getBD(ParamConst.DOUBLE_ZERO);
 		for(OrderDetail orderDetail : orderDetails){
 			ItemDetail itemDetail= CoreData.getInstance()
-					.getItemDetailById(orderDetail.getItemId().intValue());
+					.getItemDetailById(orderDetail.getItemId().intValue(), orderDetail.getItemName());
 
 
 			if (promotion.getItemId()>0) {
@@ -1123,7 +1123,7 @@ public class OrderHelper {
 			BigDecimal   promotionPrice=BH.getBD(ParamConst.DOUBLE_ZERO);
 			for(OrderDetail orderDetail : orderDetails){
 				ItemDetail itemDetail= CoreData.getInstance()
-						.getItemDetailById(orderDetail.getItemId().intValue());
+						.getItemDetailById(orderDetail.getItemId().intValue(), orderDetail.getItemName());
 
 
 				if (promotion.getItemId()>0) {
@@ -1610,7 +1610,7 @@ public class OrderHelper {
 
 		// 最后从ItemHappyHour判断，是否存在合法的ItemHappyHour，如果不存在，则认为没有ItemHappyHour
 		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-				orderDetail.getItemId());
+				orderDetail.getItemId(), orderDetail.getItemName());
 		itemHappyHour = CoreData.getInstance().getItemHappyHour(revenueCenter,
 				itemDetail);
 		return itemHappyHour;
@@ -1643,7 +1643,7 @@ public class OrderHelper {
 
 		// 最后从ItemHappyHour判断，是否存在合法的ItemHappyHour，如果不存在，则认为没有ItemHappyHour
 		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-				orderDetail.getItemId());
+				orderDetail.getItemId(), orderDetail.getItemName());
 		itemPromotion = CoreData.getInstance().getItemPromotion(revenueCenter,
 				itemDetail);
 		return itemPromotion;
@@ -1709,7 +1709,7 @@ public class OrderHelper {
 	// 只有添加默认modifier
 	public static void addDefaultModifiers(Order order, OrderDetail orderDetail) {
 		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-				orderDetail.getItemId());
+				orderDetail.getItemId(), orderDetail.getItemName());
 		if (itemDetail == null || itemDetail.getItemTemplateId() == null){
 			return;
 		}

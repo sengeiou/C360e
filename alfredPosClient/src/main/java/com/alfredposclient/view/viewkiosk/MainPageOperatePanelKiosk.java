@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -368,8 +369,8 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                                                     orderDetail,
                                                                     CoreData.getInstance()
                                                                             .getItemDetailById(
-                                                                                    orderDetail
-                                                                                            .getItemId()),
+                                                                                    orderDetail.getItemId(),
+                                                                                    orderDetail.getItemName()),
                                                                     kotSummary,
                                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                                     kotItemDetail.setItemNum(orderDetail
@@ -622,8 +623,8 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                         orderDetail,
                                         CoreData.getInstance()
                                                 .getItemDetailById(
-                                                        orderDetail
-                                                                .getItemId()),
+                                                        orderDetail.getItemId(),
+                                                        orderDetail.getItemName()),
                                         kotSummary,
                                         App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                         kotItemDetail.setItemNum(orderDetail

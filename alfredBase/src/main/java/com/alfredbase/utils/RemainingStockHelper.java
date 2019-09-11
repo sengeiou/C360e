@@ -24,7 +24,7 @@ public class RemainingStockHelper {
     }
 
     public static boolean updateRemainingStockNumByOrderDetail(OrderDetail orderDetail){
-        int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+        int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName()).getItemTemplateId();
         RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
         if (remainingStock != null) {
             RemainingStockSQL.updateRemainingById(orderDetail.getItemNum(), itemTempId);
@@ -72,7 +72,7 @@ public class RemainingStockHelper {
     }
 
     public static boolean updateRemainingStockNumByDeleteOrderDetail(OrderDetail orderDetail){
-        int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+        int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName()).getItemTemplateId();
         RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
         if (remainingStock != null) {
             RemainingStockSQL.addRemainingById(orderDetail.getItemNum(), itemTempId);

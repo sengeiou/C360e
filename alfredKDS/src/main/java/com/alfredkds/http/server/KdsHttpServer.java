@@ -1,6 +1,7 @@
 package com.alfredkds.http.server;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -143,10 +144,10 @@ public class KdsHttpServer extends AlfredHttpServer {
         try {
             JSONObject jsonObject = new JSONObject(params);
             Gson gson = new Gson();
-			KotSummary kotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
-			if(kotSummary != null){
-				KotSummarySQL.update(kotSummary);
-			}
+            KotSummary kotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
+            if (kotSummary != null) {
+                KotSummarySQL.update(kotSummary);
+            }
             KotItemDetail kotItemDetail = gson.fromJson(jsonObject.optString("tansferKotItem"), KotItemDetail.class);
             KotItemDetailSQL.update(kotItemDetail);
             App.getTopActivity().httpRequestAction(KitchenOrder.HANDLER_MERGER_KOT, null);
@@ -161,7 +162,6 @@ public class KdsHttpServer extends AlfredHttpServer {
     private Response handlerSubmitNewKot(String params) {
         Response resp = null;
         Map<String, Object> result = new HashMap<String, Object>();
-        int revenueCenterId = App.instance.getCurrentConnectedMainPos().getRevenueId();
         try {
             JSONObject jsonObject = new JSONObject(params);
             final Gson gson = new Gson();
@@ -177,7 +177,15 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.kot_submit_failed));
                 return resp;
             } else {
-                if (revenueCenterId != kotSummary.getRevenueCenterId()) {
+                boolean isRevenueCenterId = false;
+                for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPos()) {
+                    int revenueCenterId = mainPos.getRevenueId();
+                    if (kotSummary.getRevenueCenterId() == revenueCenterId) {
+                        isRevenueCenterId = true;
+                    }
+                }
+
+                if (!isRevenueCenterId) {
                     App.getTopActivity().httpRequestAction(App.HANDLER_VERIFY_MAINPOS, null);
                     result.put("resultCode", ResultCode.CONNECTION_FAILED);
                     resp = getJsonResponse(new Gson().toJson(result));
@@ -193,7 +201,6 @@ public class KdsHttpServer extends AlfredHttpServer {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-
                         KotSummarySQL.update(kotSummary);
                         if (kotItemDetails != null) {
                             KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -331,15 +338,15 @@ public class KdsHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             MainPosInfo pos = gson.fromJson(
                     jsonObject.optString("mainpos"), MainPosInfo.class);
-            MainPosInfo connectedPos = App.instance.getCurrentConnectedMainPos();
-
-            //old POS version(<1.0.1) POS dont have mainpos object in request
-            if (pos == null)
-                return true;
-            if (connectedPos != null &&
-                    pos.getRestId().intValue() == connectedPos.getRestId().intValue()
-                    && pos.getRevenueId().intValue() == connectedPos.getRevenueId().intValue()) {
-                ret = true;
+            for (MainPosInfo connectedPos : App.instance.getCurrentConnectedMainPos()) {
+                //old POS version(<1.0.1) POS dont have mainpos object in request
+                if (pos == null)
+                    return true;
+                if (connectedPos != null &&
+                        pos.getRestId().intValue() == connectedPos.getRestId().intValue()
+                        && pos.getRevenueId().intValue() == connectedPos.getRevenueId().intValue()) {
+                    ret = true;
+                }
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -366,9 +373,9 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                                 @Override
                                 public void onClick(View v) {
-                                    KotSummarySQL.deleteAllKotSummary();
-                                    KotItemDetailSQL.deleteAllKotItemDetail();
-                                    KotItemModifierSQL.deleteAllKotItemModifier();
+                                    KotSummarySQL.deleteAllKotSummary(null);
+                                    KotItemDetailSQL.deleteAllKotItemDetail(null);
+                                    KotItemModifierSQL.deleteAllKotItemModifier(null);
 //							App.instance.popAllActivityExceptOne(EmployeeID.class);
                                     UIHelp.startWelcome(App.getTopActivity());
                                     App.instance.popAllActivityExceptOne(Login.class);
@@ -385,17 +392,17 @@ public class KdsHttpServer extends AlfredHttpServer {
         return resp;
     }
 
-	private Response handlerRefreshKot(){
-		Map<String, Object> result = new HashMap<String, Object>();
-		try {
-			App.getTopActivity().httpRequestAction(App.HANDLER_RELOAD_KOT, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		result.put("resultCode", ResultCode.SUCCESS);
-		Response resp = this.getJsonResponse(new Gson().toJson(result));
-		return resp;
-	}
+    private Response handlerRefreshKot() {
+        Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            App.getTopActivity().httpRequestAction(App.HANDLER_RELOAD_KOT, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        result.put("resultCode", ResultCode.SUCCESS);
+        Response resp = this.getJsonResponse(new Gson().toJson(result));
+        return resp;
+    }
 
     private Response invalidDeviceResponse() {
         Map<String, Object> result = new HashMap<String, Object>();

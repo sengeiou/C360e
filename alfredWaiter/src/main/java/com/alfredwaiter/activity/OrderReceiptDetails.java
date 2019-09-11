@@ -128,7 +128,7 @@ public class OrderReceiptDetails extends BaseActivity {
 
 			final OrderDetail orderDetail = orderDetails.get(arg0);
 			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-					orderDetail.getItemId());
+					orderDetail.getItemId(),orderDetail.getItemName());
 
 			List<OrderModifier> modifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
 			if (modifiers.size() > 0) {

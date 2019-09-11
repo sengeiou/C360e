@@ -123,7 +123,7 @@ public class HttpAnalysis {
             SessionStatus sessionStatus = gson.fromJson(
                     object.optString("session"), SessionStatus.class);
             MainPosInfo mainPosInfo = gson.fromJson(object.optString("mainPosInfo"), MainPosInfo.class);
-			String formatType = object.optString("formatType");
+            String formatType = object.optString("formatType");
 
 
 
@@ -167,8 +167,8 @@ public class HttpAnalysis {
             App.instance.setMainPosInfo(mainPosInfo);
             App.instance.setSessionStatus(sessionStatus);
             App.instance.setCurrencySymbol(currencySymbol, isDouble);
-			App.instance.setFormatType(formatType);
-            CoreData.getInstance().setUserKey(userKey);
+            App.instance.setFormatType(formatType);
+            CoreData.getInstance().setUserKey(mainPosInfo.getRevenueId(),userKey);
             return userKey;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -338,15 +338,15 @@ public class HttpAnalysis {
             Gson gson = new Gson();
             order = gson.fromJson(object.getJSONObject("order").toString(),
                     Order.class);
-			Map<String, String> waiterMap = new LinkedHashMap<String, String>(16, 0.75f, true);
-			if(!TextUtils.isEmpty(order.getWaiterInformation())){
-				waiterMap=CommonUtil.getStringToMap(order.getWaiterInformation());
-				waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
-			}else {
-				waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
-			}
-			String waitterName = CommonUtil.getMapToString(waiterMap);
-			order.setWaiterInformation(waitterName);
+            Map<String, String> waiterMap = new LinkedHashMap<String, String>(16, 0.75f, true);
+            if(!TextUtils.isEmpty(order.getWaiterInformation())){
+                waiterMap=CommonUtil.getStringToMap(order.getWaiterInformation());
+                waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+            }else {
+                waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+            }
+            String waitterName = CommonUtil.getMapToString(waiterMap);
+            order.setWaiterInformation(waitterName);
             List<ItemDetail> itemDetails = gson.fromJson(object.getString("tempItems"),
                     new TypeToken<ArrayList<ItemDetail>>() {
                     }.getType());

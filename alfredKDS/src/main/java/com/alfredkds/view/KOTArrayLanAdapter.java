@@ -33,7 +33,6 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
     private boolean addFirstItem = false;
     private Handler handler;
     private LayoutInflater inflater;
-    private MainPosInfo mainPosInfo;
 
 //	private Map<Integer, Long> times = new HashMap<Integer, Long>();
 
@@ -139,7 +138,6 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
                     if (!ButtonClickTimer.canClick()) {
                         return;
                     }
-                    mainPosInfo = App.instance.getCurrentConnectedMainPos();
                     Message message = new Message();
                     message.obj = kotItem;
                     message.arg2 = kotItem.getItemDetailId();

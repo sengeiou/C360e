@@ -204,6 +204,33 @@
             android:text="@string/transfer_table"
             android:textColor="@color/text_color_selector"
             android:textSize="@dimen/text_size_s" />
+
+        <TextView
+            android:id="@+id/tv_cancel_waiting_list"
+            android:layout_width="@dimen/dp70"
+            android:layout_height="@dimen/dp80"
+            android:layout_below="@+id/tv_tables"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/box_bill_selector"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/text_color_selector"
+            android:textSize="@dimen/text_size_s"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_open_item_waiting_list"
+            android:layout_width="@dimen/dp70"
+            android:layout_height="@dimen/dp80"
+            android:layout_below="@+id/tv_transfer_table"
+            android:layout_toRightOf="@+id/tv_cancel_waiting_list"
+            android:background="@drawable/box_bill_selector"
+            android:gravity="center"
+            android:text="@string/open_item"
+            android:textColor="@color/text_color_selector"
+            android:textSize="@dimen/text_size_s"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <TextView
@@ -269,6 +296,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_split_fire"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rl_misc"

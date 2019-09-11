@@ -335,5 +335,21 @@
     <string name="turning_on_training_mode">تشغيل وضع التدريب</string>
     <string name="turning_on_training_mode_desc">لأول مرة للمستخدمين ، سوف تظهر الإعدادات في وضع التشغيل في الأعلى</string>
 
+    <string name="ok">حسنا</string>
+    <string name="add">أكثر</string>
+    <string name="cancel">ألغها</string>
+    <string name="sign_in">دخول</string>
+    <string name="sync">مزامنة</string>
+    <string name="waiting_list">قائمة الانتظار</string>
+    <string name="queue">الطابور</string>
+    <string name="assign_table">تعيين\nالجدول</string>
+    <string name="summary">ملخص</string>
+
+    <string name="add_queue">إضافة قائمة انتظار جديدة</string>
+    <string name="queue_name">اسم قائمة الانتظار</string>
+    <string name="ask_save_edit_content">هل تريد حفظ المحتوى المحرر؟</string>
+    <string name="ask_delete_queue">هل أنت متأكد من حذف قائمة الانتظار هذه؟</string>
+    <string name="name_used">الاسم مستخدم بالفعل ، جرب آخر</string>
+
 
 </resources>

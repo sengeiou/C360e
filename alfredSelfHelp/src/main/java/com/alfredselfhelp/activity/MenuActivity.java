@@ -271,7 +271,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                    if (count == 0) {
 //
 //                    } else {
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId());
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(),orderDetail.getItemName());
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 
                     if (remainingStock != null) {
@@ -521,7 +521,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     boolean isStock = false;
                     for (int i = 0; i < orderDetails.size(); i++) {
                         OrderDetail orderDetail = orderDetails.get(i);
-                        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
+                        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId(),orderDetail.getItemName());
                         RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                         if (remainingStock != null) {
                             int qty = remainingStock.getQty() - remainingStock.getMinQty();
@@ -776,7 +776,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
                 boolean showToast = false;
                 for (ItemDetailDto itemDetailDto : itemDetailDtos) {
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId(),itemDetailDto.getItemName());
                     OrderDetail selectedOrderDetail = null;
                     if (orderDetails != null && orderDetails.size() > 0) {
                         for (OrderDetail orderDetail : orderDetails) {

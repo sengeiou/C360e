@@ -45,7 +45,7 @@ public class TablesAdapter extends BaseAdapter {
 //				.getInstance().getTableList(
 //						App.instance.getRevenueCenter().getId(),
 //						places.getId());
-		this.tableList = TableInfoSQL.getTableInfosBuyPlaces(places);
+		this.tableList = TableInfoSQL.getTableInfosByPlaces(places);
 	}
 
 	@Override

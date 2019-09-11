@@ -1,6 +1,7 @@
 package com.alfredposclient.jobs;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
