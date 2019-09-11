@@ -35,7 +35,7 @@
     <string name="waiter">WAITER</string>
     <string name="get_bill">Get Bill</string>
     <string name="bill">Bill</string>
-    <string name="print">Print</string>
+    <string name="print">Print Bill</string>
     <string name="discount">Discount</string>
     <string name="unseat">Unseat</string>
     <string name="table">Table</string>
@@ -97,7 +97,7 @@
     <string name="change_amount">Change Amount</string>
     <string name="open_drawer">Open Drawer</string>
     <string name="cashier">Cashier</string>
-    <string name="reprint">Reprint</string>
+    <string name="reprint">KOT Reprint</string>
     <string name="print_report">Print Report</string>
     <string name="clear_all">Clear All</string>
     <string name="top_up">Top-up</string>
