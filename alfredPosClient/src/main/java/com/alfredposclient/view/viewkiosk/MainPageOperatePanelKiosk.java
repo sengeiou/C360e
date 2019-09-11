@@ -229,6 +229,13 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
 				if (paymentSettlement != null) {
 					return;
 				}
+
+				int placeOrderCount = OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(order);
+				if(placeOrderCount > 0) {
+					DialogFactory.showOneButtonCompelDialog(parent,"", parent.getResources().getString(R.string.cannot_delete), null);
+					return;
+				}
+
 				DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning), 
 						parent.getResources().getString(R.string.discard_current_order), 
 						parent.getResources().getString(R.string.no), 

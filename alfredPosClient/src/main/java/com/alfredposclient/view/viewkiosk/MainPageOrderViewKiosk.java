@@ -276,9 +276,9 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                     kotItemDetail.setItemNum(orderDetail.getItemNum());
 
                                     //region change status TMP when place order
-                                    if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TMP) {
-                                        kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNSEND);
-                                    }
+//                                    if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TMP) {
+//                                        kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNSEND);
+//                                    }
                                     //endregion
 
                                     if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
