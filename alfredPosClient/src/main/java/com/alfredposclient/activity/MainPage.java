@@ -2263,9 +2263,9 @@ public class MainPage extends BaseActivity {
                 case BaseApplication.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC:
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
-                    unseat();
+                    unseat(currentOrder);
                     onBackPressed();
-                    showTables();
+//                    showTables();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
                     final OrderDetail orderDetail = transfItemOrderDetail;
@@ -2293,14 +2293,15 @@ public class MainPage extends BaseActivity {
                         List<OrderDetail> ordersDetail = OrderDetailSQL.getOrderDetails(oldOrder.getId());
                         if (ordersDetail.size() > 0) {
                             removeItemLogic(orderDetail);
-                            showTables();
-                            onBackPressed();
+//                            showTables();
                             ordersDetail = OrderDetailSQL.getOrderDetails(oldOrder.getId());
                             if (ordersDetail.size() <= 0){
                                 unseat(oldOrder);
                             } else {
 
                             }
+
+                            onBackPressed();
                         }
                     }
 
@@ -2314,7 +2315,38 @@ public class MainPage extends BaseActivity {
     };
 
     private void unseat() {
-        unseat(currentOrder);
+        OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
+        KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
+        OrderModifierSQL.deleteOrderModifierByOrder(currentOrder);
+        List<OrderSplit> splits = OrderSplitSQL.getAllOrderSplits(currentOrder);
+        if (splits.size() > 0) {
+            for (OrderSplit split : splits) {
+                OrderSplitSQL.delete(split);
+            }
+        }
+        OrderBillSQL.deleteOrderBillByOrder(currentOrder);
+        OrderSQL.deleteOrder(currentOrder);
+
+        TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
+        tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
+        if (checkIfTableFromThisRVC(tables)) {
+            TableInfoSQL.updateTables(tables);
+        }
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("tableId", currentTable.getPosId().intValue());
+            jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
+            jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        activityRequestCode = 0;
+        selectOrderSplitDialog.dismiss();
+        tableShowAction = SHOW_TABLES;
+        currentOrder = null;
+        showTables();
     }
     private void unseat(Order order) {
         OrderDetailSQL.deleteOrderDetailByOrder(order);
@@ -2349,7 +2381,6 @@ public class MainPage extends BaseActivity {
         tableShowAction = SHOW_TABLES;
         order = null;
         currentOrder = null;
-        showTables();
     }
 
     private boolean checkIfTableFromThisRVC(TableInfo tableInfo) {
