@@ -2263,11 +2263,18 @@ public class MainPage extends BaseActivity {
                 case BaseApplication.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC:
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
+
+                    App.instance.printTransferOrder(App.instance.getCahierPrinter(), oldTable.getName(), currentTable.getName(),
+                            currentOrder, oldOrder, orderDetails, new ArrayList<OrderModifier>());
                     unseat(currentOrder);
                     onBackPressed();
 //                    showTables();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
+
+                    App.instance.printTransferOrder(App.instance.getCahierPrinter(), oldTable.getName(), currentTable.getName(),
+                            currentOrder, oldOrder, orderDetails, new ArrayList<OrderModifier>());
+
                     final OrderDetail orderDetail = transfItemOrderDetail;
                     if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
 
@@ -2295,7 +2302,7 @@ public class MainPage extends BaseActivity {
                             removeItemLogic(orderDetail);
 //                            showTables();
                             ordersDetail = OrderDetailSQL.getOrderDetails(oldOrder.getId());
-                            if (ordersDetail.size() <= 0){
+                            if (ordersDetail.size() <= 0) {
                                 unseat(oldOrder);
                             } else {
 
@@ -2348,6 +2355,7 @@ public class MainPage extends BaseActivity {
         currentOrder = null;
         showTables();
     }
+
     private void unseat(Order order) {
         OrderDetailSQL.deleteOrderDetailByOrder(order);
         KotSummarySQL.deleteKotSummaryByOrder(order);

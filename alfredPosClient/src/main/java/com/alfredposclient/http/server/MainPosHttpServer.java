@@ -3691,6 +3691,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
                 }
             }
+
+            result.put("orderTarget", new Gson().toJson(orderTarget));
+            result.put("tableTarget", new Gson().toJson(tableInfo));
         } catch (Exception e) {
             result.put("resultCode", ResultCode.UNKNOW_ERROR);
             e.printStackTrace();

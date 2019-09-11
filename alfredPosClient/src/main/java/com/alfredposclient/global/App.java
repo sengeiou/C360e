@@ -2486,6 +2486,17 @@ public class App extends BaseApplication {
     }
 
 
+    public void printTransferOrder(PrinterDevice printer, String fromTable, String toTable, Order fromOrder, Order toOrder, List<OrderDetail> orderDetail, List<OrderModifier> modifier) {
+        Gson gson = new Gson();
+        String prtStr = gson.toJson(printer);
+        String fromOrderStr = gson.toJson(fromOrder);
+        String toOrderStr = gson.toJson(toOrder);
+        String details = gson.toJson(fromTable);
+        String mods = gson.toJson(modifier);
+
+        mRemoteService.printTransferOrder(prtStr, fromTable, toTable, fromOrder, toOrder, details, mods);
+    }
+
     public void printQrByBitmap(PrinterDevice printer, PrinterTitle printerTitle, String paymentMethod, String id, String amount, Bitmap bmp) {
         Bitmap bitmap = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), bmp.getConfig());
         Canvas canvas = new Canvas(bitmap);
@@ -3237,7 +3248,7 @@ public class App extends BaseApplication {
             Payment payment = ObjectFactory.getInstance().getPayment(order, orderBill);
             PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_PAYPAL, payment.getPaymentAmount());
             for (AppOrderDetail appOrderDetail : appOrderDetailList) {
-                if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue(),appOrderDetail.getItemName()) == null)
+                if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue(), appOrderDetail.getItemName()) == null)
                     continue;
                 OrderDetail orderDetail = ObjectFactory
                         .getInstance()
