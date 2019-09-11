@@ -12,6 +12,7 @@ import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,7 +20,6 @@ import java.util.List;
  */
 
 public class TableInfoSQL {
-
 
 
     public static void addTables(TableInfo newTable) {
@@ -34,7 +34,7 @@ public class TableInfoSQL {
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
-                    new Object[] { newTable.getPosId(), newTable.getName(), newTable.getImageName(),
+                    new Object[]{newTable.getPosId(), newTable.getName(), newTable.getImageName(),
                             newTable.getRestaurantId(), newTable.getRevenueId(), newTable.getxAxis(),
                             newTable.getyAxis(), newTable.getPlacesId(), newTable.getResolution(),
                             newTable.getShape(), newTable.getType(), newTable.getStatus(),
@@ -64,7 +64,7 @@ public class TableInfoSQL {
                     + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
-                    new Object[] { newTable.getPosId(), newTable.getName(), newTable.getImageName(),
+                    new Object[]{newTable.getPosId(), newTable.getName(), newTable.getImageName(),
                             newTable.getRestaurantId(), newTable.getRevenueId(), newTable.getxAxis(),
                             newTable.getyAxis(), newTable.getPlacesId(), newTable.getResolution(),
                             newTable.getShape(), newTable.getType(), newTable.getStatus(),
@@ -150,12 +150,20 @@ public class TableInfoSQL {
     }
 
     public static List<TableInfo> getAllTables() {
+        return getAllTables(" and posId > 0");
+    }
+
+    public static List<TableInfo> getAllWaitingListTables() {
+        return getAllTables(" and posId < 0");
+    }
+
+    public static List<TableInfo> getAllTables(String logicPosId) {
         List<TableInfo> result = new ArrayList<TableInfo>();
-        String sql = "select * from " + TableNames.TableInfo + " where isKiosk <> 1";
+        String sql = "select * from " + TableNames.TableInfo + " where isKiosk <> 1 " + logicPosId;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[] {});
+            cursor = db.rawQuery(sql, new String[]{});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -197,16 +205,19 @@ public class TableInfoSQL {
                 cursor.close();
             }
         }
+        if (result.size() > 0) {
+            Collections.reverse(result);
+        }
         return result;
     }
 
     public static List<TableInfo> getAllUsedTables() {
         List<TableInfo> result = new ArrayList<TableInfo>();
-        String sql = "select * from " + TableNames.TableInfo + " where status <> " + ParamConst.TABLE_STATUS_IDLE  + " and isKiosk <> 1";
+        String sql = "select * from " + TableNames.TableInfo + " where status <> " + ParamConst.TABLE_STATUS_IDLE + " and isKiosk <> 1  and posId > 0";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[] {});
+            cursor = db.rawQuery(sql, new String[]{});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -253,12 +264,12 @@ public class TableInfoSQL {
 
 
     public static TableInfo getAllUsedOneTables() {
-        String sql = "select * from " + TableNames.TableInfo + " where status = " + ParamConst.TABLE_STATUS_IDLE  + " and isKiosk <> 1";
+        String sql = "select * from " + TableNames.TableInfo + " where status = " + ParamConst.TABLE_STATUS_IDLE + " and isKiosk <> 1  and posId > 0";
         Cursor cursor = null;
         TableInfo newTable = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[] {});
+            cursor = db.rawQuery(sql, new String[]{});
             int count = cursor.getCount();
             if (count < 1) {
                 return newTable;
@@ -306,7 +317,7 @@ public class TableInfoSQL {
         TableInfo newTable = new TableInfo();
         Cursor cursor = null;
         try {
-            cursor = SQLExe.getDB().rawQuery(sql, new String[] {String.valueOf(id)});
+            cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(id)});
 
             if (cursor.moveToFirst()) {
                 newTable.setPosId(cursor.getInt(0));
@@ -343,12 +354,13 @@ public class TableInfoSQL {
         }
         return newTable;
     }
+
     public static TableInfo getTableByName(String name) {
         String sql = "select * from " + TableNames.TableInfo + " where name = ?";
         TableInfo newTable = null;
         Cursor cursor = null;
         try {
-            cursor = SQLExe.getDB().rawQuery(sql, new String[] {name});
+            cursor = SQLExe.getDB().rawQuery(sql, new String[]{name});
 
             if (cursor.moveToFirst()) {
                 newTable = new TableInfo();
@@ -386,12 +398,13 @@ public class TableInfoSQL {
         }
         return newTable;
     }
+
     public static TableInfo getKioskTable() {
         String sql = "select * from " + TableNames.TableInfo + " where isKiosk = ?";
         TableInfo newTable = null;
         Cursor cursor = null;
         try {
-            cursor = SQLExe.getDB().rawQuery(sql, new String[] {String.valueOf(1)});
+            cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(1)});
 
             if (cursor.moveToFirst()) {
                 newTable = new TableInfo();
@@ -432,23 +445,31 @@ public class TableInfoSQL {
 
 
     public static void deleteTableInfo(int id) {
-        String sql = "delete from " + TableNames.TableInfo + " where posId = ?";
+        String sql = "delete from " + TableNames.TableInfo + " where posId = ? ";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] { id });
+            SQLExe.getDB().execSQL(sql, new Object[]{id});
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static List<TableInfo> getTableInfosBuyPlaces(PlaceInfo places) {
+    public static List<TableInfo> getTableInfosByPlaces(PlaceInfo places) {
+        return getTableInfosByPlaces(places, "and posId > 0");
+    }
+
+    public static List<TableInfo> getWaitingListInfosByPlaces(PlaceInfo places) {
+        return getTableInfosByPlaces(places, "and posId < 0");
+    }
+
+    public static List<TableInfo> getTableInfosByPlaces(PlaceInfo places, String logic) {
         List<TableInfo> result = new ArrayList<TableInfo>();
         String sql = "select * from " + TableNames.TableInfo
-                + " where placesId = ?  and isKiosk <> 1";
+                + " where placesId = ?  and isKiosk <> 1  " + logic;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,
-                    new String[] { Integer.toString(places.getId()) });
+                    new String[]{Integer.toString(places.getId())});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -493,19 +514,19 @@ public class TableInfoSQL {
         return result;
     }
 
-    public static void setAllTableIdle(){
+    public static void setAllTableIdle() {
         String sql = "update " + TableNames.TableInfo + " set status = " + ParamConst.TABLE_STATUS_IDLE + " where status <> " + ParamConst.TABLE_STATUS_IDLE;
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] {});
+            SQLExe.getDB().execSQL(sql, new Object[]{});
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void updateTableStatusById(int posId, int status){
+    public static void updateTableStatusById(int posId, int status) {
         String sql = "update " + TableNames.TableInfo + " set status = ? where  posId = ?";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] {status, posId});
+            SQLExe.getDB().execSQL(sql, new Object[]{status, posId});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -514,19 +535,79 @@ public class TableInfoSQL {
     public static void deleteAllTableInfo() {
         String sql = "delete from " + TableNames.TableInfo;
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] {});
+            SQLExe.getDB().execSQL(sql, new Object[]{});
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void deleteTableInfoByPlaceId(int placeInfoId) {
-        String sql = "delete from " + TableNames.TableInfo + " where placesId = ?";
+        deleteTableInfoByPlaceId(placeInfoId, "and posId > 0");
+    }
+
+    public static void deleteWaitingListByPlaceId(int placeInfoId) {
+        deleteTableInfoByPlaceId(placeInfoId, "and posId < 0");
+    }
+
+    public static void deleteTableInfoByPlaceId(int placeInfoId, String logicPosId) {
+        String sql = "delete from " + TableNames.TableInfo + " where placesId = ?  " + logicPosId;
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] {placeInfoId});
+            SQLExe.getDB().execSQL(sql, new Object[]{placeInfoId});
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public static TableInfo getFirstTables() {
+        TableInfo result = null;
+        String sql = "select * from " + TableNames.TableInfo + " where isKiosk <> 1  ORDER BY posId ASC LIMIT 1";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            TableInfo newTable = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                newTable = new TableInfo();
+                newTable.setPosId(cursor.getInt(0));
+                newTable.setName(cursor.getString(1));
+                newTable.setImageName(cursor.getString(2));
+                newTable.setRestaurantId(cursor.getInt(3));
+                newTable.setRevenueId(cursor.getInt(4));
+                newTable.setxAxis(cursor.getString(5));
+                newTable.setyAxis(cursor.getString(6));
+                newTable.setPlacesId(cursor.getInt(7));
+                newTable.setResolution(cursor.getInt(8));
+                newTable.setShape(cursor.getInt(9));
+                newTable.setType(cursor.getInt(10));
+                newTable.setStatus(cursor.getInt(11));
+                newTable.setIsDecorate(cursor.getInt(12));
+                newTable.setUnionId(cursor.getString(13));
+                newTable.setIsActive(cursor.getInt(14));
+                newTable.setPacks(cursor.getInt(15));
+                newTable.setRotate(cursor.getInt(16));
+                newTable.setCreateTime(cursor.getLong(17));
+                newTable.setUpdateTime(cursor.getLong(18));
+                newTable.setOrders(cursor.getInt(19));
+                newTable.setIsKiosk(cursor.getInt(20));
+                newTable.setResolutionWidth(cursor.getInt(21));
+                newTable.setResolutionHeight(cursor.getInt(22));
+                result = newTable;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
 
 }

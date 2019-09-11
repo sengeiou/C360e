@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -84,7 +84,6 @@ public class KOTView extends LinearLayout implements AnimationListener,
     private TextTypeFace textTypeFace;
     private Handler handler;
     private int hour;
-    private MainPosInfo mainPosInfo;
 
     public KOTView(Context context) {
         super(context);
@@ -112,7 +111,6 @@ public class KOTView extends LinearLayout implements AnimationListener,
     }
 
     public void init() {
-        mainPosInfo = App.instance.getCurrentConnectedMainPos();
         kotView = View.inflate(context, R.layout.kot_view, this);
         /*---kotTop显示---*/
         kotId = (TextView) kotView.findViewById(R.id.tv_kotId);
@@ -137,7 +135,15 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
         adapter = new KotItemDetailAdapter();
 //		initTextTypeFace();
-        if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+
+
+        boolean isKiosk = true;
+        for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPos()) {
+            if (mainPos.getIsKiosk() != ParamConst.MAINPOSINFO_IS_KIOSK) {
+                isKiosk = false;
+            }
+        }
+        if (isKiosk) {
             tv_kiosk_order_id.setVisibility(View.GONE);
             orderId.setVisibility(View.GONE);
             time.setVisibility(GONE);
@@ -261,7 +267,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
             trainString = ".Training";
         }
         if (TextUtils.isEmpty(kot.getKotSummary().getTableName())) {
-            table.setText(kioskOrderNoStr+trainString);
+            table.setText(kioskOrderNoStr + trainString);
             if (kot.getKotSummary().getAppOrderId() > 0) {
                 if (kot.getKotSummary().getEatType() == 3) {
                     orderId.setText(context.getResources().getString(R.string.online_app_no) + " : " + kot.getKotSummary().getAppOrderId() + "\n" + TimeUtil.getDeliveryDataTime(kot.getKotSummary().getDeliveryTime()));
@@ -321,8 +327,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
         }
 
-		date.setText(TimeUtil.getPrintDateTime(kot.getKotSummary().getCreateTime()));
-		//time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
+        date.setText(TimeUtil.getPrintDateTime(kot.getKotSummary().getCreateTime()));
+        //time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));
 
 //		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
 //		long currentTime = System.currentTimeMillis();

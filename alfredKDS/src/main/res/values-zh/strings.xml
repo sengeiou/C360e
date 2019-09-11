@@ -76,4 +76,6 @@
     <string name="reconn_pos">你应该重新连接pos！</string>
     <string name="complete_all_item">确认所有订单都已完成？</string>
     <string name="completed">已完成</string>
+    <string name="choose">选择</string>
+    <string name="please_choose_pos">请选择一个POS</string>
 </resources>

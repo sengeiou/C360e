@@ -9,13 +9,13 @@ bugly {
 }
 
 bugsee {
-//    appToken '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+//    appToken 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
 //    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
             case 'release': '9290f896-1a2e-4b70-b1fa-46823bb4398c'
                 break
-            case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
                 break
         }
     }
@@ -108,6 +108,16 @@ android {
 //        exclude 'LICENSE.txt'
 //    }
     buildToolsVersion '27.0.3'
+    flavorDimensions 'default'
+    productFlavors {
+        dev {
+            dimension = 'default'
+            applicationIdSuffix = '.debug'
+        }
+        prod {
+            dimension = 'default'
+        }
+    }
 }
 repositories {
 

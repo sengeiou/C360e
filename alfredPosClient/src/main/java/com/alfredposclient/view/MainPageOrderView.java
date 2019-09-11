@@ -3,7 +3,6 @@ package com.alfredposclient.view;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,7 +63,6 @@ import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
 import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TextTypeFace;
-import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
@@ -72,17 +70,13 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
-import com.alfredposclient.utils.NetworkUtils;
 import com.google.gson.Gson;
-import com.path.android.jobqueue.network.NetworkUtil;
-import com.alfredposclient.utils.NetworkUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -246,6 +240,9 @@ public class MainPageOrderView extends LinearLayout {
                                 if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                                     kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
                                 } else {
+                                    ItemDetail item = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName());
+                                    Log.wtf("Test_orderdetail", orderDetail.getItemName() + " " + orderDetail.getItemId());
+                                    Log.wtf("Test_itemdetail", "" + new Gson().toJson(item));
                                     KotItemDetail kotItemDetail = ObjectFactory
                                             .getInstance()
                                             .getKotItemDetail(
@@ -253,8 +250,8 @@ public class MainPageOrderView extends LinearLayout {
                                                     orderDetail,
                                                     CoreData.getInstance()
                                                             .getItemDetailById(
-                                                                    orderDetail
-                                                                            .getItemId()),
+                                                                    orderDetail.getItemId(),
+                                                                    orderDetail.getItemName()),
                                                     kotSummary,
                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                     kotItemDetail.setItemNum(orderDetail
@@ -407,6 +404,15 @@ public class MainPageOrderView extends LinearLayout {
                 .getName();
         if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.takeaway) + ")";
+        }
+        if (order.getTableId() < 0) {
+            orderNoStr = context.getResources().getString(R.string.queue)
+                    + " - "
+                    + TableInfoSQL.getTableById(order.getTableId())
+                    .getName();
+            btn_place_order.setVisibility(View.GONE);
+        } else {
+            btn_place_order.setVisibility(View.VISIBLE);
         }
         tv_table_name_ontop.setText(orderNoStr);
         tv_item_count.setText("" + itemCount);
@@ -564,7 +570,7 @@ public class MainPageOrderView extends LinearLayout {
                     List<ItemModifier> itemModifiers = CoreData.getInstance()
                             .getItemModifiers(
                                     CoreData.getInstance().getItemDetailById(
-                                            orderDetail.getItemId()));
+                                            orderDetail.getItemId(),orderDetail.getItemName()));
                     if (itemModifiers.size() > 0) {
                         Message msg = handler.obtainMessage();
                         msg.what = MainPage.VIEW_EVENT_OPEN_MODIFIERS;
@@ -631,7 +637,7 @@ public class MainPageOrderView extends LinearLayout {
 
                             if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                                 if (num < 1) {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -663,7 +669,7 @@ public class MainPageOrderView extends LinearLayout {
 //									OrderModifierSQL.updateOrderModifierNum(tag, 999);
                                     OrderHelper.setOrderModifierPirceAndNum(tag, 999);
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -743,7 +749,7 @@ public class MainPageOrderView extends LinearLayout {
                                     // kotCommitStatus, null);
 
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -1064,8 +1070,6 @@ public class MainPageOrderView extends LinearLayout {
             public int getPageIndex() {
                 return pageIndex;
             }
-
-            ;
 
             @Override
             public int getCount() {

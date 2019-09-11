@@ -76,4 +76,6 @@
     <string name="reconn_pos">يجب عليك إعادة الاتصال pos!</string>
     <string name="complete_all_item">تأكيد اكتمال جميع الطلبات؟</string>
     <string name="completed">منجز</string>
+    <string name="choose">حدد</string>
+    <string name="please_choose_pos">يرجى اختيار POS</string>
 </resources>

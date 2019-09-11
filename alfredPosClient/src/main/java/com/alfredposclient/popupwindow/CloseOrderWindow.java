@@ -2688,7 +2688,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 if (selectView != null && selectView == tv_cards_amount_paid_num) {
                     selectView.setInputType(InputType.TYPE_CLASS_NUMBER);
                     if (TextUtils.isEmpty(show)) {
-                        selectView.setText(BH.formatMoney(0).toString());
+                        selectView.setText(BH.formatMoney(0));
                     } else {
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)

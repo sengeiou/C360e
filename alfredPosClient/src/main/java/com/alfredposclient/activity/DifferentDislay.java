@@ -90,7 +90,6 @@ private ImageView homePageWelcomeImg;
         setContentView(R.layout.dialog_different);
         init();
 
-
         list = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
 
         text = Store.getInt(App.instance, Store.TEXTSIZE, 50);
@@ -346,9 +345,8 @@ private ImageView homePageWelcomeImg;
     @Override
     protected void onStop() {
         super.onStop();
-        if(homePageImageView != null)
-        {
+//        if(homePageImageView != null){
             homePageImageView.releasePlayer();
-        }
+//        }
     }
 }

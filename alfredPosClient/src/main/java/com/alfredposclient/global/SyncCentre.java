@@ -3,7 +3,6 @@ package com.alfredposclient.global;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
@@ -11,14 +10,18 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.LoginResult;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.SyncMsg;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PushMessage;
+import com.alfredbase.javabean.model.RVCDevice;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
@@ -781,4 +784,42 @@ public class SyncCentre {
     }
     //end payhalal
 
+    //start connection multi RVC
+    public void getOtherRVCPlaceTable(Context context, Handler handler) {
+        ArrayList<String> urls = new ArrayList<String>();
+        for (Map.Entry<String, RVCDevice> entry : App.instance.getRVCDevices().entrySet()) {
+            RVCDevice posInfo = entry.getValue();
+            urls.add(getAbsoluteUrl(posInfo.getIp(), APIName.GET_OTHER_RVC_PLACE_TABLE));
+        }
+        for (int i = 0; i < urls.size(); i++) {
+            HttpAPI.getOtherRVCPlaceTable(context,
+                    urls.get(i), httpClient, handler);
+        }
+    }
+
+    public void getOtherRVCTable(Context context, String url, int placeId,Handler handler) {
+            HttpAPI.getOtherRVCTable(context,
+                    getAbsoluteUrl(url, APIName.GET_OTHER_RVC_TABLE), placeId,httpClient, handler);
+
+    }
+
+
+    public void sendOrderToOtherRVC(Context context, String url, int transferType, Order currentOrder, int tableId, Handler handler) {
+        HttpAPI.sendOrderToOtherRVC(context,
+                getAbsoluteUrl(url, APIName.TRANSFER_TABLE_TO_OTHER_RVC),transferType, currentOrder, tableId, httpClient, handler);
+
+    }
+
+    public void transferItemToOtherRVC(Context context, String url, Order oldOrder, OrderDetail transfItemOrderDetail, TableInfo targetTable, Handler handler) {
+        HttpAPI.transferItemToOtherRVC(context,
+                getAbsoluteUrl(url, APIName.TRANSFER_ITEM_TO_OTHER_RVC), oldOrder, transfItemOrderDetail, targetTable.getPosId(), targetTable.getPacks(), httpClient, handler);
+    }
+
+
+    private String getAbsoluteUrl(String url, String subUrl) {
+        return "http://" + url + ":" + APPConfig.HTTP_SERVER_PORT + "/" + subUrl;
+    }
+
+
+    //end conenction multi RVC
 }

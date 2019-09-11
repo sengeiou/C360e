@@ -2,6 +2,8 @@ package com.alfredbase.javabean;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.store.DataHelper;
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;

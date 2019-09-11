@@ -76,4 +76,7 @@
     <string name="reconn_pos">You should reconnect pos!</string>
     <string name="complete_all_item">Confirm all orders are completed?</string>
     <string name="completed">Complete</string>
+
+    <string name="choose">Select</string>
+    <string name="please_choose_pos">Please select POS</string>
 </resources>

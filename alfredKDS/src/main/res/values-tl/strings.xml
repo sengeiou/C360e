@@ -76,4 +76,6 @@
     <string name="reconn_pos">Dapat kang makipag-ugnay muli sa pos!</string>
     <string name="complete_all_item">Kumpirmahin ang lahat ng mga order ay nakumpleto?</string>
     <string name="completed">Nakumpleto</string>
+    <string name="choose">pumili</string>
+    <string name="please_choose_pos">Mangyaring pumili ng POS</string>
 </resources>

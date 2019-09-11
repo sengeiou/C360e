@@ -3,6 +3,7 @@ package com.alfredposclient.activity.kioskactivity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -399,8 +400,8 @@ public class KioskHoldActivity extends BaseActivity implements View.OnLongClickL
                                         orderDetail,
                                         CoreData.getInstance()
                                                 .getItemDetailById(
-                                                        orderDetail
-                                                                .getItemId()),
+                                                        orderDetail.getItemId(),
+                                                        orderDetail.getItemName()),
                                         kotSummary,
                                         App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                         kotItemDetail.setItemNum(orderDetail

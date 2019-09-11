@@ -19,13 +19,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class BitmapUtil {
-	public static Bitmap convertViewToBitmap(View view) {
-		Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
-				Bitmap.Config.RGB_565);
-		view.draw(new Canvas(bitmap));
+    public static Bitmap convertViewToBitmap(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
+                Bitmap.Config.RGB_565);
+        view.draw(new Canvas(bitmap));
 
-		return bitmap;
-	}
+        return bitmap;
+    }
+
     public static Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {
         int width = bm.getWidth();
         int height = bm.getHeight();
@@ -41,7 +42,7 @@ public class BitmapUtil {
         return resizedBitmap;
     }
 
-    public static Bitmap rotate(int rotate, float scale, Bitmap img){
+    public static Bitmap rotate(int rotate, float scale, Bitmap img) {
         Matrix matrix = new Matrix();
         matrix.postRotate(rotate);
         matrix.postScale(scale, scale);
@@ -51,7 +52,7 @@ public class BitmapUtil {
         return img;
     }
 
-    public static Bitmap getResizedBitmap(Bitmap bigimage, float scale){
+    public static Bitmap getResizedBitmap(Bitmap bigimage, float scale) {
         // 获取这个图片的宽和高
         int width = bigimage.getWidth();
         int height = bigimage.getHeight();
@@ -59,29 +60,44 @@ public class BitmapUtil {
         Matrix matrix = new Matrix();
         // 缩放图片动作
         matrix.postScale(scale, scale);
-        Bitmap bitmap = Bitmap.createBitmap(bigimage, 0, 0, width, height,matrix, true);
+        Bitmap bitmap = Bitmap.createBitmap(bigimage, 0, 0, width, height, matrix, true);
         return bitmap;
     }
 
 
-    public static Bitmap getTableBitmap(int rotate, int scale, Bitmap img){
+    public static Bitmap getTableBitmap(int rotate, int scale, Bitmap img) {
         Matrix matrix = new Matrix();
-        if(rotate != 0)
+        if (rotate != 0)
             matrix.postRotate(rotate);
 
-        switch (scale){
+        switch (scale) {
             case 1:
-                matrix.postScale((float)(2.0/3), (float)(2.0/3));
+                matrix.postScale((float) (2.0 / 3), (float) (2.0 / 3));
                 break;
             case 2:
-                matrix.postScale((float)(5.0/6), (float)(5.0/6));
+                matrix.postScale((float) (5.0 / 6), (float) (5.0 / 6));
                 break;
             case 3:
                 matrix.postScale(1, 1);
                 break;
         }
-        int width = img.getWidth();
-        int height = img.getHeight();
+
+        int width = 0;
+        try {
+            width = img.getWidth();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        int height = 0;
+        try {
+            height = img.getHeight();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        if (height == 0 || width == 0) {
+            return null;
+        }
         img = Bitmap.createBitmap(img, 0, 0, width, height, matrix, true);
         return img;
     }

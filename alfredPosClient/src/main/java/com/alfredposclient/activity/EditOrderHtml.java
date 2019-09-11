@@ -174,7 +174,7 @@ public class EditOrderHtml extends BaseActivity {
 		itemDetails = ItemDetailSQL.getAllItemDetail();
 		for (OrderDetail mOrderDetail : orderDetails) {
 			itemDetailsForOrderDetail.add(CoreData.getInstance()
-					.getItemDetailById(mOrderDetail.getItemId()));
+					.getItemDetailById(mOrderDetail.getItemId(), mOrderDetail.getItemName()));
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("OrderDetails", orderDetails);

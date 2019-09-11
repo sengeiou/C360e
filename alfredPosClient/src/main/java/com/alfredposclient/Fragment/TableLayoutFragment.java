@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
@@ -58,14 +59,19 @@ import com.alfredbase.utils.ViewTouchUtil;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.javabean.MultiRVCPlacesDao;
 import com.alfredposclient.utils.ImageUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Created by Alex on 16/9/22.
@@ -77,22 +83,33 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     public final static int UPDATE_PLACE_TABLE_FAILURE = -10001;
     private int name_w = 60;
     private ListView lv_place;
+    private ListView lv_waiting_list;
     private ListView lv_table_list;
     private RelativeLayout rl_tables;
     private RelativeLayout rl_create_table;
     private int selectPlaceIndex = -1;
     private PlaceAdapter placeAdapter;
+    private WaitingListAdapter waitingListAdapter;
     private TableAdapter tableAdapter;
     private String[] images = {"table_1_1", "table_1_2", "table_2_1", "table_4_1", "table_6_1", "table_6_2", "table_6_3"};
     private boolean canEdit = false;
     private ImageView iv_more_table;
     private TextView tv_table_edit;
     private TextView tv_cancel;
+    private TextView tv_place;
+    private TextView tv_summary;
     private List<TableInfo> newTables = new ArrayList<TableInfo>();
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
+    private List<TableInfo> waitingList = new ArrayList<TableInfo>();
+    private List<MultiRVCPlacesDao.Places> otherRVCPlaces = new ArrayList<>();
+    private Handler otherRVChandler = new Handler();
+    private Runnable otherRVCrunnable = null;
+
+
     private BaseActivity mainPage;
     private LoadingDialog loadingDialog;
     private LinearLayout ll_table_left;
+    private LinearLayout ll_waiting_list;
     private LinearLayout ll_table_right;
 
     //    private RelativeLayout rl_table_area;
@@ -107,13 +124,17 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         Log.e(TAG, "onCreateView");
         final View view = inflater.inflate(R.layout.table_layout, container, false);
         lv_place = (ListView) view.findViewById(R.id.lv_place);
+        lv_waiting_list = (ListView) view.findViewById(R.id.lv_waiting_list);
         lv_table_list = (ListView) view.findViewById(R.id.lv_table_list);
+        tv_summary = (TextView) view.findViewById(R.id.tv_summary);
         iv_more_table = (ImageView) view.findViewById(R.id.iv_more_table);
         tv_table_edit = (TextView) view.findViewById(R.id.tv_table_edit);
         tv_cancel = (TextView) view.findViewById(R.id.tv_cancel);
         rl_tables = (RelativeLayout) view.findViewById(R.id.rl_tables);
+        tv_place = (TextView) view.findViewById(R.id.tv_place);
         rl_create_table = (RelativeLayout) view.findViewById(R.id.rl_create_table);
         ll_table_left = (LinearLayout) view.findViewById(R.id.ll_table_left);
+        ll_waiting_list = (LinearLayout) view.findViewById(R.id.ll_waiting_list);
 //        rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
 //        ViewTreeObserver vto = rl_table_area.getViewTreeObserver();
 //        width = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(mainPage, 40.0f))*3/2;
@@ -138,14 +159,23 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //                return true;
 //            }
 //        });
-        refreshPlace();
+
+        if (App.instance.getRVCDevices().size() > 0) {
+            if (loadingDialog == null) {
+                loadingDialog = new LoadingDialog(mainPage);
+                loadingDialog.setTitle(mainPage.getResources().getString(R.string.loading));
+            }
+            loadingDialog.show();
+            SyncCentre.getInstance().getOtherRVCPlaceTable(mainPage, handler);
+
+
+        } else {
+            refreshView();
+        }
+
+
         tableAdapter = new TableAdapter();
         lv_table_list.setAdapter(tableAdapter);
-        if (places.size() > 0) {
-            selectPlaceIndex = 0;
-            refreshTableLayout();
-        } else {
-        }
         lv_table_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -166,14 +196,37 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         tv_cancel.setOnClickListener(this);
         iv_more_table.setOnClickListener(this);
         view.findViewById(R.id.ll_table_root).setOnClickListener(null);
-        view.findViewById(R.id.tv_place).setOnClickListener(this);
-        view.findViewById(R.id.tv_summary).setOnClickListener(this);
+        tv_place.setOnClickListener(this);
+
+
+        tv_summary.setOnClickListener(this);
         return view;
+    }
+
+    private void refreshView() {
+        refreshPlace();
+        refreshWaitingList();
+
+        if (places.size() > 0) {
+            selectPlaceIndex = 0;
+            tv_place.setText(places.get(selectPlaceIndex).getPlaceName());
+            refreshTableLayout();
+        }
     }
 
     private void refreshPlace() {
         places.clear();
         places = PlaceInfoSQL.getAllPlaceInfo();
+
+        String tableShowAction = ((MainPage) mainPage).tableShowAction;
+        if (!TextUtils.isEmpty(tableShowAction)) {
+            if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                for (MultiRVCPlacesDao.Places otherPlace : otherRVCPlaces) {
+                    places.add(otherPlace.getPlaceInfo());
+                }
+            }
+        }
+
         PlaceInfo place = new PlaceInfo();
         place.setPlaceName("");
         places.add(place);
@@ -185,14 +238,84 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void refreshTableLayout() {
-        newTables = TableInfoSQL.getTableInfosBuyPlaces(places.get(selectPlaceIndex));
-        changeLayoutStatus();
-        rl_tables.removeAllViews();
+    private void refreshWaitingList() {
+        if (mainPage instanceof MainPage) {
+            String tableShowAction = ((MainPage) mainPage).tableShowAction;
+            if (!TextUtils.isEmpty(tableShowAction)) {
+                if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                    ll_waiting_list.setVisibility(View.GONE);
+                } else {
+                    ll_waiting_list.setVisibility(View.VISIBLE);
+                }
+            }
 
-        for (TableInfo newTable : newTables) {
-            addTable(newTable);
         }
+        if (ll_waiting_list.getVisibility() == View.VISIBLE) {
+            waitingList.clear();
+            waitingList = TableInfoSQL.getAllWaitingListTables();
+            TableInfo place = new TableInfo();
+            waitingList.add(place);
+            if (waitingListAdapter != null) {
+                waitingListAdapter.notifyDataSetChanged();
+            } else {
+                waitingListAdapter = new WaitingListAdapter();
+                lv_waiting_list.setAdapter(waitingListAdapter);
+            }
+        }
+    }
+
+
+    private void refreshTableLayout() {
+        if (mainPage instanceof MainPage) {
+            String tableShowAction = ((MainPage) mainPage).tableShowAction;
+            if (!TextUtils.isEmpty(tableShowAction)) {
+                if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                    tv_place.setVisibility(View.VISIBLE);
+                    tv_table_edit.setVisibility(View.GONE);
+                    tv_summary.setText(tableShowAction.replace("_", " "));
+                    if (tableShowAction.equals(MainPage.TRANSFER_TABLE) && ((MainPage) mainPage).currentOrder.getTableId() < 0) {
+                        tv_summary.setText(getString(R.string.assign_table).replace("\n", " "));
+                    }
+                } else {
+                    tv_place.setVisibility(View.VISIBLE);
+                    tv_table_edit.setVisibility(View.VISIBLE);
+                    tv_summary.setText(getString(R.string.summary));
+                }
+            }
+
+        }
+
+        String placeName = "";
+        if (places.size() > selectPlaceIndex){
+
+            placeName = places.get(selectPlaceIndex).getPlaceName();
+        }
+        boolean isPlaceInfoExist = PlaceInfoSQL.checkPlaceInfoExistByName(placeName);
+        if (isPlaceInfoExist) {
+            newTables = TableInfoSQL.getTableInfosByPlaces(places.get(selectPlaceIndex));
+            changeLayoutStatus();
+            rl_tables.removeAllViews();
+            for (TableInfo newTable : newTables) {
+                addTable(newTable);
+            }
+        } else { //from other RVC
+
+            for (MultiRVCPlacesDao.Places other : otherRVCPlaces) {
+                if (other.getPlaceName().equals(placeName)) {
+                    if (loadingDialog == null) {
+                        loadingDialog = new LoadingDialog(mainPage);
+                        loadingDialog.setTitle(mainPage.getResources().getString(R.string.loading));
+                    }
+                    loadingDialog.show();
+                    changeLayoutStatus();
+                    rl_tables.removeAllViews();
+
+                    SyncCentre.getInstance().getOtherRVCTable(mainPage, other.getIp(), other.getPosId(), handler);
+                }
+            }
+        }
+
+
     }
 
     @Override
@@ -205,6 +328,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
     public void refresh() {
         refreshPlace();
+        refreshWaitingList();
         refreshTableLayout();
     }
 
@@ -301,7 +425,10 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         Button btn_table_small = (Button) selfView.findViewById(R.id.btn_table_small);
         Button btn_table_middle = (Button) selfView.findViewById(R.id.btn_table_middle);
         Button btn_table_large = (Button) selfView.findViewById(R.id.btn_table_large);
-        imageView.setImageBitmap(BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap));
+        Bitmap bmp = BitmapUtil.getTableBitmap(newTable.getRotate(), newTable.getShape(), bitmap);
+        if (bmp != null) {
+            imageView.setImageBitmap(bmp);
+        }
         initTableName(tv_table_name, newTable);
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
@@ -579,12 +706,14 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 if (places == null || places.size() == 0) {
                     UIHelp.showShortToast(mainPage, getString(R.string.please_add_place));
                     ll_table_left.setVisibility(View.VISIBLE);
+                    ll_waiting_list.setVisibility(View.GONE);
                     return;
                 } else if (places.size() == 1) {
                     try {
                         if (places.get(0).getIsKiosk() == ParamConst.REVENUECENTER_ISNOT_KIOSK) {
                             UIHelp.showShortToast(mainPage, getString(R.string.please_add_place));
                             ll_table_left.setVisibility(View.VISIBLE);
+                            ll_waiting_list.setVisibility(View.GONE);
                             return;
                         }
                     } catch (Exception e) {
@@ -632,20 +761,45 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 BugseeHelper.buttonClicked("Place");
                 if (ll_table_left.getVisibility() == View.VISIBLE) {
                     ll_table_left.setVisibility(View.GONE);
+                    ll_waiting_list.setVisibility(View.VISIBLE);
+
+                    if (mainPage instanceof MainPage) {
+                        String tableShowAction = ((MainPage) mainPage).tableShowAction;
+                        if (!TextUtils.isEmpty(tableShowAction)) {
+                            if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                                ll_waiting_list.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+
                 } else {
                     ll_table_left.setVisibility(View.VISIBLE);
+                    ll_waiting_list.setVisibility(View.GONE);
                 }
             }
             break;
             case R.id.tv_summary: {
-                BugseeHelper.buttonClicked("Summary");
-                UIHelp.startTableSummaryActivity(mainPage);
+                boolean isClickable = true;
+                if (mainPage instanceof MainPage) {
+                    String tableShowAction = ((MainPage) mainPage).tableShowAction;
+                    if (!TextUtils.isEmpty(tableShowAction)) {
+                        if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                            isClickable = false;
+                        }
+                    }
+
+                }
+
+                if (isClickable) {
+                    BugseeHelper.buttonClicked("Summary");
+                    UIHelp.startTableSummaryActivity(mainPage);
+                }
+
             }
             break;
             case R.id.btn_back: {
                 mainPage.onBackPressed();
             }
-            break;
         }
     }
 
@@ -691,6 +845,52 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                                     (Throwable) msg.obj, mainPage.getResources().getString(R.string.server)), null);
 //                    TableInfoSQL.addTablesList(newTables);
 
+                    break;
+                case com.alfredbase.BaseApplication.HANDLER_GET_OTHER_RVC:
+                    if (msg.obj != null) {
+                        try {
+                            MultiRVCPlacesDao dao = new Gson().fromJson((String) msg.obj, MultiRVCPlacesDao.class);
+                            if (dao != null) {
+                                if (dao.getResultCode() == ResultCode.SUCCESS) {
+                                    for (MultiRVCPlacesDao.Places daoPlace : dao.getData().getPlaces()) {
+                                        otherRVCPlaces.add(daoPlace);
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        if (otherRVCrunnable != null) {
+                            otherRVChandler.removeCallbacks(otherRVCrunnable);
+                        }
+                        otherRVCrunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                App.instance.getOtherRVCPlaces().clear();
+                                App.instance.getOtherRVCPlaces().addAll(otherRVCPlaces);
+                                loadingDialog.dismiss();
+                                refreshView();
+                            }
+                        };
+                        otherRVChandler.postDelayed(otherRVCrunnable, 300);
+                    } else {
+                        loadingDialog.dismiss();
+                        refreshView();
+                    }
+
+                    break;
+                case BaseApplication.HANDLER_GET_OTHER_TABLE:
+                    dismissDialog();
+                    if (msg.obj != null) {
+                        newTables = new Gson().fromJson((String) msg.obj, new TypeToken<List<TableInfo>>() {
+                        }.getType());
+                        changeLayoutStatus();
+                        rl_tables.removeAllViews();
+                        for (TableInfo newTable : newTables) {
+                            addTable(newTable);
+                        }
+                    }
                     break;
             }
         }
@@ -751,14 +951,17 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = inflater.inflate(R.layout.place_item_layout, null);
-                holder.rl_place = (RelativeLayout) convertView.findViewById(R.id.rl_place);
+                holder.ll_place = (LinearLayout) convertView.findViewById(R.id.ll_place);
                 holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
                 holder.iv_place_edit = (ImageView) convertView.findViewById(R.id.iv_place_edit);
                 holder.iv_place_delete = (ImageView) convertView.findViewById(R.id.iv_place_delete);
+                holder.tv_place_number = (TextView) convertView.findViewById(R.id.tv_place_number);
+                holder.tv_place_number.setVisibility(View.GONE);
                 holder.tv_place_name = (TextView) convertView.findViewById(R.id.tv_place_name);
                 holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
-                holder.rl_add_edit = (RelativeLayout) convertView.findViewById(R.id.rl_add_edit);
+                holder.ll_add_edit = (LinearLayout) convertView.findViewById(R.id.ll_add_edit);
                 holder.iv_add_place = (ImageView) convertView.findViewById(R.id.iv_add_place);
+                holder.ll_add_new_place = (LinearLayout) convertView.findViewById(R.id.ll_add_new_place);
                 holder.tv_add_place = (TextView) convertView.findViewById(R.id.tv_add_place);
                 holder.et_add_place = (EditText) convertView.findViewById(R.id.et_add_place);
                 holder.et_place_name = (EditText) convertView.findViewById(R.id.et_place_name);
@@ -813,7 +1016,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         case R.id.rl_add_place: {
                             BugseeHelper.buttonClicked("Add Place");
                             v.setVisibility(View.GONE);
-                            holder.rl_add_edit.setVisibility(View.VISIBLE);
+                            holder.ll_add_edit.setVisibility(View.VISIBLE);
                             holder.et_add_place.setFocusable(true);
                             holder.et_add_place.requestFocus();
                             showSoftInput(holder.et_add_place);
@@ -822,11 +1025,11 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         break;
                         case R.id.tv_add_place_cancel: {
                             BugseeHelper.buttonClicked("Add place cancel");
-                            holder.rl_add_edit.setVisibility(View.GONE);
+                            holder.ll_add_edit.setVisibility(View.GONE);
                             if (IntegerUtils.isEmptyOrZero(place.getId())) {
                                 holder.rl_add_place.setVisibility(View.VISIBLE);
                             } else {
-                                holder.rl_place.setVisibility(View.VISIBLE);
+                                holder.ll_place.setVisibility(View.VISIBLE);
                             }
                             hideInput(holder.et_add_place);
                         }
@@ -834,10 +1037,21 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                         case R.id.tv_place_name: {
                             BugseeHelper.buttonClicked("Place Name");
                             selectPlaceIndex = position;
+                            tv_place.setText(places.get(selectPlaceIndex).getPlaceName());
                             canEdit = false;
                             refreshPlace();
                             refreshTableLayout();
                             ll_table_left.setVisibility(View.GONE);
+                            ll_waiting_list.setVisibility(View.VISIBLE);
+                            if (mainPage instanceof MainPage) {
+                                String tableShowAction = ((MainPage) mainPage).tableShowAction;
+                                if (!TextUtils.isEmpty(tableShowAction)) {
+                                    if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                                        ll_waiting_list.setVisibility(View.GONE);
+                                    }
+                                }
+                            }
+
                         }
                         break;
                         case R.id.iv_place_delete: {
@@ -867,7 +1081,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     }
                 }
             };
-            holder.rl_add_edit.setVisibility(View.GONE);
+            holder.ll_add_edit.setVisibility(View.GONE);
             holder.et_place_name.setVisibility(View.GONE);
             if (selectPlaceIndex == position) {
                 convertView.setBackgroundColor(getResources().getColor(R.color.brownness));
@@ -881,15 +1095,29 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                 holder.tv_place_name.setTextColor(getResources().getColor(R.color.black));
             }
             if (IntegerUtils.isEmptyOrZero(place.getId())) {
-                holder.rl_place.setVisibility(View.GONE);
+                holder.ll_place.setVisibility(View.GONE);
                 holder.rl_add_place.setVisibility(View.VISIBLE);
                 convertView.setBackgroundColor(getResources().getColor(R.color.white));
             } else {
-                holder.rl_place.setVisibility(View.VISIBLE);
+                holder.ll_place.setVisibility(View.VISIBLE);
                 holder.rl_add_place.setVisibility(View.GONE);
                 holder.tv_place_name.setText(place.getPlaceName());
             }
             holder.rl_add_place.setOnClickListener(onClickListener);
+            holder.iv_place_delete.setVisibility(View.VISIBLE);
+            holder.iv_place_edit.setVisibility(View.VISIBLE);
+            if (mainPage instanceof MainPage) {
+                String tableShowAction = ((MainPage) mainPage).tableShowAction;
+                if (!TextUtils.isEmpty(tableShowAction)) {
+                    if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                        holder.iv_place_delete.setVisibility(View.GONE);
+                        holder.iv_place_edit.setVisibility(View.GONE);
+                        holder.rl_add_place.setVisibility(View.GONE);
+                        holder.rl_add_place.setOnClickListener(null);
+                    }
+                }
+
+            }
 
 
             convertView.findViewById(R.id.tv_add_place_cancel).setOnClickListener(onClickListener);
@@ -941,16 +1169,279 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
 
         class ViewHolder {
-            RelativeLayout rl_place;
+            LinearLayout ll_place;
             ImageView iv_place_edit;
             ImageView iv_place_delete;
+            TextView tv_place_number;
+            TextView tv_place_name;
+            LinearLayout ll_add_new_place;
+            TextView tv_add_place;
+            ImageView iv_add_place;
+            EditText et_add_place;
+            EditText et_place_name;
+            RelativeLayout rl_add_place;
+            LinearLayout ll_add_edit;
+        }
+    }
+
+
+    class WaitingListAdapter extends BaseAdapter {
+        LayoutInflater inflater;
+
+        public WaitingListAdapter() {
+            inflater = LayoutInflater.from(mainPage);
+        }
+
+        ViewHolder holder = null;
+
+        @Override
+        public int getCount() {
+            return waitingList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return waitingList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, final ViewGroup parent) {
+
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = inflater.inflate(R.layout.place_item_layout, null);
+                holder.ll_place = (LinearLayout) convertView.findViewById(R.id.ll_place);
+                holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
+                holder.iv_place_edit = (ImageView) convertView.findViewById(R.id.iv_place_edit);
+                holder.iv_place_delete = (ImageView) convertView.findViewById(R.id.iv_place_delete);
+                holder.tv_place_number = (TextView) convertView.findViewById(R.id.tv_place_number);
+                holder.tv_place_name = (TextView) convertView.findViewById(R.id.tv_place_name);
+                holder.rl_add_place = (RelativeLayout) convertView.findViewById(R.id.rl_add_place);
+                holder.ll_add_edit = (LinearLayout) convertView.findViewById(R.id.ll_add_edit);
+                holder.iv_add_place = (ImageView) convertView.findViewById(R.id.iv_add_place);
+                holder.tv_add_place = (TextView) convertView.findViewById(R.id.tv_add_place);
+                holder.tv_add_place.setText(getString(R.string.add_queue));
+                holder.et_add_place = (EditText) convertView.findViewById(R.id.et_add_place);
+                holder.et_add_place.setHint(getString(R.string.queue_name));
+                holder.et_place_name = (EditText) convertView.findViewById(R.id.et_place_name);
+                holder.iv_place_edit.setTag(holder);
+
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            final TableInfo tableInfo = waitingList.get(position);
+            holder.tv_place_name.setVisibility(View.VISIBLE);
+            View.OnClickListener onClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (canEdit) {
+                        DialogFactory.commonTwoBtnDialog(mainPage,
+                                mainPage.getResources().getString(R.string.warning),
+                                mainPage.getResources().getString(R.string.ask_save_edit_content),
+                                mainPage.getResources().getString(R.string.cancel),
+                                mainPage.getResources().getString(R.string.ok),
+                                null,
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        canEdit = false;
+                                        changeLayoutStatus();
+                                        saveTable();
+                                    }
+                                }
+                        );
+                        return;
+                    }
+                    switch (v.getId()) {
+
+                        case R.id.tv_place_number:
+                        case R.id.tv_place_name:
+                        case R.id.iv_place_edit: {
+                            BugseeHelper.buttonClicked("WaitingList Edit");
+                            if (getActivity() instanceof MainPage) {
+                                if (tableInfo.getPacks() <= 0) {
+                                    ((MainPage) mainPage).handler.sendMessage(handler.obtainMessage(
+                                            JavaConnectJS.ACTION_CLICK_TABLE, tableInfo));
+                                } else {
+                                    ((MainPage) mainPage).handler.sendMessage(handler.obtainMessage(
+                                            MainPage.VIEW_EVENT_OPEN_WAITING_LIST_DATA, tableInfo));
+                                }
+                            }
+                        }
+                        break;
+                        case R.id.rl_add_place: {
+                            BugseeHelper.buttonClicked("Add WaitingList");
+//                            v.setVisibility(View.GONE);
+                            holder.ll_add_edit.setVisibility(View.VISIBLE);
+                            holder.et_add_place.setFocusable(true);
+                            holder.et_add_place.requestFocus();
+                            showSoftInput(holder.et_add_place);
+                            canEdit = false;
+                        }
+                        break;
+                        case R.id.tv_add_place_cancel: {
+                            BugseeHelper.buttonClicked("Add WaitingList cancel");
+                            holder.ll_add_edit.setVisibility(View.GONE);
+                            if (IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
+                                holder.rl_add_place.setVisibility(View.VISIBLE);
+                            } else {
+                                holder.ll_place.setVisibility(View.VISIBLE);
+                            }
+                            hideInput(holder.et_add_place);
+                        }
+                        break;
+//                        case R.id.tv_place_name: {
+//                            BugseeHelper.buttonClicked("WaitingList Name");
+//                            canEdit = false;
+//                            refreshWaitingList();
+//                            refreshTableLayout();
+//                            ll_table_left.setVisibility(View.GONE);
+//                            ll_waiting_list.setVisibility(View.VISIBLE);
+//                        }
+//                        break;
+                        case R.id.iv_place_delete: {
+                            BugseeHelper.buttonClicked("WaitingList delete");
+//                            if (!canDelete()) {
+//                                UIHelp.showShortToast(mainPage, mainPage.getResources().getString(R.string.bill_not_closed));
+//                                return;
+//                            }
+                            DialogFactory.commonTwoBtnDialog(mainPage,
+                                    mainPage.getResources().getString(R.string.warning),
+                                    mainPage.getResources().getString(R.string.ask_delete_queue),
+                                    mainPage.getResources().getString(R.string.cancel),
+                                    mainPage.getResources().getString(R.string.ok),
+                                    null,
+                                    new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            TableInfoSQL.deleteTableInfo(tableInfo.getPosId());
+                                            Order order = OrderSQL.getOrderByTableId(tableInfo.getPosId());
+                                            if (order != null) {
+                                                OrderDetailSQL.deleteOrderDetailByOrder(order);
+                                                OrderSQL.deleteOrder(order);
+                                            }
+                                            refreshWaitingList();
+                                            refreshTableLayout();
+                                        }
+                                    });
+
+                        }
+                        break;
+                    }
+                }
+            };
+            holder.ll_add_edit.setVisibility(View.GONE);
+            holder.et_place_name.setVisibility(View.GONE);
+            convertView.setBackgroundColor(getResources().getColor(R.color.white));
+            holder.iv_place_delete.setImageDrawable(getResources().getDrawable(R.drawable.place_delete));
+            holder.iv_place_edit.setImageDrawable(getResources().getDrawable(R.drawable.place_edit));
+            holder.tv_place_number.setTextColor(getResources().getColor(R.color.black));
+            holder.tv_place_name.setTextColor(getResources().getColor(R.color.black));
+            if (IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
+                holder.tv_place_number.setVisibility(View.GONE);
+                holder.ll_place.setVisibility(View.GONE);
+                holder.rl_add_place.setVisibility(View.VISIBLE);
+                convertView.setBackgroundColor(getResources().getColor(R.color.white));
+            } else {
+                holder.tv_place_number.setVisibility(View.VISIBLE);
+                holder.ll_place.setVisibility(View.VISIBLE);
+                holder.rl_add_place.setVisibility(View.GONE);
+                holder.tv_place_name.setText(tableInfo.getName());
+                String pos = (tableInfo.getPosId() * -1) + "";
+                if (pos.length() < 3) {
+                    for (int i = pos.length(); i < 3; i++) {
+                        pos = "0" + pos;
+                    }
+                }
+
+                holder.tv_place_number.setText(pos);
+            }
+            holder.rl_add_place.setOnClickListener(onClickListener);
+
+
+            convertView.findViewById(R.id.tv_add_place_cancel).setOnClickListener(onClickListener);
+            holder.tv_place_number.setOnClickListener(onClickListener);
+            holder.tv_place_name.setOnClickListener(onClickListener);
+            holder.iv_place_edit.setOnClickListener(onClickListener);
+            holder.iv_place_delete.setOnClickListener(onClickListener);
+            holder.et_place_name.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (TextUtils.isEmpty(v.getText().toString().trim())) {
+                        return false;
+                    }
+                    if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+                        hideInput(v);
+                        if (!IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
+                            tableInfo.setName(v.getText().toString());
+                            TableInfoSQL.updateTables(tableInfo);
+                            Order order = OrderSQL.getOrderByTableId(tableInfo.getPosId());
+                            if (order != null) {
+                                OrderSQL.updateOrderTableName(v.getText().toString(), order.getId());
+                            }
+                            refreshWaitingList();
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            holder.et_add_place.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (TextUtils.isEmpty(v.getText().toString().trim())) {
+                        return false;
+                    }
+                    if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+                        if (IntegerUtils.isEmptyOrZero(tableInfo.getPosId())) {
+                            TableInfo tableExist = TableInfoSQL.getTableByName(v.getText().toString());
+                            if (tableExist != null) {
+                                UIHelp.showShortToast(mainPage, mainPage.getResources().getString(R.string.name_used));
+                                return false;
+                            } else {
+                                TableInfo newTableInfo = ObjectFactory.getInstance().addNewWaitingList(v.getText().toString(), App.instance.getRevenueCenter().getRestaurantId().intValue(), App.instance.getRevenueCenter().getId().intValue(), places.get(selectPlaceIndex).getId());
+                                TableInfoSQL.addTables(newTableInfo);
+                                waitingList = TableInfoSQL.getAllWaitingListTables();
+                                refreshWaitingList();
+
+                                if (getActivity() instanceof MainPage) {
+                                    ((MainPage) mainPage).handler.sendMessage(handler.obtainMessage(
+                                            JavaConnectJS.ACTION_CLICK_TABLE, newTableInfo));
+                                }
+                                holder.et_add_place.setText(null);
+                                hideInput(v);
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+            });
+
+
+            return convertView;
+        }
+
+
+        class ViewHolder {
+            LinearLayout ll_place;
+            ImageView iv_place_edit;
+            ImageView iv_place_delete;
+            TextView tv_place_number;
             TextView tv_place_name;
             TextView tv_add_place;
             ImageView iv_add_place;
             EditText et_add_place;
             EditText et_place_name;
             RelativeLayout rl_add_place;
-            RelativeLayout rl_add_edit;
+            LinearLayout ll_add_edit;
         }
     }
 
