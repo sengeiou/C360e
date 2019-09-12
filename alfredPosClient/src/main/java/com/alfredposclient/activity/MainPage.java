@@ -769,6 +769,7 @@ public class MainPage extends BaseActivity {
                     }
                     break;
                 case VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER:
+                    LogUtil.log("thread name " + Thread.currentThread().getName());
                     if (oldTable != null) {
                         if (oldTable.getPosId() < 0) {
                             TableInfoSQL.deleteTableInfo(oldTable.getPosId());
@@ -1368,6 +1369,9 @@ public class MainPage extends BaseActivity {
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
 
+                        if (loadingDialog != null)
+                            loadingDialog.show();
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -1488,6 +1492,9 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
+                        if (loadingDialog != null)
+                            loadingDialog.show();
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -2297,6 +2304,7 @@ public class MainPage extends BaseActivity {
 
                     App.instance.printTransferOrder(App.instance.getCahierPrinter(), currentTable.getName(), tableName,
                             toOrder, currentOrder, orderDetails1, orderModifiers1);
+
                     unseat(currentOrder);
                     onBackPressed();
 //                    showTables();
