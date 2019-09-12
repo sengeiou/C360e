@@ -2261,6 +2261,8 @@ public class MainPage extends BaseActivity {
                     setDataWaitingList();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC:
+                    if (loadingDialog != null && loadingDialog.isShowing())
+                        loadingDialog.dismiss();
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
 
@@ -2300,6 +2302,8 @@ public class MainPage extends BaseActivity {
 //                    showTables();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
+                    if (loadingDialog != null && loadingDialog.isShowing())
+                        loadingDialog.dismiss();
 
                     TableInfo tableInfo2 = null;
                     Order toOrder2 = null;
@@ -2328,10 +2332,12 @@ public class MainPage extends BaseActivity {
                         e.printStackTrace();
                     }
 
+                    List<OrderDetail> orderDetails3 = new ArrayList<>();
+                    orderDetails3.add(transfItemOrderDetail);
                     String tableName2 = tableInfo2 != null ? tableInfo2.getName() : "";
 
-                    App.instance.printTransferOrder(App.instance.getCahierPrinter(), currentTable.getName(), tableName2,
-                            toOrder2, currentOrder, orderDetails2, orderModifiers2);
+                    App.instance.printTransferOrder(App.instance.getCahierPrinter(), oldTable.getName(), tableName2,
+                            toOrder2, currentOrder, orderDetails3, new ArrayList<OrderModifier>());
 
                     final OrderDetail orderDetail = transfItemOrderDetail;
 
