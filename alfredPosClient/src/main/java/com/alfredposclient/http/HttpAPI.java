@@ -3061,6 +3061,9 @@ public class HttpAPI {
         parameters.put("tableId", tableId); //selected tableId
         parameters.put("pack", pack); //selected tableId
 
+        ArrayList<OrderModifier> orderModifier = OrderModifierSQL.getAllOrderModifier(oldOrder);
+        parameters.put("orderModifier", new Gson().toJson(orderModifier));
+
 
         Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));
         try {

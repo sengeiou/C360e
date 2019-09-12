@@ -3708,6 +3708,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
 
+            result.put("toOrder", new Gson().toJson(orderTarget));
+            result.put("tableInfo", new Gson().toJson(tableInfo));
+            String orderDetail = jsonObject.optString("orderDetail");
+            String orderModifier = jsonObject.optString("orderModifier");
+            result.put("orderDetail", orderDetail);
+            result.put("orderModifier", orderModifier);
+
             result.put("orderTarget", new Gson().toJson(orderTarget));
             result.put("tableTarget", new Gson().toJson(tableInfo));
         } catch (Exception e) {
