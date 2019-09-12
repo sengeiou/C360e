@@ -74,7 +74,8 @@ public class SyncCentre {
             httpClient = new AsyncHttpClient();
             httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
             httpClient.addHeader("Keep-Alive", "30");
-            httpClient.setTimeout(20 * 1000);
+//            httpClient.setTimeout(20 * 1000);
+            httpClient.setTimeout(60 * 1000);
             syncHttpClient = new SyncHttpClient();
             syncHttpClient.addHeader("Keep-Alive", "30");
             syncHttpClient.setTimeout(20 * 1000);
@@ -798,16 +799,16 @@ public class SyncCentre {
         }
     }
 
-    public void getOtherRVCTable(Context context, String url, int placeId,Handler handler) {
-            HttpAPI.getOtherRVCTable(context,
-                    getAbsoluteUrl(url, APIName.GET_OTHER_RVC_TABLE), placeId,httpClient, handler);
+    public void getOtherRVCTable(Context context, String url, int placeId, Handler handler) {
+        HttpAPI.getOtherRVCTable(context,
+                getAbsoluteUrl(url, APIName.GET_OTHER_RVC_TABLE), placeId, httpClient, handler);
 
     }
 
 
     public void sendOrderToOtherRVC(Context context, String url, int transferType, Order currentOrder, int tableId, Handler handler) {
         HttpAPI.sendOrderToOtherRVC(context,
-                getAbsoluteUrl(url, APIName.TRANSFER_TABLE_TO_OTHER_RVC),transferType, currentOrder, tableId, httpClient, handler);
+                getAbsoluteUrl(url, APIName.TRANSFER_TABLE_TO_OTHER_RVC), transferType, currentOrder, tableId, httpClient, handler);
 
     }
 
