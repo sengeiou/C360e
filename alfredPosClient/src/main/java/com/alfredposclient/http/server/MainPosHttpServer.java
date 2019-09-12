@@ -3586,9 +3586,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
             order.setTableId(targetTableId);
             order.setBusinessDate(App.instance.getBusinessDate());
+            order.setRestId(CoreData.getInstance().getRestaurant().getId());
 
             TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
+            order.setPlaceId(tableInfo.getPlacesId());
             order.setTableName(tableInfo.getName());
+//            order.setTableId(tableInfo.getPosId());
+            long time = System.currentTimeMillis();
+            order.setCreateTime(time);
+            order.setUpdateTime(time);
+            order.setOrderNo(OrderHelper.calculateOrderNo(App.instance.getBusinessDate()));//流水号
             OrderSQL.addOrder(order);
             Order last = OrderSQL.getLastOrderatTabel(targetTableId);
 
