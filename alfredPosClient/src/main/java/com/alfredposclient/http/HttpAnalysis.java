@@ -337,6 +337,7 @@ public class HttpAnalysis {
             ItemDetailSQL.addItemDetailList(itemDetailList);
             CoreData.getInstance().setItemDetails(
                     ItemDetailSQL.getAllItemDetail());
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
