@@ -3771,6 +3771,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 
         Map<Integer, Integer> mapOrderDetail = new HashMap<>();
+        Map<Integer, Integer> mapItemId = new HashMap<>();
         try {
             List<OrderDetail> orderDetails = gson.fromJson(orderDetail,
                     new TypeToken<List<OrderDetail>>() {
@@ -3790,6 +3791,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         orderDetail1.setOrderSplitId(value);
                     }
                 }
+
+                ItemDetail currentRevItemDetail = ItemDetailSQL.getItemDetailByName(rvc.getId(), orderDetail1.getItemName());
+
+                if (currentRevItemDetail != null) {
+                    mapItemId.put(orderDetail1.getItemId(), currentRevItemDetail.getId());
+                    orderDetail1.setItemId(mapItemId.get(orderDetail1.getItemId()));
+                }
+
                 orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
                 orderDetail1.setOrderId(last.getId());
                 orderDetail1.setCreateTime(time);
@@ -3805,6 +3814,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         data.setCreateTime(time);
                         data.setUpdateTime(time);
                         data.setUserId(last.getUserId());
+                        data.setItemId(mapItemId.get(orderDetail1.getItemId()));
+
                         ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
                         if (item != null) {
                             data.setPrinterId(item.getPrinterId());
