@@ -24,16 +24,17 @@ public class TransferOrder extends PrintJob {
         }
     }
 
-    public void AddTitle(String revenueCenterName, String tableName, Integer orderNo) {
+    public void AddTitle(String title, String revenueCenterName, String tableName, Integer orderNo) {
         addFeed();
         StringBuilder sbr = new StringBuilder();
-        sbr.append("From")
+        sbr.append(title)
                 .append(reNext)
                 .append(revenueCenterName)
                 .append(reNext)
                 .append(tableName)
                 .append(reNext)
-                .append("Order No : " + orderNo);
+                .append("Order No : " + orderNo)
+                .append(reNext);
 
         PrintData header = new PrintData();
         header.setDataFormat(PrintData.FORMAT_TXT);
@@ -81,7 +82,7 @@ public class TransferOrder extends PrintJob {
             addSingleLineText(0, "Transfer Time : " + time, 0);
             addLineSpace(1);
         }
-        addSingleLineText(this.charSize,op, 0);
+        addSingleLineText(this.charSize, op, 0);
         addHortionalLine(this.charSize);
         AddCut();
         AddSing();
@@ -101,18 +102,18 @@ public class TransferOrder extends PrintJob {
 
 //		int qtyLen = KOTPrint.FIXED_COL2_QTY;
 //		if(charScale > 1){
-        int	qtyLen = charScale*col2Content.length();
+        int qtyLen = charScale * col2Content.length();
 //		}
 
-        KOTPrint.COL2_ITEMNAME = this.charSize/charScale - qtyLen/charScale - KOTPrint.FIXED_COL2_SPACE;
+        KOTPrint.COL2_ITEMNAME = this.charSize / charScale - qtyLen / charScale - KOTPrint.FIXED_COL2_SPACE;
 
         //double ln1 = col1Content.length();
         int ln1 = 1;
-        String [] splitedcontents ={col1Content};
+        String[] splitedcontents = {col1Content};
 
         try {
             //ln1 = (col1Content.getBytes("GBK").length)/(KOTPrint.COL2_ITEMNAME*1.0);
-            splitedcontents = StringUtil.formatLn(KOTPrint.COL2_ITEMNAME*1, col1Content);
+            splitedcontents = StringUtil.formatLn(KOTPrint.COL2_ITEMNAME * 1, col1Content);
             ln1 = splitedcontents.length;
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
@@ -123,26 +124,26 @@ public class TransferOrder extends PrintJob {
         //String col1PadContent = StringUtil.padRight(col1Content, col1Lines*KOTPrint.COL2_ITEMNAME);
         //ArrayList<String> splittedCol1Content = StringUtil.splitEqually(col1PadContent, KOTPrint.COL2_ITEMNAME);
 
-        double ln2 = (col2Content.length())/(qtyLen*1.0/charScale);
+        double ln2 = (col2Content.length()) / (qtyLen * 1.0 / charScale);
         col2Lines = StringUtil.nearestTen(ln2);
-        String col2PadContent = StringUtil.padRight(col2Content, col2Lines*qtyLen/charScale);
-        ArrayList<String> splittedCol2Content = StringUtil.splitEqually(col2PadContent, qtyLen/charScale);
+        String col2PadContent = StringUtil.padRight(col2Content, col2Lines * qtyLen / charScale);
+        ArrayList<String> splittedCol2Content = StringUtil.splitEqually(col2PadContent, qtyLen / charScale);
 
 
-        for (int i=0; i< Math.max(col1Lines, col2Lines); i++) {
-            if (i<col1Lines) {
+        for (int i = 0; i < Math.max(col1Lines, col2Lines); i++) {
+            if (i < col1Lines) {
                 //result.append(splittedCol1Content.get(i));
                 result.append(StringUtil.padRight(splitedcontents[i], KOTPrint.COL2_ITEMNAME));
-            }else{
+            } else {
                 result.append(StringUtil.padRight(" ", KOTPrint.COL2_ITEMNAME));
             }
             //padding
             result.append(StringUtil.padRight(" ", KOTPrint.FIXED_COL2_SPACE));
 
-            if (i<col2Lines) {
+            if (i < col2Lines) {
                 result.append(splittedCol2Content.get(i));
-            }else {
-                result.append(StringUtil.padRight(" ", (qtyLen)/charScale));
+            } else {
+                result.append(StringUtil.padRight(" ", (qtyLen) / charScale));
             }
 
             result.append(reNext);

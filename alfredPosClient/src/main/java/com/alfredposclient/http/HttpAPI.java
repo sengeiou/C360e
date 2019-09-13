@@ -2985,10 +2985,10 @@ public class HttpAPI {
         ArrayList<KotItemDetail> kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderId(currentOrder.getId());
         parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
 
-        ArrayList<ArrayList<KotItemModifier>> kotItemModifiers = new ArrayList<>();
+        ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
         for (KotItemDetail itemDetail : kotItemDetail) {
             ArrayList<KotItemModifier> kotItemModifier = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(itemDetail.getId());
-            kotItemModifiers.add(kotItemModifier);
+            kotItemModifiers.addAll(kotItemModifier);
 
         }
         parameters.put("kotItemModifier", new Gson().toJson(kotItemModifiers));

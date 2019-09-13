@@ -3742,8 +3742,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
             transferOrder.setPrinterIp(prtDevice.getIP());
 
-            transferOrder.AddTitle(fromRvcName, fromTable, mFromOrder.getOrderNo());
-            transferOrder.AddTitle(toRvcName, toTable, mToOrder.getOrderNo());
+            transferOrder.AddTitle("From", fromRvcName, fromTable, mFromOrder.getOrderNo());
+            transferOrder.AddTitle("To", toRvcName, toTable, mToOrder.getOrderNo());
             transferOrder.addLineSpace(2);
 
             for (OrderDetail od : orderDetails) {

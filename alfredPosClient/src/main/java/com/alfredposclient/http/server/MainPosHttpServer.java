@@ -104,6 +104,7 @@ import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
+import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.SettlementRestaurantSQL;
 import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.SubPosCommitSQL;
@@ -3597,6 +3598,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order.setCreateTime(time);
             order.setUpdateTime(time);
             order.setOrderNo(OrderHelper.calculateOrderNo(App.instance.getBusinessDate()));//流水号
+            order.setUserId(App.instance.getUser().getId());
             OrderSQL.addOrder(order);
             Order last = OrderSQL.getLastOrderatTabel(targetTableId);
 
@@ -3741,12 +3743,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
     }
 
-
     private void addOrderDetailFromOtherRVC(Order last, String orderDetail, String kotSummary, String orderbill, String orderModifier, String orderSplit, String kotItemDetail, String kotItemModifier) {
 
         RevenueCenter rvc = App.instance.getRevenueCenter();
         Restaurant resto = CoreData.getInstance().getRestaurant();
         Map<Integer, Integer> mapSplit = new HashMap<>();
+        long time = System.currentTimeMillis();
 
         try {
             List<OrderSplit> orderSplits = gson.fromJson(orderSplit,
@@ -3790,6 +3792,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
                 orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
                 orderDetail1.setOrderId(last.getId());
+                orderDetail1.setCreateTime(time);
+                orderDetail1.setUpdateTime(time);
+                orderDetail1.setUserId(last.getUserId());
                 OrderDetailSQL.addOrderDetailETC(orderDetail1);
 
                 for (OrderModifier data : orderModifiers) {
@@ -3797,10 +3802,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
                         data.setOrderId(last.getId());
                         data.setOrderDetailId(newId);
+                        data.setCreateTime(time);
+                        data.setUpdateTime(time);
+                        data.setUserId(last.getUserId());
                         ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
                         if (item != null) {
-
                             data.setPrinterId(item.getPrinterId());
+                            data.setItemId(item.getId());
                         }
                         OrderModifierSQL.addOrderModifier(data);
                     }
@@ -3826,6 +3834,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 orderbill1.setRestaurantId(resto.getId());
                 orderbill1.setOrderId(last.getId());
                 orderbill1.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                orderbill1.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(rvc.getId()));
+                orderbill1.setOrderId(last.getId());
+                orderbill1.setRestaurantId(CoreData.getInstance().getRestaurant()
+                        .getId());
+                orderbill1.setRevenueId(rvc.getId());
+                orderbill1.setUserId(last.getUserId());
+                orderbill1.setCreateTime(time);
+                orderbill1.setUpdateTime(time);
                 OrderBillSQL.add(orderbill1);
             }
         } catch (Exception e) {
@@ -3845,13 +3861,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 kot.setTableId(last.getTableId());
                 kot.setTableName(last.getTableName());
                 kot.setOrderId(last.getId());
+                kot.setOrderNo(last.getOrderNo());
+                kot.setBusinessDate(App.instance.getBusinessDate());
                 kot.setNumTag(last.getNumTag());
+                kot.setCreateTime(time);
+                kot.setUpdateTime(time);
                 List<KotSummary> kots = new ArrayList<>();
                 kots.add(kot);
                 KotSummarySQL.addKotSummaryList(kots);
             }
         }
-
 
         //String kotItemDetail
         Map<Integer, Integer> mapKotItemDetail = new HashMap<>();
@@ -3867,6 +3886,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
                 data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
                 data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
+                data.setRestaurantId(last.getRestId());
+                data.setCreateTime(time);
+                data.setUpdateTime(time);
+
                 KotItemDetailSQL.update(data);
             }
         } catch (Exception e) {
@@ -3874,15 +3897,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
         try {
-            List<List<KotItemModifier>> kotItemDetails = gson.fromJson(kotItemModifier,
-                    new TypeToken<List<List<KotItemDetail>>>() {
+            List<KotItemModifier> kotItemModifiers = gson.fromJson(kotItemModifier,
+                    new TypeToken<List<KotItemModifier>>() {
                     }.getType());
-            for (List<KotItemModifier> datas : kotItemDetails) {
-                for (KotItemModifier data : datas) {
-                    data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
-                    data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
-                    KotItemModifierSQL.update(data);
-                }
+            for (KotItemModifier data : kotItemModifiers) {
+                data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
+                data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
+                KotItemModifierSQL.update(data);
             }
         } catch (Exception e) {
             e.printStackTrace();
