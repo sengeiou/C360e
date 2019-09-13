@@ -1384,6 +1384,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                     Order currentOrder = OrderSQL.getLastOrderatTabel(tableId);
                     result.put("toOrder", new Gson().toJson(currentOrder));
+                    result.put("toRevenue", new Gson().toJson(App.instance.getRevenueCenter()));
                 } else {
                     result.put("resultCode", ResultCode.UNKNOW_ERROR);
                 }
@@ -3715,13 +3716,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
 
-            result.put("toOrder", new Gson().toJson(orderTarget));
-            result.put("tableInfo", new Gson().toJson(tableInfo));
             String orderDetail = jsonObject.optString("orderDetail");
             String orderModifier = jsonObject.optString("orderModifier");
+
+            result.put("toRevenue", new Gson().toJson(App.instance.getRevenueCenter()));
+            result.put("toOrder", new Gson().toJson(orderTarget));
+            result.put("tableInfo", new Gson().toJson(tableInfo));
             result.put("orderDetail", orderDetail);
             result.put("orderModifier", orderModifier);
-
             result.put("orderTarget", new Gson().toJson(orderTarget));
             result.put("tableTarget", new Gson().toJson(tableInfo));
         } catch (Exception e) {

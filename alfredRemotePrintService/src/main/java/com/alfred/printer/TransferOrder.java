@@ -24,30 +24,16 @@ public class TransferOrder extends PrintJob {
         }
     }
 
-    public void AddTitle(String revenueCenter, String tableName) {
+    public void AddTitle(String revenueCenterName, String tableName, Integer orderNo) {
         addFeed();
         StringBuilder sbr = new StringBuilder();
-        sbr.append(revenueCenter)
+        sbr.append("From")
                 .append(reNext)
-                .append(PrintService.instance.getResources().getString(R.string.table)+" : "+ tableName)
-                .append(reNext);
-
-        PrintData header = new PrintData();
-        header.setDataFormat(PrintData.FORMAT_TXT);
-        header.setFontsize(2);
-        header.setTextAlign(PrintData.ALIGN_CENTRE);
-        header.setText(sbr.toString());
-        this.data.add(header);
-
-        addHortionalLine(this.charSize);
-    }
-
-
-    public void addTextHeader(String tableName) {
-        addFeed();
-        StringBuilder sbr = new StringBuilder();
-        sbr.append(tableName);
-        sbr.append(reNext);
+                .append(revenueCenterName)
+                .append(reNext)
+                .append(tableName)
+                .append(reNext)
+                .append("Order No : " + orderNo);
 
         PrintData header = new PrintData();
         header.setDataFormat(PrintData.FORMAT_TXT);
@@ -69,10 +55,30 @@ public class TransferOrder extends PrintJob {
         this.data.add(printData);
     }
 
-    public void AddFooter(String op, String remark) {
+    public void AddModifierItem(String modifiers) {
+        AddModifierItem(modifiers, 2);
+    }
+
+    public void AddModifierItem(String modifiers, int kotFontSize) {
+        if (modifiers != null) {
+
+            PrintData kot = new PrintData();
+            kot.setDataFormat(PrintData.FORMAT_TXT);
+            kot.setFontsize(10);
+            kot.setUnderline(true);
+            kot.setLanguage(PrintData.LANG_CN);
+            kot.setTextAlign(PrintData.ALIGN_LEFT);
+            kot.setMarginTop(2);
+            modifiers = modifiers + reNext;
+            kot.setText(modifiers);
+            this.data.add(kot);
+        }
+    }
+
+    public void AddFooter(String op, String time) {
         addHortionalLine(this.charSize);
-        if (!TextUtils.isEmpty(remark)) {
-            addSingleLineText(0, "Order remark:" + remark, 0);
+        if (!TextUtils.isEmpty(time)) {
+            addSingleLineText(0, "Transfer Time : " + time, 0);
             addLineSpace(1);
         }
         addSingleLineText(this.charSize,op, 0);

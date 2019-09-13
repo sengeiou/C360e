@@ -239,9 +239,6 @@ public class MainPageOrderView extends LinearLayout {
                                 if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                                     kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
                                 } else {
-                                    ItemDetail item = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName());
-                                    Log.wtf("Test_orderdetail", orderDetail.getItemName() + " " + orderDetail.getItemId());
-                                    Log.wtf("Test_itemdetail", "" + new Gson().toJson(item));
                                     KotItemDetail kotItemDetail = ObjectFactory
                                             .getInstance()
                                             .getKotItemDetail(

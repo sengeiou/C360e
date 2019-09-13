@@ -3061,8 +3061,8 @@ public class HttpAPI {
         parameters.put("tableId", tableId); //selected tableId
         parameters.put("pack", pack); //selected tableId
 
-        ArrayList<OrderModifier> orderModifier = OrderModifierSQL.getAllOrderModifier(oldOrder);
-        parameters.put("orderModifier", new Gson().toJson(orderModifier));
+        ArrayList<OrderModifier> orderModifiers = OrderModifierSQL.getAllOrderModifier(oldOrder);
+        parameters.put("orderModifier", new Gson().toJson(orderModifiers));
 
 
         Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));
@@ -3106,7 +3106,7 @@ public class HttpAPI {
                         }
                     });
         } catch (Exception e) {
-            Log.wtf("Test_sendOrderExcep",""+e.getMessage());
+            Log.wtf("Test_sendOrderExcep", "" + e.getMessage());
 
             e.printStackTrace();
         }
