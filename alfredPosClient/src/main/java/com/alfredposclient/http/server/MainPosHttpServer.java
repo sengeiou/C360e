@@ -3586,14 +3586,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
         if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
             Order order = new Gson().fromJson(orderData, Order.class);
             order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-            order.setTableId(targetTableId);
+//            order.setTableId(targetTableId);
             order.setBusinessDate(App.instance.getBusinessDate());
             order.setRestId(CoreData.getInstance().getRestaurant().getId());
 
             TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
             order.setPlaceId(tableInfo.getPlacesId());
             order.setTableName(tableInfo.getName());
-//            order.setTableId(tableInfo.getPosId());
+            order.setTableId(tableInfo.getPosId());
             long time = System.currentTimeMillis();
             order.setCreateTime(time);
             order.setUpdateTime(time);
@@ -3679,10 +3679,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 //        String oldOrderData = jsonObject.optString("order");
         String oldOrderDetailData = jsonObject.optString("orderDetail");
-        String tablename = jsonObject.optString("tableName");
         int packs = jsonObject.optInt("pack");
         int targetTableId = jsonObject.optInt("tableId");
-        String targetTableName = jsonObject.optString("tableName");
 
 
         OrderDetail transfItemOrderDetail = new Gson().fromJson(oldOrderDetailData, OrderDetail.class);
@@ -3693,16 +3691,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
         tableInfo.setPacks(tableInfo.getPacks() + packs);
-//        tableInfo.setName(targetTableName);
         tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
         TableInfoSQL.updateTables(tableInfo);
 
-        try {
-            if (orderTarget != null) {
+        RevenueCenter rvc = App.instance.getRevenueCenter();
+        Restaurant resto = CoreData.getInstance().getRestaurant();
+        long time = System.currentTimeMillis();
 
-                transfItemOrderDetail.setOrderId(orderTarget.getId().intValue());
-                OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
-            } else {
+        try {
+            if (orderTarget == null) {
                 orderTarget = ObjectFactory.getInstance().getOrder(
                         ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tableInfo,
                         App.instance.getRevenueCenter(), App.instance.getUser(),
@@ -3712,11 +3709,28 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         ParamConst.ORDER_STATUS_OPEN_IN_POS,
                         App.instance.getLocalRestaurantConfig()
                                 .getIncludedTax().getTax(), "");
-                if (orderTarget != null) {
-                    transfItemOrderDetail.setOrderId(orderTarget.getId().intValue());
-                    OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
-                }
+            } else {
+
             }
+
+            ItemDetail currentRevItemDetail = ItemDetailSQL.getItemDetailByName(rvc.getId(), transfItemOrderDetail.getItemName());
+
+            transfItemOrderDetail.setId(orderTarget.getId());
+            transfItemOrderDetail.setOrderId(orderTarget.getId().intValue());
+
+            if (currentRevItemDetail != null) {
+                transfItemOrderDetail.setItemId(currentRevItemDetail.getId());
+            }
+
+            transfItemOrderDetail.setOrderId(orderTarget.getId());
+            transfItemOrderDetail.setOrderOriginId(orderTarget.getId());
+            transfItemOrderDetail.setCreateTime(time);
+            transfItemOrderDetail.setUpdateTime(time);
+            transfItemOrderDetail.setUserId(orderTarget.getUserId());
+
+            OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
+
+            //TODO: modifier, all kot, orderbill
 
             String orderDetail = jsonObject.optString("orderDetail");
             String orderModifier = jsonObject.optString("orderModifier");
@@ -3806,24 +3820,25 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 orderDetail1.setUserId(last.getUserId());
                 OrderDetailSQL.addOrderDetailETC(orderDetail1);
 
-                for (OrderModifier data : orderModifiers) {
-                    if (data.getOrderDetailId() == oldId) {
-                        data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
-                        data.setOrderId(last.getId());
-                        data.setOrderDetailId(newId);
-                        data.setCreateTime(time);
-                        data.setUpdateTime(time);
-                        data.setUserId(last.getUserId());
-                        data.setItemId(mapItemId.get(orderDetail1.getItemId()));
+                if (orderModifiers != null) {
+                    for (OrderModifier data : orderModifiers) {
+                        if (data.getOrderDetailId() == oldId) {
+                            data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+                            data.setOrderId(last.getId());
+                            data.setOrderDetailId(newId);
+                            data.setCreateTime(time);
+                            data.setUpdateTime(time);
+                            data.setUserId(last.getUserId());
+                            data.setItemId(mapItemId.get(orderDetail1.getItemId()));
 
-                        ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
-                        if (item != null) {
-                            data.setPrinterId(item.getPrinterId());
-                            data.setItemId(item.getId());
+                            ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
+                            if (item != null) {
+                                data.setPrinterId(item.getPrinterId());
+                                data.setItemId(item.getId());
+                            }
+                            OrderModifierSQL.addOrderModifier(data);
                         }
-                        OrderModifierSQL.addOrderModifier(data);
                     }
-
                 }
             }
         } catch (Exception e) {
