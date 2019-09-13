@@ -48,6 +48,7 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
@@ -769,7 +770,6 @@ public class MainPage extends BaseActivity {
                     }
                     break;
                 case VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER:
-                    LogUtil.log("thread name " + Thread.currentThread().getName());
                     if (oldTable != null) {
                         if (oldTable.getPosId() < 0) {
                             TableInfoSQL.deleteTableInfo(oldTable.getPosId());
@@ -1369,9 +1369,6 @@ public class MainPage extends BaseActivity {
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
 
-                        if (loadingDialog != null)
-                            loadingDialog.show();
-
                         new Thread(new Runnable() {
 
                             @Override
@@ -1492,9 +1489,6 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
-                        if (loadingDialog != null)
-                            loadingDialog.show();
-
                         new Thread(new Runnable() {
 
                             @Override
@@ -2273,79 +2267,82 @@ public class MainPage extends BaseActivity {
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
 
-                    TableInfo tableInfo = null;
-                    Order toOrder = null;
-                    List<OrderDetail> orderDetails1 = null;
-                    List<OrderModifier> orderModifiers1 = null;
                     String data = (String) msg.obj;
 
                     try {
+                        Gson gson = new Gson();
                         JSONObject jsonObject = new JSONObject(data);
 
+                        String toRevenueCenterStr = jsonObject.optString("toRevenue");
                         String toOrderStr = jsonObject.optString("toOrder");
                         String tableInfoStr = jsonObject.optString("tableInfo");
-                        String orderDetail = jsonObject.optString("orderDetail");
-                        String orderModifier = jsonObject.optString("orderModifier");
+                        String orderDetailStr = jsonObject.optString("orderDetail");
+                        String orderModifierStr = jsonObject.optString("orderModifier");
 
-                        toOrder = new Gson().fromJson(toOrderStr, Order.class);
-                        tableInfo = new Gson().fromJson(tableInfoStr, TableInfo.class);
+                        RevenueCenter toRevenueCenter = gson.fromJson(toRevenueCenterStr, RevenueCenter.class);
+                        Order toOrder = gson.fromJson(toOrderStr, Order.class);
+                        TableInfo tableInfo = gson.fromJson(tableInfoStr, TableInfo.class);
 
-                        orderDetails1 = gson.fromJson(orderDetail,
+                        List<OrderDetail> orderDetails = gson.fromJson(orderDetailStr,
                                 new TypeToken<List<OrderDetail>>() {
                                 }.getType());
-                        orderModifiers1 = gson.fromJson(orderModifier,
+                        List<OrderModifier> orderModifiers = gson.fromJson(orderModifierStr,
                                 new TypeToken<List<OrderModifier>>() {
                                 }.getType());
+
+                        String tableName = tableInfo != null ? tableInfo.getName() : "";
+                        RevenueCenter fromRevenueCenter = App.instance.getRevenueCenter();
+
+                        App.instance.printTransferOrder(
+                                App.instance.getCahierPrinter(), fromRevenueCenter, toRevenueCenter,
+                                currentTable.getName(), tableName,
+                                toOrder, currentOrder, orderDetails, orderModifiers);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    String tableName = tableInfo != null ? tableInfo.getName() : "";
-
-                    App.instance.printTransferOrder(App.instance.getCahierPrinter(), currentTable.getName(), tableName,
-                            toOrder, currentOrder, orderDetails1, orderModifiers1);
-
                     unseat(currentOrder);
                     onBackPressed();
-//                    showTables();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
-                    if (loadingDialog != null && loadingDialog.isShowing())
+                    if (loadingDialog != null)
                         loadingDialog.dismiss();
 
-                    TableInfo tableInfo2 = null;
-                    Order toOrder2 = null;
-                    List<OrderDetail> orderDetails2 = null;
-                    List<OrderModifier> orderModifiers2 = null;
                     String data2 = (String) msg.obj;
 
                     try {
                         JSONObject jsonObject = new JSONObject(data2);
 
+                        String toRevenueCenterStr = jsonObject.optString("toRevenue");
                         String toOrderStr = jsonObject.optString("toOrder");
                         String tableInfoStr = jsonObject.optString("tableInfo");
-                        String orderDetail = jsonObject.optString("orderDetail");
-                        String orderModifier = jsonObject.optString("orderModifier");
+                        String orderDetailStr = jsonObject.optString("orderDetail");
+                        String orderModifierStr = jsonObject.optString("orderModifier");
 
-                        toOrder2 = new Gson().fromJson(toOrderStr, Order.class);
-                        tableInfo2 = new Gson().fromJson(tableInfoStr, TableInfo.class);
+                        RevenueCenter toRevenueCenter = gson.fromJson(toRevenueCenterStr, RevenueCenter.class);
+                        Order toOrder = new Gson().fromJson(toOrderStr, Order.class);
+                        TableInfo tableInfo = new Gson().fromJson(tableInfoStr, TableInfo.class);
 
-                        orderDetails2 = gson.fromJson(orderDetail,
+                        List<OrderDetail> orderDetails = gson.fromJson(orderDetailStr,
                                 new TypeToken<List<OrderDetail>>() {
                                 }.getType());
-                        orderModifiers2 = gson.fromJson(orderModifier,
+                        List<OrderModifier> orderModifiers = gson.fromJson(orderModifierStr,
                                 new TypeToken<List<OrderModifier>>() {
                                 }.getType());
+
+                        List<OrderDetail> orderDetailsResult = new ArrayList<>();
+                        orderDetailsResult.add(transfItemOrderDetail);
+                        String tableName = tableInfo != null ? tableInfo.getName() : "";
+                        RevenueCenter fromRevenueCenter = App.instance.getRevenueCenter();
+
+                        App.instance.printTransferOrder(App.instance.getCahierPrinter(),
+                                fromRevenueCenter, toRevenueCenter,
+                                oldTable.getName(), tableName,
+                                toOrder, currentOrder, orderDetailsResult, orderModifiers);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    List<OrderDetail> orderDetails3 = new ArrayList<>();
-                    orderDetails3.add(transfItemOrderDetail);
-                    String tableName2 = tableInfo2 != null ? tableInfo2.getName() : "";
-
-                    App.instance.printTransferOrder(App.instance.getCahierPrinter(), oldTable.getName(), tableName2,
-                            toOrder2, currentOrder, orderDetails3, new ArrayList<OrderModifier>());
 
                     final OrderDetail orderDetail = transfItemOrderDetail;
 

@@ -2485,21 +2485,27 @@ public class App extends BaseApplication {
         }
     }
 
-
-    public void printTransferOrder(PrinterDevice printer, String fromTable, String toTable, Order fromOrder, Order toOrder, List<OrderDetail> orderDetail, List<OrderModifier> modifier) {
-        Gson gson = new Gson();
-        String prtStr = gson.toJson(printer);
-        String fromOrderStr = gson.toJson(fromOrder);
-        String toOrderStr = gson.toJson(toOrder);
-        String details = gson.toJson(orderDetail);
-        String mods = gson.toJson(modifier);
-
-        KotSummary kotSummary = KotSummarySQL.getKotSummary(fromOrder.getId(), fromOrder.getNumTag());
-
-        String rvcName = kotSummary != null ? kotSummary.getRevenueCenterName() : "";
-
+    public void printTransferOrder(PrinterDevice printer, RevenueCenter fromRevenueCenter, RevenueCenter toRevenueCenter,
+                                   String fromTable, String toTable,
+                                   Order fromOrder, Order toOrder, List<OrderDetail> orderDetail,
+                                   List<OrderModifier> modifier) {
         try {
-            mRemoteService.printTransferOrder(prtStr, rvcName, fromTable, toTable, fromOrderStr, toOrderStr, details, mods);
+            for (OrderModifier orderModifier : modifier) {
+                ItemDetail itemDetail = CoreData.getInstance().getItemDetailByTemplateId(orderModifier.getItemId());
+                if (itemDetail != null) {
+                    orderModifier.modifierName = itemDetail.getItemName();
+                }
+            }
+
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            String fromOrderStr = gson.toJson(fromOrder);
+            String toOrderStr = gson.toJson(toOrder);
+            String details = gson.toJson(orderDetail);
+            String mods = gson.toJson(modifier);
+
+            mRemoteService.printTransferOrder(prtStr, fromRevenueCenter.getRevName(), toRevenueCenter.getRevName(),
+                    fromTable, toTable, fromOrderStr, toOrderStr, details, mods);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

@@ -3702,7 +3702,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
     }
 
     @Override
-    public void printTransferOrder(String printer, String rvcName, String fromTable, String toTable, String fromOrder, String toOrder, String orderDetail, String modifier) {
+    public void printTransferOrder(String printer, String fromRvcName, String toRvcName, String fromTable, String toTable, String fromOrder, String toOrder, String orderDetail, String modifier) {
         Gson gson = new Gson();
         PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
         Order mFromOrder = gson.fromJson(fromOrder, Order.class);
@@ -3714,7 +3714,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 new TypeToken<ArrayList<OrderDetail>>() {
                 }.getType());
 
-        ArrayList<OrderModifier> orderModifiers = gson.fromJson(modifier,
+        String modifierStr = !TextUtils.isEmpty(modifier) ? modifier : "";
+
+        ArrayList<OrderModifier> orderModifiers = gson.fromJson(modifierStr,
                 new TypeToken<ArrayList<OrderModifier>>() {
                 }.getType());
 
@@ -3740,36 +3742,30 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
             transferOrder.setPrinterIp(prtDevice.getIP());
 
-            transferOrder.AddTitle(rvcName, toTable);
+            transferOrder.AddTitle("From", fromRvcName, fromTable, mFromOrder.getOrderNo());
+            transferOrder.AddTitle("To", toRvcName, toTable, mToOrder.getOrderNo());
             transferOrder.addLineSpace(2);
-
-            transferOrder.addTextHeader("Transferred From Table " + fromTable);
-            transferOrder.addLineSpace(2);
-            transferOrder.addTextHeader("From Order No : " + mFromOrder.getOrderNo());
-            transferOrder.addTextHeader("To Order No : " + mToOrder.getOrderNo());
-            transferOrder.addLineSpace(2);
-
-//            transferOrder.addTextHeader("Emp : " + fromTable);
-//            transferOrder.addLineSpace(2);
 
             for (OrderDetail od : orderDetails) {
                 transferOrder.addItem(od.getItemName(), od.getItemNum());
 
-                for (OrderModifier kotItemModifier : orderModifiers) {
-//                    if (IntegerUtils.isEmptyOrZero(kotItemModifier.getPrinterId())
-//                            || kotItemModifier.getPrinterId().intValue() == prtDevice.getDevice_id()) {
-//                        if (!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1) {
-//                            kot.AddModifierItem("-" + kotItemModifier.getN() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
-//                        } else {
-//                            kot.AddModifierItem("-" + kotItemModifier.getModifierName(), 1);
-//                        }
-//
-//
-//                    }
+                if (orderModifiers != null) {
+                    for (OrderModifier orderModifier : orderModifiers) {
+                        if (IntegerUtils.isEmptyOrZero(orderModifier.getPrinterId())
+                                || orderModifier.getPrinterId().intValue() == prtDevice.getDevice_id()) {
+                            if (!IntegerUtils.isEmptyOrZero(orderModifier.getModifierNum()) && orderModifier.getModifierNum().intValue() > 1) {
+                                transferOrder.AddModifierItem("-" + orderModifier.modifierName + "x" + orderModifier.getModifierNum().intValue(), 1);
+                            } else {
+                                transferOrder.AddModifierItem("-" + orderModifier.modifierName, 1);
+                            }
+
+
+                        }
+                    }
                 }
             }
 
-            transferOrder.AddFooter("", "Transfer Time");
+            transferOrder.AddFooter("", TimeUtil.getPrintDate(System.currentTimeMillis()));
 
             pqMgr.queuePrint(transferOrder.getJobForQueue());
             printMgr.addJob(prtDevice.getIP(), transferOrder);

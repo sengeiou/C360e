@@ -330,14 +330,62 @@ public class ItemDetailSQL {
     public static ItemDetail getItemDetailById(int itemId, String name) {
 
         String query = " where id = ? and isActive = 1";
-        if(!TextUtils.isEmpty(name)){
-            query = " where (id = ? or itemName = "+name+") and isActive = 1";
+        if (!TextUtils.isEmpty(name)) {
+            query = " where (id = ? or itemName = " + name + ") and isActive = 1";
         }
         String sql = "select * from " + TableNames.ItemDetail + query;
         Cursor cursor = null;
         ItemDetail itemDetail = null;
         try {
             cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(itemId)});
+
+            if (cursor.moveToFirst()) {
+                itemDetail = new ItemDetail();
+                itemDetail.setId(cursor.getInt(0));
+                itemDetail.setRestaurantId(cursor.getInt(1));
+                itemDetail.setItemTemplateId(cursor.getInt(2));
+                itemDetail.setRevenueId(cursor.getInt(3));
+                itemDetail.setItemName(cursor.getString(4));
+                itemDetail.setItemDesc(cursor.getString(5));
+                itemDetail.setItemCode(cursor.getString(6));
+                itemDetail.setImgUrl(cursor.getString(7));
+                itemDetail.setPrice(cursor.getString(8));
+                itemDetail.setItemType(cursor.getInt(9));
+                itemDetail.setPrinterId(cursor.getInt(10));
+                itemDetail.setIsModifier(cursor.getInt(11));
+                itemDetail.setItemMainCategoryId(cursor.getInt(12));
+                itemDetail.setItemCategoryId(cursor.getInt(13));
+                itemDetail.setIsActive(cursor.getInt(14));
+                itemDetail.setTaxCategoryId(cursor.getInt(15));
+                itemDetail.setIsPack(cursor.getInt(16));
+                itemDetail.setIsTakeout(cursor.getInt(17));
+                itemDetail.setHappyHoursId(cursor.getInt(18));
+                itemDetail.setUserId(cursor.getInt(19));
+                itemDetail.setCreateTime(cursor.getLong(20));
+                itemDetail.setUpdateTime(cursor.getLong(21));
+                itemDetail.setIndexId(cursor.getInt(22));
+                itemDetail.setIsDiscount(cursor.getInt(23));
+                itemDetail.setBarcode(cursor.getString(24));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return itemDetail;
+    }
+
+    public static ItemDetail getItemDetailByName(Integer revId, String name) {
+
+        String query = " where itemName = ? and isActive = 1 and revenueId = ?";
+        String sql = "select * from " + TableNames.ItemDetail + query;
+        Cursor cursor = null;
+        ItemDetail itemDetail = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql, new String[]{name, String.valueOf(revId)});
 
             if (cursor.moveToFirst()) {
                 itemDetail = new ItemDetail();
