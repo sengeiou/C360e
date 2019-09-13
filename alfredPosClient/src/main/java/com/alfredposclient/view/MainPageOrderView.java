@@ -1143,7 +1143,9 @@ public class MainPageOrderView extends LinearLayout {
                     break;
                     case R.id.ll_remove: {
                         final OrderDetail tag = (OrderDetail) view.getTag();
-                        if (!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())) {
+                        if (tag.getIsFree().intValue() == ParamConst.FREE) {
+                            return;
+                        } else if (!IntegerUtils.isEmptyOrZero(tag.getAppOrderDetailId())) {
                             UIHelp.showShortToast(parent, parent.getString(R.string.cannot_delete_order_from_diner_app));
                             return;
                         } else if (tag.getOrderSplitId() != null && tag.getOrderSplitId().intValue() != 0) {
@@ -1164,7 +1166,9 @@ public class MainPageOrderView extends LinearLayout {
                     break;
                     case R.id.ll_void: {
                         OrderDetail orderDetail = (OrderDetail) view.getTag();
-                        if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
+                        if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
+                            return;
+                        } else if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
                             return;
                         } else if (orderDetail.getOrderSplitId() != null && orderDetail.getOrderSplitId().intValue() != 0) {
                             OrderSplit orderSplit = OrderSplitSQL.get(orderDetail.getOrderSplitId().intValue());
