@@ -2384,9 +2384,9 @@ public class MainPage extends BaseActivity {
                         if (orderDetails.size() <= 0) {
                             unseat(oldOrder);
                         }
-
                         onBackPressed();
                     }
+                    onBackPressed();
 
                     break;
                 default:
