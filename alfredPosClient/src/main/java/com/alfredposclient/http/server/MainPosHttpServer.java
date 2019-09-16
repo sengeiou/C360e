@@ -3742,6 +3742,45 @@ public class MainPosHttpServer extends AlfredHttpServer {
             result.put("orderModifier", orderModifier);
             result.put("orderTarget", new Gson().toJson(orderTarget));
             result.put("tableTarget", new Gson().toJson(tableInfo));
+
+            List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
+                    new TypeToken<List<OrderModifier>>() {
+                    }.getType());
+
+            List<OrderDetail> orderDetails = gson.fromJson(orderDetail,
+                    new TypeToken<List<OrderDetail>>() {
+                    }.getType());
+
+            for (OrderDetail orderDetail1 : orderDetails) {
+                int oldId = orderDetail1.getId();
+                int newId = CommonSQL.getNextSeq(TableNames.OrderDetail);
+
+                if (orderModifiers != null) {
+                    for (OrderModifier data : orderModifiers) {
+                        if (data.getOrderDetailId() == oldId) {
+                            data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+                            data.setOrderDetailId(newId);
+                            data.setOrderId(orderTarget.getId());
+                            data.setCreateTime(time);
+                            data.setUpdateTime(time);
+                            data.setUserId(orderTarget.getUserId());
+                            data.setItemId(orderDetail1.getItemId());
+
+                            ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
+                            if (item != null) {
+                                data.setPrinterId(item.getPrinterId());
+                                data.setItemId(item.getId());
+                            }
+                            OrderModifierSQL.addOrderModifier(data);
+                        }
+                    }
+                }
+            }
+
+
+
+
+
         } catch (Exception e) {
             result.put("resultCode", ResultCode.UNKNOW_ERROR);
             e.printStackTrace();
