@@ -1369,6 +1369,14 @@ public class MainPage extends BaseActivity {
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
 
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (loadingDialog != null)
+                                    loadingDialog.show();
+                            }
+                        });
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -1489,6 +1497,7 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -2262,8 +2271,9 @@ public class MainPage extends BaseActivity {
                     setDataWaitingList();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC:
-                    if (loadingDialog != null && loadingDialog.isShowing())
+                    if (loadingDialog != null)
                         loadingDialog.dismiss();
+
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
 
@@ -2367,19 +2377,15 @@ public class MainPage extends BaseActivity {
                         map.put("type", new Integer(ParamConst.ORDERDETAIL_TYPE_VOID));
                         handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_VOID_OR_FREE, map));
                         handler.sendEmptyMessage(MainPage.VIEW_EVENT_CLOSE_MODIFIER_VIEW);
-                        List<OrderDetail> ordersDetail = OrderDetailSQL.getOrderDetails(oldOrder.getId());
-                        if (ordersDetail.size() > 0) {
-                            removeItemLogic(orderDetail);
-//                            showTables();
-                            ordersDetail = OrderDetailSQL.getOrderDetails(oldOrder.getId());
-                            if (ordersDetail.size() <= 0) {
-                                unseat(oldOrder);
-                            } else {
 
-                            }
+                        removeItemLogic(orderDetail);
 
-                            onBackPressed();
+                        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(oldOrder.getId());
+                        if (orderDetails.size() <= 0) {
+                            unseat(oldOrder);
                         }
+
+                        onBackPressed();
                     }
 
                     break;

@@ -3810,7 +3810,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                 if (currentRevItemDetail != null) {
                     mapItemId.put(orderDetail1.getItemId(), currentRevItemDetail.getId());
-                    orderDetail1.setItemId(mapItemId.get(orderDetail1.getItemId()));
+                    orderDetail1.setItemId(currentRevItemDetail.getId());
                 }
 
                 orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
@@ -3829,7 +3829,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                             data.setCreateTime(time);
                             data.setUpdateTime(time);
                             data.setUserId(last.getUserId());
-                            data.setItemId(mapItemId.get(orderDetail1.getItemId()));
+                            data.setItemId(orderDetail1.getItemId());
 
                             ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
                             if (item != null) {
