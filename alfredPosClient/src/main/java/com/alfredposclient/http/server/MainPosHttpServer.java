@@ -153,15 +153,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MainPosHttpServer extends AlfredHttpServer {
-    private String TAG = MainPosHttpServer.class.getSimpleName();
-
-    public MainPosHttpServer() {
-        super(APPConfig.HTTP_SERVER_PORT);
-        KpmgResponseUtil.getInstance().init(this);
-    }
-
-    private Object lockObject = new Object();
-
     public static final String MIME_JAVASCRIPT = "text/javascript";
     public static final String MIME_CSS = "text/css";
     public static final String MIME_JPEG = "image/jpeg";
@@ -170,6 +161,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
     public static final String MIME_JSON = "application/json";
     public static final String RESULT_CODE = "resultCode";
     public static final Gson gson = new Gson();
+    private String TAG = MainPosHttpServer.class.getSimpleName();
+    private Object lockObject = new Object();
+
+    public MainPosHttpServer() {
+        super(APPConfig.HTTP_SERVER_PORT);
+        KpmgResponseUtil.getInstance().init(this);
+    }
 
     @Override
     public Response doGet(String uri, Method mothod, final Map<String, String> params, String body) {
@@ -2891,11 +2889,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (CommonUtil.isNull(userKey)
-                || App.instance.getUserByKey(userKey) == null) {
-            return false;
-        }
-        return true;
+        return !CommonUtil.isNull(userKey)
+                && App.instance.getUserByKey(userKey) != null;
     }
 
     private Response handlerGetKotNotifications() {
@@ -3786,16 +3781,17 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 KotSummarySQL.addKotSummaryList(kots);
             }
 
-            kotItemDetails.setId(CommonSQL.getNextSeq(TableNames.KotItemDetail));
-            kotItemDetails.setOrderId(orderTarget.getId());
-            kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-            kotItemDetails.setKotSummaryId(kotSummarys.getId());
-            kotItemDetails.setCreateTime(time);
-            kotItemDetails.setUpdateTime(time);
-            kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
+            if (kotItemDetails != null) {
+                kotItemDetails.setId(CommonSQL.getNextSeq(TableNames.KotItemDetail));
+                kotItemDetails.setOrderId(orderTarget.getId());
+                kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                kotItemDetails.setKotSummaryId(kotSummarys.getId());
+                kotItemDetails.setCreateTime(time);
+                kotItemDetails.setUpdateTime(time);
+                kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
 
-            KotItemDetailSQL.update(kotItemDetails);
-
+                KotItemDetailSQL.update(kotItemDetails);
+            }
 
             if (kotItemModifier != null) {
                 for (KotItemModifier data : kotModfiers) {
@@ -3818,15 +3814,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
             result.put("orderModifier", orderModifier);
             result.put("orderTarget", new Gson().toJson(orderTarget));
             result.put("tableTarget", new Gson().toJson(tableInfo));
+            if (orderBill != null) {
 
-            OrderBillSQL.add(orderBill);
+                OrderBillSQL.add(orderBill);
+            }
         } catch (Exception e) {
             result.put("resultCode", ResultCode.UNKNOW_ERROR);
             e.printStackTrace();
         }
 
         //todo transfer add KOT on KDS
-
 
 
         App.getTopActivity().httpRequestAction(

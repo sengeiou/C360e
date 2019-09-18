@@ -3061,20 +3061,26 @@ public class HttpAPI {
         parameters.put("tableId", tableId); //selected tableId
         parameters.put("pack", pack); //selected tableId
 
+        KotItemDetail kotItemDetail = null;
+        ArrayList<KotItemModifier> kotModifiers = new ArrayList<>();
         ArrayList<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(transfItemOrderDetail.getId());
         parameters.put("orderModifier", new Gson().toJson(orderModifiers));
 
-        OrderBill orderbill = OrderBillSQL.getOrderBillByOnlyOrder(oldOrder.getId());
-        parameters.put("orderBill", new Gson().toJson(orderbill));
+            OrderBill orderbill = OrderBillSQL.getOrderBillByOnlyOrder(oldOrder.getId());
+                parameters.put("orderBill", new Gson().toJson(orderbill));
 
-        KotSummary kot = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
-        parameters.put("kotSummary", new Gson().toJson(kot));
+            KotSummary kot = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
+                parameters.put("kotSummary", new Gson().toJson(kot));
 
-        KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailById(oldOrder.getId());
-        parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+            kotItemDetail = KotItemDetailSQL.getKotItemDetailById(oldOrder.getId());
+            parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
 
-        ArrayList<KotItemModifier> kotModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+        if (kotItemDetail !=  null){
+            kotModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+        }
         parameters.put("kotModifier", new Gson().toJson(kotModifiers));
+
+
 
         Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));
         try {
