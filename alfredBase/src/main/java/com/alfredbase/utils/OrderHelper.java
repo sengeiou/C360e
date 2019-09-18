@@ -1,5 +1,6 @@
 package com.alfredbase.utils;
 
+import android.content.ClipData;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -1008,34 +1009,32 @@ public class OrderHelper {
     }
 
     // Buy X Item, get Y Price
-	// If you buy X Quantity you will get the DiscountPrice whereby Total Price - DiscountPrice
-	// Not sure however if it should be setting the price to DiscountPrice.
-	// Can be circumvented by simply deducting the value user wants.
+	// If you buy X Quantity you will get Y price.
+	// This part has no issues, but can be refined further for shorter code, to be done when we have the time.
     private static BigDecimal  promotionAndItemPrice(Order order,List<OrderDetail> orderDetails,Promotion promotion,BigDecimal total)
 	{
 		int itemNum = 0;
-		int promoItemNum = 0;
-		int itemId = 0;
+		int totalNumOfItem = 0;
 
 		List<OrderDetail> beforeDiscOrderDetails = new ArrayList<>();
         List<OrderDetail> discOrderDetails = new ArrayList<>();
 
 		for(OrderDetail orderDetail : orderDetails)
 		{
-			itemId = orderDetail.getItemId();
-			ItemDetail itemDetail= CoreData.getInstance().getItemDetailById(itemId, null);
+			ItemDetail itemDetail= CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), null);
 			if (promotion.getItemId()>0)
 			{
 				if (promotion.getItemId().intValue() == itemDetail.getItemTemplateId().intValue() && orderDetail.getIsFree() != ParamConst.FREE)
 				{
-					if(orderDetail.getDiscountPrice() == null)
+					if(orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)
 					{
                         itemNum = itemNum + orderDetail.getItemNum();
+                        totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
                         beforeDiscOrderDetails.add(orderDetail);
 					}
 					else
                     {
-                        promoItemNum = promoItemNum + orderDetail.getItemNum();
+                        totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
                         discOrderDetails.add(orderDetail);
                     }
 				}
@@ -1048,6 +1047,7 @@ public class OrderHelper {
 					{
 						CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
 						itemNum = itemNum + orderDetail.getItemNum();
+                        totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
 						beforeDiscOrderDetails.add(orderDetail);
 					}
 				}
@@ -1060,92 +1060,115 @@ public class OrderHelper {
 					if(orderDetail.getDiscountPrice() == null)
 					{
 						itemNum = itemNum + orderDetail.getItemNum();
+                        totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
 						beforeDiscOrderDetails.add(orderDetail);
 					}
 				}
 			}
 		}
 
-        int tempValue = itemNum;
-        int promoCount = 0;
-        for(int x = 0; tempValue >= promotion.getItemNum(); x++)
-        {
-        	tempValue = tempValue - promotion.getItemNum();
-        	promoCount++;
-        }
+        Boolean alteredPrice = false;
 
-        int discPromoCount = 0;
-        for(int x = promotion.getItemNum(); x <= promoItemNum; x = x + promotion.getItemNum())
-        {
-            discPromoCount++;
-        }
-
-        Log.i("Checkpromo", String.valueOf(promoCount));
-        Log.i("Checkdiscpromo", String.valueOf(discPromoCount));
-
-        for(int x = 0; tempValue > promotion.getItemNum(); x++)
-        {
-            tempValue = tempValue - promotion.getItemNum();
-            promoCount++;
-        }
-
-        if(promoCount > 0)
-        {
-			for(int i = 0; i < promoCount; i++)
+		if(discOrderDetails.size() != 0)
+		{
+			OrderDetail firstOrder = discOrderDetails.get(0);
+			BigDecimal DiscountPerItem = BH.div(BH.getBD(promotion.getDiscountPrice()), new BigDecimal(promotion.getItemNum()), false);
+			BigDecimal ItemPrice = BH.mul(BH.getBD(firstOrder.getItemNum()), BH.div(BH.getBD(promotion.getDiscountPrice()), new BigDecimal(promotion.getItemNum()), false), false);
+			BigDecimal RealPrice = BH.mul(BH.getBD(firstOrder.getItemNum()), new BigDecimal(firstOrder.getItemPrice()), false);
+			BigDecimal DiscountPrice = BH.sub(RealPrice, ItemPrice, false);
+            int tempItemCount = totalNumOfItem;
+            int remainder = 0;
+			for(int j = promotion.getItemNum(); j < tempItemCount; j = promotion.getItemNum())
 			{
-				int promoCheck = 0;
-				for(OrderDetail tempOrderDetail : beforeDiscOrderDetails)
+				tempItemCount = tempItemCount - promotion.getItemNum();
+				remainder = tempItemCount;
+				if(remainder == promotion.getItemNum())
 				{
-					if(promoCheck < (promotion.getItemNum()*(i+1)))
-					{
-						int tempItemCount = 0;
-						for(int j = tempOrderDetail.getItemNum(); promotion.getItemNum() <= j; j = j - promotion.getItemNum())
-						{
-							tempItemCount = tempItemCount + promotion.getItemNum();
-						}
-						BigDecimal ItemPrice = BH.mul(BH.getBD(tempOrderDetail.getItemNum()), BH.div(BH.getBD(promotion.getDiscountPrice()), new BigDecimal(promotion.getItemNum()), false), false);
-						BigDecimal RealPrice = BH.mul(BH.getBD(tempOrderDetail.getItemNum()), new BigDecimal(tempOrderDetail.getItemPrice()), false);
-						BigDecimal DiscountPrice = BH.sub(RealPrice, ItemPrice, false);
-                        if((itemNum - tempItemCount) > 0)
-                        {
-                            for(int k = 0; k < tempItemCount; k++)
-                            {
-                                DiscountPrice = BH.sub(DiscountPrice, new BigDecimal(promotion.getDiscountPrice()), false);
-                            }
-                        }
-                        tempOrderDetail.setDiscountPrice(String.valueOf(DiscountPrice));
-                        tempOrderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB);
-                        OrderDetailSQL.updateOrderDetailAndOrderByDiscount(tempOrderDetail);
-//                        order.setDiscountPrice(String.valueOf(BH.add(new BigDecimal(order.getDiscountAmount()), new BigDecimal(tempOrderDetail.getDiscountPrice()), false)));
-						addPromotion(order, promotion, null, promotion.getDiscountPrice());
-						OrderSQL.updateOrder(order);
-						total = new BigDecimal(order.getTotal());
-						promoCheck++;
-					}
+					remainder = 0;
 				}
 			}
-        }
-        else
-		{
-//            for(OrderDetail tempOrderDetail : discOrderDetails)
-//            {
-//                if(tempOrderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)
-//                {
-//                    tempOrderDetail.setDiscountPrice(ParamConst.INT_ZERO);
-//                    tempOrderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
-//                    OrderDetailSQL.updateOrderDetailAndOrderByDiscount(tempOrderDetail);
-//                    OrderSQL.updateOrder(order);
-//                    deletePromotion(order, promotion);
-//                }
-//            }
-//
-//            for(OrderDetail tempOrderDetail : beforeDiscOrderDetails)
-//            {
-//                BigDecimal ItemPrice = BH.mul(BH.getBD(tempOrderDetail.getItemNum()), BH.div(BH.getBD(promotion.getDiscountPrice()), new BigDecimal(promotion.getItemNum()), false), false);
-//                BigDecimal RealPrice = BH.mul(BH.getBD(tempOrderDetail.getItemNum()), new BigDecimal(tempOrderDetail.getItemPrice()), false);
-//                BigDecimal DiscountPrice = BH.sub(RealPrice, ItemPrice, false);
-//            }
+            while(remainder > 0)
+            {
+                DiscountPrice = BH.sub(DiscountPrice, new BigDecimal(firstOrder.getItemPrice()), false);
+				DiscountPrice = BH.add(DiscountPrice, DiscountPerItem, false);
+                remainder--;
+            }
+
+            if(DiscountPrice.compareTo(new BigDecimal(firstOrder.getDiscountPrice())) != 0)
+            {
+                alteredPrice = true;
+            }
 		}
+
+		if (itemNum >= promotion.getItemNum() || alteredPrice || orderDetails.size() > 1)
+		{
+			OrderDetail orderToAppend;
+			if(!alteredPrice)
+			{
+				orderToAppend = beforeDiscOrderDetails.get(0);
+			}
+			else
+			{
+				orderToAppend = discOrderDetails.get(0);
+			}
+
+			for(OrderDetail tempOrderDetail : beforeDiscOrderDetails)
+			{
+				OrderDetailSQL.deleteOrderDetail(tempOrderDetail);
+			}
+
+			if(discOrderDetails.size() != 0)
+			{
+				orderToAppend = discOrderDetails.get(0);
+				orderToAppend.setItemNum(orderToAppend.getItemNum() + itemNum);
+			}
+			else
+			{
+				orderToAppend.setItemNum(beforeDiscOrderDetails.get(0).getItemNum());
+                orderToAppend.setItemNum(itemNum);
+			}
+			BigDecimal DiscountPerItem = BH.div(BH.getBD(promotion.getDiscountPrice()), new BigDecimal(promotion.getItemNum()), false);
+			BigDecimal ItemPrice = BH.mul(BH.getBD(orderToAppend.getItemNum()), DiscountPerItem, false);
+			BigDecimal RealPrice = BH.mul(BH.getBD(orderToAppend.getItemNum()), new BigDecimal(orderToAppend.getItemPrice()), false);
+			BigDecimal DiscountPrice = BH.sub(RealPrice, ItemPrice, false);
+
+			int tempItemCount = totalNumOfItem;
+			int remainder = 0;
+			for(int j = promotion.getItemNum(); j < tempItemCount; j = promotion.getItemNum())
+			{
+				tempItemCount = tempItemCount - promotion.getItemNum();
+				remainder = tempItemCount;
+				if(remainder == promotion.getItemNum())
+				{
+					remainder = 0;
+				}
+			}
+			while(remainder > 0)
+			{
+				DiscountPrice = BH.sub(DiscountPrice, new BigDecimal(orderToAppend.getItemPrice()), false);
+				DiscountPrice = BH.add(DiscountPrice, DiscountPerItem, false);
+				remainder--;
+			}
+
+			orderToAppend.setDiscountPrice(String.valueOf(DiscountPrice));
+			orderToAppend.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB);
+			OrderDetailSQL.updateOrderDetailAndOrderByDiscount(orderToAppend);
+			addPromotion(order, promotion, null, promotion.getDiscountPrice());
+			OrderSQL.updateOrder(order);
+			total = new BigDecimal(order.getTotal());
+		}
+		if(totalNumOfItem < promotion.getItemNum())
+		{
+			if(discOrderDetails.size() != 0)
+			{
+				discOrderDetails.get(0).setDiscountPrice(ParamConst.INT_ZERO);
+				discOrderDetails.get(0).setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+				OrderDetailSQL.updateOrderDetailAndOrderByDiscount(discOrderDetails.get(0));
+				OrderSQL.updateOrder(order);
+				deletePromotion(order, promotion);
+			}
+		}
+
 	    return total;
     }
 
