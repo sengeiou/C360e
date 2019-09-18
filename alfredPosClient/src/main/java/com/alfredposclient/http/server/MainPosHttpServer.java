@@ -3678,16 +3678,26 @@ public class MainPosHttpServer extends AlfredHttpServer {
         result.put("resultCode", ResultCode.SUCCESS);
 
 //        String oldOrderData = jsonObject.optString("order");
+        String kotSummary = jsonObject.optString("kotSummary");
+        String kotItemDetail = jsonObject.optString("kotItemDetail");
+        String kotItemModifier = jsonObject.optString("kotModifier");
+        String orderbill = jsonObject.optString("orderBill");
         String oldOrderDetailData = jsonObject.optString("orderDetail");
         String orderModifier = jsonObject.optString("orderModifier");
+
         int packs = jsonObject.optInt("pack");
         int targetTableId = jsonObject.optInt("tableId");
 
         OrderDetail transfItemOrderDetail = new Gson().fromJson(oldOrderDetailData, OrderDetail.class);
-        List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
-                new TypeToken<List<OrderModifier>>() {
-                }.getType());
+        OrderBill orderBill = new Gson().fromJson(orderbill, OrderBill.class);
 
+        KotSummary kotSummarys = new Gson().fromJson(kotSummary, KotSummary.class);
+        KotItemDetail kotItemDetails = new Gson().fromJson(kotItemDetail, KotItemDetail.class);
+
+        List<KotItemModifier> kotModfiers = gson.fromJson(kotItemModifier, new TypeToken<List<KotItemModifier>>() {
+        }.getType());
+        List<OrderModifier> orderModifiers = gson.fromJson(orderModifier, new TypeToken<List<OrderModifier>>() {
+        }.getType());
 
 
         Order orderTarget = OrderSQL.getOrderByTableId(targetTableId);
@@ -3727,12 +3737,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (currentRevItemDetail != null) {
                 transfItemOrderDetail.setItemId(currentRevItemDetail.getId());
             }
-
+            transfItemOrderDetail.setTransferFromDetailId(newIdOrderDetail);
             transfItemOrderDetail.setOrderId(orderTarget.getId());
             transfItemOrderDetail.setOrderOriginId(orderTarget.getId());
             transfItemOrderDetail.setCreateTime(time);
             transfItemOrderDetail.setUpdateTime(time);
             transfItemOrderDetail.setUserId(orderTarget.getUserId());
+
 
             if (orderModifiers != null) {
                 for (OrderModifier data : orderModifiers) {
@@ -3755,8 +3766,49 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
             OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
 
+            if (kotSummarys != null) {
+                int newId = CommonSQL.getNextSeq(TableNames.KotSummary);
+//                mapKotSummary.put(kot.getId(), newId);
+                kotSummarys.setId(newId);
+                kotSummarys.setRevenueCenterId(rvc.getId());
+                kotSummarys.setRevenueCenterIndex(rvc.getIndexId());
+                kotSummarys.setRevenueCenterName(rvc.getRevName());
+                kotSummarys.setTableId(orderTarget.getTableId());
+                kotSummarys.setTableName(orderTarget.getTableName());
+                kotSummarys.setOrderId(orderTarget.getId());
+                kotSummarys.setOrderNo(orderTarget.getOrderNo());
+                kotSummarys.setBusinessDate(App.instance.getBusinessDate());
+                kotSummarys.setNumTag(orderTarget.getNumTag());
+                kotSummarys.setCreateTime(time);
+                kotSummarys.setUpdateTime(time);
+                List<KotSummary> kots = new ArrayList<>();
+                kots.add(kotSummarys);
+                KotSummarySQL.addKotSummaryList(kots);
+            }
+
+            kotItemDetails.setId(CommonSQL.getNextSeq(TableNames.KotItemDetail));
+            kotItemDetails.setOrderId(orderTarget.getId());
+            kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+            kotItemDetails.setKotSummaryId(kotSummarys.getId());
+            kotItemDetails.setCreateTime(time);
+            kotItemDetails.setUpdateTime(time);
+            kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
+
+            KotItemDetailSQL.update(kotItemDetails);
+
+
+            if (kotItemModifier != null) {
+                for (KotItemModifier data : kotModfiers) {
+                    data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
+                    data.setKotItemDetailId(kotItemDetails.getId());
+                    KotItemModifierSQL.update(data);
+                }
+            }
+//            KotItemModifierSQL.addKotItemModifierList(kotModfiers);
+
             //TODO: modifier, all kot, orderbill
 
+            KotItemDetail details = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummarys.getId(), transfItemOrderDetail.getId());
             String orderDetail = jsonObject.optString("orderDetail");
 
             result.put("toRevenue", new Gson().toJson(App.instance.getRevenueCenter()));
@@ -3767,13 +3819,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
             result.put("orderTarget", new Gson().toJson(orderTarget));
             result.put("tableTarget", new Gson().toJson(tableInfo));
 
-
+            OrderBillSQL.add(orderBill);
         } catch (Exception e) {
             result.put("resultCode", ResultCode.UNKNOW_ERROR);
             e.printStackTrace();
         }
 
         //todo transfer add KOT on KDS
+
+
 
         App.getTopActivity().httpRequestAction(
                 MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
