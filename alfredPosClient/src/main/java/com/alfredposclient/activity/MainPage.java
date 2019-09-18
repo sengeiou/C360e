@@ -2644,10 +2644,13 @@ public class MainPage extends BaseActivity {
                             }
 
                             KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
-                            KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(kotSummary.getId(), tag.getId());
+
+                            if (kotSummary != null) {
+                                KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(kotSummary.getId(), tag.getId());
 
 //                            sendKOTTmpToKDS(tag, kotItemDetail, ParamConst.JOB_DELETE_TMP_ITEM_KOT);
-//
+                            }
+
 //                            RemainingStockSQL.updateRemainingNum(num,itemTempId);
                             OrderDetailSQL.deleteOrderDetail(tag);
                             OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
