@@ -1017,7 +1017,7 @@ public class OrderHelper {
 		int totalNumOfItem = 0;
 
 		List<OrderDetail> beforeDiscOrderDetails = new ArrayList<>();
-        List<OrderDetail> discOrderDetails = new ArrayList<>();
+		List<OrderDetail> discOrderDetails = new ArrayList<>();
 
 		for(OrderDetail orderDetail : orderDetails)
 		{
@@ -1026,17 +1026,16 @@ public class OrderHelper {
 			{
 				if (promotion.getItemId().intValue() == itemDetail.getItemTemplateId().intValue() && orderDetail.getIsFree() != ParamConst.FREE)
 				{
+					totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
 					if(orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)
 					{
-                        itemNum = itemNum + orderDetail.getItemNum();
-                        totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
-                        beforeDiscOrderDetails.add(orderDetail);
+						itemNum = itemNum + orderDetail.getItemNum();
+						beforeDiscOrderDetails.add(orderDetail);
 					}
 					else
-                    {
-                        totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
-                        discOrderDetails.add(orderDetail);
-                    }
+					{
+						discOrderDetails.add(orderDetail);
+					}
 				}
 			}
 			if (promotion.getItemId()<=0&&promotion.getItemCategoryId()>0)
@@ -1047,7 +1046,7 @@ public class OrderHelper {
 					{
 						CoreData.getInstance().getItemDetails(promotion.getItemCategoryId());
 						itemNum = itemNum + orderDetail.getItemNum();
-                        totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
+						totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
 						beforeDiscOrderDetails.add(orderDetail);
 					}
 				}
@@ -1060,24 +1059,24 @@ public class OrderHelper {
 					if(orderDetail.getDiscountPrice() == null)
 					{
 						itemNum = itemNum + orderDetail.getItemNum();
-                        totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
+						totalNumOfItem = totalNumOfItem + orderDetail.getItemNum();
 						beforeDiscOrderDetails.add(orderDetail);
 					}
 				}
 			}
 		}
 
-        Boolean alteredPrice = false;
+		Boolean alteredPrice = false;
 
-		if(discOrderDetails.size() != 0)
+		if(discOrderDetails.size() > promotion.getItemNum())
 		{
 			OrderDetail firstOrder = discOrderDetails.get(0);
 			BigDecimal DiscountPerItem = BH.div(BH.getBD(promotion.getDiscountPrice()), new BigDecimal(promotion.getItemNum()), false);
 			BigDecimal ItemPrice = BH.mul(BH.getBD(firstOrder.getItemNum()), BH.div(BH.getBD(promotion.getDiscountPrice()), new BigDecimal(promotion.getItemNum()), false), false);
 			BigDecimal RealPrice = BH.mul(BH.getBD(firstOrder.getItemNum()), new BigDecimal(firstOrder.getItemPrice()), false);
 			BigDecimal DiscountPrice = BH.sub(RealPrice, ItemPrice, false);
-            int tempItemCount = totalNumOfItem;
-            int remainder = 0;
+			int tempItemCount = totalNumOfItem;
+			int remainder = 0;
 			for(int j = promotion.getItemNum(); j < tempItemCount; j = promotion.getItemNum())
 			{
 				tempItemCount = tempItemCount - promotion.getItemNum();
@@ -1087,23 +1086,23 @@ public class OrderHelper {
 					remainder = 0;
 				}
 			}
-            while(remainder > 0)
-            {
-                DiscountPrice = BH.sub(DiscountPrice, new BigDecimal(firstOrder.getItemPrice()), false);
+			while(remainder > 0)
+			{
+				DiscountPrice = BH.sub(DiscountPrice, new BigDecimal(firstOrder.getItemPrice()), false);
 				DiscountPrice = BH.add(DiscountPrice, DiscountPerItem, false);
-                remainder--;
-            }
+				remainder--;
+			}
 
-            if(DiscountPrice.compareTo(new BigDecimal(firstOrder.getDiscountPrice())) != 0)
-            {
-                alteredPrice = true;
-            }
+			if(DiscountPrice.compareTo(new BigDecimal(firstOrder.getDiscountPrice())) != 0)
+			{
+				alteredPrice = true;
+			}
 		}
 
-		if (itemNum >= promotion.getItemNum() || alteredPrice || orderDetails.size() > 1)
+		if (itemNum >= promotion.getItemNum() || alteredPrice)
 		{
 			OrderDetail orderToAppend;
-			if(!alteredPrice)
+			if(beforeDiscOrderDetails.size() != 0)
 			{
 				orderToAppend = beforeDiscOrderDetails.get(0);
 			}
@@ -1125,7 +1124,7 @@ public class OrderHelper {
 			else
 			{
 				orderToAppend.setItemNum(beforeDiscOrderDetails.get(0).getItemNum());
-                orderToAppend.setItemNum(itemNum);
+				orderToAppend.setItemNum(itemNum);
 			}
 			BigDecimal DiscountPerItem = BH.div(BH.getBD(promotion.getDiscountPrice()), new BigDecimal(promotion.getItemNum()), false);
 			BigDecimal ItemPrice = BH.mul(BH.getBD(orderToAppend.getItemNum()), DiscountPerItem, false);
@@ -1169,7 +1168,7 @@ public class OrderHelper {
 			}
 		}
 
-	    return total;
+		return total;
     }
 
     private static void addPromotion(Order order,Promotion promotion,OrderDetail freeOrderDetail,String price)
