@@ -112,6 +112,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class HttpAnalysis {
     public static final String TAG = HttpAnalysis.class.getSimpleName();
@@ -259,6 +260,38 @@ public class HttpAnalysis {
             List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("configList"),
                     new TypeToken<ArrayList<RestaurantConfig>>() {
                     }.getType());
+
+            //region dummy data
+            List<String> salesTypeNameList = new ArrayList<>();
+            salesTypeNameList.add("Dine In");
+            salesTypeNameList.add("Take away");
+            salesTypeNameList.add("Delivery");
+            salesTypeNameList.add("Employee");
+
+            int i = 0;
+            for (String name : salesTypeNameList) {
+                RestaurantConfig rc = new RestaurantConfig();
+                rc.setId(++i + new Random().nextInt(1000));
+                rc.setParaType(ParamConst.SALES_TYPE);
+                rc.setParaName("Sales Type");
+                rc.setParaValue1(name);
+
+                String idValue = String.valueOf(ParamConst.DINE_IN);
+                if (name.equalsIgnoreCase("Dine In"))
+                    idValue = String.valueOf(ParamConst.DINE_IN);
+                else if (name.equalsIgnoreCase("Take away"))
+                    idValue = String.valueOf(ParamConst.TAKE_AWAY);
+                else if (name.equalsIgnoreCase("Delivery"))
+                    idValue = String.valueOf(ParamConst.APP_DELIVERY);
+                else if (name.equalsIgnoreCase("Employee"))
+                    idValue = String.valueOf(ParamConst.EMPLOYEE);
+
+                rc.setParaValue2(idValue);
+
+                restaurantConfigs.add(rc);
+            }
+            //endregion
+
             CoreData.getInstance().setRestaurantConfigs(restaurantConfigs);
             RestaurantConfigSQL.deleteAllRestaurantConfig();
             RestaurantConfigSQL.addRestaurantConfigs(restaurantConfigs);

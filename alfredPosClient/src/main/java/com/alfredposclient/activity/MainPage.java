@@ -1,5 +1,6 @@
 package com.alfredposclient.activity;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -18,9 +19,15 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -29,6 +36,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemModifier;
@@ -48,6 +56,7 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
@@ -73,6 +82,7 @@ import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
+import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
@@ -95,8 +105,10 @@ import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TimeUtil;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
+import com.alfredposclient.adapter.SalesTypeAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.SyncCentre;
@@ -227,6 +239,7 @@ public class MainPage extends BaseActivity {
 
     public static final int SERVER_TRANSFER_TABLE_FROM_OTHER_RVC = 400;
     public static final int ACTION_MERGE_TABLE = 401;
+    public static final int VIEW_EVENT_SHOW_SALES_TYPE = 402;
 
     public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
     public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
@@ -307,6 +320,7 @@ public class MainPage extends BaseActivity {
     private TableLayoutFragment f_tables;
     private Observable<Integer> observable;
     private Observable<Object> observable1;
+    private AlertDialog salesTypeDialog;
 
     private void initDrawerLayout() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -844,6 +858,9 @@ public class MainPage extends BaseActivity {
                 break;
                 case VIEW_EVENT_SHOW_OPEN_ITEM_WINDOW:
                     showOpenItemWindow();
+                    break;
+                case VIEW_EVENT_SHOW_SALES_TYPE:
+                    showSalesTypeWindow();
                     break;
                 case VIEW_EVENT_DISMISS_OPEN_ITEM_WINDOW:
                     dismissOpenItemWindow();
@@ -2296,7 +2313,7 @@ public class MainPage extends BaseActivity {
                             showTables();
                             onBackPressed();
                             ordersDetail = OrderDetailSQL.getOrderDetails(oldOrder.getId());
-                            if (ordersDetail.size() <= 0){
+                            if (ordersDetail.size() <= 0) {
                                 unseat(oldOrder);
                             } else {
 
@@ -2316,6 +2333,7 @@ public class MainPage extends BaseActivity {
     private void unseat() {
         unseat(currentOrder);
     }
+
     private void unseat(Order order) {
         OrderDetailSQL.deleteOrderDetailByOrder(order);
         KotSummarySQL.deleteKotSummaryByOrder(order);
@@ -2497,6 +2515,63 @@ public class MainPage extends BaseActivity {
         if (isShowTables) {
             dismissOpenItemWindow();
         }
+    }
+
+    private void showSalesTypeWindow() {
+        salesTypeDialog = new AlertDialog.Builder(this).create();
+        salesTypeDialog.setCancelable(true);
+        salesTypeDialog.setCanceledOnTouchOutside(false);
+
+        Window window = salesTypeDialog.getWindow();
+        if (window == null) return;
+
+        salesTypeDialog.show();
+        window.setContentView(R.layout.dialog_select_sales_type);
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+
+        ListView listView = (ListView) salesTypeDialog.findViewById(R.id.lvSalesType);
+
+        List<RestaurantConfig> restaurantConfigList = RestaurantConfigSQL.getAllRestaurantConfigByParaType(ParamConst.SALES_TYPE);
+        SalesTypeAdapter adapter = new SalesTypeAdapter(this, restaurantConfigList);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                if (OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(currentOrder) > 0) {
+                    ToastUtils.showToast(MainPage.this, "Can't change sales type after place order");
+                    return;
+                }
+
+                List<OrderDetail> orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(currentOrder);
+                if (orderDetailList.size() > 0) {
+                    OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
+                    OrderModifierSQL.deleteOrderModifierByOrder(currentOrder);
+                }
+
+                if (salesTypeDialog != null) {
+                    salesTypeDialog.dismiss();
+                }
+
+                SalesTypeAdapter salesTypeAdapter = (SalesTypeAdapter) adapterView.getAdapter();
+
+                if (salesTypeAdapter == null) return;
+
+                RestaurantConfig item = salesTypeAdapter.getItem(i);
+
+                int salesType = ParamConst.DINE_IN;
+
+                if (!TextUtils.isEmpty(item.getParaValue2()))
+                    salesType = Integer.parseInt(item.getParaValue2());
+
+                currentOrder.setIsTakeAway(salesType);
+                OrderSQL.updateOrder(currentOrder);
+                handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+
+            }
+        });
+
     }
 
     private void dismissOpenItemWindow() {

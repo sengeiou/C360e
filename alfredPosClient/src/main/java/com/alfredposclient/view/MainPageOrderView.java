@@ -404,7 +404,12 @@ public class MainPageOrderView extends LinearLayout {
                 .getName();
         if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.takeaway) + ")";
+        } else if (order.getIsTakeAway() == ParamConst.APP_DELIVERY) {
+            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.delivery) + ")";
+        } else if (order.getIsTakeAway() == ParamConst.EMPLOYEE) {
+            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.employee) + ")";
         }
+
         if (order.getTableId() < 0) {
             orderNoStr = context.getResources().getString(R.string.queue)
                     + " - "
@@ -570,7 +575,7 @@ public class MainPageOrderView extends LinearLayout {
                     List<ItemModifier> itemModifiers = CoreData.getInstance()
                             .getItemModifiers(
                                     CoreData.getInstance().getItemDetailById(
-                                            orderDetail.getItemId(),orderDetail.getItemName()));
+                                            orderDetail.getItemId(), orderDetail.getItemName()));
                     if (itemModifiers.size() > 0) {
                         Message msg = handler.obtainMessage();
                         msg.what = MainPage.VIEW_EVENT_OPEN_MODIFIERS;
@@ -637,7 +642,7 @@ public class MainPageOrderView extends LinearLayout {
 
                             if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                                 if (num < 1) {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(), tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -669,7 +674,7 @@ public class MainPageOrderView extends LinearLayout {
 //									OrderModifierSQL.updateOrderModifierNum(tag, 999);
                                     OrderHelper.setOrderModifierPirceAndNum(tag, 999);
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(), tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -749,7 +754,7 @@ public class MainPageOrderView extends LinearLayout {
                                     // kotCommitStatus, null);
 
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(), tag.getItemName());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());

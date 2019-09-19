@@ -22,6 +22,7 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -370,6 +371,9 @@ public class OrderDetailSQL {
 
         orderDetail.setRealPrice(OrderHelper.getOrderDetailRealPrice(order,
                 orderDetail).toString());
+
+        BigDecimal itemPrice = OrderHelper.getItemPriceBySalesType(order.getIsTakeAway(), BH.getBD(orderDetail.getItemPrice()));
+        orderDetail.setItemPrice(itemPrice.toString());
     }
 
 
@@ -459,7 +463,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 35,
                         orderDetail.getBarCode());
-                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 36, orderDetail.getOrderDetailRound());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -555,7 +559,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 34,
                         orderDetail.getBarCode());
-                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 36, orderDetail.getOrderDetailRound());
 
                 sqLiteStatement.executeInsert();
             }
@@ -872,7 +876,7 @@ public class OrderDetailSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId+""});
+            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId + ""});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -900,7 +904,7 @@ public class OrderDetailSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId+""});
+            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId + ""});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -927,7 +931,7 @@ public class OrderDetailSQL {
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId+""});
+            cursor = db.rawQuery(sql, new String[]{orderId + "", itemDetailId + ""});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
@@ -2385,7 +2389,7 @@ public class OrderDetailSQL {
     }
 
     public static OrderDetail getPromotionOrderDetail(int orderId,
-                                            int fromOrderDetailId) {
+                                                      int fromOrderDetailId) {
         OrderDetail orderDetail = null;
         String sql = "select * from " + TableNames.OrderDetail
                 + " where orderId = ? and fromOrderDetailId = ? ";
@@ -2737,7 +2741,7 @@ public class OrderDetailSQL {
         return count;
     }
 
-    public static int getNoVoidCountByOrderId(int orderId){
+    public static int getNoVoidCountByOrderId(int orderId) {
         String sql = "select count(*) from "
                 + TableNames.OrderDetail
                 + " where orderId = ? and orderDetailType <> " + ParamConst.ORDERDETAIL_TYPE_VOID;
