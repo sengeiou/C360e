@@ -1,7 +1,6 @@
 package com.alfredposclient.jobs;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
@@ -29,7 +28,6 @@ import com.path.android.jobqueue.config.Configuration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class KotJobManager {
@@ -624,7 +622,8 @@ public class KotJobManager {
                     if (prntd != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
-                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from) + " " + fromTableName);
+                        String tableTransferFrom = context.getResources().getString(R.string.table_transfer_from);
+                        printKotSummary.setDescription(String.format(tableTransferFrom + "", fromTableName));
                         printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 
@@ -735,8 +734,8 @@ public class KotJobManager {
                     if (prntd != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
-                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from) + " " + fromTableName);
-                        printed = App.instance.remoteKotPrint(prntd, printKotSummary,
+                        String tableTransferFrom = context.getResources().getString(R.string.table_transfer_from);
+                        printKotSummary.setDescription(String.format(tableTransferFrom + "", fromTableName));                        printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 
                     } else {
