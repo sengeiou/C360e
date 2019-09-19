@@ -1224,24 +1224,34 @@ public class OrderHelper {
 	// This part has no issues.
 	private static BigDecimal promotionAndPax(Order order, List<OrderDetail> orderDetails, Promotion promotion, BigDecimal total, int pax)
 	{
-		Log.i("Check", "triggered");
-		if(total.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0 && pax>=promotion.getGuestNum())
+		BigDecimal currentDiscAmount = new BigDecimal(order.getDiscountAmount());
+		BigDecimal discount = BH.divThirdFormat(BH.getBD(promotion.getDiscountPercentage()), BH.getBD(100), false);
+		BigDecimal promotionPrice = BH.mul(total, discount, false);
+		if(total.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) >0&&pax>=promotion.getGuestNum())
 		{
-			BigDecimal discount = BH.divThirdFormat(BH.getBD(promotion.getDiscountPercentage()), BH.getBD(100), false);
-			BigDecimal promotionPrice = BH.mul(total, discount, false);
-			total = BH.sub(BH.getBD(total),promotionPrice, false);
-			order.setDiscountAmount(String.valueOf(promotionPrice));
-			order.setTotal(String.valueOf(total));
-			OrderSQL.update(order);
-			deletePromotion(order, promotion);
-			addPromotion(order, promotion, null,promotionPrice.toString());
+			if(PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId()) == null)
+			{
+				order.setDiscountAmount(String.valueOf(BH.add(new BigDecimal(order.getDiscountAmount()), promotionPrice, false)));
+				total = BH.sub(BH.getBD(total),promotionPrice, false);
+				deletePromotion(order, promotion);
+				addPromotion(order, promotion, null,promotionPrice.toString());
+				order.setTotal(String.valueOf(total));
+				OrderSQL.update(order);
+			}
 		}
 		else
 		{
-			order.setDiscountAmount("0");
-			order.setTotal(order.getSubTotal());
-			OrderSQL.update(order);
-			deletePromotion(order,promotion);
+			if(BH.sub(currentDiscAmount, promotionPrice, false).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0)
+			{
+				if(PromotionDataSQL.getPromotionDataOrId(order.getId(), promotion.getId()) != null)
+				{
+					order.setDiscountAmount(String.valueOf(BH.sub(new BigDecimal(order.getDiscountAmount()), promotionPrice, false)));
+					total = BH.add(BH.getBD(total), promotionPrice, false);
+					deletePromotion(order, promotion);
+					order.setTotal(String.valueOf(total));
+					OrderSQL.updateOrder(order);
+				}
+			}
 		}
 
 		return total;
