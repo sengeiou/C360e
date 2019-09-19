@@ -105,10 +105,12 @@ import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.CardsSettlementSQL;
+import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.LocalDeviceSQL;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
@@ -2491,9 +2493,9 @@ public class App extends BaseApplication {
                                    List<OrderModifier> modifier) {
         try {
             for (OrderModifier orderModifier : modifier) {
-                ItemDetail itemDetail = CoreData.getInstance().getItemDetailByTemplateId(orderModifier.getItemId());
+                Modifier itemDetail = ModifierSQL.getModifierById(orderModifier.getModifierId());
                 if (itemDetail != null) {
-                    orderModifier.modifierName = itemDetail.getItemName();
+                    orderModifier.modifierName = itemDetail.getModifierName();
                 }
             }
 

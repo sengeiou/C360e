@@ -2333,9 +2333,6 @@ public class MainPage extends BaseActivity {
                         Order toOrder = new Gson().fromJson(toOrderStr, Order.class);
                         TableInfo tableInfo = new Gson().fromJson(tableInfoStr, TableInfo.class);
 
-                        List<OrderDetail> orderDetails = gson.fromJson(orderDetailStr,
-                                new TypeToken<List<OrderDetail>>() {
-                                }.getType());
                         List<OrderModifier> orderModifiers = gson.fromJson(orderModifierStr,
                                 new TypeToken<List<OrderModifier>>() {
                                 }.getType());
