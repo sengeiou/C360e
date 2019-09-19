@@ -104,4 +104,12 @@ public class SystemSettings {
         return Store.getInt(this.context, Store.KDS_ONLINE, 0);
     }
 
+    public void setAllowPartial(boolean value) {
+        Store.putBoolean(this.context, Store.ALLOW_PARTIAL, value);
+    }
+
+    public boolean isAllowPartial() {
+        return Store.getBoolean(this.context, Store.ALLOW_PARTIAL, false);
+    }
+
 }

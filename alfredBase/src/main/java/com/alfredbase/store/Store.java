@@ -22,6 +22,7 @@ public class Store {
     public static final String BALANCER_TIME_END = "BALANCER_TIME_END";
     public static final String STACK_COUNT = "STACK_COUNT";
     public static final String PENDING_LIST = "PENDING_LIST";
+    public static final String ALLOW_PARTIAL = "ALLLOW_PARTIAL";
     public static final String MODE_BALANCER = "MODE_BALANCER";
     public static final String POS_TYPE = "POS_TYPE";
     public static final String CURRENT_REVENUE_CENTER = "CURRENT_REVENUE_CENTER";

@@ -49,7 +49,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
     private LinearLayout llStackCount;
     private LinearLayout llContTime;
 
-    private MyToggleButton mt_kot_lan, mtPendingList;
+    private MyToggleButton mt_kot_lan, mtPendingList, mtAllowPartial;
     private MyToggleButton mtKdsOnline;
     private SystemSettings settings;
 
@@ -94,6 +94,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         this.tv_switch_account = (TextView) findViewById(R.id.tv_switch_account);
         this.mtPendingList = (MyToggleButton) findViewById(R.id.mtPendingList);
         this.mt_kot_lan = (MyToggleButton) findViewById(R.id.mt_kot_lan);
+        this.mtAllowPartial = (MyToggleButton) findViewById(R.id.mtAllowPartial);
         this.mtKdsOnline = (MyToggleButton) findViewById(R.id.mtKdsOnline);
         this.etStackCount = (EditText) findViewById(R.id.etStackCount);
         this.llStackCount = (LinearLayout) findViewById(R.id.llStackCount);
@@ -101,6 +102,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         this.mtPendingList.setOnStateChangeListeren(this);
         this.mtKdsOnline.setOnStateChangeListeren(this);
         this.mt_kot_lan.setOnStateChangeListeren(this);
+        this.mtAllowPartial.setOnStateChangeListeren(this);
         this.tv_kot_history.setOnClickListener(this);
         this.tv_kot_reset.setOnClickListener(this);
         this.tv_switch_account.setOnClickListener(this);
@@ -109,6 +111,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         LinearLayout llBalancer = (LinearLayout) findViewById(R.id.llBalancer);
 
         mtKdsOnline.setChecked(settings.isKdsOnline() == 0);
+        mtAllowPartial.setChecked(settings.isAllowPartial());
 
         if (App.instance.isBalancer()) {
             llNormal.setVisibility(View.GONE);
@@ -317,6 +320,13 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                             }
                         });
 
+                break;
+            case R.id.mtAllowPartial:
+                if (checkState) {
+                    settings.setAllowPartial(true);
+                } else {
+                    settings.setAllowPartial(false);
+                }
                 break;
         }
     }

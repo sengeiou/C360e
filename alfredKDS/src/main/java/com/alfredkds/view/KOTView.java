@@ -404,30 +404,39 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 complete_all_tv.setVisibility(VISIBLE);
                 call_num_tv.setVisibility(VISIBLE);
 
-                int itemCount = 0;
-
-                List<KotItemDetail> kotItemDetailsLocal = KotItemDetailSQL.getKotItemDetailBySummaryId(kot.getKotSummary().getId());
-
-                for (KotItemDetail kotItemDetail : kotItemDetailsLocal) {
-
-                    if (ParamConst.KOT_STATUS_VOID != kotItemDetail.getKotStatus() &&
-                            ParamConst.KOT_STATUS_DONE != kotItemDetail.getKotStatus()) {
-                        if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {//package item
-                            itemCount += KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId()).size();
-                        } else {
-                            itemCount++;
-                        }
-                    }
-                }
-//
-                if (itemCount >= kot.getKotSummary().getOrderDetailCount()) {
+                if (App.instance.getSystemSettings().isAllowPartial()) {
                     llAction.setVisibility(VISIBLE);
 
                     if (kot.getKotSummary().isNext() == 1) {
                         call_num_tv.setVisibility(GONE);
                     }
+
                 } else {
-                    llAction.setVisibility(GONE);
+                    int itemCount = 0;
+
+                    List<KotItemDetail> kotItemDetailsLocal = KotItemDetailSQL.getKotItemDetailBySummaryId(kot.getKotSummary().getId());
+
+                    for (KotItemDetail kotItemDetail : kotItemDetailsLocal) {
+
+                        if (ParamConst.KOT_STATUS_VOID != kotItemDetail.getKotStatus() &&
+                                ParamConst.KOT_STATUS_DONE != kotItemDetail.getKotStatus()) {
+                            if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {//package item
+                                itemCount += KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId()).size();
+                            } else {
+                                itemCount++;
+                            }
+                        }
+                    }
+
+                    if (itemCount >= kot.getKotSummary().getOrderDetailCount()) {
+                        llAction.setVisibility(VISIBLE);
+
+                        if (kot.getKotSummary().isNext() == 1) {
+                            call_num_tv.setVisibility(GONE);
+                        }
+                    } else {
+                        llAction.setVisibility(GONE);
+                    }
                 }
             }
         }
