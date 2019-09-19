@@ -322,7 +322,7 @@
                                         android:layout_marginTop="10dp"
                                         android:text="@string/rounding"
                                         android:textColor="@color/black"
-                                        android:textSize="@dimen/text_size_m" />
+                                        android:textSize="@dimen/text_size_m"/>
 
                                     <com.alfredbase.view.DashedLine
                                         android:layout_width="match_parent"

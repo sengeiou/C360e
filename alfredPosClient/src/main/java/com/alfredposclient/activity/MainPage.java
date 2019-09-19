@@ -81,6 +81,7 @@ import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
@@ -91,6 +92,7 @@ import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
+import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.StockCallBack;
@@ -132,6 +134,7 @@ import com.moonearly.utils.service.TcpUdpFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -904,6 +907,8 @@ public class MainPage extends BaseActivity {
                                             currentTable.getName(), 1, App.instance.getSystemSettings().getTrainType());
 
                             currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
+                            BigDecimal remainTotal = BH.getBD(currentOrder.getTotal());
+
                             OrderSQL.update(currentOrder);
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
@@ -911,8 +916,9 @@ public class MainPage extends BaseActivity {
 
                             List<OrderPromotion> orderPromotions = PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
 
+                            RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(currentOrder, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                             App.instance.remoteBillPrint(printer, title, currentOrder,
-                                    orderItems, orderModifiers, taxMap, null, null, orderPromotions);
+                                    orderItems, orderModifiers, taxMap, null, roundAmount, orderPromotions);
 //						handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                         }
                     } else {
