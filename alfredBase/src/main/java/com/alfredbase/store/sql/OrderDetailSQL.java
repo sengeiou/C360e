@@ -369,10 +369,11 @@ public class OrderDetailSQL {
         orderDetail.setModifierPrice(OrderHelper.getOrderDetailModifierPrice(
                 order, orderDetail).toString());
 
+        //TODO: price by sales type
         orderDetail.setRealPrice(OrderHelper.getOrderDetailRealPrice(order,
                 orderDetail).toString());
 
-        BigDecimal itemPrice = OrderHelper.getItemPriceBySalesType(order.getIsTakeAway(), BH.getBD(orderDetail.getItemPrice()));
+        BigDecimal itemPrice = OrderHelper.getItemPriceBySalesType(orderDetail.getItemId(), order.getIsTakeAway(), BH.getBD(orderDetail.getItemPrice()));
         orderDetail.setItemPrice(itemPrice.toString());
     }
 

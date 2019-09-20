@@ -7,6 +7,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.HappyHourWeek;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.ItemDetailPrice;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.ItemPromotion;
@@ -26,6 +27,7 @@ import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.Tax;
 import com.alfredbase.javabean.TaxCategory;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.ItemDetailPriceSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
@@ -278,95 +280,39 @@ public class OrderHelper {
     public static BigDecimal getOrderDetailRealPrice(Order order,
                                                      OrderDetail orderDetail) {
         BigDecimal price = BH.getBD(ParamConst.DOUBLE_ZERO);
+        BigDecimal priceBySalesType = getItemPriceBySalesType(orderDetail.getItemId(), order.getIsTakeAway(), price);
         ItemHappyHour itemHappyHour = getItemHappyHour(order, orderDetail);
+
         if (itemHappyHour != null) {
-            //TODO: price by sales type
+
             if (BH.getBD(itemHappyHour.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
-                price = BH.sub(BH.getBD(orderDetail.getItemPrice()),
+//                price = BH.sub(BH.getBD(orderDetail.getItemPrice()),
+//                        BH.getBDNoFormat(itemHappyHour.getDiscountPrice()), false);
+                price = BH.sub(priceBySalesType,
                         BH.getBDNoFormat(itemHappyHour.getDiscountPrice()), false);
             } else if (Double.parseDouble(itemHappyHour.getDiscountRate()) > 0) {
                 orderDetail.setDiscountRate(itemHappyHour.getDiscountRate());
-                price = BH.sub(BH.getBD(orderDetail.getItemPrice()), BH
-                        .mul(BH.getBD(orderDetail.getItemPrice()),
+//                price = BH.sub(BH.getBD(orderDetail.getItemPrice()), BH
+//                        .mul(BH.getBD(orderDetail.getItemPrice()),
+//                                BH.getBDNoFormat(itemHappyHour.getDiscountRate()),
+//                                false), false);
+                price = BH.sub(priceBySalesType, BH.mul(priceBySalesType,
                                 BH.getBDNoFormat(itemHappyHour.getDiscountRate()),
                                 false), false);
             } else if (itemHappyHour.getFreeNum().intValue() > 0) {
-                price = BH.getBD(orderDetail.getItemPrice());
+//                price = BH.getBD(orderDetail.getItemPrice());
+                price = priceBySalesType;
             }
         } else {
 
-            price = BH.getBD(orderDetail.getItemPrice());
+//            price = BH.getBD(orderDetail.getItemPrice());
 
-            //TODO: price by sales type
-            price = getItemPriceBySalesType(order.getIsTakeAway(), price);
+            price = priceBySalesType;
 
         }
-//		BigDecimal promotionPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
-//		ItemPromotion itemPromotion = getItemPromotion(order, orderDetail);
-//		if (itemPromotion != null&&hasWeek(itemPromotion.getPromotionId())) {
-//			if (BH.getBD(itemPromotion.getDiscountPrice()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) != 0) {
-//				price = BH.sub(BH.getBD(orderDetail.getItemPrice()),
-//						BH.getBD(itemPromotion.getDiscountPrice()), false);
-//                promotionPrice=BH.add(promotionPrice,BH.getBD(itemPromotion.getDiscountPrice()), true);
-//			}
-//			else if (Double.parseDouble(itemPromotion.getDiscountPercentage()) > 0) {
-//				orderDetail.setDiscountRate(itemPromotion.getDiscountPercentage());
-//
-//				 if(price.compareTo(BH.getBD("0")) > 0) {
-//					 price = BH.sub(BH.getBD(orderDetail.getItemPrice()), BH
-//							 .mul(BH.getBD(price),
-//									 BH.getBD(itemPromotion.getDiscountPercentage()),
-//									 false), false);
-//				 }else {
-//					 price = BH.sub(BH.getBD(orderDetail.getItemPrice()), BH
-//							 .mul(BH.getBD(orderDetail.getItemPrice()),
-//									 BH.getBD(itemPromotion.getDiscountPercentage()),
-//									 false), false);
-//				 }
-//				promotionPrice=BH.add(promotionPrice,BH.mul(BH.getBD(orderDetail.getItemPrice()),
-//                        BH.getBD(itemPromotion.getDiscountPercentage()),
-//                        false),false) ;
-//			}
-//			if (itemPromotion.getFreeNum().intValue() > 0) {
-//				//promotionPrice = BH.getBD(orderDetail.getItemPrice());
-//			}
-//		} else {
-//			price = BH.getBD(orderDetail.getItemPrice());
-//		}
-
-//		promotionPrice = BH.mul(promotionPrice, BH.getBD(orderDetail.getItemNum()), false);
-//		if(promotionPrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0){
-//			long nowTime = System.currentTimeMillis();
-//
-//			OrderPromotion promotionData=PromotionDataSQL.getPromotionData(order.getId(),orderDetail.getId());
-//			if(promotionData==null){
-//				List<Promotion> promotionList= PromotionSQL.getAllPromotion();
-//				Promotion promotion= PromotionSQL.getPromotion(itemPromotion.getPromotionId());
-//                promotionData=new OrderPromotion();
-//				promotionData.setPromotionType(0);
-//				promotionData.setPromotionAmount(promotionPrice.toString());
-//				promotionData.setItemId(orderDetail.getItemId());
-//				promotionData.setItemName(orderDetail.getItemName());
-//				promotionData.setFreeItemId(itemPromotion.getFreeItemId());
-//				promotionData.setFreeNum(itemPromotion.getFreeNum());
-//				promotionData.setFreeItemName(itemPromotion.getFreeItemName());
-//				promotionData.setOrderDetailId(orderDetail.getId());
-//				promotionData.setOrderId(orderDetail.getOrderId());
-//				promotionData.setItemNum(orderDetail.getItemNum());
-//				promotionData.setCreateTime(nowTime);
-//				promotionData.setPromotionId(itemPromotion.getPromotionId());
-//				promotionData.setPromotionName(promotion.getPromotionName());
-//				promotionData.setBusinessDate( order.getBusinessDate());
-//				PromotionDataSQL.addPromotionData(promotionData);
-//			}else {
-//				promotionData.setPromotionAmount(promotionPrice.toString());
-//				promotionData.setItemNum(orderDetail.getItemNum());
-//				promotionData.setUpdateTime(nowTime);
-//				PromotionDataSQL.updatePromotionData(promotionData);
-//			}
-        //	}
 
         price = BH.mul(price, BH.getBD(orderDetail.getItemNum()), false);
+
         if (BH.getBDNoFormat(orderDetail.getWeight()).compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) > 0) {
             price = BH.mul(price, BH.getBDNoFormat(orderDetail.getWeight()), false);
         }
@@ -374,16 +320,21 @@ public class OrderHelper {
         return price;
     }
 
-    public static BigDecimal getItemPriceBySalesType(int salesType, BigDecimal defPrice) {
+    public static BigDecimal getItemPriceBySalesType(int itemId, int salesType, BigDecimal defPrice) {
         BigDecimal price = defPrice;
+        ItemDetailPrice itemDetailPrice = ItemDetailPriceSQL.get(itemId, salesType);
 
-        if (salesType == ParamConst.TAKE_AWAY) {
-            price = BH.mul(price, BH.getBD(0.5), false);
-        } else if (salesType == ParamConst.APP_DELIVERY) {
-            price = BH.mul(price, BH.getBD(0.3), false);
-        } else if (salesType == ParamConst.EMPLOYEE) {
-            price = BH.mul(price, BH.getBD(0.6), false);
+        if (itemDetailPrice != null) {
+            price = BH.getBD(itemDetailPrice.getItemPrice());
         }
+
+//        if (salesType == ParamConst.TAKE_AWAY) {
+//            price = BH.mul(price, BH.getBD(0.5), false);
+//        } else if (salesType == ParamConst.APP_DELIVERY) {
+//            price = BH.mul(price, BH.getBD(0.3), false);
+//        } else if (salesType == ParamConst.EMPLOYEE) {
+//            price = BH.mul(price, BH.getBD(0.6), false);
+//        }
 
         return price;
     }

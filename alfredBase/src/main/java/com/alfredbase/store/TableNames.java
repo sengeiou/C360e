@@ -102,6 +102,8 @@ public class TableNames {
 	public static final String PromotionOrder= "PromotionOrder_";
 	public static final String PromotionData= "PromotionData_";
 
+	public static final String ItemDetailPrice= "ItemDetailPrice_";
+
 
 	public static final String EventLog= "EventLog_";
 }

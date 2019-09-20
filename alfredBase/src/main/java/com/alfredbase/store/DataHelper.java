@@ -778,6 +778,10 @@ public class DataHelper {
             db.execSQL("CREATE TABLE "
                     + TableNames.RestaurantConfig
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, paraId INTEGER, paraType INTEGER, paraName TEXT, paraValue1 TEXT, paraValue2 TEXT)");
+            db.execSQL("CREATE TABLE "
+                    + TableNames.ItemDetailPrice
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, itemId INTEGER, salesTypeId INTEGER, taxId INTEGER, paraType INTEGER, itemPrice DOUBLE, createTime LONG, updateTime LONG)");
+
 
             // create index
             db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS localDevice_idx1 on "

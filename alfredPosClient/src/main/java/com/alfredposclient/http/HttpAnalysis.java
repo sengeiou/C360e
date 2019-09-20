@@ -13,6 +13,7 @@ import com.alfredbase.javabean.HappyHour;
 import com.alfredbase.javabean.HappyHourWeek;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.ItemDetailPrice;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
@@ -62,6 +63,7 @@ import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
+import com.alfredbase.store.sql.ItemDetailPriceSQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.ItemHappyHourSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
@@ -370,6 +372,26 @@ public class HttpAnalysis {
             ItemDetailSQL.addItemDetailList(itemDetailList);
             CoreData.getInstance().setItemDetails(
                     ItemDetailSQL.getAllItemDetail());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getItemPrice(int statusCode, Header[] headers,
+                                    byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            List<ItemDetailPrice> itemPriceList = new Gson().fromJson(
+                    object.getString("itemPriceList"),
+                    new TypeToken<ArrayList<ItemDetailPrice>>() {
+                    }.getType());
+
+            ItemDetailPriceSQL.delete();
+
+            for (ItemDetailPrice itemDetailPrice : itemPriceList) {
+                ItemDetailPriceSQL.update(itemDetailPrice);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

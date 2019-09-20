@@ -144,6 +144,8 @@ public class SyncCentre {
 
         getRemainingStock(context, handler, MODE_FIRST_SYNC);
 
+        HttpAPI.getItemPrice(context,getAbsoluteUrl(APIName.ITEM_PRICE), httpClient, handler, MODE_FIRST_SYNC);
+
     }
 
     //修改单个菜数量
