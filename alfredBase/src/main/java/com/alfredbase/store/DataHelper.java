@@ -1735,11 +1735,22 @@ public class DataHelper {
                     "itemNum INTEGER,sessionStatus INTEGER,sysCreateTime LONG,sysUpdateTime LONG)");
 
             db.execSQL("ALTER TABLE " + TableNames.Order
-                    + " ADD COLUMN waiterInformation TEXT ");
+                    + " ADD COLUMN waiterInformation TEXT");
             db.execSQL("ALTER TABLE " + TableNames.Order
                     + " ADD COLUMN isWaiterPrint INTEGER default 0 ");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN promotionQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDayTax
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ReportPluDayItem
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ReportPluDayModifier
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ReportPluDayComboModifier
+                    + " ADD COLUMN salesTypeId TEXT");
 
         }
 

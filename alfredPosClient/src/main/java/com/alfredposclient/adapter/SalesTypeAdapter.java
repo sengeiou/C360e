@@ -60,7 +60,7 @@ public class SalesTypeAdapter extends BaseAdapter {
         }
 
         RestaurantConfig item = data.get(i);
-        holder.tvTitle.setText(item.getParaValue1());
+        holder.tvTitle.setText(item.getParaValue2());
 
         return view;
     }

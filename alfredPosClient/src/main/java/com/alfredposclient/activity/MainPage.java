@@ -2562,8 +2562,8 @@ public class MainPage extends BaseActivity {
 
                 int salesType = ParamConst.DINE_IN;
 
-                if (!TextUtils.isEmpty(item.getParaValue2()))
-                    salesType = Integer.parseInt(item.getParaValue2());
+                if (!TextUtils.isEmpty(item.getParaValue1()))
+                    salesType = Integer.parseInt(item.getParaValue1());
 
                 currentOrder.setIsTakeAway(salesType);
                 OrderSQL.updateOrder(currentOrder);

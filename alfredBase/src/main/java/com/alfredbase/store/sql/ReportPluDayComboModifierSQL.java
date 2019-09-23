@@ -24,8 +24,8 @@ public class ReportPluDayComboModifierSQL {
 					+ "(id, reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 					+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, " 
 					+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
-					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount, daySalesId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount, daySalesId, salesTypeId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportPluDayComboModifier.getId(),
@@ -57,7 +57,8 @@ public class ReportPluDayComboModifierSQL {
 							reportPluDayComboModifier.getModifierItemPrice() == null ? "0.00" : reportPluDayComboModifier.getModifierItemPrice(),
 							reportPluDayComboModifier.getRealPrice() == null ? "0.00" : reportPluDayComboModifier.getRealPrice(),
 							reportPluDayComboModifier.getRealCount() == null ? 0 : reportPluDayComboModifier.getRealCount(),
-							reportPluDayComboModifier.getDaySalesId()
+							reportPluDayComboModifier.getDaySalesId(),
+							reportPluDayComboModifier.getSalesTypeId()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,8 +77,8 @@ public class ReportPluDayComboModifierSQL {
 					+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 					+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, "
 					+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
-					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount, daySalesId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount, daySalesId, salesTypeId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportPluDayComboModifier reportPluDayComboModifier : reportPluDayComboModifiers) {
@@ -110,6 +111,7 @@ public class ReportPluDayComboModifierSQL {
 				SQLiteStatementHelper.bindString(sqLiteStatement, 27, reportPluDayComboModifier.getRealPrice() == null ? "0.00" : reportPluDayComboModifier.getRealPrice());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 28, reportPluDayComboModifier.getRealCount() == null ? 0 : reportPluDayComboModifier.getRealCount());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 29, reportPluDayComboModifier.getDaySalesId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 30, reportPluDayComboModifier.getSalesTypeId());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -129,8 +131,8 @@ public class ReportPluDayComboModifierSQL {
 					+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 					+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, "
 					+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
-					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount, daySalesId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount, daySalesId, salesTypeId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportPluDayComboModifier reportPluDayComboModifier : reportPluDayComboModifiers) {
@@ -163,6 +165,7 @@ public class ReportPluDayComboModifierSQL {
 				SQLiteStatementHelper.bindString(sqLiteStatement, 27, reportPluDayComboModifier.getRealPrice() == null ? "0.00" : reportPluDayComboModifier.getRealPrice());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 28, reportPluDayComboModifier.getRealCount() == null ? 0 : reportPluDayComboModifier.getRealCount());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 29, daySalesId);
+				SQLiteStatementHelper.bindString(sqLiteStatement, 30, reportPluDayComboModifier.getSalesTypeId());
 				sqLiteStatement.executeInsert();
 			}
 		} catch (Exception e) {
@@ -183,8 +186,8 @@ public class ReportPluDayComboModifierSQL {
 					+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 					+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, " 
 					+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
-					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount, daySalesId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "billFocPrice, billFocCount, comboItemId, itemId, itemName, modifierItemPrice, realPrice, realCount, daySalesId, salesTypeId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportPluDayComboModifier reportPluDayComboModifier : reportPluDayComboModifiers) {
@@ -217,6 +220,7 @@ public class ReportPluDayComboModifierSQL {
 				SQLiteStatementHelper.bindString(sqLiteStatement, 27, reportPluDayComboModifier.getRealPrice());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 28, reportPluDayComboModifier.getRealCount());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 29, reportPluDayComboModifier.getDaySalesId());
+				SQLiteStatementHelper.bindString(sqLiteStatement, 30, reportPluDayComboModifier.getSalesTypeId());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -268,6 +272,7 @@ public class ReportPluDayComboModifierSQL {
 				reportPluDayComboModifier.setRealPrice(cursor.getString(27));
 				reportPluDayComboModifier.setRealCount(cursor.getInt(28));
 				reportPluDayComboModifier.setDaySalesId(cursor.getInt(29));
+				reportPluDayComboModifier.setSalesTypeId(cursor.getString(30));
 				return reportPluDayComboModifier;
 			}
 		} catch (Exception e) {
@@ -327,6 +332,7 @@ public class ReportPluDayComboModifierSQL {
 				reportPluDayComboModifier.setRealPrice(cursor.getString(27));
 				reportPluDayComboModifier.setRealCount(cursor.getInt(28));
 				reportPluDayComboModifier.setDaySalesId(cursor.getInt(29));
+				reportPluDayComboModifier.setSalesTypeId(cursor.getString(30));
 				result.add(reportPluDayComboModifier);
 			}
 		} catch (Exception e) {
@@ -385,6 +391,7 @@ public class ReportPluDayComboModifierSQL {
 				reportPluDayComboModifier.setRealPrice(cursor.getString(27));
 				reportPluDayComboModifier.setRealCount(cursor.getInt(28));
 				reportPluDayComboModifier.setDaySalesId(cursor.getInt(29));
+				reportPluDayComboModifier.setSalesTypeId(cursor.getString(30));
 				result.add(reportPluDayComboModifier);
 			}
 		} catch (Exception e) {
@@ -446,6 +453,7 @@ public class ReportPluDayComboModifierSQL {
 				reportPluDayComboModifier.setRealPrice(cursor.getString(27));
 				reportPluDayComboModifier.setRealCount(cursor.getInt(28));
 				reportPluDayComboModifier.setDaySalesId(cursor.getInt(29));
+				reportPluDayComboModifier.setSalesTypeId(cursor.getString(30));
 				result.add(reportPluDayComboModifier);
 			}
 		} catch (Exception e) {

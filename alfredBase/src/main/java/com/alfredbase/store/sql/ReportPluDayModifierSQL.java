@@ -24,8 +24,8 @@ public class ReportPluDayModifierSQL {
 					+ "(id, reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 					+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, " 
 					+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
-					+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice, realPrice, realCount,daySalesId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice, realPrice, realCount,daySalesId, salesTypeId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportPluDayModifier.getId(),
@@ -55,7 +55,8 @@ public class ReportPluDayModifierSQL {
 							reportPluDayModifier.getModifierItemPrice() == null ? "0.00" : reportPluDayModifier.getModifierItemPrice(),
 							reportPluDayModifier.getRealPrice() == null ? "0.00" : reportPluDayModifier.getRealPrice(),
 							reportPluDayModifier.getRealCount() == null ? 0 : reportPluDayModifier.getRealCount(),
-							reportPluDayModifier.getDaySalesId()
+							reportPluDayModifier.getDaySalesId(),
+							reportPluDayModifier.getSalesTypeId()
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,8 +74,8 @@ public class ReportPluDayModifierSQL {
 						+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 						+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, "
 						+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
-						+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice, realPrice, realCount, daySalesId)"
-						+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+						+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice, realPrice, realCount, daySalesId, salesTypeId)"
+						+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				SQLiteStatement sqLiteStatement = db.compileStatement(
 						sql);
 				for (ReportPluDayModifier reportPluDayModifier : reportPluDayModifiers) {
@@ -132,6 +133,8 @@ public class ReportPluDayModifierSQL {
 							reportPluDayModifier.getRealCount() == null ? 0 : reportPluDayModifier.getRealCount());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 27,
 							reportPluDayModifier.getDaySalesId());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 28,
+							reportPluDayModifier.getSalesTypeId());
 					sqLiteStatement.executeInsert();
 				}
 				db.setTransactionSuccessful();
@@ -151,8 +154,8 @@ public class ReportPluDayModifierSQL {
 						+ "(reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, modifierCategoryId, "
 						+ "modifierCategoryName, modifierId, modifierName, modifierPrice, modifierCount, billVoidPrice, billVoidCount, "
 						+ "voidModifierPrice, voidModifierCount, bohModifierPrice, bohModifierCount, focModifierPrice, focModifierCount, "
-						+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice, realPrice, realCount, daySalesId)"
-						+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+						+ "billFocPrice, billFocCount, comboItemId, modifierItemPrice, realPrice, realCount, daySalesId, salesTypeId)"
+						+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				SQLiteStatement sqLiteStatement = db.compileStatement(
 						sql);
 				for (ReportPluDayModifier reportPluDayModifier : reportPluDayModifiers) {
@@ -209,6 +212,8 @@ public class ReportPluDayModifierSQL {
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
 							reportPluDayModifier.getRealCount() == null ? 0 : reportPluDayModifier.getRealCount());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 27, daySalesId);
+					SQLiteStatementHelper.bindString(sqLiteStatement, 28,
+							reportPluDayModifier.getSalesTypeId());
 					sqLiteStatement.executeInsert();
 				}
 			} catch (Exception e) {
@@ -257,6 +262,7 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setRealPrice(cursor.getString(25));
 				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				reportPluDayModifier.setDaySalesId(cursor.getInt(27));
+				reportPluDayModifier.setSalesTypeId(cursor.getString(28));
 				return reportPluDayModifier;
 			}
 		} catch (Exception e) {
@@ -314,6 +320,7 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setRealPrice(cursor.getString(25));
 				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				reportPluDayModifier.setDaySalesId(cursor.getInt(27));
+				reportPluDayModifier.setSalesTypeId(cursor.getString(28));
 				result.add(reportPluDayModifier);
 			}
 		} catch (Exception e) {
@@ -370,6 +377,7 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setRealPrice(cursor.getString(25));
 				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				reportPluDayModifier.setDaySalesId(cursor.getInt(27));
+				reportPluDayModifier.setSalesTypeId(cursor.getString(28));
 				result.add(reportPluDayModifier);
 			}
 		} catch (Exception e) {
@@ -429,6 +437,7 @@ public class ReportPluDayModifierSQL {
 				reportPluDayModifier.setRealPrice(cursor.getString(25));
 				reportPluDayModifier.setRealCount(cursor.getInt(26));
 				reportPluDayModifier.setDaySalesId(cursor.getInt(27));
+				reportPluDayModifier.setSalesTypeId(cursor.getString(28));
 				result.add(reportPluDayModifier);
 			}
 		} catch (Exception e) {
