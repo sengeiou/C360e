@@ -259,7 +259,7 @@ public class HttpAnalysis {
 //			RoundRuleSQL.deleteAllRoundRule();
 //			RoundRuleSQL.update(roundRule);
 
-            List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("configList"),
+            List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("glbConfigList"),
                     new TypeToken<ArrayList<RestaurantConfig>>() {
                     }.getType());
 
@@ -382,7 +382,7 @@ public class HttpAnalysis {
         try {
             JSONObject object = new JSONObject(new String(responseBody));
             List<ItemDetailPrice> itemPriceList = new Gson().fromJson(
-                    object.getString("itemPriceList"),
+                    object.getString("dietaryPatternList"),
                     new TypeToken<ArrayList<ItemDetailPrice>>() {
                     }.getType());
 
