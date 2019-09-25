@@ -86,6 +86,7 @@ import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
@@ -108,6 +109,7 @@ import com.alfredbase.utils.TimeUtil;
 import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
+import com.alfredposclient.adapter.EmployeeAdapter;
 import com.alfredposclient.adapter.SalesTypeAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
@@ -320,7 +322,7 @@ public class MainPage extends BaseActivity {
     private TableLayoutFragment f_tables;
     private Observable<Integer> observable;
     private Observable<Object> observable1;
-    private AlertDialog salesTypeDialog;
+    private AlertDialog salesTypeDialog, emplyeeDialog;
 
     private void initDrawerLayout() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -2562,16 +2564,64 @@ public class MainPage extends BaseActivity {
 
                 int salesType = ParamConst.DINE_IN;
 
-                if (!TextUtils.isEmpty(item.getParaValue2()))
-                    salesType = Integer.parseInt(item.getParaValue2());
+                if (!TextUtils.isEmpty(item.getParaValue1()))
+                    salesType = Integer.parseInt(item.getParaValue1());
 
                 currentOrder.setIsTakeAway(salesType);
                 OrderSQL.updateOrder(currentOrder);
                 handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-
+//                if (item.getParaValue1() == "Employee"){
+//
+//                }
             }
         });
 
+    }
+
+    private void showListEmployee() {
+        emplyeeDialog = new AlertDialog.Builder(this).create();
+        emplyeeDialog.setCancelable(true);
+        emplyeeDialog.setCanceledOnTouchOutside(false);
+
+        Window window = emplyeeDialog.getWindow();
+        if (window == null) return;
+
+        emplyeeDialog.show();
+        window.setContentView(R.layout.dialog_select_employee);
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+
+        ListView listView = (ListView) emplyeeDialog.findViewById(R.id.lvEmployee);
+
+        ArrayList<User> userList = UserSQL.getAllUser();
+        EmployeeAdapter adapter = new EmployeeAdapter(this, userList);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+                if (emplyeeDialog != null) {
+                    salesTypeDialog.dismiss();
+                }
+
+                EmployeeAdapter employeeAdapter = (EmployeeAdapter) adapterView.getAdapter();
+
+                if (employeeAdapter == null) return;
+
+                User item = employeeAdapter.getItem(i);
+
+//                int salesType = ParamConst.DINE_IN;
+//
+//                if (!TextUtils.isEmpty(item.getParaValue2()))
+//                    salesType = Integer.parseInt(item.getParaValue2());
+//
+//                currentOrder.setIsTakeAway(salesType);
+//                OrderSQL.updateOrder(currentOrder);
+//                handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+
+            }
+        });
     }
 
     private void dismissOpenItemWindow() {
