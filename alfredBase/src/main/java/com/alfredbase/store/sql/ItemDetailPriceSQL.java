@@ -6,6 +6,9 @@ import com.alfredbase.javabean.ItemDetailPrice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Arif S. on 2019-09-20
  */
@@ -21,7 +24,6 @@ public class ItemDetailPriceSQL {
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{itemDetailPrice.getId(),
-                            itemDetailPrice.getId(),
                             itemDetailPrice.getItemId(),
                             itemDetailPrice.getSalesTypeId(),
                             itemDetailPrice.getTaxId(),
@@ -66,6 +68,38 @@ public class ItemDetailPriceSQL {
         return itemDetailPrice;
     }
 
+    public static List<ItemDetailPrice> getAll() {
+
+        List<ItemDetailPrice> listitemDetailPrice = new ArrayList<>();
+        String query = "";
+        String sql = "select * from " + TableNames.ItemDetailPrice + query;
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql, new String[]{});
+
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                ItemDetailPrice itemDetailPrice = new ItemDetailPrice();
+                itemDetailPrice.setId(cursor.getInt(0));
+                itemDetailPrice.setItemId(cursor.getInt(1));
+                itemDetailPrice.setSalesTypeId(cursor.getInt(2));
+                itemDetailPrice.setTaxId(cursor.getInt(3));
+                itemDetailPrice.setParaType(cursor.getInt(4));
+                itemDetailPrice.setItemPrice(cursor.getDouble(5));
+                itemDetailPrice.setCreateTime(cursor.getLong(6));
+                itemDetailPrice.setUpdateTime(cursor.getLong(7));
+                listitemDetailPrice.add(itemDetailPrice);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return listitemDetailPrice;
+    }
     public static void delete() {
         String sql = "delete from " + TableNames.ItemDetailPrice;
         try {

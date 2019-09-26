@@ -280,7 +280,7 @@ public class OrderHelper {
     public static BigDecimal getOrderDetailRealPrice(Order order,
                                                      OrderDetail orderDetail) {
         BigDecimal price = BH.getBD(ParamConst.DOUBLE_ZERO);
-        BigDecimal priceBySalesType = getItemPriceBySalesType(orderDetail.getItemId(), order.getIsTakeAway(), price);
+        BigDecimal priceBySalesType = getItemPriceBySalesType(orderDetail.getItemId(), order.getIsTakeAway(), BH.getBD(orderDetail.getItemPrice()));
         ItemHappyHour itemHappyHour = getItemHappyHour(order, orderDetail);
 
         if (itemHappyHour != null) {
@@ -323,7 +323,7 @@ public class OrderHelper {
     public static BigDecimal getItemPriceBySalesType(int itemId, int salesType, BigDecimal defPrice) {
         BigDecimal price = defPrice;
         ItemDetailPrice itemDetailPrice = ItemDetailPriceSQL.get(itemId, salesType);
-
+        List<ItemDetailPrice> listdetail = ItemDetailPriceSQL.getAll();
         if (itemDetailPrice != null) {
             price = BH.getBD(itemDetailPrice.getItemPrice());
         }

@@ -40,6 +40,8 @@ public class User implements Serializable{
 
 	private Long updateTime;
 
+	private double budget;
+
 	public User() {
 	}
 
@@ -201,6 +203,17 @@ public class User implements Serializable{
 				+ ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", nickName=" + nickName + ", companyId=" + companyId
 				+ ", createTime=" + createTime + ", updateTime=" + updateTime
+				+ ", budget=" + budget
 				+ "]";
+	}
+
+	public double getBudget() {
+		if (CommonUtil.isNull(budget))
+			return 0;
+		return budget;
+	}
+
+	public void setBudget(double budget) {
+		this.budget = budget;
 	}
 }
