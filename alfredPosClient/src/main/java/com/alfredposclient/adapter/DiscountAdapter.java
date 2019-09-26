@@ -44,13 +44,16 @@ public class DiscountAdapter extends BaseAdapter {
             for (int i = 0; i < orderDetails.size(); i++){
                 OrderDetail detail = orderDetails.get(i);
                 ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(detail.getItemId(), detail.getItemName());
-                if (!ids.contains(itemDetail.getItemMainCategoryId())){
-                    ids.add(itemDetail.getItemMainCategoryId());
-                    ItemMainCategory itemMainCategory = ItemMainCategorySQL.getItemMainCategoryById(itemDetail.getItemMainCategoryId());
-                    list.add(itemMainCategory);
-                    if(detail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
-                            || detail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE){
-                        sparseBooleanArray.put(itemMainCategory.getId().intValue(), true);
+                if(itemDetail != null)
+                {
+                    if (!ids.contains(itemDetail.getItemMainCategoryId())){
+                        ids.add(itemDetail.getItemMainCategoryId());
+                        ItemMainCategory itemMainCategory = ItemMainCategorySQL.getItemMainCategoryById(itemDetail.getItemMainCategoryId());
+                        list.add(itemMainCategory);
+                        if(detail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
+                                || detail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE){
+                            sparseBooleanArray.put(itemMainCategory.getId(), true);
+                        }
                     }
                 }
             }
