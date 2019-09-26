@@ -328,10 +328,9 @@ public class ItemDetailSQL {
     }
 
     public static ItemDetail getItemDetailById(int itemId, String name) {
-
         String query = " where id = ? and isActive = 1";
         if(!TextUtils.isEmpty(name)){
-            query = " where (id = ? or itemName = "+name+") and isActive = 1";
+            query = " where (id = ? or itemName = '"+name+"') and isActive = 1";
         }
         String sql = "select * from " + TableNames.ItemDetail + query;
         Cursor cursor = null;

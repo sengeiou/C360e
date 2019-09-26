@@ -218,13 +218,20 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         places.clear();
         places = PlaceInfoSQL.getAllPlaceInfo();
 
-        String tableShowAction = ((MainPage) mainPage).tableShowAction;
-        if (!TextUtils.isEmpty(tableShowAction)) {
-            if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
-                for (MultiRVCPlacesDao.Places otherPlace : otherRVCPlaces) {
-                    places.add(otherPlace.getPlaceInfo());
+        try
+        {
+            String tableShowAction = ((MainPage) mainPage).tableShowAction;
+            if (!TextUtils.isEmpty(tableShowAction)) {
+                if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                    for (MultiRVCPlacesDao.Places otherPlace : otherRVCPlaces) {
+                        places.add(otherPlace.getPlaceInfo());
+                    }
                 }
             }
+        }
+        catch (Exception e)
+        {
+            Log.e("Error", String.valueOf(e));
         }
 
         PlaceInfo place = new PlaceInfo();
