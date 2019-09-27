@@ -2998,8 +2998,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
             // : fix bug: filter out old data that may be in KDS
             ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
-            for (int i = 0; i < kotItemDetails.size(); i++) {
-                KotItemDetail kotItemDetail = kotItemDetails.get(i);
+            for (int i = 0; i < kotItemDetailsCopy.size(); i++) {
+                KotItemDetail kotItemDetail = kotItemDetailsCopy.get(i);
                 if (kotItemDetail.getOrderId().intValue() == localKotSummary.getOrderId().intValue())
                     filteredKotItemDetails.add(kotItemDetail);
             }
@@ -3047,6 +3047,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                             MainPage.VIEW_EVENT_SET_DATA, localKotSummary.getOrderId());
                 result.put("resultCode", ResultCode.SUCCESS);
                 result.put("resultKotItemDetails", resultKotItemDetails);
+                result.put("kotSummary", kotSummary);
                 result.put("kotSummaryId", kotSummary.getId());
                 new Thread(new Runnable() {
                     @Override
@@ -3098,21 +3099,22 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }).start();
 
                 //delete kot on summary kds
+                //use kotItemDetails from kds don't use local
                 deleteKotSummary(localKotSummary, kotItemDetails);
                 deleteKdsLogs(localKotSummary, kotItemDetails, App.instance.getKDSDevice(kdsId));
                 resp = this.getJsonResponse(new Gson().toJson(result));
 
 
-                ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
-                for (KotItemDetail items : kotItemDetails) {
-                    Integer pgid = items.getPrinterGroupId();
-                    if (!printerGrougIds.contains(pgid))
-                        printerGrougIds.add(pgid);
-                }
-
-                if (printerGrougIds.size() > 0) {
-                    App.instance.getKdsJobManager().refreshAllKDS(kotItemDetails, ParamConst.JOB_REFRESH_KOT);
-                }
+//                ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
+//                for (KotItemDetail items : kotItemDetails) {
+//                    Integer pgid = items.getPrinterGroupId();
+//                    if (!printerGrougIds.contains(pgid))
+//                        printerGrougIds.add(pgid);
+//                }
+//
+//                if (printerGrougIds.size() > 0) {
+//                    App.instance.getKdsJobManager().refreshAllKDS(kotItemDetails, ParamConst.JOB_REFRESH_KOT);
+//                }
 
 
             } else {

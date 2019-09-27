@@ -24,8 +24,8 @@ public class KotNotificationSQL {
 
             String sql = "replace into "
                     + TableNames.KotNotification
-                    + "(id, orderId, orderDetailId, revenueCenterId, tableName, revenueCenterName, itemName, qty,session, status, unFinishQty, kotItemDetailId,kotItemNum)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "(id, orderId, orderDetailId, revenueCenterId, tableName, revenueCenterName, itemName, qty,session, status, unFinishQty, kotItemDetailId,kotItemNum,uniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB()
                     .execSQL(
                             sql,
@@ -41,7 +41,9 @@ public class KotNotificationSQL {
                                     notification.getStatus(),
                                     notification.getUnFinishQty(),
                                     notification.getKotItemDetailId(),
-                                    notification.getKotItemNum()});
+                                    notification.getKotItemNum(),
+                                    notification.getUniqueId()
+                            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,8 +59,8 @@ public class KotNotificationSQL {
             db.beginTransaction();
             String sql = "replace into "
                     + TableNames.KotNotification
-                    + "(id, orderId, orderDetailId, revenueCenterId, tableName, revenueCenterName, itemName, qty,session, status, unFinishQty,kotItemDetailId,kotItemNum)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "(id, orderId, orderDetailId, revenueCenterId, tableName, revenueCenterName, itemName, qty,session, status, unFinishQty,kotItemDetailId,kotItemNum,uniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(sql);
             for (KotNotification notification : notifications) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
@@ -87,6 +89,8 @@ public class KotNotificationSQL {
                         notification.getKotItemDetailId());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 13,
                         notification.getKotItemNum());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 14,
+                        notification.getUniqueId());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -126,6 +130,7 @@ public class KotNotificationSQL {
                 notification.setUnFinishQty(cursor.getInt(10));
                 notification.setKotItemDetailId(cursor.getInt(11));
                 notification.setKotItemNum(cursor.getInt(12));
+                notification.setUniqueId(cursor.getString(13));
                 result.add(notification);
             }
         } catch (Exception e) {
@@ -162,6 +167,7 @@ public class KotNotificationSQL {
                 result.setUnFinishQty(cursor.getInt(10));
                 result.setKotItemDetailId(cursor.getInt(11));
                 result.setKotItemNum(cursor.getInt(12));
+                result.setUniqueId(cursor.getString(13));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -197,9 +203,9 @@ public class KotNotificationSQL {
 
     public static void deleteKotNotification(KotNotification kotSummary) {
         String sql = "delete from " + TableNames.KotNotification
-                + " where id = ?";
+                + " where id = ? and revenueCenterId = ?";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getId()});
+            SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getRevenueCenterId(), kotSummary.getId()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -208,9 +214,9 @@ public class KotNotificationSQL {
     public static void deleteAllKotNotifications(Integer revenueId) {
         String deleteByRevenue = "";
         if (revenueId != null) {
-			deleteByRevenue = " where revenueCenterId = "+revenueId;
+            deleteByRevenue = " where revenueCenterId = " + revenueId;
         }
-        String sql = "delete from " + TableNames.KotNotification+ deleteByRevenue;
+        String sql = "delete from " + TableNames.KotNotification + deleteByRevenue;
         try {
             SQLExe.getDB().execSQL(sql, new Object[]{});
         } catch (Exception e) {
@@ -218,10 +224,10 @@ public class KotNotificationSQL {
         }
     }
 
-    public static void deleteAllKotNotificationsByKotItemDetail(KotItemDetail kotItemDetai) {
-        String sql = "delete from " + TableNames.KotNotification + " where orderDetailId = ? and kotItemDetailId = ?";
+    public static void deleteAllKotNotificationsByKotItemDetail(KotItemDetail kotItemDetail) {
+        String sql = "delete from " + TableNames.KotNotification + " where revenueCenterId = ? and orderDetailId = ? and kotItemDetailId = ?";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[]{kotItemDetai.getOrderDetailId(), kotItemDetai.getId()});
+            SQLExe.getDB().execSQL(sql, new Object[]{kotItemDetail.getRestaurantId(), kotItemDetail.getOrderDetailId(), kotItemDetail.getId()});
         } catch (Exception e) {
             e.printStackTrace();
         }

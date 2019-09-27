@@ -417,7 +417,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 } else {
                     int itemCount = 0;
 
-                    List<KotItemDetail> kotItemDetailsLocal = KotItemDetailSQL.getKotItemDetailBySummaryId(kot.getKotSummary().getId());
+                    List<KotItemDetail> kotItemDetailsLocal = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(kot.getKotSummary().getId(), kot.getKotSummary().getRevenueCenterId());
 
                     for (KotItemDetail kotItemDetail : kotItemDetailsLocal) {
 
@@ -425,7 +425,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 //                                ParamConst.KOT_STATUS_DONE != kotItemDetail.getKotStatus()) {
                         if (ParamConst.KOT_STATUS_VOID != kotItemDetail.getKotStatus()) {
                             if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {//package item
-                                itemCount += KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId()).size();
+                                itemCount += KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail).size();
                             } else {
                                 itemCount++;
                             }
@@ -695,7 +695,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
 
                 for (KotItemDetail kotItemDetail : kotItemDetails) {
                     ArrayList<KotItemModifier> kims = KotItemModifierSQL.
-                            getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                            getKotItemModifiersByKotItemDetail(kotItemDetail);
 
                     kotItemModifiers.addAll(kims);
                 }
@@ -714,7 +714,7 @@ public class KOTView extends LinearLayout implements AnimationListener,
                 for (KotItemDetail kotItemDetail : kotItemDetails) {
 
                     ArrayList<KotItemModifier> kims = KotItemModifierSQL.
-                            getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                            getKotItemModifiersByKotItemDetail(kotItemDetail);
 
                     kotItemModifiers.addAll(kims);
                 }

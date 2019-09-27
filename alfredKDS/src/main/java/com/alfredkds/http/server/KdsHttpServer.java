@@ -538,7 +538,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 @Override
                 public void run() {
 
-                    KotSummarySQL.updateKotSummaryOrderCountById(kotSummary.getOrderDetailCount(), kotSummary.getId());
+                    KotSummarySQL.updateKotSummaryOrderCountByUniqueId(kotSummary.getOrderDetailCount(), kotSummary.getUniqueId());
 
                     if (App.getTopActivity() != null)
                         App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_KOT, null);
@@ -658,7 +658,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 
             for (KotItemDetail kotItemDetail : kotItemDetails) {
                 List<KotItemModifier> kotItemModifierList =
-                        KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                        KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail);
 
                 for (KotItemModifier kotItemModifier : kotItemModifierList) {
                     KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
@@ -813,14 +813,14 @@ public class KdsHttpServer extends AlfredHttpServer {
                         KotItemModifierSQL.deleteKotItemModifiers(kotItemModifiers);
                     } else {
                         //region update to db
-                        ArrayList<KotSummary> kotSummariesLocal = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId());
+                        ArrayList<KotSummary> kotSummariesLocal = KotSummarySQL.getKotSummaryByOriginalId(kotSummary.getOriginalId(), kotSummary.getRevenueCenterId());
 
                         if (kotSummariesLocal.size() > 0) {
 
                             KotSummary kotSumSelected = null;
                             for (KotSummary kotSLocal : kotSummariesLocal) {
 
-                                List<KotItemDetail> kotDetailLocal = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSLocal.getId());
+                                List<KotItemDetail> kotDetailLocal = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(kotSLocal.getId(), kotSLocal.getRevenueCenterId());
                                 boolean isPlaceOrder = false;
                                 for (KotItemDetail kotItemDetail : kotDetailLocal) {
                                     if (kotItemDetail.getKotStatus() > ParamConst.KOT_STATUS_TMP) {
@@ -910,7 +910,7 @@ public class KdsHttpServer extends AlfredHttpServer {
             if (action.equals(ParamConst.JOB_MERGER_KOT)) {
                 toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
                 fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
-                List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
+                List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(fromKotSummary.getId(), fromKotSummary.getRevenueCenterId());
                 KotSummarySQL.update(toKotSummary);
                 if (fromKotSummary != null) {
                     for (int i = 0; i < kotItemDetails.size(); i++) {
@@ -1002,21 +1002,6 @@ public class KdsHttpServer extends AlfredHttpServer {
                     @Override
                     public void run() {
 
-//                        List<MainPosInfo> mainPosInfoList = App.instance.getCurrentConnectedMainPosList();
-//                        if (mainPosInfoList.size() > 1) {//multiple POS connected
-//                            if (kotSummary.getOriginalId() == null || kotSummary.getOriginalId() <= 0) {
-//                                kotSummary.setOriginalId(kotSummary.getId());
-//                            }
-//
-//                            int fakeId = Integer.parseInt(CommonSQL.getFakeId() + "" + App.instance.getRvcIdentifier(kotSummary.getRevenueCenterId()));
-//
-//                            kotSummary.setId(fakeId);
-//
-//                            for (int i = 0; i < kotItemDetails.size(); i++) {
-//                                kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
-//                            }
-//                        }
-
                         KotSummarySQL.update(kotSummary);
                         if (kotItemDetails != null) {
                             KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
@@ -1066,13 +1051,15 @@ public class KdsHttpServer extends AlfredHttpServer {
                         } else {//sub kds with fake id
                             int KotSummaryId = CommonSQL.isFakeId(kotSummary.getId()) ? kotSummary.getOriginalId() : kotSummary.getId();
                             KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(KotSummaryId, kotSummary.getRevenueCenterId());
+                            String fakeId = kotSummary.getUniqueId();
 
                             if (kotSummaryLocal != null) {
-                                KotSummarySQL.updateKotSummaryOrderCountById(kotSummary.getOrderDetailCount(),
-                                        kotSummaryLocal.getId());
+                                KotSummarySQL.updateKotSummaryOrderCountByUniqueId(kotSummary.getOrderDetailCount(),
+                                        kotSummaryLocal.getUniqueId());
+
+                                fakeId = CommonSQL.getFakeUniqueId();
                             }
 
-                            int fakeId = CommonSQL.getFakeId();
 
                             if (kotItemModifiers != null) {
                                 KotItemModifierSQL.addKotItemModifierList(kotItemModifiers);
@@ -1082,7 +1069,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                             for (int i = 0; i < kotItemDetails.size(); i++) {
                                 if (kotItemDetails.get(i).getFireStatus() == 1) {
                                     KotItemDetail kidLocal = KotItemDetailSQL.
-                                            getKotItemDetailById(kotItemDetails.get(i).getId());
+                                            getKotItemDetailByUniqueId(kotItemDetails.get(i).getUniqueId());
 
                                     if (kidLocal != null) {
                                         kidLocal.setFireStatus(1);
@@ -1091,7 +1078,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                                     isFire = true;
                                 } else {
-                                    kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
+//                                    kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
                                     KotItemDetailSQL.update(kotItemDetails.get(i));
                                     orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
                                 }
@@ -1099,7 +1086,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                             if (!isFire) {
                                 KotSummarySQL.deleteKotSummaryTmp(kotSummary);
-                                kotSummary.setId(fakeId);
+                                kotSummary.setUniqueId(fakeId);
 //                                kotSummary.setOrderDetailCount(kotItemDetails.size());
                                 KotSummarySQL.addKotSummary(kotSummary);
                             }
@@ -1149,7 +1136,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                         boolean isFound = false;
 
                         for (KotItemDetail kotItemDetail : kotItemDetails) {
-                            KotItemDetail kotItemDetailLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                            KotItemDetail kotItemDetailLocal = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
                             if (kotItemDetailLocal != null) {
                                 isFound = true;
                                 kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_VOID);//状态改变为void

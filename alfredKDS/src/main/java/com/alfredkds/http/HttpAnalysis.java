@@ -90,10 +90,10 @@ public class HttpAnalysis {
 
                 if (kotSummariesLocal.size() > 0) {
                     for (KotSummary kotSummary : kotSummariesLocal) {
-                        List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+                        List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(kotSummary.getId(), kotSummary.getRevenueCenterId());
 
                         for (KotItemDetail kotItemDetail : kotItemDetailList) {
-                            List<KotItemModifier> kotItemModifierList = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                            List<KotItemModifier> kotItemModifierList = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail);
                             for (KotItemModifier kotItemModifier : kotItemModifierList) {
                                 KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
                             }
@@ -282,10 +282,10 @@ public class HttpAnalysis {
             final KotSummary kotSummary = gson.fromJson(
                     jsonObject.getString("kotSummary"), KotSummary.class);
 
-            ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+            ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(kotSummary.getId(), kotSummary.getRevenueCenterId());
             for (KotItemDetail kotItemDetail : kotItemDetails) {
                 List<KotItemModifier> kotItemModifierList =
-                        KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                        KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail);
 
                 for (KotItemModifier kotItemModifier : kotItemModifierList) {
                     KotItemModifierSQL.deleteKotItemModifier(kotItemModifier);
@@ -313,11 +313,20 @@ public class HttpAnalysis {
                     }.getType());
             KotItemDetailSQL.addKotItemDetailList(subKotItemDetails);
             if (object.has("kotSummaryId")) {
-                int id = object.getInt("kotSummaryId");
-                int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(id);
-                if (count == 0) {
-                    KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE, id);
+                if (object.has("kotSummary")) {
+                    KotSummary kotSummary = gson.fromJson(object.optString("kotSummary"), KotSummary.class);
+                    int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId(), kotSummary.getRevenueCenterId());
+                    if (count == 0) {
+                        KotSummarySQL.updateKotSummaryStatusByUniqueId(ParamConst.KOTS_STATUS_DONE, kotSummary.getUniqueId());
+                    }
+                } else {
+                    int id = object.getInt("kotSummaryId");
+                    int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(id);
+                    if (count == 0) {
+                        KotSummarySQL.updateKotSummaryStatusById(ParamConst.KOTS_STATUS_DONE, id);
+                    }
                 }
+
             }
         } catch (JSONException e) {
             e.printStackTrace();

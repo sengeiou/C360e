@@ -69,6 +69,8 @@ public class KotItemDetail implements Serializable {
 
     private Integer itemId;
 
+    private String uniqueId;
+
     public boolean isChecklist;
 
     public KotItemDetail() {
@@ -284,6 +286,14 @@ public class KotItemDetail implements Serializable {
         this.itemId = itemId;
     }
 
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
     @Override
     public String toString() {
         return "KotItemDetail{" +
@@ -314,6 +324,7 @@ public class KotItemDetail implements Serializable {
                 ", itemType=" + itemType +
                 ", itemId=" + itemId +
                 ", isChecklist=" + isChecklist +
+                ", uniqueId='" + uniqueId + '\'' +
                 '}';
     }
 }

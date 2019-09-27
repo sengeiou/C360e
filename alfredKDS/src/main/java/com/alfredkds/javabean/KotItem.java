@@ -21,6 +21,7 @@ public class KotItem implements Serializable {
     private Integer revenueCenterIndex;
     private boolean isPlaceOrder;
     private int itemId;
+    private String kotItemDetailUniqueId;
 
     public boolean isPlaceOrder() {
         return isPlaceOrder;
@@ -159,6 +160,14 @@ public class KotItem implements Serializable {
         this.itemId = itemId;
     }
 
+    public String getKotItemDetailUniqueId() {
+        return kotItemDetailUniqueId;
+    }
+
+    public void setKotItemDetailUniqueId(String kotItemDetailUniqueId) {
+        this.kotItemDetailUniqueId = kotItemDetailUniqueId;
+    }
+
     @Override
     public String toString() {
         return "KotItem{" +
@@ -179,6 +188,7 @@ public class KotItem implements Serializable {
                 ", revenueCenterIndex=" + revenueCenterIndex +
                 ", isPlaceOrder=" + isPlaceOrder +
                 ", itemId=" + itemId +
+                ", kotItemDetailUniqueId=" + kotItemDetailUniqueId +
                 '}';
     }
 }

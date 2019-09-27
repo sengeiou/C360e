@@ -360,7 +360,7 @@ public class KitchenOrder extends BaseActivity {
                             parameters.put("printerName", printer.getPrinterName());
                         }
 
-                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
+                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, kotItem.getKotItemDetailUniqueId());
                     } else {
                         UIHelp.showToast(KitchenOrder.this, getString(R.string.order_number_cannot_empty));
                     }
@@ -384,7 +384,7 @@ public class KitchenOrder extends BaseActivity {
                             parameters.put("printerName", printer.getPrinterName());
                         }
 
-                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, id);
+                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, null);
                     } else {
                         UIHelp.showToast(KitchenOrder.this, getString(R.string.order_number_cannot_empty));
                     }
@@ -683,6 +683,7 @@ public class KitchenOrder extends BaseActivity {
                         item.setCallType(kotItemDetail.getCallType());
                         item.setQty(unFinishQty);
                         item.setItemDetailId(kotItemDetail.getId());
+                        item.setKotItemDetailUniqueId(kotItemDetail.getUniqueId());
                         item.setItemId(kotItemDetail.getItemId());
                         List<KotItemModifier> itemModifierlist = kot.getKotItemModifiers();
                         if (itemModifierlist != null && itemModifierlist.size() > 0) {

@@ -22,6 +22,7 @@ public class KotNotification implements Serializable{
 	private Integer unFinishQty;
 	private Integer kotItemDetailId;
 	private Integer kotItemNum;
+	private String uniqueId;
 	public Integer getId() {
 		return id;
 	}
@@ -105,6 +106,15 @@ public class KotNotification implements Serializable{
 	public void setKotItemNum(Integer kotItemNum) {
 		this.kotItemNum = kotItemNum;
 	}
+
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
+
 	@Override
 	public String toString() {
 		return "KotNotification [id=" + id + ", orderDetailId=" + orderDetailId
@@ -114,7 +124,7 @@ public class KotNotification implements Serializable{
 				+ itemName + ", qty=" + qty + ", session=" + session
 				+ ", status=" + status + ", unFinishQty=" + unFinishQty
 				+ ", kotItemDetailId=" + kotItemDetailId + ", kotItemNum="
-				+ kotItemNum + "]";
+				+ kotItemNum + "uniqueId=" + uniqueId + "]";
 	}
 	
 }

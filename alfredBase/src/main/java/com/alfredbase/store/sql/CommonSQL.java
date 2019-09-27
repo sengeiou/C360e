@@ -1,11 +1,13 @@
 package com.alfredbase.store.sql;
 
 import android.database.Cursor;
+import android.text.TextUtils;
 
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class CommonSQL {
 
@@ -30,6 +32,10 @@ public class CommonSQL {
             }
             return seq + 1;
         }
+    }
+
+    public static String getUniqueId() {
+        return UUID.randomUUID().toString();
     }
 
     public static int getCurrentSeq(String table) {
@@ -62,5 +68,16 @@ public class CommonSQL {
 
     public static boolean isFakeId(int id) {
         return id <= 0;
+    }
+
+    public static String getFakeUniqueId() {
+        return "-" + getUniqueId();
+    }
+
+    public static boolean isFakeId(String id) {
+        if (TextUtils.isEmpty(id)) return true;
+
+        char c = id.charAt(0);
+        return c == '-';
     }
 }

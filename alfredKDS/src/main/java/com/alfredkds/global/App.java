@@ -350,7 +350,8 @@ public class App extends BaseApplication {
         for (int i = 0; i < kotSummaries.size(); i++) {
 
             kot = new Kot();
-            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(kotSummaries.get(i).getId(),
+            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(
+                    kotSummaries.get(i).getRevenueCenterId(), kotSummaries.get(i).getId(),
                     kotSummaries.get(i).getOrderId());
 
             boolean isPlaceOrder = false;
@@ -364,7 +365,7 @@ public class App extends BaseApplication {
                     isPlaceOrder = true;
                 }
 
-                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
+                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j)));
             }
 
             if (flag) {
@@ -394,14 +395,16 @@ public class App extends BaseApplication {
         List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
         for (int i = 0; i < kotSummaries.size(); i++) {
             kot = new Kot();
-            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummaries.get(i).getId(),
+            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(
+                    kotSummaries.get(i).getRevenueCenterId(),
+                    kotSummaries.get(i).getId(),
                     kotSummaries.get(i).getOrderId());
             for (int j = 0; j < kotItemDetails.size(); j++) {
                 if (kotItemDetails.get(j).getKotStatus() < ParamConst.KOT_STATUS_DONE
                         || kotSummaries.get(i).getStatus() == ParamConst.KOTS_STATUS_UNDONE) {
                     flag = true;
                 }
-                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
+                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j)));
             }
             if (flag) {
                 kot.setKotItemDetails(kotItemDetails);
@@ -430,9 +433,9 @@ public class App extends BaseApplication {
         List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
         for (int i = 0; i < kotSummaries.size(); i++) {
             kot = new Kot();
-            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummaries.get(i).getId());
+            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(kotSummaries.get(i).getId(), kotSummaries.get(i).getRevenueCenterId());
             for (int j = 0; j < kotItemDetails.size(); j++) {
-                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
+                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j)));
             }
             kot.setKotItemDetails(kotItemDetails);
             kot.setKotItemModifiers(kotItemModifiers);
@@ -456,7 +459,7 @@ public class App extends BaseApplication {
         List<KotItemModifier> kotItemModifiers = null;
         for (int i = 0; i < kotItemDetails.size(); i++) {
             KotSummary kotSummary = KotSummarySQL.getKotSummaryById(kotItemDetails.get(i).getKotSummaryId());
-            kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(i).getId());
+            kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(i));
             String kotItem = "";
             if (kotItemModifiers.size() == 0) {
                 kotItem = kotItemDetails.get(i).getItemName();
@@ -508,7 +511,7 @@ public class App extends BaseApplication {
         List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByDishName(dishName);
         List<KotItemModifier> kotItemModifiers = null;
         for (int i = 0; i < kotItemDetails.size(); i++) {
-            kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(i).getId());
+            kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(i));
             String kotItem = "";
             if (kotItemModifiers.size() == 0) {
                 kotItem = kotItemDetails.get(i).getItemName();
@@ -537,10 +540,10 @@ public class App extends BaseApplication {
      */
     public Kot getKot(KotSummary kotSummary) {
         Kot kot = new Kot();
-        List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+        List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(kotSummary.getId(), kotSummary.getRevenueCenterId());
         List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
         for (int j = 0; j < kotItemDetails.size(); j++) {
-            kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
+            kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j)));
         }
         kot.setKotSummary(kotSummary);
         kot.setKotItemDetails(kotItemDetails);
