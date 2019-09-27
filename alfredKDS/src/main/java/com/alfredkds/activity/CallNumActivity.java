@@ -66,7 +66,7 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
                     parameters.put("printerName", printer.getPrinterName());
                 }
 
-                SyncCentre.getInstance().callSpecifyNum(CallNumActivity.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
+                SyncCentre.getInstance().callSpecifyNum(CallNumActivity.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, null);
             } else {
                 UIHelp.showToast(CallNumActivity.this, "The order number can not be empty");
             }
