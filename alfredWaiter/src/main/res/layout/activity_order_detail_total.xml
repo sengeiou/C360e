@@ -99,7 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="right"
-                        android:text="@string/sub_total"
+                        android:text="@string/subtotal"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_m" />
 
@@ -120,6 +120,16 @@
                         android:text="@string/taxes"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_m" />
+
+                    <TextView
+                        android:id="@+id/tv_promotion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="@string/taxes"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_m" />
+
 
                     <TextView
                         android:id="@+id/tv_grand_total"
@@ -154,14 +164,26 @@
                     android:visibility="visible">
 
                     <Button
+                        android:id="@+id/btn_reprint_kot"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/reprint"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_m" />
+
+
+                    <Button
                         android:id="@+id/btn_print_bill"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="20dp"
-                        android:text="@string/print_bill"
+                        android:layout_marginRight="10dp"
+                        android:text="@string/print"
                         android:textColor="@color/black"
                         android:textSize="@dimen/text_size_m" />
+
 
                     <Button
                         android:id="@+id/btn_get_bill"

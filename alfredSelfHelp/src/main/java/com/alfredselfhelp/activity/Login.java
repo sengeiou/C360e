@@ -12,9 +12,11 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
@@ -59,7 +61,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
         tv_login_tips = (TextView) findViewById(R.id.tv_login_tips);
         old_employee_ID = Store.getString(context, Store.EMPLOYEE_ID);
         oldUser = Store.getObject(context, Store.KPM_USER, User.class);
-        tv_login_tips.setText(oldUser.getFirstName() + "." + oldUser.getLastName() + getString(R.string.waiter_login_tips2));
+        tv_login_tips.setText(oldUser.getFirstName() + "." + oldUser.getLastName() +"\n"+ getString(R.string.waiter_login_tips2));
         ((TextView) findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
         Button btn_re_connect = (Button) findViewById(R.id.btn_re_connect);
         btn_re_connect.setVisibility(View.VISIBLE);
@@ -94,6 +96,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
                 case HANDLER_LOGIN: {
 
                     App.instance.setPosIp(App.instance.getPairingIp());
+                    initBugseeModifier();
                     UIHelp.startMain(context);
                     loadingDialog.dismiss();
                     finish();
@@ -118,6 +121,23 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 
     private static final int KEY_LENGTH = 5;
     private StringBuffer keyBuf = new StringBuffer();
+
+    private void initBugseeModifier() {
+        Restaurant restaurant = RestaurantSQL.getRestaurant();
+        if (restaurant != null) {
+            BugseeHelper.setEmail(restaurant.getEmail());
+            BugseeHelper.setAttribute("restaurant_id", restaurant.getId());
+            BugseeHelper.setAttribute("restaurant_company_id", restaurant.getCompanyId());
+            BugseeHelper.setAttribute("restaurant_address", restaurant.getAddressPrint());
+            BugseeHelper.setAttribute("restaurant_country", restaurant.getCountry());
+            BugseeHelper.setAttribute("restaurant_city", restaurant.getCity());
+        }
+
+        String employeeId = Store.getString(context, Store.EMPLOYEE_ID);
+        BugseeHelper.setAttribute("employee_id", employeeId);
+
+//        throw new NullPointerException("Test Crash");
+    }
 
     @Override
     public void onKeyBoardClick(String key) {

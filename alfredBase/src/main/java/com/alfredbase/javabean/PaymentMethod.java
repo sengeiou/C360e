@@ -28,13 +28,13 @@ public class PaymentMethod implements Serializable {
 
     private int isDiscount;
 
-    private int isAdmin;
+    private int isAdmin;//是否验证
 
     private int isMsg;
 
     private int isMsgRequire;
 
-    private int isPart;
+    private int isPart;//0 不计税  、1 计税
 
     private double partAcount;
 

@@ -2,6 +2,7 @@ package com.alfredwaiter.http;
 
 import android.os.Build;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
@@ -61,6 +62,7 @@ import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.store.sql.TaxSQL;
 import com.alfredbase.store.sql.UserSQL;
+import com.alfredbase.utils.CommonUtil;
 import com.alfredwaiter.activity.EmployeeID;
 import com.alfredwaiter.activity.KOTNotification;
 import com.alfredwaiter.activity.MainPage;
@@ -75,6 +77,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -120,6 +123,8 @@ public class HttpAnalysis {
             SessionStatus sessionStatus = gson.fromJson(
                     object.optString("session"), SessionStatus.class);
             MainPosInfo mainPosInfo = gson.fromJson(object.optString("mainPosInfo"), MainPosInfo.class);
+            String formatType = object.optString("formatType");
+
 
             SessionStatus localSessionStatus = App.instance.getSessionStatus();
             if (localSessionStatus == null
@@ -161,6 +166,7 @@ public class HttpAnalysis {
             App.instance.setMainPosInfo(mainPosInfo);
             App.instance.setSessionStatus(sessionStatus);
             App.instance.setCurrencySymbol(currencySymbol, isDouble);
+            App.instance.setFormatType(formatType);
             CoreData.getInstance().setUserKey(mainPosInfo.getRevenueId(), userKey);
             return userKey;
         } catch (JSONException e) {
@@ -215,6 +221,7 @@ public class HttpAnalysis {
                 OrderBillSQL.deleteAllOrderBill();
                 OrderBillSQL.add(orderBill);
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -330,6 +337,15 @@ public class HttpAnalysis {
             Gson gson = new Gson();
             order = gson.fromJson(object.getJSONObject("order").toString(),
                     Order.class);
+            Map<String, String> waiterMap = new LinkedHashMap<String, String>(16, 0.75f, true);
+            if (!TextUtils.isEmpty(order.getWaiterInformation())) {
+                waiterMap = CommonUtil.getStringToMap(order.getWaiterInformation());
+                waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+            } else {
+                waiterMap.put(App.instance.getUser().getEmpId().toString(), App.instance.getUser().getFirstName() + "" + App.instance.getUser().getLastName());
+            }
+            String waitterName = CommonUtil.getMapToString(waiterMap);
+            order.setWaiterInformation(waitterName);
             List<ItemDetail> itemDetails = gson.fromJson(object.getString("tempItems"),
                     new TypeToken<ArrayList<ItemDetail>>() {
                     }.getType());
@@ -566,7 +582,7 @@ public class HttpAnalysis {
                     new TypeToken<List<OrderModifier>>() {
                     }.getType());
             List<OrderDetailTax> orderDetailTaxs = gson.fromJson(
-                    jsonObject.optString("orderModifiers"),
+                    jsonObject.optString("orderDetailTaxs"),
                     new TypeToken<List<OrderDetailTax>>() {
                     }.getType());
             App.instance.setNewOrderDetail(newOrderDetails);

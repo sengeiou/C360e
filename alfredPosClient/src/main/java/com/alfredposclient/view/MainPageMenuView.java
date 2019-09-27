@@ -42,7 +42,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
@@ -121,17 +120,20 @@ public class MainPageMenuView extends LinearLayout {
 	public void setParent(BaseActivity parent){
 		this.parent = parent;
 	}
-
+	public void refreshAllMenu(){
+		TwoLevelMenuAdapter twoLevelMenuAdapter = (TwoLevelMenuAdapter) twoLevelMenu.getAdapter();
+		twoLevelMenuAdapter.notifyDataSetChanged();
+	}
 	public void setParam(Order order, Handler handler) {
 		this.handler = handler;
 		this.order = order;
-
 		size= Store.getInt(App.instance, Store.TEXT_SIZE, 0);
 		tsize=Store.getInt(App.instance, Store.T_TEXT_SIZE, 0);
 
 		color= Store.getInt(App.instance, Store.COLOR_PICKER, Color.WHITE);
 		textcolor=Store.getInt(App.instance, Store.T_COLOR_PICKER, Color.WHITE);
-
+		listMainCategorys = CoreData.getInstance()
+				.getItemMainCategories();
 		if(size!=tsize||color!=textcolor){
 			isFirst=true;
 
@@ -144,10 +146,12 @@ public class MainPageMenuView extends LinearLayout {
 			twoLevelMenu.setAdapter(new TwoLevelMenuAdapter());
 			isFirst = false;
 		}else{
+//			if(oneLevelMenu != null){
+//				oneLevelMenu.getAdapter().notifyDataSetChanged();
+//			}
 			notifyItemStockNum(current_index);
 		}
-		listMainCategorys = CoreData.getInstance()
-				.getItemMainCategories();
+
 	}
 
 	private void notifyItemStockNum(int position){
@@ -240,6 +244,7 @@ public class MainPageMenuView extends LinearLayout {
 	class OneLevelMenuAdapter extends RecyclerView.Adapter<OneLevelMenuAdapter.CategoryViewHolder>{
 		private List<ItemMainCategory> itemMainCategoryList = new ArrayList<>();
 		public OneLevelMenuAdapter(){
+			itemMainCategoryList.clear();
 			itemMainCategoryList.addAll(CoreData.getInstance().getItemMainCategories());
 			itemMainCategoryList.add(0, null);
 			itemMainCategoryList.add(null);
@@ -363,7 +368,7 @@ public class MainPageMenuView extends LinearLayout {
 					public void onGlobalLayout() {
 						int numColumns = (int)Math.floor(gv_menu_detail.getWidth()/(gv_menu_detail.getVerticalSpacing() + ScreenSizeUtil.dip2px(parent, ItemDetailAdapter.ITEM_WIDTH_HEIGHT)));
 						gv_menu_detail.setNumColumns(numColumns);
-						LogUtil.e("TEST", "宽===" + gv_menu_detail.getWidth() + "高====" + gv_menu_detail.getHeight());
+//						LogUtil.e("TEST", "宽===" + gv_menu_detail.getWidth() + "高====" + gv_menu_detail.getHeight());
 					}
 				});
 				gv_menu_detail.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -374,7 +379,7 @@ public class MainPageMenuView extends LinearLayout {
 								.getItemAtPosition(position);
 						RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 						if(remainingStock!=null) {
-							DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "", "CANCEL", "DONE",
+							DialogFactory.commonTwoBtnInputIntDialog(parent, false, parent.getString(R.string.num), "", context.getString(R.string.cancel), context.getString(R.string.done).toUpperCase(),
 									new OnClickListener() {
 										@Override
 										public void onClick(View view) {
@@ -426,7 +431,7 @@ public class MainPageMenuView extends LinearLayout {
 										handler.sendMessage(msg);
 
 									}else{
-										UIHelp.showShortToast(parent, "Out Of Stock!");
+										UIHelp.showShortToast(parent, parent.getString(R.string.out_of_stock));
 									}
 								}
 							});
@@ -628,7 +633,7 @@ public class MainPageMenuView extends LinearLayout {
 			bitmap.recycle();
 
 		ll_menu.setVisibility(View.GONE);
-		((TextView) findViewById(R.id.tv_item_name)).setText(CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemName());
+		((TextView) findViewById(R.id.tv_item_name)).setText(CoreData.getInstance().getItemDetailById(orderDetail.getItemId(),orderDetail.getItemName()).getItemName());
 		ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_up, "y",
 				iv_up.getY(), iv_up.getY() - iv_up.getHeight()).setDuration(
 				OPEN_DELAY);

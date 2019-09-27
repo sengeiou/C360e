@@ -223,7 +223,7 @@
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_marginTop="20dp"
-	            android:text="Version:"
+	            android:text="@string/version"
 	            android:gravity="center"
 	            android:textColor="@color/black"
 	            android:textSize="@dimen/text_size_s" />        

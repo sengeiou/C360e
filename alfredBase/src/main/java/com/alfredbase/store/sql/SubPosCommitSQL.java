@@ -118,6 +118,9 @@ public class SubPosCommitSQL {
             if(reportHourlys != null && reportHourlys.size() > 0){
                 ReportHourlySQL.addReportHourly(reportDaySales.getId().intValue(), db, reportHourlys);
             }
+//            if(reportHourlys != null && reportHourlys.size() > 0){
+//               // ReportPromotionSQL.addReportPromotion(reportDaySales.getId().intValue(), db, reportHourlys);
+//            }
             if(reportPluDayComboModifiers != null && reportPluDayComboModifiers.size() > 0) {
                 ReportPluDayComboModifierSQL.addReportPluDayModifierList(reportDaySales.getId().intValue(), db, reportPluDayComboModifiers);
             }

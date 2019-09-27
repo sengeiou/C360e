@@ -52,7 +52,7 @@ public class SelectKitchen extends BaseActivity {
         Intent intent = getIntent();
         printers = (List<Printer>) intent.getSerializableExtra("printers");
         if (printers == null || printers.isEmpty()) {
-            UIHelp.showToast(context, "POS has no Kitchen Printer Configured. Kindly check Backend Settings if a Printer is Configured for the Kitchen.");
+            UIHelp.showToast(context, context.getString(R.string.pos_not_connect_to_kitchen));
             finish();
         }
         lv_kitchen_centre.setAdapter(new KitchenListAdapter(context, printers));

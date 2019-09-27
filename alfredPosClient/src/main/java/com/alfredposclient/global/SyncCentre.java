@@ -10,22 +10,31 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
+import com.alfredbase.javabean.LoginResult;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.SyncMsg;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PushMessage;
+import com.alfredbase.javabean.model.RVCDevice;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredposclient.R;
 import com.alfredposclient.http.HTTPKDSRequest;
 import com.alfredposclient.http.HTTPWaiterRequest;
 import com.alfredposclient.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SyncHttpClient;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,11 +109,6 @@ public class SyncCentre {
         }
     }
 
-    public void requestIpay88Payment(Context context, Map<String, Object> parameter, Handler handler) {
-        HttpAPI.requestIpay88Payment(context, parameter, getAbsoluteUrl(APIName.REQUEST_IPAY88),
-                httpClient, handler);
-    }
-
     public void login(Context context, Map<String, Object> parameters,
                       Handler handler) {
         HttpAPI.login(context, parameters,
@@ -125,6 +129,8 @@ public class SyncCentre {
 //
         HttpAPI.mediaSync(context,
                 getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.paymentMethodSync(context,
+                getAbsoluteUrl(APIName.SETTLEMENT_GETPAYMENT_METHOD), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getItemCategory(context,
                 getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getModifier(context, getAbsoluteUrl(APIName.ITEM_GETMODIFIER),
@@ -134,8 +140,8 @@ public class SyncCentre {
                 getAbsoluteUrl(APIName.HAPPYHOUR_GETHAPPYHOUR), httpClient, handler, MODE_FIRST_SYNC);
         HttpAPI.getPromotionInfo(context,
                 getAbsoluteUrl(APIName.PROMOTIONINFO_GETPROMOTIONINFO), httpClient, handler, MODE_FIRST_SYNC);
-        HttpAPI.getPromotionData(context,
-                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
+//        HttpAPI.getPromotionData(context,
+//                getAbsoluteUrl(APIName.PROMOTIONPOSSINFO_GETPROMOTIONDATA), httpClient, handler, MODE_FIRST_SYNC);
 
         getRemainingStock(context, handler, MODE_FIRST_SYNC);
 
@@ -221,6 +227,8 @@ public class SyncCentre {
 
         HttpAPI.mediaSync(context,
                 getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), bigSyncHttpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.paymentMethodSync(context,
+                getAbsoluteUrl(APIName.SETTLEMENT_GETPAYMENT_METHOD), bigSyncHttpClient, handler, MODE_FIRST_SYNC);
 
     }
 
@@ -231,6 +239,13 @@ public class SyncCentre {
 
     public void cloudSyncUploadOrderInfo(BaseActivity context,
                                          SyncMsg syncMsg, Handler handler) {
+        //orderDataMsg
+        HttpAPI.cloudSync(context, syncMsg,
+                getAbsoluteUrl("receive/orderDataMsg"), bigSyncHttpClient);
+    }
+
+    public void cloudSyncUploadRealOrderInfo(BaseActivity context,
+                                             SyncMsg syncMsg, Handler handler) {
         //orderDataMsg
         int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
         if (timely == 0) {
@@ -305,6 +320,8 @@ public class SyncCentre {
         if (type.equals(PushMessage.PAYMENT_METHOD)) {
             HttpAPI.mediaSync(context,
                     getAbsoluteUrl(APIName.SETTLEMENT_GETOTHERPAYMENT), httpClient, handler, MODE_PUSH_SYNC);
+            HttpAPI.paymentMethodSync(context,
+                    getAbsoluteUrl(APIName.SETTLEMENT_GETPAYMENT_METHOD), httpClient, handler, MODE_PUSH_SYNC);
         }
         if (type.equals(PushMessage.HAPPY_HOURS)) {
             HttpAPI.getHappyHour(context,
@@ -542,6 +559,7 @@ public class SyncCentre {
      * for KDS
      */
 
+    /* sync KOT data to KDS */
     public void checkKdsBalance(KDSDevice kdsDevice, BaseActivity context,
                                 Map<String, Object> parameters, Handler handler) throws Throwable {
 
@@ -559,6 +577,13 @@ public class SyncCentre {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
         HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
+
+    }
+
+    public void refreshSameGroupKDS(KDSDevice kdsDevice, BaseActivity context,
+                                    Map<String, Object> parameters) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.REFRESH_KOT);
+        HTTPKDSRequest.refreshSameGroupKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient);
 
     }
 
@@ -654,6 +679,62 @@ public class SyncCentre {
         HttpAPI.callAppNo(context, url, syncHttpClient, params);
     }
 
+    //start language
+
+    public void setClientLanguage(final Context context, String version, String tag) {
+        ArrayList<String> urls = new ArrayList<String>();
+
+        Map<Integer, WaiterDevice> waiterDeviceMap = App.instance.getWaiterDevices();
+        if (waiterDeviceMap != null && waiterDeviceMap.size() > 0) {
+            Set<Integer> key = waiterDeviceMap.keySet();
+            for (Integer index : key) {
+                WaiterDevice waiterDevice = waiterDeviceMap.get(index);
+                String url = "http://" + waiterDevice.getIP() + ":" + APPConfig.WAITER_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+                urls.add(url);
+            }
+        }
+
+        Map<Integer, KDSDevice> kdsDeviceMap = App.instance.getKDSDevices();
+        if (kdsDeviceMap != null && kdsDeviceMap.size() > 0) {
+            Set<Integer> key = kdsDeviceMap.keySet();
+            for (Integer index : key) {
+                KDSDevice kdsDevice = kdsDeviceMap.get(index);
+                String url = "http://" + kdsDevice.getIP() + ":" + APPConfig.KDS_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+                urls.add(url);
+            }
+        }
+
+        if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
+            String callNumApi = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_LANGUAGE;
+            urls.add(callNumApi);
+        }
+
+        for (int i = 0; i < urls.size(); i++) {
+            HttpAPI.setClientLanguage(context, urls.get(i), syncHttpClient, version, tag);
+        }
+    }
+
+
+    public void callServerLanguage(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
+                                   Handler handler) {
+        HttpAPI.setServerLanguage(context, parameters,
+                getAbsoluteUrl(mainPosInfo, APIName.SET_LANGUAGE), httpClient, handler);
+    }
+
+    private String getAbsoluteUrl(MainPosInfo mainPosInfo, String url) {
+        return "http://" + getIp(mainPosInfo) + ":" + APPConfig.HTTP_SERVER_PORT + "/" + url;
+    }
+
+    public String getIp(MainPosInfo mainPosInfo) {
+//		if (ip == null){
+        String ip = mainPosInfo.getIP();
+//		}
+        return ip;
+    }
+
+
+    //end language
+
     public void posCloseSession(final Context context) {
         if (!TextUtils.isEmpty(App.instance.getCallAppIp())) {
             String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.POS_CLOSE_SESSION;
@@ -663,24 +744,29 @@ public class SyncCentre {
     }
 
     //3rd party services
-    public String requestAlipayUrl(final Map<String, Object> parameters) {
+    public String requestAlipayUrl(final Context context, final Map<String, Object> parameters) {
         //{restaurantKey:"h6s235",userKey:"19x6ljc",revenueId:27,orderId:123243,billNo:12312,amount:100}
         String url = null;
         StringBuffer param = new StringBuffer("userKey=" + CoreData.getInstance().getLoginResult().getUserKey() + "&");
 
-        if (App.instance.isDebug) {
+        if (BaseApplication.isDebug) {
             url = "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
             param.append("amount=0.01&");
-        } else if (App.instance.isOpenLog) {
+        } else if (BaseApplication.isOpenLog) {
             url = "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
             param.append("amount=0.01&");
         } else {
             if (App.instance.countryCode == ParamConst.CHINA) {
                 url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
-                url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
+                if (BaseApplication.isZeeposDev) {
+                    url = "http://18.140.71.198/alfred-api/" + APIName.REQUEST_ALIPAY;
+                } else {
+                    url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
+                }
             }
-            param.append("amount=" + parameters.get("amount") + "&");
+            String amount = context.getString(R.string.amount);
+            param.append(amount + " =" + parameters.get("amount") + "&");
         }
 
         param.append("restaurantKey=" + CoreData.getInstance().getLoginResult()
@@ -708,4 +794,119 @@ public class SyncCentre {
     public String getURLStart() {
         return getAbsoluteUrl("");
     }
+
+
+    public void loginQRPayment(Context context,
+                               Handler handler) {
+        User user = App.instance.getUser();
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String url = getAbsoluteUrl(APIName.REQUEST_IPAY88_LOGIN);
+        HttpAPI.loginQRPayment(context, url, user.getEmpId(), user.getPassword(), login.getRestaurantKey(), httpClient, handler);
+    }
+
+
+    //start pay88
+    public void qrcodePay88(Context context,
+                            Integer paymentTypeId, //alipay, grabpay
+                            BigDecimal amount,
+                            String currency,
+                            String productDesc,
+                            long billNo,
+                            String custContact,
+                            String custEmail,
+                            String custName,
+                            Handler handler) {
+
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String userkey = login.getUserKey();
+        String url = getAbsoluteUrl(APIName.REQUEST_IPAY88_QRCODE);
+
+        HttpAPI.qrcodePay88(context, url, login.getRestaurantKey(), userkey, paymentTypeId, amount, currency, productDesc, billNo, custContact, custEmail, custName, httpClient, handler);
+    }
+
+
+    public void checkStatusPay88(Context context,
+                                 long billNo,
+                                 BigDecimal amount,
+                                 Handler handler) {
+
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String userkey = login.getUserKey();
+        String url = getAbsoluteUrl(APIName.REQUEST_IPAY88_CHECK_STATUS);
+        HttpAPI.checkStatusPay88(context, url, login.getRestaurantKey(), userkey, billNo, amount, httpClient, handler);
+    }
+
+
+    //end pay88
+
+    //Start payhalal
+    public void qrcodePayHalal(Context context,
+                               Integer paymentTypeId,
+                               BigDecimal amount,
+                               String currency,
+                               String productDesc,
+                               long billNo,
+                               String custContact,
+                               String custEmail,
+                               String custName,
+                               Handler handler) {
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String userkey = login.getUserKey();
+        String url = getAbsoluteUrl(APIName.REQUEST_PAYHALAL_QRCODE);
+
+        HttpAPI.qrcodePayhalal(context, url, login.getRestaurantKey(), userkey, paymentTypeId, amount, currency, productDesc, billNo, custContact, custEmail, custName, httpClient, handler);
+    }
+
+
+    public void checkStatusPayHalal(Context context,
+                                    String currency,
+                                    long billNo,
+                                    String transactionId,
+                                    BigDecimal amount,
+                                    Handler handler) {
+        LoginResult login = CoreData.getInstance().getLoginResult();
+        String userkey = login.getUserKey();
+        String url = getAbsoluteUrl(APIName.REQUEST_PAYHALAL_CHECK_STATUS);
+        HttpAPI.checkStatusPayhalal(context, url, login.getRestaurantKey(), userkey, amount, currency, billNo, transactionId, httpClient, handler);
+    }
+    //end payhalal
+
+    //start connection multi RVC
+    public void getOtherRVCPlaceTable(Context context, Handler handler) {
+        ArrayList<String> urls = new ArrayList<String>();
+        for (Map.Entry<String, RVCDevice> entry : App.instance.getRVCDevices().entrySet()) {
+            RVCDevice posInfo = entry.getValue();
+            urls.add(getAbsoluteUrl(posInfo.getIp(), APIName.GET_OTHER_RVC_PLACE_TABLE));
+        }
+        for (int i = 0; i < urls.size(); i++) {
+            HttpAPI.getOtherRVCPlaceTable(context,
+                    urls.get(i), httpClient, handler);
+        }
+    }
+
+    public void getOtherRVCTable(Context context, String url, int placeId, Handler handler) {
+        HttpAPI.getOtherRVCTable(context,
+                getAbsoluteUrl(url, APIName.GET_OTHER_RVC_TABLE), placeId, httpClient, handler);
+
+    }
+
+
+    public void sendOrderToOtherRVC(Context context, String url, int transferType, Order currentOrder, int tableId, Handler handler) {
+        HttpAPI.sendOrderToOtherRVC(context,
+                getAbsoluteUrl(url, APIName.TRANSFER_TABLE_TO_OTHER_RVC), transferType, currentOrder, tableId, httpClient, handler);
+
+    }
+
+    public void transferItemToOtherRVC(Context context, String url, Order oldOrder, OrderDetail transfItemOrderDetail, TableInfo targetTable, Handler handler) {
+        HttpAPI.transferItemToOtherRVC(context,
+                getAbsoluteUrl(url, APIName.TRANSFER_ITEM_TO_OTHER_RVC), oldOrder, transfItemOrderDetail, targetTable.getPosId(), targetTable.getPacks(), httpClient, handler);
+    }
+
+
+    private String getAbsoluteUrl(String url, String subUrl) {
+        return "http://" + url + ":" + APPConfig.HTTP_SERVER_PORT + "/" + subUrl;
+    }
+
+
+    //end conenction multi RVC
 }

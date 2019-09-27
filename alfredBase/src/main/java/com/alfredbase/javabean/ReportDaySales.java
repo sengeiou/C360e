@@ -180,10 +180,42 @@ public class ReportDaySales implements Serializable{
 
 	private String reportNoStr;
 	private String promotionTotal;
+	private String daySalesRound;
 
 	private String payHalal;
-
 	private Integer payHalalQty;
+	private  Integer promotionQty;
+
+	private String ipay88Wepay;
+	private Integer ipay88WepayQty;
+
+	private String ipay88Alipay;
+	private Integer ipay88AlipayQty;
+
+	private String ipay88Boost;
+	private Integer ipay88BoostQty;
+
+	private String ipay88Mcash;
+	private Integer ipay88McashQty;
+
+	private String ipay88TouchnGo;
+	private Integer ipay88TouchnGoQty;
+
+	private String ipay88Unionpay;
+	private Integer ipay88UnionpayQty;
+
+	private String ipay88Mbb;
+	private Integer ipay88MbbQty;
+
+	private String ipay88Cimb;
+	private Integer ipay88CimbQty;
+
+	private String ipay88Grabpay;
+	private Integer ipay88GrabpayQty;
+
+	private String ipay88Nets;
+	private Integer ipay88NetsQty;
+
 
 //	private String cashGstDiscount;
 //	private String netsGstDiscount;
@@ -1001,6 +1033,183 @@ public class ReportDaySales implements Serializable{
 		this.payHalalQty = payHalalQty;
 	}
 
+    public String getDaySalesRound() {
+        return daySalesRound;
+    }
+
+    public void setDaySalesRound(String daySalesRound) {
+        this.daySalesRound = daySalesRound;
+    }
+
+    public Integer getPromotionQty() {
+        return promotionQty;
+    }
+
+    public void setPromotionQty(Integer promotionQty) {
+        this.promotionQty = promotionQty;
+    }
+
+
+    public String getIpay88Wepay() {
+		return ipay88Wepay;
+	}
+
+	public void setIpay88Wepay(String ipay88Wepay) {
+		this.ipay88Wepay = ipay88Wepay;
+	}
+
+	public Integer getIpay88WepayQty() {
+		return ipay88WepayQty;
+	}
+
+	public void setIpay88WepayQty(Integer ipay88WepayQty) {
+		this.ipay88WepayQty = ipay88WepayQty;
+	}
+
+	public String getIpay88Alipay() {
+		return ipay88Alipay;
+	}
+
+	public void setIpay88Alipay(String ipay88Alipay) {
+		this.ipay88Alipay = ipay88Alipay;
+	}
+
+	public Integer getIpay88AlipayQty() {
+		return ipay88AlipayQty;
+	}
+
+	public void setIpay88AlipayQty(Integer ipay88AlipayQty) {
+		this.ipay88AlipayQty = ipay88AlipayQty;
+	}
+
+	public String getIpay88Boost() {
+		return ipay88Boost;
+	}
+
+	public void setIpay88Boost(String ipay88Boost) {
+		this.ipay88Boost = ipay88Boost;
+	}
+
+	public Integer getIpay88BoostQty() {
+		return ipay88BoostQty;
+	}
+
+	public void setIpay88BoostQty(Integer ipay88BoostQty) {
+		this.ipay88BoostQty = ipay88BoostQty;
+	}
+
+	public String getIpay88Mcash() {
+		return ipay88Mcash;
+	}
+
+	public void setIpay88Mcash(String ipay88Mcash) {
+		this.ipay88Mcash = ipay88Mcash;
+	}
+
+	public Integer getIpay88McashQty() {
+		return ipay88McashQty;
+	}
+
+	public void setIpay88McashQty(Integer ipay88McashQty) {
+		this.ipay88McashQty = ipay88McashQty;
+	}
+
+	public String getIpay88TouchnGo() {
+		return ipay88TouchnGo;
+	}
+
+	public void setIpay88TouchnGo(String ipay88TouchnGo) {
+		this.ipay88TouchnGo = ipay88TouchnGo;
+	}
+
+	public Integer getIpay88TouchnGoQty() {
+		return ipay88TouchnGoQty;
+	}
+
+	public void setIpay88TouchnGoQty(Integer ipay88TouchnGoQty) {
+		this.ipay88TouchnGoQty = ipay88TouchnGoQty;
+	}
+
+	public String getIpay88Unionpay() {
+		return ipay88Unionpay;
+	}
+
+	public void setIpay88Unionpay(String ipay88Unionpay) {
+		this.ipay88Unionpay = ipay88Unionpay;
+	}
+
+	public Integer getIpay88UnionpayQty() {
+		return ipay88UnionpayQty;
+	}
+
+	public void setIpay88UnionpayQty(Integer ipay88UnionpayQty) {
+		this.ipay88UnionpayQty = ipay88UnionpayQty;
+	}
+
+	public String getIpay88Mbb() {
+		return ipay88Mbb;
+	}
+
+	public void setIpay88Mbb(String ipay88Mbb) {
+		this.ipay88Mbb = ipay88Mbb;
+	}
+
+	public Integer getIpay88MbbQty() {
+		return ipay88MbbQty;
+	}
+
+	public void setIpay88MbbQty(Integer ipay88MbbQty) {
+		this.ipay88MbbQty = ipay88MbbQty;
+	}
+
+	public String getIpay88Cimb() {
+		return ipay88Cimb;
+	}
+
+	public void setIpay88Cimb(String ipay88Cimb) {
+		this.ipay88Cimb = ipay88Cimb;
+	}
+
+	public Integer getIpay88CimbQty() {
+		return ipay88CimbQty;
+	}
+
+	public void setIpay88CimbQty(Integer ipay88CimbQty) {
+		this.ipay88CimbQty = ipay88CimbQty;
+	}
+
+	public String getIpay88Grabpay() {
+		return ipay88Grabpay;
+	}
+
+	public void setIpay88Grabpay(String ipay88Grabpay) {
+		this.ipay88Grabpay = ipay88Grabpay;
+	}
+
+	public Integer getIpay88GrabpayQty() {
+		return ipay88GrabpayQty;
+	}
+
+	public void setIpay88GrabpayQty(Integer ipay88GrabpayQty) {
+		this.ipay88GrabpayQty = ipay88GrabpayQty;
+	}
+
+	public String getIpay88Nets() {
+		return ipay88Nets;
+	}
+
+	public void setIpay88Nets(String ipay88Nets) {
+		this.ipay88Nets = ipay88Nets;
+	}
+
+	public Integer getIpay88NetsQty() {
+		return ipay88NetsQty;
+	}
+
+	public void setIpay88NetsQty(Integer ipay88NetsQty) {
+		this.ipay88NetsQty = ipay88NetsQty;
+	}
+
 	@Override
 	public String toString() {
 		return "ReportDaySales{" +
@@ -1098,7 +1307,28 @@ public class ReportDaySales implements Serializable{
 				", reportNoStr='" + reportNoStr + '\'' +
 				", payHalal='" + payHalal + '\'' +
 				", payHalalQty=" + payHalalQty +
+				", ipay88Wepay='" + ipay88Wepay + '\'' +
+				", ipay88WepayQty=" +ipay88WepayQty +
+				", ipay88Alipay='" + ipay88Alipay + '\'' +
+				", ipay88AlipayQty=" +ipay88AlipayQty +
+				", ipay88Boost='" + ipay88Boost + '\'' +
+				", ipay88BoostQty=" +ipay88BoostQty +
+				", ipay88Mcash='" + ipay88Mcash + '\'' +
+				", ipay88McashQty=" +ipay88McashQty +
+				", ipay88TouchnGo='" + ipay88TouchnGo + '\'' +
+				", ipay88TouchnGoQty=" +ipay88TouchnGoQty +
+				", ipay88Unionpay='" + ipay88Unionpay + '\'' +
+				", ipay88UnionpayQty=" +ipay88UnionpayQty +
+				", ipay88Mbb='" + ipay88Mbb + '\'' +
+				", ipay88MbbQty=" +ipay88MbbQty +
+				", ipay88Cimb='" + ipay88Cimb + '\'' +
+				", ipay88CimbQty=" +ipay88CimbQty +
+				", ipay88Grabpay='" + ipay88Grabpay + '\'' +
+				", ipay88GrabpayQty=" +ipay88GrabpayQty +
+				", ipay88Nets='" + ipay88Nets + '\'' +
+				", ipay88NetsQty=" +ipay88NetsQty +
 				", promotionTotal='" + promotionTotal + '\'' +
+				", daySalesRound='" + daySalesRound + '\'' +
 				'}';
 	}
 }

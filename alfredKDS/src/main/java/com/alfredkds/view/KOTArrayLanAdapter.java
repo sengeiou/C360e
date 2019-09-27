@@ -94,42 +94,42 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 //
 //        int itemViewType = KOTArrayLanAdapter.this.getItemViewType(position);
 //        if (itemViewType == 1) {
-        final KotItem kotItem = kots.get(position);
-        String orderNoStr = kotItem.getNumTag() + IntegerUtils.fromat(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
-        holder.orderNo.setText(orderNoStr);
-        holder.mod.setText(kotItem.getItemModName());
-        holder.detail.setText(kotItem.getItemDetailName());
-        holder.table.setText(kotItem.getTableName());
+            final KotItem kotItem = kots.get(position);
+            String orderNoStr = kotItem.getNumTag() + IntegerUtils.formatLocale(kotItem.getRevenueCenterIndex(), kotItem.getOrderNo() + "");
+            holder.orderNo.setText(orderNoStr);
+            holder.mod.setText(kotItem.getItemModName());
+            holder.detail.setText(kotItem.getItemDetailName());
+            holder.table.setText(kotItem.getTableName());
 
-        //0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
+            //0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
 
-        if (kotItem.getKotStatus() == 1) {
-            holder.status.setText("progress");
-        } else if (kotItem.getKotStatus() == 0) {
-            holder.status.setText("progress");
-        } else if (kotItem.getKotStatus() == 2) {
-            //holder.status.setText("更新");
-        } else if (kotItem.getKotStatus() == 3) {
-            //	holder.status.setText("已完成");
-        } else if (kotItem.getKotStatus() == 4) {
-            //	holder.status.setText("已退单");
-        } else if (kotItem.getKotStatus() == -1) {
-            //	holder.status.setText("已删除");
-        }
-        long createTime = kotItem.getUpdateTime();
-        holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
-        holder.qty.setText(kotItem.getQty() + "");
-        holder.tv_lan_progress.start();
-        if (kotItem.getCallType() == 1) {
-            //	holder.btn_call.setClickable(false);
-            holder.btn_call.setText("call again");
+            if (kotItem.getKotStatus() == 1) {
+                holder.status.setText(mContext.getString(R.string.kot_in_progress));
+            } else if (kotItem.getKotStatus() == 0) {
+                holder.status.setText(mContext.getString(R.string.kot_in_progress));
+            } else if (kotItem.getKotStatus() == 2) {
+                //holder.status.setText("更新");
+            } else if (kotItem.getKotStatus() == 3) {
+                //	holder.status.setText("已完成");
+            } else if (kotItem.getKotStatus() == 4) {
+                //	holder.status.setText("已退单");
+            } else if (kotItem.getKotStatus() == -1) {
+                //	holder.status.setText("已删除");
+            }
+            long createTime = kotItem.getUpdateTime();
+            holder.tv_lan_progress.setBase(SystemClock.elapsedRealtime() - (System.currentTimeMillis() - createTime));
+            holder.qty.setText(kotItem.getQty() + "");
+            holder.tv_lan_progress.start();
+            if (kotItem.getCallType() == 1) {
+                //	holder.btn_call.setClickable(false);
+                holder.btn_call.setText(mContext.getResources().getString(R.string.call_again));
 
-        } else {
-            holder.btn_call.setText("call");
-            //	holder.btn_call.setClickable(true);
-            // holder.btn_call.setText("void");
+            } else {
+                holder.btn_call.setText(mContext.getResources().getString(R.string.call));
+                //	holder.btn_call.setClickable(true);
+                // holder.btn_call.setText("void");
 
-        }
+            }
 
 
         holder.btn_call.setBackgroundColor(mContext.getResources().getColor(R.color.color_kotview));

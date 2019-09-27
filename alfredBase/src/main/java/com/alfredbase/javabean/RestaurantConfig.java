@@ -19,6 +19,7 @@ public class RestaurantConfig {
 	 */
 	private String paraValue1;
 	private String paraValue2;
+	private String paraValue3;
 	public Integer getId() {
 		return id;
 	}
@@ -61,11 +62,26 @@ public class RestaurantConfig {
 	public void setParaValue2(String paraValue2) {
 		this.paraValue2 = paraValue2;
 	}
+
+	public String getParaValue3() {
+		return paraValue3;
+	}
+
+	public void setParaValue3(String paraValue3) {
+		this.paraValue3 = paraValue3;
+	}
+
 	@Override
 	public String toString() {
-		return "RestaurantConfig [id=" + id + ", restaurantId=" + restaurantId
-				+ ", paraId=" + paraId + ", paraType=" + paraType
-				+ ", paraName=" + paraName + ", paraValue1=" + paraValue1
-				+ ", paraValue2=" + paraValue2 + "]";
+		return "RestaurantConfig{" +
+				"id=" + id +
+				", restaurantId=" + restaurantId +
+				", paraId=" + paraId +
+				", paraType=" + paraType +
+				", paraName='" + paraName + '\'' +
+				", paraValue1='" + paraValue1 + '\'' +
+				", paraValue2='" + paraValue2 + '\'' +
+				", paraValue3='" + paraValue3 + '\'' +
+				'}';
 	}
 }

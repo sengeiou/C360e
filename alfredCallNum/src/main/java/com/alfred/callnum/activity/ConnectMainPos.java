@@ -16,6 +16,9 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.Restaurant;
+import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 
@@ -32,12 +35,13 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
     private TextView tv_connect;
     private TextTypeFace textTypeFace;
     private TextView tv_app_version;
+
     @Override
     protected void initView() {
         super.initView();
         setContentView(R.layout.ip_connect_view);
         tv_app_version = (TextView) findViewById(R.id.tv_app_version);
-        ipkeyboard = (Numerickeyboard)findViewById(R.id.ipkeyboard);
+        ipkeyboard = (Numerickeyboard) findViewById(R.id.ipkeyboard);
         ipkeyboard.setKeyBoardClickListener(this);
         ipkeyboard.setParams(context);
         tv_connect = (TextView) findViewById(R.id.tv_connect);
@@ -61,8 +65,8 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
     private void initTextTypeFace() {
         textTypeFace = TextTypeFace.getInstance();
         textTypeFace.setTrajanProRegular(tv_app_version);
-        textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_ipaddr_tips));
-        textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_connect));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_ipaddr_tips));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_connect));
         textTypeFace.setTrajanProRegular(et_ip1);
         textTypeFace.setTrajanProRegular(et_ip2);
         textTypeFace.setTrajanProRegular(et_ip3);
@@ -103,7 +107,7 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
 
     @Override
     public void onKeyBoardClick(String key) {
-        if (TextUtils.isEmpty(key)){
+        if (TextUtils.isEmpty(key)) {
 //            App.instance.setPairingIp(getInputedIP());
 //            UIHelp.startEmployeeID(context);
             finish();
@@ -171,22 +175,22 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
     }
 
     private String getInputedIP() {
-        String ipAddress = et_ip1.getText().toString()+"."
-                +et_ip2.getText().toString()+"."
-                +et_ip3.getText().toString()+"."
-                +et_ip4.getText().toString();
+        String ipAddress = et_ip1.getText().toString() + "."
+                + et_ip2.getText().toString() + "."
+                + et_ip3.getText().toString() + "."
+                + et_ip4.getText().toString();
         return ipAddress;
 
     }
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case ResultCode.SUCCESS:
                     dismissLoadingDialog();
-
+                    initBugseeModifier();
                     UIHelp.startMainActivity(context, App.instance.getMainPageType());
                     finish();
                     break;
@@ -198,6 +202,26 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
         }
     };
 
+    private void initBugseeModifier() {
+        Restaurant restaurant = RestaurantSQL.getRestaurant();
+        if (restaurant != null) {
+            BugseeHelper.setEmail(restaurant.getEmail());
+            BugseeHelper.setAttribute("restaurant_id", restaurant.getId());
+            BugseeHelper.setAttribute("restaurant_company_id", restaurant.getCompanyId());
+            BugseeHelper.setAttribute("restaurant_address", restaurant.getAddressPrint());
+            BugseeHelper.setAttribute("restaurant_country", restaurant.getCountry());
+            BugseeHelper.setAttribute("restaurant_city", restaurant.getCity());
+        }
+
+        String employeeId = Store.getString(context, Store.EMPLOYEE_ID);
+        if (!TextUtils.isEmpty(employeeId))
+            BugseeHelper.setAttribute("employee_id", employeeId);
+
+        BugseeHelper.setAttribute("pos_ip", App.instance.getPosIp());
+
+//        throw new NullPointerException("Test crash");
+    }
+
     @Override
     public void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
@@ -208,10 +232,10 @@ public class ConnectMainPos extends BaseActivity implements Numerickeyboard.KeyB
                 Matcher matcher = pattern.matcher(getInputedIP());
                 if (matcher.matches()) {
                     App.instance.setPosIp(getInputedIP());
-                    if(loadingDialog == null){
+                    if (loadingDialog == null) {
                         loadingDialog = new LoadingDialog(context);
                     }
-                    loadingDialog.setTitle("loading");
+                    loadingDialog.setTitle(getString(R.string.loading));
                     loadingDialog.show();
                     SyncCentre.getInstance().assignRevenue(context, App.instance.getPosIp(), handler);
 //                    App.instance.setPosIp(getInputedIP());

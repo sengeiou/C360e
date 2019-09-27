@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="System Setup"
+            android:text="@string/system_setup"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_b" />
     </LinearLayout>
@@ -40,7 +40,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign In"
+            android:text="@string/sign_in"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_xb" />
 
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Sync"
+            android:text="@string/sync"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_xb" />
     </LinearLayout>

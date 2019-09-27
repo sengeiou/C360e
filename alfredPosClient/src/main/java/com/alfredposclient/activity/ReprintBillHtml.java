@@ -220,14 +220,14 @@ public class ReprintBillHtml extends BaseActivity {
 							App.instance.getUser().getFirstName()
 									+ App.instance.getUser().getLastName(),
 							TableInfoSQL.getTableById(order.getTableId())
-									.getName(), 1),
+									.getName(), 1,App.instance.getSystemSettings().getTrainType()),
 					order,
 					ObjectFactory.getInstance().getItemList(
 							OrderDetailSQL.getOrderDetails(order.getId())),
 					orderModifiers, OrderDetailTaxSQL.getTaxPriceSUMForPrint(
 							App.instance.getLocalRestaurantConfig()
 									.getIncludedTax().getTax(), order), null,
-					roundAmount);
+					roundAmount,null);
 		} else {
 			List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
 			for (OrderSplit orderSplit : orderSplits) {
@@ -280,7 +280,7 @@ public class ReprintBillHtml extends BaseActivity {
 				temporaryOrder.setOrderNo(order.getOrderNo());
 				App.instance.remoteBillPrint(printer, title, temporaryOrder,
 						orderItems, orderModifiers, taxMap, null,
-						null);
+						null,null);
 			}
 		}
 	}

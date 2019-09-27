@@ -1,5 +1,7 @@
 package com.alfred.printer;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 public class PrintData  implements Serializable{
@@ -18,7 +20,8 @@ public class PrintData  implements Serializable{
 	public static int FORMAT_FEED=15;
 	public static int FORMAT_SING=16;
 	public static int FORMAT_MIN_QR = 17;
-	
+	public static int FORMAT_QR_BITMAP = 18;
+
 	//alignment 
 	public static int ALIGN_LEFT=0;
 	public static int ALIGN_CENTRE = 1;
@@ -41,6 +44,7 @@ public class PrintData  implements Serializable{
 	private int img_w;
 	private int img_h;
 	private String qrCode;
+	private byte[] qrCodeBitmap;
 	
 
 	public PrintData() {
@@ -171,5 +175,13 @@ public class PrintData  implements Serializable{
 
 	public void setQrCode(String qrCode) {
 		this.qrCode = qrCode;
+	}
+
+	public byte[] getQrCodeBitmap() {
+		return qrCodeBitmap;
+	}
+
+	public void setQrCodeBitmap(byte[] qrCodeBitmap) {
+		this.qrCodeBitmap = qrCodeBitmap;
 	}
 }

@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="Connect Manually"/>
+            android:text="@string/connect_manually"/>
 
         <ImageView
             android:layout_width="match_parent"

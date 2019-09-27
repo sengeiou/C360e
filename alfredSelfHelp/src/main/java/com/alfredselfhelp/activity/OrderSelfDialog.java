@@ -167,8 +167,8 @@ public class OrderSelfDialog extends Dialog{
 //        if (noStr != null) {
 //            no.setText(noStr);
 //        }
-        yes.setText("Yes");
-        no.setText("No");
+        yes.setText(mContext.getResources().getString(R.string.yes));
+        no.setText(mContext.getResources().getString(R.string.no));
     }
 
     /**
@@ -227,7 +227,7 @@ public class OrderSelfDialog extends Dialog{
 
     public void notifyAdapter(){
         if (totalStr != null && total != null) {
-            total.setText("S" + App.instance.getCurrencySymbol() + BH.getBD(totalStr));
+            total.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(totalStr));
         }
         if(adapter != null) {
             adapter.notifyDataSetChanged();

@@ -2,6 +2,7 @@ package com.alfredposclient.global;
 
 import android.content.Context;
 
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.store.Store;
 
 public class SystemSettings {
@@ -32,11 +33,14 @@ public class SystemSettings {
     private boolean removeToVoid = false;
     private boolean isTransferPrint = true;
     private boolean isAutoToTable = false;
+    private Boolean isTraining= false;
+    private  boolean isInstructions=true;
+    private boolean isWaiterOnce=false;
 
     private int callStyle = 1;// 叫号端默认布局
 
     private int maxPrintOrderNo = 98;
-
+  private int trainType;
     public SystemSettings(Context context) {
         super();
         this.context = context;
@@ -517,6 +521,8 @@ public class SystemSettings {
     }
 
 
+
+
     public void setCardRounding(Integer cardRound) {
         Store.putInt(this.context, Store.CREDIT_CARD_ROUNDING,
                 cardRound.intValue());
@@ -524,6 +530,54 @@ public class SystemSettings {
             this.cardRounding = true;
         else
             this.cardRounding = false;
+    }
+    //order备注
+    public void setPrintInstructions(Integer printInstructions) {
+        Store.putInt(this.context, Store.PRINT_INSTRUCTIONS,
+                printInstructions.intValue());
+        if (printInstructions.intValue() == 1)
+            this.isInstructions = true;
+        else
+            this.isInstructions = false;
+    }
+
+
+    public boolean isPrintInstructions() {
+        Integer value = Store.getInt(context,
+                Store.PRINT_INSTRUCTIONS);
+        if (value != null && value != Store.DEFAULT_INT_TYPE) {
+            if (value.intValue() == 1) {
+                this.isInstructions = true;
+            } else {
+                this.isInstructions = false;
+            }
+        }
+        return isInstructions;
+    }
+
+
+    //waiter 是否只打印一次
+    public void setWaiterOnce(Integer waiterOnce) {
+        Store.putInt(this.context, Store.PRINT_WAITER_ONCE,
+                waiterOnce.intValue());
+        if (waiterOnce.intValue() == 1)
+            this.isWaiterOnce = true;
+        else
+            this.isWaiterOnce = false;
+    }
+
+
+    public boolean isPrintWaiterOnce() {
+        Integer value = Store.getInt(context,
+                Store.PRINT_WAITER_ONCE);
+        if (value != null && value != Store.DEFAULT_INT_TYPE) {
+            if (value.intValue() == 1) {
+                this.isWaiterOnce = true;
+            } else {
+                this.isWaiterOnce = false;
+            }
+        }
+        return isWaiterOnce;
     }
 
     public void setPrintLable(Integer printLable) {
@@ -593,6 +647,8 @@ public class SystemSettings {
         return isOfPax;
     }
 
+
+
     public void setOfPax(Integer ofPax) {
         Store.putInt(this.context, Store.OF_PAX,
                 ofPax.intValue());
@@ -602,7 +658,26 @@ public class SystemSettings {
             this.isOfPax = false;
     }
 
+    public boolean isTraining() {
+        Integer value = Store.getInt(context,
+                Store.TRAINING);
+        if (value != null && value != Store.DEFAULT_INT_TYPE) {
+            if (value.intValue() == 1)
+                this.isTraining = true;
+            else
+                this.isTraining = false;
+        }
+        return isTraining;
+    }
 
+    public void setTraining(Integer isTraining) {
+        Store.putInt(this.context, Store.TRAINING,
+                isTraining.intValue());
+        if (isTraining.intValue() == 1)
+            this.isTraining = true;
+        else
+            this.isTraining = false;
+    }
     public int getCallStyle() {
         Integer value = Store.getInt(context,
                 Store.CALL_STYLE);
@@ -621,5 +696,21 @@ public class SystemSettings {
                 style.intValue());
         this.callStyle = style.intValue();
 
+    }
+
+    public int getTrainType() {
+
+        Integer value = SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+        if (value == null) {
+            this.trainType = 0;
+        }else {
+            this.trainType=value.intValue();
+        }
+        return trainType;
+    }
+
+    public void setTrainType(int trainType) {
+
+        this.trainType = trainType;
     }
 }

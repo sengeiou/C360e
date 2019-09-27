@@ -137,6 +137,7 @@ public class KpmgResponseUtil {
                 resp = mainPosHttpServer.getJsonResponse(gson.toJson(result));
             } else {
                 result.put("resultCode", ResultCode.USER_NO_PERMIT);
+                result.put("lineCode", Thread.currentThread().getStackTrace()[2].getLineNumber()+" "+this.getClass().getName());
                 resp = mainPosHttpServer.getJsonResponse(gson.toJson(result));
             }
         } catch (Exception e) {
@@ -282,7 +283,7 @@ public class KpmgResponseUtil {
             if(orderDetails!=null){
                 for (int i = 0; i <orderDetails.size() ; i++) {
                     OrderDetail orderDetail=orderDetails.get(i);
-                    final int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemTemplateId();
+                    final int itemTempId = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName()).getItemTemplateId();
                     RemainingStock remainingStock=RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                     if(remainingStock!=null){
                         int num=orderDetail.getItemNum();
@@ -341,8 +342,8 @@ public class KpmgResponseUtil {
                                                     orderDetail,
                                                     CoreData.getInstance()
                                                             .getItemDetailById(
-                                                                    orderDetail
-                                                                            .getItemId()),
+                                                                    orderDetail.getItemId(),
+                                                                    orderDetail.getItemName()),
                                                     kotSummary,
                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                     kotItemDetail.setItemNum(orderDetail
@@ -408,7 +409,7 @@ public class KpmgResponseUtil {
                             placeOrder,
                             App.instance.getUser().getFirstName()
                                     + App.instance.getUser().getLastName(),
-                            "", 1);
+                            "", 1,App.instance.getSystemSettings().getTrainType());
 
             map.put("order", placeOrder);
             map.put("title", title);

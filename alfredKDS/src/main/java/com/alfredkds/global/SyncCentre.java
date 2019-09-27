@@ -12,8 +12,6 @@ import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredkds.http.HttpAPI;
 import com.loopj.android.http.AsyncHttpClient;
 
-import org.apache.http.protocol.RequestUserAgent;
-
 import java.util.Map;
 
 /* Wrapper of all HTTP Requests (KDS -> Main POS) */

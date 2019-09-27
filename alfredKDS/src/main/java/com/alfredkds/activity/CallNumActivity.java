@@ -34,7 +34,7 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
         setContentView(R.layout.activity_call_num);
         flag = false;
         loadingDialog = new LoadingDialog(context);
-        loadingDialog.setTitle("Loading");
+        loadingDialog.setTitle(getString(R.string.loading));
         tv_quantity = (TextView) findViewById(R.id.tv_quantity);
         callNumboard = (CallNumboard) findViewById(R.id.quantityKeyboard);
         callNumboard.setKeyBoardClickListener(this);

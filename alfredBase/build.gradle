@@ -15,6 +15,11 @@ android {
         targetCompatibility javaVersion
     }
 
+        lintOptions {
+            abortOnError false
+        }
+
+
     buildTypes {
         release {
             minifyEnabled false
@@ -25,6 +30,7 @@ android {
     }
     buildToolsVersion '27.0.3'
 }
+
 
 //greendao {
 //    schemaVersion 1

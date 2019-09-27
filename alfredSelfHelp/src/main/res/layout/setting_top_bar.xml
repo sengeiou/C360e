@@ -47,13 +47,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
+            <!--anti-checkout-->
             <TextView
                 android:id="@+id/tv_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="反结账"
+                android:text="@string/revert"
                 android:textSize="20sp" />
         </LinearLayout>
 
@@ -80,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="Print Report"
+                android:text="@string/print_report"
                 android:textSize="20sp" >
 
             </TextView>

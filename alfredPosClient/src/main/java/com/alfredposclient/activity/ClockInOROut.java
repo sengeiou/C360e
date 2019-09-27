@@ -68,7 +68,7 @@ public class ClockInOROut extends BaseActivity implements KeyBoardClickListener 
 		lv_user_click_in = (ListView) findViewById(R.id.lv_user_click_in);
 		userTimeSheets = new ArrayList<>();
 		loadingDialog = new LoadingDialog(context);
-		loadingDialog.setTitle("Loading");
+		loadingDialog.setTitle(getString(R.string.loading));
 		getList();
 	}
 
@@ -107,16 +107,16 @@ public class ClockInOROut extends BaseActivity implements KeyBoardClickListener 
 				}
 					break;
 				case CLOCK_SUCCESS:
-					UIHelp.showShortToast(context, "succeed");
+					UIHelp.showShortToast(context, getString(R.string.succeed));
 					getList();
 					break;
 				case ResultCode.USER_LOGIN_EXIST: {
 					dismissLoadingDialog();
 					int tyep = (int) msg.obj;
 					if (tyep == 1) {
-						UIHelp.showShortToast(context, "Users already Clocked In");
+						UIHelp.showShortToast(context, getString(R.string.user_already_clock_in));
 					} else {
-						UIHelp.showShortToast(context, "Please Clock In");
+						UIHelp.showShortToast(context, getString(R.string.please_clock_in));
 					}
 				}
 					break;

@@ -3,8 +3,11 @@ package com.alfredposclient.popupwindow;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -12,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
@@ -24,10 +28,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -40,6 +46,7 @@ import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.SettlementRestaurant;
 import com.alfredbase.javabean.TableInfo;
@@ -69,19 +76,33 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.TextTypeFace;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.StoredCardActivity;
+import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
+import com.alfredposclient.adapter.Ipay88SettlementAdapter;
 import com.alfredposclient.adapter.OrderDetailAdapter;
+import com.alfredposclient.adapter.SettlementAdapter;
 import com.alfredposclient.global.App;
+import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.javabean.Ipay88CheckStatusDao;
+import com.alfredposclient.javabean.Ipay88QrDao;
+import com.alfredposclient.javabean.PayHalalQrDao;
+import com.alfredposclient.javabean.PayhalalCheckStatusDao;
 import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
 import com.alfredposclient.view.SettlementDetailItemView;
 import com.alfredposclient.view.SettlementDetailItemView.ViewResultCall;
+import com.alfredposclient.view.dialog.Ipay88Dialog;
 import com.alfredposclient.view.dialog.MediaDialog;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.gson.Gson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -89,7 +110,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener {
+public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener, SettlementAdapter.ClickListener, Ipay88SettlementAdapter.ClickListener {
     private String TAG = CloseOrderWindow.class.getSimpleName();
     private static final int DURATION_1 = 300;
     private static final int DURATION_2 = 200;
@@ -189,14 +210,23 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
     boolean isFirstClickPart;
 
-
+    private BigDecimal cardAmountPaidNum;
     PaymentMethod paymentMethod = new PaymentMethod();
 
-    Button tv_other_media;
 
     List<PaymentMethod> pamentMethodlist = new ArrayList<PaymentMethod>();
 
     MediaDialog mediaDialog;
+    private LoadingDialog loadingDialog;
+    private Ipay88Dialog ipay88dialog;
+    private AlertDialog paymentDialog;
+
+    PayHalalQrDao payHalalQrDao;
+    private long qrRefId = 0;
+
+
+    private ArrayList<SettlementRestaurant> paymentSettleRestaurant = new ArrayList<>();
+    private SettlementAdapter settlementAdapter;
 
 
     public CloseOrderSplitWindow(BaseActivity parent, View parentView,
@@ -311,14 +341,11 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         moneyKeyboard.setVisibility(View.GONE);
 //		swipe = contentView.findViewById(R.id.swipe);
 //		swipe.setOnClickListener(this);
-        contentView.findViewById(R.id.iv_halal).setVisibility(View.INVISIBLE);
-        tv_other_media = (Button) contentView.findViewById(R.id.tv_other_media);
+
         tv_cards_rounding_num = (TextView) contentView.findViewById(R.id.tv_cards_rounding_num);
 
-        tv_other_media.setOnClickListener(this);
         contentView.findViewById(R.id.tv_Others).setOnClickListener(this);
         contentView.findViewById(R.id.tv_exact).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_VISA).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_200).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_150).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_100).setOnClickListener(this);
@@ -326,12 +353,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         contentView.findViewById(R.id.tv_cash_20).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_10).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_5).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_MasterCard).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_NETS).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_UnionPay).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_JCB).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_AMERICAN).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_dinersclub).setOnClickListener(this);
         contentView.findViewById(R.id.tv_BILL_on_HOLD).setOnClickListener(this);
         contentView.findViewById(R.id.tv_VOID).setOnClickListener(this);
         contentView.findViewById(R.id.tv_ENTERTAINMENT)
@@ -392,8 +413,21 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
         });
         lv_list.setAdapter(orderDetailAdapter);
+
+        setSettlementAdapter();
+        loadingDialog = new LoadingDialog(parent);
+        loadingDialog.setTitle(parent.getResources().getString(R.string.loading));
     }
 
+    private void setSettlementAdapter() {
+        paymentSettleRestaurant.addAll(CoreData.getInstance().getSettlementRestaurant());
+        settlementAdapter = new SettlementAdapter(paymentSettleRestaurant, this);
+        RecyclerView recyclerView = (RecyclerView) contentView.findViewById(R.id.rv_settlement);
+        int numberOfColumns = 3;
+        recyclerView.setLayoutManager(new GridLayoutManager(parent, numberOfColumns));
+        recyclerView.setAdapter(settlementAdapter);
+        settlementAdapter.notifyDataSetChanged();
+    }
 
 //	private void handleUp(View view) {
 //		if (isMenuClose) {
@@ -416,6 +450,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //	}
 
     private void init() {
+
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
 //		Tax tax = App.instance.getLocalRestaurantConfig().getIncludedTax().getTax();
 //		if(tax != null){
 //			includTax = BH.mul(BH.getBD(tax.getTaxPercentage()), BH.div(BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(order.getDiscountAmount()), false), BH.add(BH.getBD(1), BH.getBD(tax.getTaxPercentage()), false), false), true);
@@ -453,8 +493,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
         textTypeFace.setTrajanProBlod((TextView) view
                 .findViewById(R.id.tv_part_settlement));
-        textTypeFace.setTrajanProRegular((Button) view
-                .findViewById(R.id.tv_other_media));
         textTypeFace.setTrajanProBlod((TextView) view
                 .findViewById(R.id.tv_bill_summary));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -505,13 +543,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         TextView tv_discount = (TextView) view
                 .findViewById(R.id.tv_discount);
         textTypeFace.setTrajanProRegular(tv_discount);
-        tv_discount.setText(parent.getResources().getString(R.string.discount_));
+        tv_discount.setText(parent.getResources().getString(R.string.discount));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_discount_num));
         TextView tv_taxes = (TextView) view
                 .findViewById(R.id.tv_taxes);
         textTypeFace.setTrajanProRegular(tv_taxes);
-        tv_taxes.setText(parent.getResources().getString(R.string.taxes_));
+        tv_taxes.setText(parent.getResources().getString(R.string.taxes));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_taxes_num));
         TextView tv_cash_200 = (TextView) view
@@ -716,14 +754,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
 
         }
-        ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+        ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
         //	tv_part_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal));
 //		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
 
-        tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderSplit.getSubTotal()).toString());
-        tv_discount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderSplit.getDiscountAmount()).toString());
-        tv_taxes_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderSplit.getTaxAmount()).toString());
-        tv_total_bill_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderSplit.getTotal()).toString());
+        tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderSplit.getSubTotal()).toString());
+        tv_discount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderSplit.getDiscountAmount()).toString());
+        tv_taxes_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderSplit.getTaxAmount()).toString());
+        tv_total_bill_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderSplit.getTotal()).toString());
 //		tv_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(roundAmount.getRoundBalancePrice()).toString());
 //		tv_grand_total_bill_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + orderSplit.getTotal());
 //		tv_settled_num.setText(settlementNum.toString());
@@ -803,6 +841,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //							.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + settlementNum.toString());
                     if (!(parent instanceof EditSettlementPage)) {
                         orderSplit.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
+                        disableButtons();
                         OrderSplitSQL.update(orderSplit);
                         int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                         if (upDoneOrderSplitCount == 0) {
@@ -817,6 +856,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
                             if (roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
                                 orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
+                                disableButtons();
                                 OrderSplitSQL.update(orderSplit);
                                 if (parent instanceof EditSettlementPage) {
                                     roundAmount.setRoundBalancePrice(0.00);
@@ -834,31 +874,30 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
                         case ParamConst.SETTLEMENT_TYPE_JCB:
 
-                                CardsSettlement cardsSettlement = CardsSettlementSQL
-                                        .getCardsSettlementByPament(payment.getId(),
-                                                paymentSettlement.getId());
+                            CardsSettlement cardsSettlement = CardsSettlementSQL
+                                    .getCardsSettlementByPament(payment.getId(),
+                                            paymentSettlement.getId());
 
-                                subPaymentSettlement = cardsSettlement;
+                            subPaymentSettlement = cardsSettlement;
+                            if (parent instanceof EditSettlementPage) {
+                                cardsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
+                                CardsSettlementSQL.addCardsSettlement(cardsSettlement);
+                            } else {
+                                CardsSettlementSQL.deleteCardsSettlement(cardsSettlement);
+                            }
+                            RoundAmount roundAmounts = RoundAmountSQL.getRoundAmount(orderSplit);
+                            if (roundAmounts != null && BH.getBD(roundAmounts.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
+                                orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmounts.getRoundBalancePrice()), true).toString());
+                                    disableButtons();
+                                OrderSplitSQL.update(orderSplit);
                                 if (parent instanceof EditSettlementPage) {
-                                    cardsSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
-                                    CardsSettlementSQL.addCardsSettlement(cardsSettlement);
+                                    roundAmounts.setRoundBalancePrice(0.00);
+                                    RoundAmountSQL.update(roundAmounts);
                                 } else {
-                                    CardsSettlementSQL.deleteCardsSettlement(cardsSettlement);
+                                    RoundAmountSQL.deleteRoundAmount(roundAmounts);
                                 }
-                                RoundAmount roundAmounts = RoundAmountSQL.getRoundAmount(orderSplit);
-                                if (roundAmounts != null && BH.getBD(roundAmounts.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
-                                    orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmounts.getRoundBalancePrice()), true).toString());
-                                    OrderSplitSQL.update(orderSplit);
-                                    if (parent instanceof EditSettlementPage) {
-                                        roundAmounts.setRoundBalancePrice(0.00);
-                                        RoundAmountSQL.update(roundAmounts);
-                                    } else {
-                                        RoundAmountSQL.deleteRoundAmount(roundAmounts);
-                                    }
-                                    remainTotal = BH.getBD(orderSplit.getTotal());
-                                }
-
-
+                                remainTotal = BH.getBD(orderSplit.getTotal());
+                            }
 
 
                             break;
@@ -1091,10 +1130,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         if (rounding.compareTo(BH.getBD("0.00")) == -1) {
             symbol = "-";
         }
-        tv_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.abs(rounding, true));
-        tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
-        tv_total_amount_num.setText(BH.getBD(remainTotalAfterRound).toString());
-        tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+        tv_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()));
+        tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()));
+        tv_total_amount_num.setText(BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()).toString());
+        tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(0).toString()).toString());
     }
 
     // private void initAuthentication() {
@@ -1117,7 +1156,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 View.INVISIBLE);
         switch (type) {
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
-                tv_special_settlement_title.setText("ENTERTAINMENT");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.entertainment));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.VISIBLE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
@@ -1128,13 +1167,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 rl_special_settlement_phone.setVisibility(View.VISIBLE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_VOID:
-                tv_special_settlement_title.setText("VOID");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.void_).toUpperCase());
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_REFUND:
-                tv_special_settlement_title.setText("Refund");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.refund));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(orderSplit.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
@@ -1143,7 +1182,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 break;
         }
 
-        tv_special_settlement_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+        tv_special_settlement_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
         tv_special_settlement_authorize_by_name.setText(user.getFirstName() + user.getLastName());
 
     }
@@ -1173,24 +1212,27 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
         if (!App.instance.getSystemSettings().isCardRounding()) {
 
-            tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
-            tv_cards_amount_paid_num.setText(BH.getBD(remainTotal).toString());
-            tv_cards_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+            tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
+            cardAmountPaidNum = remainTotal;
+            tv_cards_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
+            tv_cards_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(0).toString()).toString());
         } else {
             BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
             show.append((BH.mul(remainTotalAfterRound, BH.getBDNoFormat("100"), true).setScale(0, BigDecimal.ROUND_HALF_UP)).toString());
-            tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
+            tv_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()).toString());
             BigDecimal rounding = BH.sub(remainTotalAfterRound, remainTotal, true);
             String symbol = "";
             if (rounding.compareTo(BH.getBD("0.00")) == -1) {
                 symbol = "-";
             }
-            tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.abs(rounding, true).toString());
-            tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotalAfterRound).toString());
-            tv_cards_amount_paid_num.setText(BH.getBD(remainTotalAfterRound).toString());
+            tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()).toString());
+            tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()).toString());
+            cardAmountPaidNum = remainTotalAfterRound;
+            tv_cards_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()).toString());
         }
         tv_cards_expiration_date_num.setText("");
 //        tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+//        remainTotalAfterRound = remainTotal
         //  tv_cards_amount_paid_num.setText(BH.getBD(remainTotal).toString());
         selectView = tv_card_no_num;
         tv_cards_amount_paid_num.setBackgroundColor(parent.getResources().getColor(
@@ -1217,9 +1259,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         initBillSummary();
         contentView.findViewById(R.id.ll_subtotal_layout).setVisibility(
                 View.INVISIBLE);
-        tv_nets_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+        tv_nets_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
         tv_nets_ref_num.setText("");
-        tv_nets_amount_paid_num.setText(BH.getBD(remainTotal).toString());
+        tv_nets_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
         tv_nets_ref_num.setBackgroundColor(parent.getResources()
                 .getColor(R.color.default_line_indicator_selected_color));
         tv_nets_amount_paid_num.setBackgroundColor(parent.getResources()
@@ -1239,9 +1281,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         } else if (payTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK) {
             tv_wechat_ali_settlement.setText("EZ-Link Settlement");
         }
-        tv_wechat_ali_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal).toString());
+        tv_wechat_ali_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
         tv_wechat_ali_ref_num.setText("");
-        tv_wechat_ali_amount_paid_num.setText(BH.getBD(remainTotal).toString());
+        tv_wechat_ali_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
 //		tv_wechat_ali_ref_num.setBackgroundColor(parent.getResources()
 //				.getColor(R.color.default_line_indicator_selected_color));
         tv_wechat_ali_amount_paid_num.setBackgroundColor(parent.getResources()
@@ -1271,7 +1313,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         if (isShowing()) {
             return;
         }
-        tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+        tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
         this.order = order;
         App.instance.setClosingOrderId(order.getId());
         this.orderSplit = orderSplit;
@@ -1522,14 +1564,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
     }
 
     public void voidItem(final OrderDetail orderDetail) {
-        DialogFactory.commonTwoBtnDialog(parent, "Warring", "This operation is irreversible,\n Are you sure ?", "YES", "NO", new OnClickListener() {
+        DialogFactory.commonTwoBtnDialog(parent, parent.getString(R.string.warning), parent.getString(R.string.operation_irreversible), parent.getString(R.string.yes).toUpperCase(), parent.getString(R.string.no).toUpperCase(), new OnClickListener() {
             @Override
             public void onClick(View v) {
                 OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail, oldTotal);
                 order = OrderSQL.getOrder(order.getId());
                 orderSplit = OrderSplitSQL.get(orderSplit.getId().intValue());
                 orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
-                tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.sub(BH.getBD(oldTotal), BH.getBD(orderSplit.getTotal()), true).toString());
+                tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.sub(BH.getBD(oldTotal), BH.getBD(orderSplit.getTotal()), true).toString()).toString());
                 initBillSummary();
             }
         }, null);
@@ -1545,6 +1587,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
                     if (roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
                         orderSplit.setTotal(BH.sub(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
+                        disableButtons();
                         OrderSplitSQL.update(orderSplit);
                         RoundAmountSQL.deleteRoundAmount(roundAmount);
                     }
@@ -1567,6 +1610,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     payment_amount = remainTotal;
                     paymentType = viewTag;
                     orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                    disableButtons();
                     OrderSplitSQL.update(orderSplit);
                     int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                     if (upDoneOrderSplitCount == 0) {
@@ -1735,46 +1779,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
             // 支付方式的点击事件
             switch (v.getId()) {
-
-
-                case R.id.tv_other_media:
-                    List<SettlementRestaurant> settle;
-                    pamentMethodlist.clear();
-                    settle = CoreData.getInstance().getSettlementRestaurant();
-
-
-                    if (settle != null && !settle.isEmpty()) {
-
-                        if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {
-
-                            String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
-                            for (int i = 0; i < strarray.length; i++) {
-                                PaymentMethod pa = new PaymentMethod();
-                                pa = CoreData.getInstance().getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
-                                if (pa == null) {
-                                    return;
-                                } else {
-                                    pamentMethodlist.add(pa);
-                                }
-
-                            }
-                        }
-                    }
-//                    //  pamentMethodlist=PamentMethodSQL.getAllPaymentMethod();
-//                    pamentMethodlist.add(pam);
-//                    if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {
-//
-//                        String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
-//                        for (int i = 0; i < strarray.length; i++) {
-//                            PaymentMethod pa = new PaymentMethod();
-//                            pa = PamentMethodSQL.getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
-//                            pamentMethodlist.add(pa);
-//                        }
-//                    }
-
-                    mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
-                    mediaDialog.setPaymentClickListener(this);
-                    break;
                 case R.id.tv_Others: {
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     isFirstClickCash = true;
@@ -1788,11 +1792,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
                     break;
                 }
-                case R.id.iv_VISA: {
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_VISA);
-                    break;
-                }
-
                 case R.id.tv_cash_200:
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     selectNumberAction(200);
@@ -1827,25 +1826,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     selectNumberAction(5);
                     isFirstClickCash = true;
-                    break;
-                case R.id.iv_MasterCard:
-                    openMoneyKeyboard(View.GONE,
-                            ParamConst.SETTLEMENT_TYPE_MASTERCARD);
-                    break;
-                case R.id.iv_NETS:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_NETS);
-                    break;
-                case R.id.iv_UnionPay:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_UNIPAY);
-                    break;
-                case R.id.iv_JCB:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_JCB);
-                    break;
-                case R.id.iv_AMERICAN:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_AMEX);
-                    break;
-                case R.id.iv_dinersclub:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL);
                     break;
                 case R.id.tv_stored_card: {
 //				String value = ((TextView)contentView.findViewById(R.id.tv_residue_total_num)).getText().toString().substring(1);
@@ -2318,9 +2298,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         }
         show.append(num * 100);
         tv_total_amount_num
-                .setText(BH.getBD(num).toString());
+                .setText(BH.formatMoney(BH.getBD(num).toString()).toString());
         tv_part_total_amount_num
-                .setText(BH.getBD(num).toString());
+                .setText(BH.formatMoney(BH.getBD(num).toString()).toString());
 //		showCashChange();
         BigDecimal cashNum = BH.getBD(num);
         BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
@@ -2328,10 +2308,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         if (change > 0) {
             BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
             tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-                    + BH.getBD(changeNum).toString());
+                    + BH.formatMoney(BH.getBD(changeNum).toString()).toString());
             clickEnterAction();
         } else {
-            tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+            tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
         }
     }
 
@@ -2344,9 +2324,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         if (change > 0) {
             BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
             tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-                    + BH.getBD(changeNum).toString());
+                    + BH.formatMoney(changeNum.toString()).toString());
         } else {
-            tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+            tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
         }
     }
 
@@ -2380,6 +2360,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     App.instance.getBusinessDate());
                     orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
                     OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
+                    disableButtons();
                     OrderSplitSQL.update(orderSplit);
                     PaymentSQL.updateSplitOrderPaymentAmount(orderSplit.getTotal(), orderSplit.getId().intValue());
                     int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
@@ -2399,6 +2380,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                         OrderHelper.setOrderTotalAlfterRound(order, orderRoundAmount);
+                        disableButtons();
                         OrderSQL.update(order);
                     }
                     paymentSettlement.setCashChange(BH.sub(showStrBigDecimal,
@@ -2421,6 +2403,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             case ParamConst.SETTLEMENT_CUSTOM_PART:
                 //固定金额
             case ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE: {
+                if (paymentMethod.getIsTax() == 0) {
+                    //不计税
+                    //  deleteVoidOrEntTax();
+                    ToastUtils.showToast(parent, "setting error\n");
+
+                    return;
+                }
 
                 BigDecimal paidBD = BH.getBD(paymentMethod.getPartAcount());
                 if (viewTag == ParamConst.SETTLEMENT_CUSTOM_PART) {
@@ -2438,6 +2427,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     remainTotal, true).toString());
                         }
                         orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                        disableButtons();
                         OrderSplitSQL.update(orderSplit);
                         int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                         if (upDoneOrderSplitCount == 0) {
@@ -2464,7 +2454,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             break;
             case ParamConst.SETTLEMENT_CUSTOM_ALL: {
                 PaymentSettlement paymentSettlement = null;
-                if (paymentMethod.getIsPart() == 0) {
+                if (paymentMethod.getIsTax() == 0) {
                     //不计税
                     deleteVoidOrEntTax();
 
@@ -2477,6 +2467,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 
                 orderSplit.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2507,7 +2498,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 PaymentSettlement paymentSettlement = null;
                 //四舍五入
                 if (!App.instance.getSystemSettings().isCardRounding()) {
-                    paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+                    paidBD = cardAmountPaidNum;
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
                                 .getInstance().getPaymentSettlementForCard(
@@ -2516,6 +2507,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                         paidBD.toString());
                         if (paidBD.compareTo(remainTotal) > -1) {
                             orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                            disableButtons();
                             OrderSplitSQL.update(orderSplit);
                             int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                             if (upDoneOrderSplitCount == 0) {
@@ -2528,7 +2520,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         }
                     }
                 } else {
-                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(tv_cards_amount_paid_num.getText().toString()));
+                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), cardAmountPaidNum);
                     BigDecimal remainTotalAlfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
@@ -2547,6 +2539,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                             App.instance.getBusinessDate());
                             orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
                             OrderHelper.setOrderSplitTotalAlfterRound(orderSplit, roundAmount);
+                            disableButtons();
                             OrderSplitSQL.update(orderSplit);
                             int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                             if (upDoneOrderSplitCount == 0) {
@@ -2566,6 +2559,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
                                 order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                                 OrderHelper.setOrderTotalAlfterRound(order, orderRoundAmount);
+                                disableButtons();
                                 OrderSQL.update(order);
 
                             }
@@ -2584,9 +2578,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //
 //                //四舍五入
 //                if(!App.instance.getSystemSettings().isCardRounding()) {
-//                   paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+//                   paidBD = BH.getBD(cardAmountPaidNum);
 //                }else {
-//                    paidBD= RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(),  BH.getBD(tv_cards_amount_paid_num.getText().toString()));
+//                    paidBD= RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(),  BH.getBD(cardAmountPaidNum));
 //                }
 //                if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
 //                    PaymentSettlement paymentSettlement = ObjectFactory
@@ -2607,7 +2601,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //                        remainTotal = BH.sub(remainTotal, settlementNum, false);
 //                    }
 
-                if (paymentSettlement!=null) {
+                if (paymentSettlement != null) {
                     PaymentSQL.addPayment(payment);
                     PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
                     String cvv = tv_cards_cvv_num.getText().toString();
@@ -2643,6 +2637,23 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
 
             break;
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_ALIPAY:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_BOOST:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_TOUCHNGO:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_MCASH:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_UNIONPAY:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_NETS:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_CIMB:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_MBB:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_GRABPAY:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_WEPAY: {
+                payWithIpay88();
+
+            }
+            break;
+            case ParamConst.SETTLEMENT_TYPE_PAYHALAL:
+                payWithPayHalal();
+                break;
             case ParamConst.SETTLEMENT_TYPE_STORED_CARD: {
 //			String amount = ((TextView) contentView.findViewById(R.id.tv_residue_total))
 //					.getText().toString();
@@ -2655,6 +2666,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 payment_amount = remainTotal;
                 paymentType = viewTag;
                 orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2702,6 +2714,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					OrderDetailSQL.updateOrderDetail(orderDetails.get(i));
 //				}
 //			}
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2752,6 +2765,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //					OrderDetailSQL.updateOrderDetail(orderDetails.get(i));
 //				}
 //			}
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2776,6 +2790,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 payment_amount = remainTotal;
                 paymentType = viewTag;
                 orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2809,6 +2824,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 payment_amount = remainTotal;
                 paymentType = viewTag;
                 orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2842,6 +2858,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 payment_amount = remainTotal;
                 paymentType = viewTag;
                 orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                disableButtons();
                 OrderSplitSQL.update(orderSplit);
                 int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                 if (upDoneOrderSplitCount == 0) {
@@ -2870,6 +2887,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     String.valueOf(paidBD.toString()));
                     if (paidBD.compareTo(remainTotal) > -1) {
                         orderSplit.setOrderStatus(ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED);
+                        disableButtons();
                         OrderSplitSQL.update(orderSplit);
                         int upDoneOrderSplitCount = OrderSplitSQL.getUnDoneOrderSplitsCountByOrder(orderSplit.getOrderId(), splitPax);
                         if (upDoneOrderSplitCount == 0) {
@@ -2913,6 +2931,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     String.valueOf(paidBD.toString()));
                     if (paidBD.compareTo(remainTotal) > -1) {
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                        disableButtons();
                         OrderSQL.update(order);
                     } else {
                         settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2943,6 +2962,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     String.valueOf(paidBD.toString()));
                     if (paidBD.compareTo(remainTotal) > -1) {
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                        disableButtons();
                         OrderSQL.update(order);
                     } else {
                         settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2982,6 +3002,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         }
     }
 
+    private void disableButtons() {
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
+    }
+
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {
 
         PaymentSQL.addPayment(payment);
@@ -2989,6 +3017,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 .getPaymentSettlement(payment, paymentTypeId,
                         paidAmount.toString());
         PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+
         AlipaySettlement alipaySettlement = ObjectFactory.getInstance()
                 .getAlipaySettlement(payment, paymentSettlement, tradeNo, buyerEmail);
         AlipaySettlementSQL.addAlipaySettlement(alipaySettlement);
@@ -3042,14 +3071,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 if (selectView != null && selectView == tv_cards_amount_paid_num) {
                     selectView.setInputType(InputType.TYPE_CLASS_NUMBER);
                     if (TextUtils.isEmpty(show)) {
-                        selectView.setText(BH.getBD(0).toString());
+                        selectView.setText(BH.formatMoney(0).toString());
                     } else {
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
 
                         if (!BH.compare(selectBD, remainTotal)) {
-                            selectView.setText(selectBD.toString());
+                            selectView.setText(BH.formatMoney(selectBD.toString()).toString());
                         } else {
                             show.delete(show.length() - key.length(), show.length());
                         }
@@ -3101,13 +3130,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 if (selectView != null && selectView == tv_nets_amount_paid_num) {
                     selectView.setInputType(InputType.TYPE_CLASS_NUMBER);
                     if (TextUtils.isEmpty(show)) {
-                        selectView.setText(BH.getBD(0).toString());
+                        selectView.setText(BH.formatMoney(0).toString());
                     } else {
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
                         if (!BH.compare(selectBD, remainTotal)) {
-                            selectView.setText(selectBD.toString());
+                            selectView.setText(BH.formatMoney(selectBD.toString()).toString());
                         } else {
                             show.delete(show.length() - key.length(), show.length());
                         }
@@ -3146,8 +3175,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         show.delete(0, show.length());
         switch (viewTag) {
             case ParamConst.SETTLEMENT_TYPE_CASH: {
-                tv_total_amount_num.setText(BH.getBD(0).toString());
-                tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
+                tv_total_amount_num.setText(BH.formatMoney(0).toString());
+                tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
 
             }
             break;
@@ -3158,7 +3187,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             case ParamConst.SETTLEMENT_TYPE_UNIPAY:
             case ParamConst.SETTLEMENT_TYPE_VISA: {
                 if (selectView != null && selectView == tv_cards_amount_paid_num) {
-                    selectView.setText(BH.getBD(0).toString());
+                    selectView.setText(BH.formatMoney(0).toString());
                 }
                 if (selectView != null && selectView == tv_card_no_num) {
                     selectView.setText("");
@@ -3195,7 +3224,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
             break;
             case ParamConst.SETTLEMENT_CUSTOM_PART:
-                tv_part_total_amount_num.setText(BH.getBD(0).toString());
+                tv_part_total_amount_num.setText(BH.formatMoney(0).toString());
                 break;
             default:
                 break;
@@ -3353,18 +3382,17 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 viewTag = ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE;
                 //备注
                 if (paymentMethod.getIsMsg() == 1) {
-                    tv_special_settlement_title.setText("CUSTOM");
+                    tv_special_settlement_title.setText(parent.getResources().getString(R.string.custom).toUpperCase());
                     rl_special_settlement_person.setVisibility(View.GONE);
                     rl_special_settlement_phone.setVisibility(View.GONE);
                     contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                             View.VISIBLE);
-                  //  show.append(0);
+                    //  show.append(0);
                     EditText et_special_settlement_person_name = (EditText) contentView
                             .findViewById(R.id.et_special_settlement_person_name);
-                    if(TextUtils.isEmpty(paymentMethod.getDescription()))
-                    {
+                    if (TextUtils.isEmpty(paymentMethod.getDescription())) {
                         et_special_settlement_person_name.setText("");
-                    }else {
+                    } else {
                         et_special_settlement_person_name.setText(paymentMethod.getDescription().toString());
                     }
                     moneyKeyboard.setVisibility(View.VISIBLE);
@@ -3399,18 +3427,17 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
             viewTag = ParamConst.SETTLEMENT_CUSTOM_ALL;
             if (paymentMethod.getIsMsg() == 1) {
-                tv_special_settlement_title.setText("CUSTOM");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.custom).toUpperCase());
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                         View.VISIBLE);
-           //     show.append(0);
+                //     show.append(0);
                 EditText et_special_settlement_person_name = (EditText) contentView
                         .findViewById(R.id.et_special_settlement_person_name);
-                if(TextUtils.isEmpty(paymentMethod.getDescription()))
-                {
+                if (TextUtils.isEmpty(paymentMethod.getDescription())) {
                     et_special_settlement_person_name.setText("");
-                }else {
+                } else {
                     et_special_settlement_person_name.setText(paymentMethod.getDescription().toString());
                 }
                 moneyKeyboard.setVisibility(View.VISIBLE);
@@ -3449,10 +3476,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 View.INVISIBLE);
         //  BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
         //  show.append(remainTotalAfterRound.toString().replace(".", ""));
-        tv_part_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal));
+        tv_part_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
         tv_part_cur.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol());
         //  tv_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.abs(rounding, true).toString());
-        tv_part_total_amount_num.setText(BH.getBD(remainTotal).toString());
+        tv_part_total_amount_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
         show.append(0);
         //   tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(0).toString());
     }
@@ -3462,9 +3489,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
     }
 
-    public void backLikeClose(){
+    public void backLikeClose() {
         closeWindowAction();
-        if(splitPax){
+        if (splitPax) {
             handler.sendEmptyMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW);
         }
         if (parent instanceof EditSettlementPage && oldPaymentMapList != null) {
@@ -3475,10 +3502,455 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                     EditSettlementPage.EDIT_SETTLEMENT_CLOSE_BILL,
                     newAndOldPaymentSettlement));
         }
-        if(!(parent instanceof EditSettlementPage)){
-            if(splitPax){
+        if (!(parent instanceof EditSettlementPage)) {
+            if (splitPax) {
                 handler.sendEmptyMessage(MainPage.ACTION_PAX_SPLIT_BY_PAX_WINDOW);
             }
         }
     }
+
+    //start qrpayment
+    private void showQrPaymentDialog(BigDecimal amount, final String url) {
+        paymentDialog = new AlertDialog.Builder(parent).create();
+        paymentDialog.show();
+        paymentDialog.setCancelable(true);
+        paymentDialog.setCanceledOnTouchOutside(false);
+
+        Window window = paymentDialog.getWindow();
+        window.setContentView(R.layout.dialog_ipay88_payment_layout);
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+
+        final ImageView ivQrcode = (ImageView) paymentDialog.findViewById(R.id.iv_qrcode_ipay88);
+        TextView tvTitle = (TextView) paymentDialog.findViewById(R.id.tv_qrcode_title);
+        TextView tvAmount = (TextView) paymentDialog.findViewById(R.id.tv_qrcode_amount);
+        Button btnPaid = (Button) paymentDialog.findViewById(R.id.btn_qrcode_paid);
+        Button btnCancel = (Button) paymentDialog.findViewById(R.id.btn_qrcode_cancel);
+
+
+        final String title = parent.getResources().getString(R.string.scan_qrcode)+"\n" + ParamConst.getQRPaymentName(paymentTypeId);
+        final String total = App.instance.getLocalRestaurantConfig().getCurrencySymbol() + amount;
+        tvAmount.setText(total);
+        tvTitle.setText(title);
+
+
+        Glide.with(parent)
+                .load(url)
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>(200, 200) {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                        App.instance.showSunmiQrimg(parent, title, total, bitmap);
+                        ivQrcode.setImageBitmap(bitmap);
+
+                        TableInfo tables = TableInfoSQL.getTableById(order.getTableId());
+                        PrinterTitle title = ObjectFactory.getInstance()
+                                .getPrinterTitleForQRCode(
+                                        App.instance.getRevenueCenter(),
+                                        App.instance.getUser().getFirstName()
+                                                + App.instance.getUser().getLastName(),
+                                        tables.getName());
+
+                        App.instance.printQrByBitmap(App.instance.getCahierPrinter(),
+                                title, ParamConst.getQRPaymentName(paymentTypeId), "" + orderBill.getBillNo(), total, bitmap);
+
+                    }
+                });
+
+
+        btnCancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                payHalalQrDao = null;
+                paymentDialog.dismiss();
+            }
+        });
+
+        btnPaid.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYHALAL) {
+                    checkStatusPayhalal();
+                } else {
+                    checkStatusIpay88();
+                }
+
+            }
+        });
+
+
+    }
+
+    //    start ipay88
+    @Override
+    public void ipay88SettlementAdapteronClick(PaymentMethod paymentMethod) {
+        viewTag = paymentMethod.getPaymentTypeId().intValue();
+        paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
+        clickEnterAction();
+    }
+
+    private void payWithIpay88() {
+        loadingDialog.show();
+        payment_amount = remainTotal;
+        paymentType = viewTag;
+        callQrcodeIpay88();
+    }
+
+
+    private void callQrcodeIpay88() {
+        String currency = App.instance.getLocalRestaurantConfig().getCurrencySymbol(); //TODO pay88 check symbol to currency
+        String orderName = null;
+        for (int i = 0; i < orderDetails.size(); i++) {
+            if (!TextUtils.isEmpty(orderName)) {
+                orderName += ", " + orderDetails.get(i).getItemName();
+            } else {
+                orderName = orderDetails.get(i).getItemName();
+            }
+        }
+
+        qrRefId = orderBill.getBillNo();//Long.parseLong(orderBill.getBillNo()+""+(System.currentTimeMillis() / 1000));
+        SyncCentre.getInstance().qrcodePay88(parent,
+                paymentTypeId,
+                payment_amount,
+                currency,
+                orderName,
+                qrRefId,
+                "12345678",
+                "customer@mail.com",
+                "customer",
+                qrPaymentHandler);
+    }
+
+    private void checkStatusIpay88() {
+        SyncCentre.getInstance().checkStatusPay88(parent, qrRefId, payment_amount, qrPaymentHandler);
+    }
+
+    private void saveIpay88() {
+        if (ipay88dialog != null) {
+            ipay88dialog.dismiss();
+            ipay88dialog.close();
+        }
+        if (paymentDialog != null) {
+            paymentDialog.dismiss();
+        }
+        PaymentSQL.addPayment(payment);
+        PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+                .getPaymentSettlement(payment, paymentTypeId,
+                        order.getTotal());
+        PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+        payment_amount = remainTotal;
+        paymentType = viewTag;
+        order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+        OrderSQL.update(order);
+        AlipaySettlement alipaySettlement = ObjectFactory.getInstance().getAlipaySettlement(payment, paymentSettlement, "", "");
+        if (newPaymentMapList != null) {
+            Map<String, Object> paymentMap = new HashMap<String, Object>();
+            paymentMap.put("newPaymentSettlement", paymentSettlement);
+            paymentMap.put("newSubPaymentSettlement", alipaySettlement);
+            newPaymentMapList.add(paymentMap);
+        }
+        initBillSummary();
+        closeMoneyKeyboard();
+        initSettlementDetail();
+
+        if (settlementNum.compareTo(BH.getBD(orderSplit.getTotal())) == 0) {
+            if (viewTag == ParamConst.SETTLEMENT_TYPE_CASH) {
+                if (TextUtils.isEmpty(tv_change_num.getText().toString())) {
+                    printBill(true, null);
+                } else {
+                    printBill(true, tv_change_num.getText().toString());
+                }
+            } else {
+                printBill(true, null);
+            }
+        }
+    }
+//end ipay88
+
+    //start payhalal
+    private void payWithPayHalal() {
+        loadingDialog.show();
+        paymentTypeId = ParamConst.SETTLEMENT_TYPE_PAYHALAL;
+        viewTag = paymentTypeId;
+        paymentType = paymentTypeId;
+        payment_amount = remainTotal;
+
+        if (CoreData.getInstance().getLoginResult().getUserKey() == null) {
+            SyncCentre.getInstance().loginQRPayment(parent, qrPaymentHandler);
+        } else {
+            callQrcodePayhalal();
+        }
+    }
+
+
+    private void callQrcodePayhalal() {
+        String currency = App.instance.getLocalRestaurantConfig().getCurrencySymbol(); //TODO pay88 check symbol to currency
+        String orderName = null;
+        for (int i = 0; i < orderDetails.size(); i++) {
+            if (!TextUtils.isEmpty(orderName)) {
+                orderName += ", " + orderDetails.get(i).getItemName();
+            } else {
+                orderName = orderDetails.get(i).getItemName();
+            }
+        }
+
+        qrRefId = orderBill.getBillNo();//Long.parseLong(orderBill.getBillNo()+""+(System.currentTimeMillis() / 1000));
+        SyncCentre.getInstance().qrcodePayHalal(parent,
+                paymentTypeId,
+                payment_amount,
+                currency,
+                orderName,
+                qrRefId,
+                "12345678",
+                "customer@mail.com",
+                "customer",
+                qrPaymentHandler);
+    }
+
+    private void checkStatusPayhalal() {
+        PayHalalQrDao.ResultData data = payHalalQrDao.getResultData();
+        SyncCentre.getInstance().checkStatusPayHalal(parent, data.getCurrency(), qrRefId, data.getTransaction_id(), payment_amount, qrPaymentHandler);
+    }
+
+    private void savePayhalal() {
+        if (ipay88dialog != null) {
+            ipay88dialog.dismiss();
+            ipay88dialog.close();
+        }
+        if (paymentDialog != null) {
+            paymentDialog.dismiss();
+        }
+        PaymentSQL.addPayment(payment);
+        PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+                .getPaymentSettlement(payment, paymentTypeId,
+                        order.getTotal());
+        PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+        payment_amount = remainTotal;
+        paymentType = viewTag;
+        order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+        OrderSQL.update(order);
+        AlipaySettlement alipaySettlement = ObjectFactory.getInstance().getAlipaySettlement(payment, paymentSettlement, "", "");
+        if (newPaymentMapList != null) {
+            Map<String, Object> paymentMap = new HashMap<String, Object>();
+            paymentMap.put("newPaymentSettlement", paymentSettlement);
+            paymentMap.put("newSubPaymentSettlement", alipaySettlement);
+            newPaymentMapList.add(paymentMap);
+        }
+        initBillSummary();
+        closeMoneyKeyboard();
+        initSettlementDetail();
+
+        if (settlementNum.compareTo(BH.getBD(orderSplit.getTotal())) == 0) {
+            if (viewTag == ParamConst.SETTLEMENT_TYPE_CASH) {
+                if (TextUtils.isEmpty(tv_change_num.getText().toString())) {
+                    printBill(true, null);
+                } else {
+                    printBill(true, tv_change_num.getText().toString());
+                }
+            } else {
+                printBill(true, null);
+            }
+        }
+    }
+    //end payhalal
+
+    private Handler qrPaymentHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case SyncData.HANDLER_LOGIN_QRPAYMENT: {
+                    if (msg.obj != null) {
+                        if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYHALAL) {
+                            callQrcodePayhalal();
+                        } else {
+                            callQrcodeIpay88();
+                        }
+                    } else {
+                        loadingDialog.dismiss();
+                    }
+
+                }
+                break;
+                case SyncData.HANDLER_QRCODE_PAY88: {
+                    boolean isValid = false;
+                    boolean isCheckStatus = false;
+                    if (msg.obj != null) {
+                        String result = msg.obj.toString();
+                        if (result.contains("ipay88QrCode")) {
+                            Ipay88QrDao dao = new Gson().fromJson(result, Ipay88QrDao.class);
+                            if (dao.getIpay88QrCode() != null) {
+                                if (dao.getResultCode() == ResultCode.SUCCESS) {
+                                    isValid = true;
+                                    String qr = dao.getIpay88QrCode().getQrCode();
+                                    BigDecimal amount = payment_amount;
+                                    if (TextUtils.isEmpty(qr)) {
+                                        isValid = false;
+                                    } else {
+                                        showQrPaymentDialog(amount, qr);
+                                    }
+                                } else {
+                                    try {
+                                        if (!TextUtils.isEmpty(dao.getIpay88QrCode().getErrorMessage())) {
+                                            if ((dao.getIpay88QrCode().getErrorMessage() + "").contains("Already paid")) {
+                                                isCheckStatus = true;
+                                            }
+                                        }
+                                    } catch (NullPointerException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        UIHelp.showToast(parent, "Something went wrong, Could not connect to iPay88 Service for requesting QR-Code");
+                    }
+                    loadingDialog.dismiss();
+                    if (isCheckStatus) {
+                        loadingDialog.show();
+                        checkStatusIpay88();
+                    }
+                }
+                break;
+                case SyncData.HANDLER_CHECK_STATUS_PAY88: {
+                    boolean isValid = false;
+                    if (msg.obj != null) {
+                        String result = msg.obj.toString();
+                        if (result.contains("paymentStatus")) {
+                            Ipay88CheckStatusDao dao = new Gson().fromJson(result, Ipay88CheckStatusDao.class);
+                            if (dao.getPaymentStatus() != null) {
+                                String status = dao.getPaymentStatus().getStatus();
+                                if (status.equals("" + ParamConst.PAY88_STATUS_PROCESSED)) {
+                                    isValid = true;
+                                    saveIpay88();
+                                } else if (status.equals("" + ParamConst.PAY88_STATUS_PROCESSED_ORDER)) {
+                                    isValid = true;
+                                    saveIpay88();
+                                }
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        UIHelp.showToast(parent, "Please scan the qrcode for pay the bill");
+                    }
+                    loadingDialog.dismiss();
+                }
+                break;
+                case SyncData.HANDLER_QRCODE_PAYHALAL: {
+                    boolean isValid = false;
+                    if (msg.obj != null) {
+                        String result = msg.obj.toString();
+                        if (result.contains("\"resultCode\":1")) {
+                            PayHalalQrDao dao = new Gson().fromJson(result, PayHalalQrDao.class);
+                            if (dao.getResultData() != null) {
+                                isValid = true;
+                                String qr = dao.getResultData().getQr_code().getImage_url();
+                                BigDecimal amount = payment_amount;
+                                if (TextUtils.isEmpty(qr)) {
+                                    isValid = false;
+                                } else {
+                                    payHalalQrDao = dao;
+                                    showQrPaymentDialog(amount, qr);
+                                }
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        UIHelp.showToast(parent, "Something went wrong, Could not connect to Payhalal Service for requesting QR-Code");
+                    }
+                    loadingDialog.dismiss();
+                }
+                break;
+                case SyncData.HANDLER_CHECK_STATUS_PAYHALAL: {
+                    boolean isValid = false;
+                    if (msg.obj != null) {
+                        String result = msg.obj.toString();
+                        if (result.contains("\"resultCode\":1")) {
+                            PayhalalCheckStatusDao dao = new Gson().fromJson(result, PayhalalCheckStatusDao.class);
+                            if (dao.getResultData() != null) {
+                                String status = dao.getResultData().getStatus();
+                                if (status.toUpperCase().equals(ParamConst.PAYHALAL_PAYMENT_STATUS_SUCCESS)) {
+                                    isValid = true;
+                                    savePayhalal();
+                                }
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        UIHelp.showToast(parent, "Please scan the qrcode for pay the bill");
+                    }
+                    loadingDialog.dismiss();
+                }
+                break;
+
+            }
+        }
+    };
+
+    @Override
+    public void settlementAdapteronClick(SettlementRestaurant settlementRestaurant) {
+        switch (settlementRestaurant.getMediaId()) {
+            case ParamConst.SETTLEMENT_CUSTOM_PAYMENT:
+            case ParamConst.SETTLEMENT_TYPE_CASH:
+                List<SettlementRestaurant> otherPaymentSettle;
+                pamentMethodlist.clear();
+                otherPaymentSettle = CoreData.getInstance().getSettlementRestaurant();
+                if (otherPaymentSettle != null && !otherPaymentSettle.isEmpty()) {
+                    for (int x = 0; x < otherPaymentSettle.size(); x++) {
+                        if (!TextUtils.isEmpty(otherPaymentSettle.get(x).getOtherPaymentId()) && otherPaymentSettle.get(x).getMediaId() != ParamConst.SETTLEMENT_TYPE_IPAY88) {
+                            String[] strarray = otherPaymentSettle.get(x).getOtherPaymentId().toString().split("[|]");
+                            for (int i = 0; i < strarray.length; i++) {
+                                PaymentMethod pa = new PaymentMethod();
+                                pa = CoreData.getInstance().getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
+                                if (pa == null) {
+                                    return;
+                                } else {
+                                    pamentMethodlist.add(pa);
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
+                mediaDialog.setPaymentClickListener(this);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_VISA: {
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_VISA);
+                break;
+            }
+            case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
+                openMoneyKeyboard(View.GONE,
+                        ParamConst.SETTLEMENT_TYPE_MASTERCARD);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_NETS:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_NETS);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_UNIPAY:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_UNIPAY);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_JCB:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_JCB);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_AMEX:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_AMEX);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_HALAL:
+            case ParamConst.SETTLEMENT_TYPE_PAYHALAL:
+                viewTag = ParamConst.SETTLEMENT_TYPE_PAYHALAL;
+                paymentTypeId = ParamConst.SETTLEMENT_TYPE_PAYHALAL;
+                clickEnterAction();
+                break;
+            case ParamConst.SETTLEMENT_TYPE_IPAY88:
+                ipay88dialog = new Ipay88Dialog(parent, this);
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    //end qrpayment
 }

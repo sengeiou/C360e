@@ -54,6 +54,8 @@ public class HttpAnalysis {
             SessionStatus receiveSessionStatus = gson.fromJson(
                     object.optString("session"), SessionStatus.class);
             Long receiveBusinessDate = object.optLong("businessDate");
+            int trainType = object.optInt("trainType");
+
             // SessionStatus oldSessionStatus = (SessionStatus)
             // Store.getObject(context, Store.SESSION_STATUS);
             // Long oldBusinessDate = (Long) Store.getObject(context,
@@ -150,6 +152,7 @@ public class HttpAnalysis {
             Store.saveObject(context, Store.SESSION_STATUS,
                     receiveSessionStatus);
             Store.putLong(context, Store.BUSINESS_DATE, receiveBusinessDate);
+            Store.putInt(context, Store.TRAIN_TYPE, trainType);
             // }
             // }
             App.instance.addMainPosInfo(mainPosInfo);

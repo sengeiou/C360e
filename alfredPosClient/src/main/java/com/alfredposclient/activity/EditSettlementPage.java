@@ -23,6 +23,7 @@ import com.alfredbase.javabean.NonChargableSettlement;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
@@ -49,6 +50,7 @@ import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
@@ -198,7 +200,7 @@ public class EditSettlementPage extends BaseActivity {
                                     currentOrder,
                                     App.instance.getUser().getFirstName()
                                             + App.instance.getUser().getLastName(),
-                                    table.getName(), 1);
+                                    table.getName(), 1,App.instance.getSystemSettings().getTrainType());
                     ArrayList<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder
                             .getId());
                     ArrayList<PrintOrderItem> printOrderItems = ObjectFactory.getInstance().getItemList(orderDetails);
@@ -299,6 +301,7 @@ public class EditSettlementPage extends BaseActivity {
                             .getInstance().getItemModifierList(OrderSQL.getOrder(orderSplit.getOrderId()), orderSplitDetails);
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit, orderBill);
                     Order temporaryOrder = new Order();
+//                    if(orderSplit.)
                     temporaryOrder.setPersons(orderSplit.getPersons());
                     temporaryOrder.setSubTotal(orderSplit.getSubTotal());
                     temporaryOrder.setDiscountAmount(orderSplit.getDiscountAmount());
@@ -635,21 +638,36 @@ public class EditSettlementPage extends BaseActivity {
                     ArrayList<PrintOrderItem> orderItems = ObjectFactory
                             .getInstance().getItemList(orderSplitDetails);
                     List<Map<String, String>> taxMap = OrderDetailTaxSQL
-                            .getOrderSplitTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), paidOrderSplit);
+                            .getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), currentOrder);
 
                     ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                             .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
                     Order temporaryOrder = new Order();
                     temporaryOrder.setPersons(paidOrderSplit.getPersons());
                     temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
-                    temporaryOrder.setDiscountAmount(paidOrderSplit.getDiscountAmount());
-                    temporaryOrder.setTotal(paidOrderSplit.getTotal());
+                    temporaryOrder.setDiscountAmount(currentOrder.getDiscountAmount());
+                    temporaryOrder.setTotal(currentOrder.getTotal());
                     temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
+                    /*
+                    ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
+                            .getInstance().getItemModifierList(currentOrder, orderSplitDetails);
+                    Order temporaryOrder = new Order();
+                    temporaryOrder.setPersons(paidOrderSplit.getPersons());
+                    temporaryOrder.setSubTotal(paidOrderSplit.getSubTotal());
+                    temporaryOrder.setDiscountAmount(currentOrder.getDiscountAmount());
+                    temporaryOrder.setTotal(currentOrder.getTotal());
+                    temporaryOrder.setTaxAmount(paidOrderSplit.getTaxAmount());
+                    temporaryOrder.setOrderNo(currentOrder.getOrderNo());
+                    temporaryOrder.setGrandTotal(paidOrderSplit.getTotal());
+                     */
                     if (orderItems.size() > 0 && printer != null) {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(paidOrderSplit, orderBill);
+                        List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,null);
                     }
                     // remove get bill notification
                     /**

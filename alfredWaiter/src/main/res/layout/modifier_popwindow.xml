@@ -29,7 +29,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="Description"
+                android:text="@string/description"
                 android:textSize="18sp" />
 
             <Button
@@ -41,7 +41,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="Save"
+                android:text="@string/save"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Please Select Modifiers"
+                    android:text="@string/please_select_modifiers"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 

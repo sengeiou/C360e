@@ -1,19 +1,13 @@
 package com.alfred.callnum.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfred.callnum.R;
 import com.alfred.callnum.activity.MainActivity;
+import com.alfredbase.utils.EditTextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,19 +94,20 @@ public class MycallAdapter extends RvAdapter<CallBean> {
 
             switch (itemViewType) {
                 case 0:
-                    tvName.setText(callBean.getCallNumber());
-                  ((MainActivity)mContext).adAnimation(tvName);
+                    tvName.setText(EditTextUtil.formatLocale(callBean.getCallNumber()));
+                    ((MainActivity) mContext).adAnimation(tvName);
 
                     break;
                 case 1:
                     //   tvCity.setText(sortBean.getName());
-                    tvSmallName.setText(callBean.getCallNumber());
+                    tvSmallName.setText(EditTextUtil.formatLocale(callBean.getCallNumber()));
                     break;
             }
         }
 
 
     }
+
 
 //    public void textAnimation(TextView textScore) {
 //        textScore.setVisibility(View.VISIBLE);

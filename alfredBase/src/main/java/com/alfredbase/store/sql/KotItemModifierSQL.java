@@ -200,6 +200,21 @@ public class KotItemModifierSQL {
         }
     }
 
+    public static void deleteAllKotItemModifier(Integer revenueId) {
+
+        String sql = "delete from " + TableNames.KotItemModifier;
+        if (revenueId != null) {
+            sql = "delete from " + TableNames.KotItemModifier + " where kotItemDetailId in (select kotItemDetailId from " + TableNames.KotItemDetail + " where revenueId = " + revenueId + ")";
+        }
+
+        try {
+            SQLExe.getDB().execSQL(sql,
+                    new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void deleteKotItemModifierByOrderModifierId(int orderModifierId) {
 
     }

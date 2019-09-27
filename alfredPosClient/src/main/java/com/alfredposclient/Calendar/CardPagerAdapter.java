@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import java.util.Calendar;
+import java.util.Locale;
 
 public class CardPagerAdapter extends PagerAdapter {
 	
@@ -19,7 +20,7 @@ public class CardPagerAdapter extends PagerAdapter {
 
 	@Override
 	public Object instantiateItem(View collection, final int position) {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(Locale.US);
 		cal.add(Calendar.MONTH, position);
 		CalendarCard card = new CalendarCard(mContext);
 		card.setDateDisplay(cal);

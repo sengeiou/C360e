@@ -1,5 +1,6 @@
 package com.alfredbase;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -17,12 +18,15 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
+import android.util.Log;
 
-import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.StoreValueSQL;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.RxBus;
+import com.floatwindow.float_lib.FloatActionController;
+import com.google.gson.Gson;
 import com.moonearly.utils.service.TcpUdpFactory;
 import com.moonearly.utils.service.UdpServiceCallBack;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -31,6 +35,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.umeng.analytics.MobclickAgent;
+
+import org.apache.commons.codec.language.bm.Lang;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,7 +48,10 @@ public class BaseApplication extends Application {
 
     public static BaseApplication instance;
     public static List<BaseActivity> activitys;
-    public static final int DATABASE_VERSION = 30;
+    public static final int DATABASE_VERSION = 32;
+
+
+
     /**
      * 注意
      * 当 isDebug == false， isOpenLog == false 为正式服务器，地区服务器通过地区代码表示 SINGAPORE亚马逊 CHINA阿里
@@ -72,6 +81,7 @@ public class BaseApplication extends Application {
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     public static final int REQUEST_ENABLE_BT = 1;  //请求的code
+
     /**
      * 国家电话代码
      * 用于区别不同国家的代码逻辑
@@ -117,6 +127,12 @@ public class BaseApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LanguageManager.setLocale(this);
     }
 
     @Override
@@ -491,14 +507,16 @@ public class BaseApplication extends Application {
 
     public void finishAllActivity() {
         while (true) {
-            BaseActivity oldActivity = activitys.get(0);
+            BaseActivity oldActivity = getTopActivity();
             if (oldActivity == null) {
                 break;
             }
+            oldActivity.setResult(Activity.RESULT_CANCELED);
             oldActivity.finish();
             activitys.remove(oldActivity);
-            android.os.Process.killProcess(android.os.Process.myPid());
         }
+        android.os.Process.killProcess(android.os.Process.myPid());
+        FloatActionController.getInstance().stopMonkServer(this);
     }
 
     /**
@@ -525,4 +543,11 @@ public class BaseApplication extends Application {
             this.time = time;
         }
     }
+
+    public static final int HANDLER_REFRESH_LANGUAGE = 772;
+    public static final int HANDLER_GET_OTHER_RVC = 773;
+    public static final int HANDLER_GET_OTHER_TABLE = 776;
+    public static final int HANDLER_TRANSFER_TABLE_TO_OTHER_RVC = 774;
+    public static final int HANDLER_TRANSFER_ITEM_TO_OTHER_RVC = 775;
+
 }

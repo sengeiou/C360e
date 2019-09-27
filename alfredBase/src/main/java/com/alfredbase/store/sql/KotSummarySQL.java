@@ -3,6 +3,7 @@ package com.alfredbase.store.sql;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
@@ -936,6 +937,23 @@ public class KotSummarySQL {
 
     public static void deleteAllKotSummary() {
         String sql = "delete from " + TableNames.KotSummary;
+        String sssql = "select * from sqlite_sequence";
+        String up = "update sqlite_sequence set seq=0 where name='" + TableNames.KotSummary + "'";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{});
+            SQLExe.getDB().rawQuery(sssql, new String[]{});
+            SQLExe.getDB().execSQL(up, new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteAllKotSummary(Integer revenueCenterId) {
+        String deleteByRevenue = "";
+        if (revenueCenterId != null) {
+            deleteByRevenue = " where revenueCenterId = " + revenueCenterId;
+        }
+        String sql = "delete from " + TableNames.KotSummary + deleteByRevenue;
         String sssql = "select * from sqlite_sequence";
         String up = "update sqlite_sequence set seq=0 where name='" + TableNames.KotSummary + "'";
         try {

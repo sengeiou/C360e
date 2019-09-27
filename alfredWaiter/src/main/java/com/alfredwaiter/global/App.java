@@ -119,6 +119,7 @@ public class App extends BaseApplication {
 
     private String currencySymbol = "$";
     public static boolean isleftMoved;
+    private String formatType;
 
     private LocalRestaurantConfig localRestaurantConfig;
     private IntentFilter intentFilter;
@@ -217,7 +218,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BugseeHelper.init(this, "36e98eb2-f473-4c02-a9e8-518a77a7e27c");
+        BugseeHelper.init(this, "5cc128ed-939d-428a-9060-2813a324b2f2");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         update15to16();
         //HTTPServer.start();
@@ -257,7 +258,7 @@ public class App extends BaseApplication {
                     return;
                 }
                 if (!object.equals(CommonUtil.getLocalIpAddress())) {
-                    DialogFactory.showOneButtonCompelDialog(getTopActivity(), "Warning", "Your IP has changed.\nPlease ReLogin", new View.OnClickListener() {
+                    DialogFactory.showOneButtonCompelDialog(getTopActivity(), getString(R.string.warning), getString(R.string.ip_changed_relogin), new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             SyncCentre.getInstance().cancelAllRequests();
@@ -504,9 +505,13 @@ public class App extends BaseApplication {
         return currencySymbol;
     }
 
-    public void setCurrencySymbol(String currencySymbol, boolean isDouble) {
-        this.currencySymbol = currencySymbol;
-        BH.initFormart(isDouble);
+	public void setCurrencySymbol(String currencySymbol, boolean isDouble) {
+		this.currencySymbol = currencySymbol;
+		//BH.initFormart(isDouble);
+	}
+
+    public String getFormatType() {
+        return formatType;
     }
 
     public void setNewOrderDetail(List<OrderDetail> orderDetails) {
@@ -592,7 +597,7 @@ public class App extends BaseApplication {
                         .toString();
             }
             if (order.getPromotion() != null) {
-                total = BH.add(BH.formatMoney(total),
+                total = BH.add(BH.formatMoneyBigDecimal(total),
                         BH.getBD(order.getPromotion()), true)
                         .toString();
             }
@@ -608,31 +613,6 @@ public class App extends BaseApplication {
             String payment = gson.toJson(printReceiptInfos);
             String roundStr = gson.toJson(roundingMap);
             String apporders = "";
-            // gson.toJson(roundingMap);
-//            if (isRevenueKiosk()) {
-//                if (countryCode == ParamConst.CHINA)
-//                    mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
-//                            details, mods, tax, payment,
-//                            this.systemSettings.isDoubleBillPrint(),
-//                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-//                            getPrintOrderNo(order.getId().intValue()), getLocalRestaurantConfig().getCurrencySymbol(),
-//                            true, BH.IsDouble());
-//                else
-//                    mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
-//                            details, mods, tax, payment,
-//                            this.systemSettings.isDoubleBillPrint(),
-//                            this.systemSettings.isDoubleReceiptPrint(), roundStr,
-//                            null, getLocalRestaurantConfig().getCurrencySymbol(),
-//                            openDrawer, BH.IsDouble());
-//
-//            } else {
-//                mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
-//                        mods, tax, payment,
-//                        this.systemSettings.isDoubleBillPrint(),
-//                        this.systemSettings.isDoubleReceiptPrint(),
-//                        roundStr,
-//                        getLocalRestaurantConfig().getCurrencySymbol(),
-//                        openDrawer, BH.IsDouble(), "", apporders);
 
             mRemoteService.printBill(prtStr, prtTitle, orderStr, details,
                     mods, tax, payment,
@@ -681,7 +661,7 @@ public class App extends BaseApplication {
         String kotsumStr = gson.toJson(kotsummary);
 
         try {
-            mRemoteService.printKOT(prtStr, kotsumStr, details, mods, true, false, 2, false);
+            mRemoteService.printKOT(prtStr, kotsumStr, details, mods, true, false, 2, false, 0);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -844,4 +824,8 @@ public class App extends BaseApplication {
         return copyIsFinish;
     }
 
+    public void setFormatType(String formatType) {
+        this.formatType = formatType;
+        BH.initFormart(formatType, getCurrencySymbol());
+    }
 }

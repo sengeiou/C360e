@@ -125,10 +125,14 @@ public class Order implements Serializable {
     private String numTag = "";
 
     private int subPosBeanId = 0;// IF it is main Pos， subPosBeanId is  zero
+    private String waiterInformation;
+    private int isWaiterPrint; //0 未打印， 1 已打印
     @Expose(serialize = false)
     private int isSplitByPax;
     private String promotion;
 
+    private String grandTotal; // only used "split by pax"
+    private String  orderRound;
     public Order() {
     }
 
@@ -457,52 +461,88 @@ public class Order implements Serializable {
         this.subPosBeanId = subPosBeanId;
     }
 
-    public String getPromotion() {
-        return promotion;
+	public String getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(String promotion) {
+		this.promotion = promotion;
+	}
+
+	public String getGrandTotal() {
+		return grandTotal;
+	}
+
+	public void setGrandTotal(String grandTotal) {
+		this.grandTotal = grandTotal;
+	}
+
+	public String getOrderRound() {
+		return orderRound;
+	}
+
+	public void setOrderRound(String orderRound) {
+		this.orderRound = orderRound;
+	}
+
+    public String getWaiterInformation() {
+        return waiterInformation;
     }
 
-    public void setPromotion(String promotion) {
-        this.promotion = promotion;
+    public void setWaiterInformation(String waiterInformation) {
+        this.waiterInformation = waiterInformation;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", orderOriginId=" + orderOriginId +
-                ", userId=" + userId +
-                ", persons=" + persons +
-                ", orderStatus=" + orderStatus +
-                ", subTotal='" + subTotal + '\'' +
-                ", taxAmount='" + taxAmount + '\'' +
-                ", discountAmount='" + discountAmount + '\'' +
-                ", discountPrice='" + discountPrice + '\'' +
-                ", discountRate='" + discountRate + '\'' +
-                ", discountType=" + discountType +
-                ", total='" + total + '\'' +
-                ", sessionStatus=" + sessionStatus +
-                ", restId=" + restId +
-                ", revenueId=" + revenueId +
-                ", placeId=" + placeId +
-                ", tableId=" + tableId +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", businessDate=" + businessDate +
-                ", orderNo=" + orderNo +
-                ", inclusiveTaxName='" + inclusiveTaxName + '\'' +
-                ", inclusiveTaxPrice='" + inclusiveTaxPrice + '\'' +
-                ", inclusiveTaxPercentage='" + inclusiveTaxPercentage + '\'' +
-                ", appOrderId=" + appOrderId +
-                ", isTakeAway=" + isTakeAway +
-                ", tableName='" + tableName + '\'' +
-                ", orderRemark='" + orderRemark + '\'' +
-                ", discountCategoryId='" + discountCategoryId + '\'' +
-                ", oldTotal='" + oldTotal + '\'' +
-                ", numTag='" + numTag + '\'' +
-                ", subPosBeanId=" + subPosBeanId +
-                ", isSplitByPax=" + isSplitByPax +
-                ", promotion='" + promotion + '\'' +
-                '}';
+	public int getIsWaiterPrint() {
+		return isWaiterPrint;
+	}
 
-    }
+	public void setIsWaiterPrint(int isWaiterPrint) {
+		this.isWaiterPrint = isWaiterPrint;
+	}
+
+	@Override
+	public String toString() {
+		return "Order{" +
+				"id=" + id +
+				", orderOriginId=" + orderOriginId +
+				", userId=" + userId +
+				", persons=" + persons +
+				", orderStatus=" + orderStatus +
+				", subTotal='" + subTotal + '\'' +
+				", taxAmount='" + taxAmount + '\'' +
+				", discountAmount='" + discountAmount + '\'' +
+				", discountPrice='" + discountPrice + '\'' +
+				", discountRate='" + discountRate + '\'' +
+				", discountType=" + discountType +
+				", total='" + total + '\'' +
+				", sessionStatus=" + sessionStatus +
+				", restId=" + restId +
+				", revenueId=" + revenueId +
+				", placeId=" + placeId +
+				", tableId=" + tableId +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", businessDate=" + businessDate +
+				", orderNo=" + orderNo +
+				", inclusiveTaxName='" + inclusiveTaxName + '\'' +
+				", inclusiveTaxPrice='" + inclusiveTaxPrice + '\'' +
+				", inclusiveTaxPercentage='" + inclusiveTaxPercentage + '\'' +
+				", appOrderId=" + appOrderId +
+				", isTakeAway=" + isTakeAway +
+				", tableName='" + tableName + '\'' +
+				", orderRemark='" + orderRemark + '\'' +
+				", discountCategoryId='" + discountCategoryId + '\'' +
+				", oldTotal='" + oldTotal + '\'' +
+				", numTag='" + numTag + '\'' +
+				", subPosBeanId=" + subPosBeanId +
+				", isSplitByPax=" + isSplitByPax +
+				", promotion='" + promotion + '\'' +
+				", orderRound='" + orderRound + '\'' +
+				", waiterInformation='" + waiterInformation + '\'' +
+				", isWaiterPrint=" + isWaiterPrint +
+				", isSplitByPax=" + isSplitByPax +
+				'}';
+
+}
 }

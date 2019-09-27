@@ -55,11 +55,11 @@ public class OrderReceiptDetails extends BaseActivity {
 	}
 	private void refreshOrderTotal(){
 		((TextView)findViewById(R.id.tv_sub_total)).setText(
-				context.getResources().getString(R.string.sub_total)+ App.instance.getCurrencySymbol() + currentOrder.getSubTotal());
+				context.getResources().getString(R.string.subtotal)+" : "+ App.instance.getCurrencySymbol() + currentOrder.getSubTotal());
 		((TextView)findViewById(R.id.tv_discount)).setText(
 				context.getResources().getString(R.string.discount_)+ App.instance.getCurrencySymbol() + currentOrder.getDiscountAmount());
 		((TextView)findViewById(R.id.tv_taxes)).setText(
-				context.getResources().getString(R.string.taxes)+ currentOrder.getTaxAmount());
+				context.getResources().getString(R.string.taxes)+" : "+ currentOrder.getTaxAmount());
 		((TextView)findViewById(R.id.tv_grand_total)).setText(App.instance.getCurrencySymbol() + currentOrder.getTotal());
 	}
 	
@@ -128,7 +128,7 @@ public class OrderReceiptDetails extends BaseActivity {
 
 			final OrderDetail orderDetail = orderDetails.get(arg0);
 			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-					orderDetail.getItemId());
+					orderDetail.getItemId(),orderDetail.getItemName());
 
 			List<OrderModifier> modifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
 			if (modifiers.size() > 0) {

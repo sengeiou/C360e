@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:text="Reconnect Pos"
+            android:text="@string/reconnect_pos"
             android:visibility="gone" />
 
         <LinearLayout
@@ -31,7 +31,7 @@
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
                 android:lineSpacingExtra="8dp"
-                android:text="Login"
+                android:text="@string/login"
                 android:textColor="@color/white"
                 android:layout_marginBottom="30dp"
                 android:textSize="@dimen/text_size_b" />
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="10dp"
-                    android:text="Incorrect Password!"
+                    android:text="@string/incorrect_pwd"
                     android:textColor="@color/red2"
                     android:textSize="36sp"
                     android:visibility="invisible" />

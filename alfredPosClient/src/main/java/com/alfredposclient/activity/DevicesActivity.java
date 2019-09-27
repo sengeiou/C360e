@@ -24,11 +24,14 @@ import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.model.RVCDevice;
 import com.alfredbase.javabean.model.WaiterDevice;
+import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.utils.BarcodeUtil;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.RxBus;
 import com.alfredbase.view.CustomListView;
 import com.alfredbase.view.HorizontalListView;
 import com.alfredposclient.R;
@@ -40,11 +43,16 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.SelectPrintWindow;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.moonearly.model.UdpMsg;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * 设备页
@@ -63,6 +71,11 @@ public class DevicesActivity extends BaseActivity {
     private TextView devices_ip_tv;
     private TextView devices_revenueCenter_tv;
     //打印机
+
+    private LinearLayout devices_rvc_lyt;
+    private List<String> rvcIds = new ArrayList<String>();
+    private List<PrinterDevice> rvcDevices = new ArrayList<PrinterDevice>();
+
     private LinearLayout devices_printe_lyt;
     //KDS
     private LinearLayout devices_transfer_lyt;
@@ -83,18 +96,23 @@ public class DevicesActivity extends BaseActivity {
     private int selectedViewId;
     private SelectPrintWindow selectPrintWindow;
     private int dex = 0;
-
+    private Observable<UdpMsg> observable2;
 
     Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
+
 
     @Override
     protected void initView() {
         super.initView();
         setContentView(R.layout.devices_layout);
+
         map.clear();
+
+
         initUI();
         initData();
         //  new MyThread().start();
+
 
     }
 
@@ -176,8 +194,6 @@ public class DevicesActivity extends BaseActivity {
 //                    break;
 
                 case ASSIGN_PRINTER_DEVICE: // 绑定打印机
-
-
                     PrinterDevice printerDevice = (PrinterDevice) msg.obj;
                     Printer prt = printerDeptModelList.get(dex);
                     printerDevice.setDevice_id(prt.getId());
@@ -352,6 +368,79 @@ public class DevicesActivity extends BaseActivity {
                 devices_customlistview.setAdapter(adapter);
             }
         }
+
+        if (selectedViewId == R.id.devices_rvc_lyt) {
+            callRvc();
+        }
+
+
+    }
+
+    private void callRvc() {
+        hv_printer_group.setVisibility(View.GONE);
+
+        rvcIds.clear();
+        rvcDevices.clear();
+        LocalDeviceSQL.deleteAllLocalDeviceByDeviceType(ParamConst.DEVICE_TYPE_MAIN_POS);
+        App.instance.removeRVCDevices();
+
+        if (adapter != null) {
+            adapter.setList(rvcDevices, 2);
+        } else {
+            adapter = new DevicesAdapter(DevicesActivity.this, rvcDevices, handler);
+            devices_customlistview.setAdapter(adapter);
+        }
+        observable2 = RxBus.getInstance().register("RECEIVE_IP_ACTION");
+        observable2.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
+            @Override
+            public void call(UdpMsg device) {
+                if (device != null) {
+                    MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
+                    if (!mainPosInfo.getIP().equals(device.getIp())) {
+                        if (!(device.getName().toLowerCase().equals("kds")
+                                || device.getName().toLowerCase().equals("printer")
+                                || device.getName().toLowerCase().equals("waiter"))) {
+
+                            String[] splitIp = device.getIp().split("\\.");
+                            int lastId = 0;
+                            try {
+                                lastId = Integer.parseInt(splitIp[splitIp.length - 1]);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            PrinterDevice printerDevice = new PrinterDevice();
+                            printerDevice.setDevice_id(lastId);
+                            printerDevice.setModel(device.getName());
+                            printerDevice.setName(device.getName());
+                            printerDevice.setIP(device.getIp());
+                            printerDevice.setType("1");
+                            String rvcId = device.getIp() + "" + device.getName();
+                            if (!rvcIds.contains(rvcId)) {
+                                rvcIds.add(rvcId);
+                                rvcDevices.add(printerDevice);
+                                App.instance.addRVCDevice(new RVCDevice(device));
+
+                                LocalDevice localDevice = ObjectFactory
+                                        .getInstance().getLocalDevice(device.getName(),
+                                                null,
+                                                ParamConst.DEVICE_TYPE_MAIN_POS,
+                                                lastId,
+                                                device.getIp(), "", device.getName(), 0);
+                                CoreData.getInstance().addLocalDevice(localDevice);
+
+                            }
+                        }
+                    }
+                }
+                if (adapter != null) {
+                    adapter.setList(rvcDevices, 2);
+                }
+            }
+        });
+
+
+        App.instance.searchRevenueIp();
     }
 
     private void unassignDevice(PrinterDevice device) {
@@ -374,13 +463,18 @@ public class DevicesActivity extends BaseActivity {
     }
 
 
-
     @Override
     public void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
         switch (v.getId()) {
             case R.id.btn_back:
                 DevicesActivity.this.finish();
+                break;
+            case R.id.devices_rvc_lyt:
+                selectedViewId = v.getId();
+                float f0 = devices_rvc_lyt.getY();
+                initAnimation(f0);
+                MViews(R.id.devices_rvc_lyt);
                 break;
             case R.id.devices_printe_lyt:
                 selectedViewId = v.getId();
@@ -407,6 +501,9 @@ public class DevicesActivity extends BaseActivity {
 
     private void MViews(int id) {
         switch (id) {
+            case R.id.devices_rvc_lyt:
+                callRvc();
+                break;
             case R.id.devices_printe_lyt:
                 hv_printer_group.setVisibility(View.VISIBLE);
                 List<PrinterDevice> devices = new ArrayList<PrinterDevice>();
@@ -569,7 +666,7 @@ public class DevicesActivity extends BaseActivity {
         ll_print.setVisibility(View.GONE);
 
         tv_title_name = (TextView) findViewById(R.id.tv_title_name);
-        tv_title_name.setText(getString(R.string.devices_));
+        tv_title_name.setText(getString(R.string.devices));
         hv_printer_group = (HorizontalListView) findViewById(R.id.hv_printer_group);
 
         device_code_img = (ImageView) findViewById(R.id.device_code_img);
@@ -579,15 +676,19 @@ public class DevicesActivity extends BaseActivity {
         devices_revenueCenter_tv = (TextView) findViewById(R.id.devices_revenueCenter_tv);
         if (App.instance.getPosType() == ParamConst.POS_TYPE_MAIN) {
             MainPosInfo mainPosInfo = App.instance.getMainPosInfo();
-            if(mainPosInfo != null) {
+            if (mainPosInfo != null) {
                 devices_revenueCenter_tv.setText(mainPosInfo.getName());
             }
         } else {
             devices_revenueCenter_tv.setText("");
         }
 
+        devices_rvc_lyt = (LinearLayout) findViewById(R.id.devices_rvc_lyt);
+        selectedViewId = R.id.devices_rvc_lyt;
+
         devices_printe_lyt = (LinearLayout) findViewById(R.id.devices_printe_lyt);
-        selectedViewId = R.id.devices_printe_lyt;
+//        selectedViewId = R.id.devices_printe_lyt;
+
         devices_transfer_lyt = (LinearLayout) findViewById(R.id.devices_transfer_lyt);
 
         devices_waiter_lyt = (LinearLayout) findViewById(R.id.devices_waiter_lyt);
@@ -603,6 +704,7 @@ public class DevicesActivity extends BaseActivity {
 
         btn_back.setOnClickListener(this);
         ll_print.setOnClickListener(this);
+        devices_rvc_lyt.setOnClickListener(this);
         devices_printe_lyt.setOnClickListener(this);
         devices_transfer_lyt.setOnClickListener(this);
         devices_waiter_lyt.setOnClickListener(this);
@@ -694,8 +796,11 @@ public class DevicesActivity extends BaseActivity {
         super.onPause();
     }
 
+
     @Override
     protected void onDestroy() {
+        if (observable2 != null)
+            RxBus.getInstance().unregister("RECEIVE_IP_ACTION", observable2);
         App.instance.closeDiscovery();
         super.onDestroy();
     }

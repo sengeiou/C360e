@@ -2,15 +2,25 @@ package com.alfredposclient.http;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotItemDetail;
+import com.alfredbase.javabean.KotItemModifier;
+import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
+import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderBill;
+import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
@@ -21,6 +31,13 @@ import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
+import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.OrderBillSQL;
+import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderModifierSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
@@ -41,6 +58,7 @@ import com.alfredposclient.activity.XZReportHtml;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.BinaryHttpResponseHandler;
@@ -52,6 +70,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,60 +110,6 @@ public class HttpAPI {
      */
     public static final int NETWORK_ORDER_STATUS_UPDATE = 1001;
 
-    public static void requestIpay88Payment(Context context, Map<String, Object> parameters,
-                                            String url, AsyncHttpClient httpClient, final Handler handler) {
-        try {
-            StringEntity entity = HttpAssembling.getIpay88PaymentParam(
-                    (Double) parameters.get("amount"),
-                    (String) parameters.get("backendURL"),
-                    (Integer) parameters.get("barcodeNo"),
-                    (String) parameters.get("currency"),
-                    (String) parameters.get("merchantCode"),
-                    (Integer) parameters.get("paymentId"),
-                    (String) parameters.get("prodDesc"),
-                    (String) parameters.get("refNo"),
-                    (String) parameters.get("remark"),
-                    (String) parameters.get("signature"),
-                    (String) parameters.get("signatureType"),
-                    (String) parameters.get("terminalID"),
-                    (String) parameters.get("userContact"),
-                    (String) parameters.get("userEmail"),
-                    (String) parameters.get("userName"),
-                    (String) parameters.get("lang")
-            );
-            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
-                    new AsyncHttpResponseHandlerEx() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers,
-                                              byte[] responseBody) {
-                            super.onSuccess(statusCode, headers, responseBody);
-                            if (resultCode == ResultCode.SUCCESS) {
-                                HttpAnalysis.requestIpay88Payment(statusCode, headers,
-                                        responseBody);
-                                handler.sendMessage(handler
-                                        .obtainMessage(SyncData.HANDLER_LOGIN));
-                            } else {
-                                handler.sendMessage(handler
-                                        .obtainMessage(
-                                                SyncData.HANDLER_ERROR_INFO,
-                                                resultCode));
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers,
-                                              byte[] responseBody, Throwable error) {
-                            handler.sendMessage(handler.obtainMessage(
-                                    ResultCode.CONNECTION_FAILED, error));
-                            super.onFailure(statusCode, headers, responseBody,
-                                    error);
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void login(Context context, Map<String, Object> parameters,
                              String url, AsyncHttpClient httpClient, final Handler handler) {
         try {
@@ -159,6 +125,8 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                                SharedPreferencesHelper.putInt(App.instance, SharedPreferencesHelper.TRAINING_MODE, 0);
+
                                 HttpAnalysis.login(statusCode, headers,
                                         responseBody);
                                 handler.sendMessage(handler
@@ -1128,7 +1096,6 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             LogUtil.d("mediaSync--", statusCode + "----" + resultCode);
 
-
                             if (resultCode == 1) {
                                 new Thread(new Runnable() {
                                     public void run() {
@@ -1171,6 +1138,81 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
 
                             LogUtil.d("HttpAPI--onFailure", statusCode + "");
+                            if (mode == SyncCentre.MODE_PUSH_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        ResultCode.CONNECTION_FAILED, error));
+                            } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                handler.sendMessage(handler.obtainMessage(
+                                        SyncData.SYNC_DATA_TAG,
+                                        SyncData.SYNC_FAILURE));
+                            }
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            throw new RuntimeException(error);
+                        }
+                    });
+        }
+
+    }
+
+    public static void paymentMethodSync(Context context, String url, AsyncHttpClient httpClient, final Handler handler, final int mode) {
+        // try {
+        Log.e("TAG", "-------------------strat");
+        StringEntity entity = null;
+        try {
+            entity = HttpAssembling.getPaymentMethodParam();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (entity != null) {
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(final int statusCode, final Header[] headers,
+                                              final byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == 1) {
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        Map<String, Integer> map = App.instance
+                                                .getPushMsgMap();
+                                        if (!map.isEmpty()) {
+                                            map.remove(PushMessage.PAYMENT_METHOD);
+                                            Store.saveObject(App.instance,
+                                                    Store.PUSH_MESSAGE, map);
+                                            App.instance.setPushMsgMap(map);
+                                        }
+                                        Log.e("TAG", "-------------------progress");
+                                        HttpAnalysis.getPaymentMethod(statusCode, headers, responseBody);
+
+                                        if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(
+                                                            SyncData.SYNC_DATA_TAG,
+                                                            SyncData.SYNC_SUCCEED));
+
+                                            Log.e("TAG", "-------------------end");
+                                        } else {
+                                            handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                        }
+
+                                    }
+                                }).start();
+                            } else {
+                                if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
                             if (mode == SyncCentre.MODE_PUSH_SYNC) {
                                 handler.sendMessage(handler.obtainMessage(
                                         ResultCode.CONNECTION_FAILED, error));
@@ -2529,4 +2571,619 @@ public class HttpAPI {
 
 //    public static void mediaSync(Context context, String absoluteUrl, SyncHttpClient syncHttpClient, Handler handler) {
 //    }
+
+    public static void setServerLanguage(Context context,
+                                         final Map<String, Object> parameters, final String url,
+                                         AsyncHttpClient httpClient, final Handler handler) {
+
+        parameters.put("appVersion", App.instance.VERSION);
+        final String language = (String) parameters.get("language");
+
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
+                                Message message = new Message();
+                                message.obj = language;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_REFRESH_LANGUAGE;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+                            } else {
+                                String body = new String(responseBody);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            String body = new String(responseBody);
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setClientLanguage(final Context context, String url,
+                                         AsyncHttpClient httpClient, String version, String language) {
+
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("version", version);
+            requestParams.put("language", language);
+            requestParams.put("callType", App.instance.getSystemSettings().getCallStyle());
+
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(requestParams), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            String body = new String(responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+
+                            } else {
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            String body = new String(responseBody);
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+                    });
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void loginQRPayment(final Context context, String url, Integer empId, String password, String restaurantKey,
+                                      AsyncHttpClient httpClient, final Handler handler) {
+        try {
+
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("empId", empId);
+            requestParams.put("password", password);
+            requestParams.put("restaurantKey", restaurantKey);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.saveLoginQRPayment(responseBody);
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_LOGIN_QRPAYMENT, new String(responseBody)));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(
+                                                SyncData.HANDLER_LOGIN_QRPAYMENT,
+                                                null));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler.obtainMessage(
+                                    SyncData.HANDLER_LOGIN_QRPAYMENT,
+                                    null));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //start pay88
+    public static void qrcodePay88(final Context context,
+                                   String url,
+                                   String restaurantKey,
+                                   String userKey,
+                                   Integer paymentTypeId, //alipay, grabpay
+                                   BigDecimal amount,
+                                   String currency,
+                                   String productDesc,
+                                   long billNo,
+                                   String custContact,
+                                   String custEmail,
+                                   String custName,
+                                   AsyncHttpClient httpClient, final Handler handler) {
+        try {
+
+
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("restaurantKey", restaurantKey);
+            requestParams.put("userKey", userKey);
+            requestParams.put("amount", amount);
+
+
+            requestParams.put("paymentId", paymentTypeId);
+            requestParams.put("currency", currency);
+            requestParams.put("productDesc", productDesc);
+            requestParams.put("billNo", billNo);
+            requestParams.put("userContact", custContact);
+            requestParams.put("userEmail", custEmail);
+            requestParams.put("username", custName);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAY88, new String(responseBody)));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAY88, null));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void checkStatusPay88(final Context context,
+                                        String url,
+                                        String restaurantKey,
+                                        String userKey,
+                                        long billNo,
+                                        BigDecimal amount,
+                                        AsyncHttpClient httpClient, final Handler handler) {
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("restaurantKey", restaurantKey);
+            requestParams.put("userKey", userKey);
+            requestParams.put("amount", amount);
+
+            requestParams.put("billNo", billNo);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAY88, new String(responseBody)));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAY88, null));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler
+                                    .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAY88, null));
+                            handler.sendMessage(handler.obtainMessage(
+                                    ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //end pay88
+
+    //start payhalal
+    public static void qrcodePayhalal(final Context context,
+                                      String url,
+                                      String restaurantKey,
+                                      String userKey,
+                                      Integer paymentTypeId,
+                                      BigDecimal amount,
+                                      String currency,
+                                      String productDesc,
+                                      long billNo,
+                                      String custContact,
+                                      String custEmail,
+                                      String custName,
+                                      AsyncHttpClient httpClient, final Handler handler) {
+
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("restaurantKey", restaurantKey);
+            requestParams.put("userKey", userKey);
+            requestParams.put("amount", amount);
+            requestParams.put("paymentId", paymentTypeId);
+            requestParams.put("currency", currency);
+            requestParams.put("productDesc", productDesc);
+            requestParams.put("billNo", billNo);
+            requestParams.put("userContact", custContact);
+            requestParams.put("userEmail", custEmail);
+            requestParams.put("username", custName);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAYHALAL, new String(responseBody)));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAYHALAL, null));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void checkStatusPayhalal(final Context context,
+                                           String url,
+                                           String restaurantKey,
+                                           String userKey,
+                                           BigDecimal amount,
+                                           String currency,
+                                           long billNo,
+                                           String transactionId,
+                                           AsyncHttpClient httpClient, final Handler handler) {
+        try {
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("restaurantKey", restaurantKey);
+            requestParams.put("userKey", userKey);
+            requestParams.put("amount", amount);
+            requestParams.put("currency", currency);
+            requestParams.put("billNo", billNo);
+            requestParams.put("transactionId", transactionId);
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAYHALAL, new String(responseBody)));
+                            } else {
+                                handler.sendMessage(handler
+                                        .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAYHALAL, null));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            handler.sendMessage(handler
+                                    .obtainMessage(SyncData.HANDLER_CHECK_STATUS_PAYHALAL, null));
+                            handler.sendMessage(handler.obtainMessage(
+                                    ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //end payhalal
+
+    //start connection multi rvc
+
+
+    public static void getOtherRVCPlaceTable(Context context,
+                                             final String url,
+                                             AsyncHttpClient httpClient, final Handler handler) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("appVersion", App.instance.VERSION);
+
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
+                                Message message = new Message();
+                                message.obj = body;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_GET_OTHER_RVC;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+                            } else {
+                                Message message = new Message();
+                                message.obj = null;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_GET_OTHER_RVC;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, null));
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            Message message = new Message();
+                            message.obj = null;
+                            message.arg2 = -1;
+                            message.what = App.HANDLER_GET_OTHER_RVC;
+                            handler.sendMessage(message);
+                            handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, null));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void getOtherRVCTable(Context context,
+                                        final String url,
+                                        int placeId,
+                                        AsyncHttpClient httpClient, final Handler handler) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("appVersion", App.instance.VERSION);
+        parameters.put("placeId", placeId);
+
+
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+
+                            Message message = new Message();
+                            try {
+                                JSONObject object = new JSONObject(new String(responseBody));
+                                if (resultCode == ResultCode.SUCCESS) {
+                                    message.obj = object.get("data");
+                                } else {
+                                    message.obj = null;
+                                }
+                            } catch (JSONException e) {
+                                message.obj = null;
+                                e.printStackTrace();
+                            }
+                            message.arg2 = -1;
+                            message.what = App.HANDLER_GET_OTHER_TABLE;
+
+                            handler.sendMessage(message);
+                            handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            Message message = new Message();
+                            message.obj = null;
+                            message.arg2 = -1;
+                            message.what = App.HANDLER_GET_OTHER_TABLE;
+                            handler.sendMessage(message);
+                            handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, null));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+
+
+                        @Override
+                        public boolean getUseSynchronousMode() {
+                            return false;
+                        }
+
+                    });
+        } catch (Exception e) {
+            Message message = new Message();
+            message.obj = null;
+            message.arg2 = -1;
+            message.what = App.HANDLER_GET_OTHER_TABLE;
+            handler.sendMessage(message);
+            handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, null));
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendOrderToOtherRVC(Context context,
+                                           final String url, int transferType, Order currentOrder, int tableId,
+                                           AsyncHttpClient httpClient, final Handler handler) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("appVersion", App.instance.VERSION);
+        parameters.put("order", new Gson().toJson(currentOrder));
+        parameters.put("transferType", transferType);
+
+        List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
+        parameters.put("orderDetail", new Gson().toJson(orderDetails));
+
+        KotSummary kot = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
+        parameters.put("kotSummary", new Gson().toJson(kot));
+
+        ArrayList<KotItemDetail> kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderId(currentOrder.getId());
+        parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+
+        ArrayList<ArrayList<KotItemModifier>> kotItemModifiers = new ArrayList<>();
+        for (KotItemDetail itemDetail : kotItemDetail) {
+            ArrayList<KotItemModifier> kotItemModifier = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(itemDetail.getId());
+            kotItemModifiers.add(kotItemModifier);
+
+        }
+        parameters.put("kotItemModifier", new Gson().toJson(kotItemModifiers));
+
+
+        List<OrderBill> orderbill = OrderBillSQL.getAllOrderBillByOrder(currentOrder);
+        parameters.put("orderBill", new Gson().toJson(orderbill));
+
+        ArrayList<OrderModifier> orderModifier = OrderModifierSQL.getAllOrderModifier(currentOrder);
+        parameters.put("orderModifier", new Gson().toJson(orderModifier));
+
+        List<OrderSplit> orderSplit = OrderSplitSQL.getAllOrderSplits(currentOrder);
+        parameters.put("orderSplit", new Gson().toJson(orderSplit));
+
+        parameters.put("tableId", tableId); //selected tableId
+
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+//                            Log.wtf("Test_sendOrderToOtherRVC", "result_success_" + resultCode);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
+                                Message message = new Message();
+                                message.obj = body;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+                            } else {
+                                String body = new String(responseBody);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
+                            }
+
+                        }
+
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+//                            Log.wtf("Test_sendOrderToOtherRVC", "result_failed_" + new String(responseBody));
+                            error.printStackTrace();
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+
+                        @Override
+                        public boolean getUseSynchronousMode() {
+                            return false;
+                        }
+                    });
+        } catch (Exception e) {
+//            Log.wtf("Test_sendOrderExcep",""+e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void transferItemToOtherRVC(Context context, String url, Order oldOrder, OrderDetail transfItemOrderDetail, int tableId, int pack, AsyncHttpClient httpClient, final Handler handler) {
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("appVersion", App.instance.VERSION);
+        parameters.put("order", new Gson().toJson(oldOrder));
+        parameters.put("orderDetail", new Gson().toJson(transfItemOrderDetail));
+        parameters.put("tableId", tableId); //selected tableId
+        parameters.put("pack", pack); //selected tableId
+
+
+        Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            Log.wtf("Test_transfer_item_to_other", "result_success_" + resultCode);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                String body = new String(responseBody);
+                                Message message = new Message();
+                                message.obj = body;
+                                message.arg2 = -1;
+                                message.what = App.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC;
+                                handler.sendMessage(message);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+                            } else {
+                                String body = new String(responseBody);
+                                handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            Log.wtf("Test_transfer_item_to_other", "result_failed_" + new String(responseBody));
+                            error.printStackTrace();
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+
+                        }
+
+                        @Override
+                        public boolean getUseSynchronousMode() {
+                            return false;
+                        }
+                    });
+        } catch (Exception e) {
+            Log.wtf("Test_sendOrderExcep", "" + e.getMessage());
+
+            e.printStackTrace();
+        }
+    }
+
+
+    //end connection multi rvc
 }

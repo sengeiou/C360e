@@ -36,7 +36,9 @@ import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.KotNotification;
 import com.alfredbase.javabean.model.PrinterDevice;
+import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
@@ -121,6 +123,7 @@ public class CoreData {
     private List<SettlementRestaurant> settlementRestaurant;
 
     private PrinterDevice device;
+    private int trainType;
 
     public RoundRule getRoundRule() {
         return roundRule;
@@ -172,6 +175,28 @@ public class CoreData {
         settlementRestaurant = SettlementRestaurantSQL.getAllSettlementRestaurant();
         pamentMethodList = PaymentMethodSQL.getAllPaymentMethod();
 
+        trainType = SharedPreferencesHelper.getInt(context, SharedPreferencesHelper.TRAINING_MODE);
+        SessionStatus sessionStatus = Store.getObject(
+                context, Store.SESSION_STATUS, SessionStatus.class);
+
+
+//
+        //train= SharedPreferencesHelper.pu(this,SharedPreferencesHelper.TRAINING_MODE);
+        if (trainType == 1) {
+
+
+            int first = Store.getInt(context, Store.TRAIN_FIRST, 0);
+            if (first == 0) {
+
+                GeneralSQL.deleteAllDataInSubPos();
+                Store.remove(context, Store.SESSION_STATUS);
+                Store.putInt(context, Store.TRAIN_FIRST, 1);
+            }
+
+        } else {
+
+        }
+
     }
 
     public PrinterDevice getDevice() {
@@ -214,7 +239,6 @@ public class CoreData {
     }
 
     private Printer getPrinterById(int printerid) {
-        LogUtil.log("Printer -> " + new Gson().toJson(getPrinters()));
         for (Printer printer : getPrinters()) {
             if (printerid == printer.getId().intValue()) {
                 return printer;
@@ -390,6 +414,34 @@ public class CoreData {
             if (itemDetail.getId().intValue() == id.intValue()) {
                 return itemDetail;
             }
+        }
+        return null;
+    }
+
+    public ItemDetail getItemDetailById(Integer id, String name) {
+        if (id == null) {
+            return null;
+        }
+
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (itemDetail.getId().intValue() == id.intValue()) {
+                if (!TextUtils.isEmpty(name)) {
+                    if (itemDetail.getItemName().equals(name)) {
+                        return itemDetail;
+                    }
+                } else {
+                    return itemDetail;
+                }
+
+            }
+
+            if (!TextUtils.isEmpty(name)) {
+                if (itemDetail.getItemName().equals(name)) {
+                    return itemDetail;
+                }
+            }
+
+
         }
         return null;
     }
@@ -677,6 +729,20 @@ public class CoreData {
         }
         for (User user : users) {
             if (user.getEmpId().intValue() == empId) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public User getUserByPassword(int pwd) {
+        if (users == null || users.size() == 0)
+            users = UserSQL.getAllUser();
+        if (users == null) {
+            return null;
+        }
+        for (User user : users) {
+            if (user.getPassword().equals(String.valueOf(pwd))) {
                 return user;
             }
         }
@@ -991,7 +1057,6 @@ public class CoreData {
         this.loginResult = loginResult;
     }
 
-
     public List<PaymentMethod> getPamentMethodList() {
         return pamentMethodList;
     }
@@ -1127,6 +1192,13 @@ public class CoreData {
 
     public void setHappyHours(List<HappyHour> happyHours) {
         this.happyHours = happyHours;
+    }
+
+    public String getUserKey() {
+        for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
+            return entry.getValue();
+        }
+        return "";
     }
 
     public String getUserKey(int revId) {

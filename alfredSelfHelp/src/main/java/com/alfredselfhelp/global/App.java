@@ -27,6 +27,7 @@ import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PrinterTitle;
@@ -45,6 +46,7 @@ import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.PaymentMethodSQL;
+import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.RxBus;
@@ -112,7 +114,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BugseeHelper.init(this, "ff9e1000-0bf4-4ecd-9c3b-2c8e5485ebdf");
+        BugseeHelper.init(this, "f252f398-4474-43c3-b287-38e6ce235894");
         VERSION = getAppVersionName();
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         TvPref.init();
@@ -368,6 +370,7 @@ public class App extends BaseApplication {
                 case ParamConst.CURRENCY_TYPE:
                     this.localRestaurantConfig.setCurrencySymbol(restaurantConfig);
                     this.localRestaurantConfig.setCurrencySymbolType(restaurantConfig);
+                    this.localRestaurantConfig.setFormatType(restaurantConfig);
                     break;
                 case ParamConst.DEF_DISCOUNT_TYPE:
                     this.localRestaurantConfig.setDiscountOption(restaurantConfig);
@@ -456,7 +459,7 @@ public class App extends BaseApplication {
 
     public void setCurrencySymbol(String currencySymbol, boolean isDouble) {
         this.currencySymbol = currencySymbol;
-        BH.initFormart(isDouble);
+       // BH.initFormart(isDouble);
     }
 
     public LocalRestaurantConfig getLocalRestaurantConfig() {
@@ -661,11 +664,12 @@ public class App extends BaseApplication {
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
             }
-
-            if(order.getPromotion()!=null){
-                total = BH.add(BH.getBD(order.getTotal()),
-                        BH.getBD(order.getPromotion()), true);
-            }
+//
+//            if(order.getPromotion()!=null){
+//                total = BH.add(BH.getBD(order.getTotal()),
+//                        BH.getBD(order.getPromotion()), true);
+//            }
+            List<OrderPromotion>  promotionData= PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
 
             roundingMap.put("Total", total.toString());
             roundingMap.put("Rounding", rounding);
@@ -678,10 +682,11 @@ public class App extends BaseApplication {
             String tax = gson.toJson(taxes);
             String payment = gson.toJson(printReceiptInfos);
             String roundStr = gson.toJson(roundingMap);
+            String proStr=gson.toJson(promotionData);
             mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                     details, mods, tax, payment, false, false, roundStr,
                     null, getLocalRestaurantConfig().getCurrencySymbol(),
-                    openDrawer, BH.IsDouble());
+                    openDrawer, BH.IsDouble(),proStr,App.instance.getLocalRestaurantConfig().getFormatType());
 
         } catch (RemoteException e) {
             e.printStackTrace();

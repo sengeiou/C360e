@@ -21,7 +21,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
-public class PamentMethodAdapter extends BaseAdapter{
+public class PamentMethodAdapter extends BaseAdapter {
 
     private Context context = null;
     private LayoutInflater inflater = null;
@@ -33,6 +33,7 @@ public class PamentMethodAdapter extends BaseAdapter{
     private DisplayImageOptions options;
 
     TextTypeFace textTypeFace = TextTypeFace.getInstance();
+
     public PamentMethodAdapter(Context context, List<PaymentMethod> list) {
 
         this.context = context;
@@ -47,6 +48,7 @@ public class PamentMethodAdapter extends BaseAdapter{
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
     }
+
     public int getCount() {
         return this.list.size();
     }
@@ -65,16 +67,16 @@ public class PamentMethodAdapter extends BaseAdapter{
         if (holder == null) {
             holder = new PamentMethodAdapter.ViewHolder();
             if (view == null) {
-                view = this.inflater.inflate(R.layout.item_pament_method, (ViewGroup)null);
+                view = this.inflater.inflate(R.layout.item_pament_method, (ViewGroup) null);
             }
-         //   holder.img = (ImageView)view.findViewById(R.id.img_pament_meth);
-            holder.tv = (TextView)view.findViewById(R.id.tv_payment_meth);
-            holder.tax = (TextView)view.findViewById(R.id.tv_payment_tax);
-            holder.admin = (TextView)view.findViewById(R.id.tv_payment_admin);
-            holder.pay = (TextView)view.findViewById(R.id.tv_payment_pay);
-            holder.symbol = (TextView)view.findViewById(R.id.tv_payment_symbol);
-            holder.money = (TextView)view.findViewById(R.id.tv_payment_money);
-            holder.img=(ImageView)view.findViewById(R.id.img_payment_left);
+            //   holder.img = (ImageView)view.findViewById(R.id.img_pament_meth);
+            holder.tv = (TextView) view.findViewById(R.id.tv_payment_meth);
+            holder.tax = (TextView) view.findViewById(R.id.tv_payment_tax);
+            holder.admin = (TextView) view.findViewById(R.id.tv_payment_admin);
+            holder.pay = (TextView) view.findViewById(R.id.tv_payment_pay);
+            holder.symbol = (TextView) view.findViewById(R.id.tv_payment_symbol);
+            holder.money = (TextView) view.findViewById(R.id.tv_payment_money);
+            holder.img = (ImageView) view.findViewById(R.id.img_payment_left);
 
 //            textTypeFace.setTrajanProBlod((TextView) window
 //                    .findViewById(R.id.lv_media));
@@ -83,45 +85,42 @@ public class PamentMethodAdapter extends BaseAdapter{
             initTextTypeFace(view);
             view.setTag(holder);
         } else {
-            holder = (PamentMethodAdapter.ViewHolder)view.getTag();
+            holder = (PamentMethodAdapter.ViewHolder) view.getTag();
         }
 
-            PaymentMethod p = list.get(position);
+        PaymentMethod p = list.get(position);
 
-            ImageLoader.getInstance().displayImage(p.getLogoSm(), holder.img, options);
-            holder.tv.setText(p.getNameOt().toString());
+        ImageLoader.getInstance().displayImage(p.getLogoSm(), holder.img, options);
+        holder.tv.setText("" + p.getNameOt());
         holder.symbol.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol());
-        if(p.getIsTax()==0)
-        {
-            holder.tax.setText("No Tax,");
-        }else
-            {
-                holder.tax.setText("Tax, ");
-        }
-
-        if ( p.getIsAdmin()==0) {
-            holder.admin.setText("Cashier, ");
+        if (p.getIsTax() == 0) {
+            holder.tax.setText(App.instance.getString(R.string.without_tax) + ", ");
         } else {
-            holder.admin.setText("Manager, ");
+            holder.tax.setText(App.instance.getString(R.string.taxes) + ", ");
         }
 
-        if ( p.getIsPart()==1) {
-            holder.pay.setText("Part-pay");
+        if (p.getIsAdmin() == 0) {
+            holder.admin.setText(context.getString(R.string.cashier) + ", ");
+        } else {
+            holder.admin.setText(context.getString(R.string.manager) + ", ");
+        }
+
+        if (p.getIsPart() == 1) {
+            holder.pay.setText(context.getString(R.string.split_pay));
 
 
-            if(p.getPartAcount()>0) {
+            if (p.getPartAcount() > 0) {
                 holder.symbol.setVisibility(View.VISIBLE);
                 holder.money.setVisibility(View.VISIBLE);
-                holder.money.setText(p.getPartAcount() + "");
-            }else {
+                holder.money.setText(BH.formatMoney(String.valueOf(p.getPartAcount())).toString());
+            } else {
                 holder.symbol.setVisibility(View.GONE);
                 holder.money.setVisibility(View.GONE);
             }
         } else {
-            holder.pay.setText("All-pay");
+            holder.pay.setText(context.getString(R.string.all_pay));
             holder.symbol.setVisibility(View.GONE);
             holder.money.setVisibility(View.GONE);
-
 
 
         }
@@ -129,8 +128,8 @@ public class PamentMethodAdapter extends BaseAdapter{
     }
 
     public class ViewHolder {
-        public ImageView img ;
-        public TextView tv ,tax,pay,admin,symbol,money;
+        public ImageView img;
+        public TextView tv, tax, pay, admin, symbol, money;
 
     }
 

@@ -32,12 +32,10 @@ import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -616,9 +614,11 @@ public class KotJobManager {
                             .getPrintersInGroup(printerGroupId);
                 }
 
-                Printer printerBalancer = App.instance.getPrinterBalancer();
-                if (printerBalancer != null)
-                    printers.add(printerBalancer);
+                if (isBalancerExists()) {
+                    Printer printerBalancer = App.instance.getPrinterBalancer();
+                    if (printerBalancer != null)
+                        printers.add(printerBalancer);
+                }
             } else {
                 if (printerGroupAsChildes.size() > 0) {//printer group
                     for (PrinterGroup pg : printerGroupAsChildes) {
@@ -877,9 +877,11 @@ public class KotJobManager {
                 }
 
                 //also delete on balancer
-                Printer printerBalancer = App.instance.getPrinterBalancer();
-                if (printerBalancer != null)
-                    printers.add(printerBalancer);
+                if (isBalancerExists()) {
+                    Printer printerBalancer = App.instance.getPrinterBalancer();
+                    if (printerBalancer != null)
+                        printers.add(printerBalancer);
+                }
             }
 
             boolean isCheckBalancer = false;
@@ -980,6 +982,53 @@ public class KotJobManager {
 
                 //send it just once for balancer
                 if (isCheckBalancer) break;
+            }
+
+        }
+    }
+
+    public void refreshAllKDS(ArrayList<KotItemDetail> kot, String method) {
+        LogUtil.d("开始时间", "时间");
+        ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
+        Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<Integer, ArrayList<KotItemDetail>>();
+        BaseActivity context = App.getTopActivity();
+        for (KotItemDetail items : kot) {
+            Integer pgid = items.getPrinterGroupId();
+            if (pgid.intValue() == 0) {
+                context.kotPrintStatus(MainPage.KOT_ITEM_PRINT_NULL,
+                        items.getItemName());
+                return;
+            }
+            // Get all Group ids that KOT blongs to
+            if (!printerGrougIds.contains(pgid))
+                printerGrougIds.add(pgid);
+
+            // kot
+            if (kots.containsKey(pgid)) {
+                ArrayList<KotItemDetail> tmp = kots.get(pgid);
+                tmp.add(items);
+            } else {
+                ArrayList<KotItemDetail> tmp = new ArrayList<KotItemDetail>();
+                tmp.add(items);
+                kots.put(pgid, tmp);
+            }
+
+        }
+
+//        List<Integer> doStockMap = new ArrayList<>();
+        // add job to send it to KDS
+
+        for (Integer prgid : printerGrougIds) {
+            ArrayList<Printer> printers = CoreData.getInstance()
+                    .getPrintersInGroup(prgid.intValue());
+            for (Printer prnt : printers) {
+                // KDS device
+                KDSDevice kds1 = App.instance.getKDSDevice(prnt.getId());
+                if (kds1 != null) {
+                    KotJob kotjob = new KotJob(kds1, kots.get(prgid), method);
+                    kotJobManager.addJob(kotjob);
+                }
+
             }
 
         }
@@ -1499,7 +1548,7 @@ public class KotJobManager {
                     if (prntd != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
-                        printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
+                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from) + " " + fromTableName);
                         printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 
@@ -1894,7 +1943,7 @@ public class KotJobManager {
                     if (prntd != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
-                        printKotSummary.setDescription(String.format(context.getResources().getString(R.string.table_transfer_from), fromTableName));
+                        printKotSummary.setDescription(context.getResources().getString(R.string.table_transfer_from) + " " + fromTableName);
                         printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 

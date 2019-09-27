@@ -6,16 +6,16 @@
 
     tools:context=".fragment.TwoFragment">
     <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
     <!--<ImageView-->
-        <!--android:id="@+id/img_call_bg"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/call_num_back_icon"-->
-        <!--android:layout_centerInParent="true"-->
+    <!--android:id="@+id/img_call_bg"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:src="@drawable/call_num_back_icon"-->
+    <!--android:layout_centerInParent="true"-->
 
-        <!--/>-->
+    <!--/>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,13 +76,14 @@
                     android:layout_weight="2"
 
                     android:orientation="horizontal">
+
                     <TextView
-                        android:layout_width="1dp"
                         android:id="@+id/tv_lines"
+                        android:layout_width="1dp"
                         android:layout_height="match_parent"
                         android:background="@color/deep_gray"
-                        android:visibility="gone"
-                        />
+                        android:visibility="gone" />
+
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/review_left"
                         android:layout_width="0dp"
@@ -90,13 +91,14 @@
                         android:layout_weight="1"
 
                         ></android.support.v7.widget.RecyclerView>
-<TextView
-    android:layout_width="1dp"
-    android:id="@+id/tv_line"
-    android:layout_height="match_parent"
-    android:background="@color/deep_gray"
-    android:visibility="gone"
-    />
+
+                    <TextView
+                        android:id="@+id/tv_line"
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/deep_gray"
+                        android:visibility="gone" />
+
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/review_right"
                         android:layout_width="0dp"
@@ -120,25 +122,52 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:text="选择视频" />
+                    android:text="@string/select_video" />
 
                 <Button
                     android:id="@+id/btn_picture"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:text="选择图片" />
+                    android:text="@string/select_image" />
 
                 <Button
                     android:id="@+id/btn_empty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:text="清空" />
+                    android:text="@string/empty" />
+
+                <LinearLayout
+                    android:id="@+id/ll_language_setting"
+                    style="@android:style/Widget.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:padding="10dp"
+                        android:text="@string/language"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_m" />
+
+                    <ImageView
+                        android:id="@+id/iv_language"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginRight="8dp" />
+
+                </LinearLayout>
+
+
             </LinearLayout>
 
         </RelativeLayout>
 
     </LinearLayout>
-   <!--// </RelativeLayout>-->
+    <!--// </RelativeLayout>-->
 </FrameLayout>

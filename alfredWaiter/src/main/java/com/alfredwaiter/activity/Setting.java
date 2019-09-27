@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.utils.DialogFactory;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
@@ -44,7 +47,7 @@ import com.alfredwaiter.popupwindow.OpenItemWindow;
 import com.alfredwaiter.view.MyToggleButton;
 import com.alfredwaiter.view.WaiterReloginDialog;
 
-public class Setting extends BaseActivity implements MyToggleButton.OnToggleStateChangeListeren {
+public class Setting extends BaseActivity implements MyToggleButton.OnToggleStateChangeListeren, LanguageManager.LanguageDialogListener {
     public static final int HANDLER_LOGOUT_SUCCESS = 1;
     public static final int HANDLER_LOGOUT_FAILED = 2;
     public static final int TEMPORARY_DISH_ADD_POS_SUCCESS = 3;
@@ -59,6 +62,12 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
     private WaiterReloginDialog waiterReloginDialog;
     OpenItemWindow openItemWindow;
     Order currentOrder;
+
+    private TextView tv_language;
+    private ImageView iv_language;
+    private LinearLayout ll_language_setting;
+    private AlertDialog alertLanguage;
+
 
     private Handler handler = new Handler() {
         @Override
@@ -75,12 +84,12 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                     break;
                 case TEMPORARY_DISH_ADD_POS_SUCCESS:
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
-                            "添加成功"));
+                            context.getString(R.string.success)));
                     break;
 
                 case TEMPORARY_DISH_ADD_POS_FAILED:
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
-                            "添加失败"));
+                            context.getString(R.string.failed)));
                     break;
 
                 case VIEW_EVENT_DISMISS_OPEN_ITEM_WINDOW:
@@ -138,6 +147,16 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         findViewById(R.id.tv_logout).setOnClickListener(this);
         findViewById(R.id.tv_clock).setOnClickListener(this);
         tv_open_item.setOnClickListener(this);
+
+        tv_language = (TextView) findViewById(R.id.tv_language);
+        tv_language.setOnClickListener(this);
+        tv_language.setText(LanguageManager.getLanguageName(this));
+
+        iv_language = (ImageView) findViewById(R.id.iv_language);
+        iv_language.setImageDrawable(LanguageManager.getLanguageFlag(this));
+
+        ll_language_setting = (LinearLayout) findViewById(R.id.ll_language_setting);
+        ll_language_setting.setOnClickListener(this);
 
         //		sb_kot_notification.SetOnChangedListener(new SlipButtonChangeListener() {
 //			
@@ -243,6 +262,10 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 waiterReloginDialog = new WaiterReloginDialog(this, false);
                 waiterReloginDialog.show();
                 break;
+            case R.id.ll_language_setting:
+            case R.id.tv_language:
+                alertLanguage = LanguageManager.alertLanguage(this, this);
+                break;
             default:
                 break;
         }
@@ -318,7 +341,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         List<ItemModifier> itemModifiers = CoreData.getInstance()
                 .getItemModifiers(
                         CoreData.getInstance().getItemDetailById(
-                                orderDetail.getItemId()));
+                                orderDetail.getItemId(), orderDetail.getItemName()));
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         //    setData();
         if (itemModifiers.size() > 0) {
@@ -344,5 +367,13 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
 
     private void dismissOpenItemWindow() {
         openItemWindow.dismiss();
+    }
+
+    @Override
+    public void setLanguage(final String language) {
+        if (alertLanguage != null) {
+            alertLanguage.dismiss();
+        }
+        App.getTopActivity().changeLanguage(language);
     }
 }

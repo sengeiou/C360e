@@ -67,6 +67,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class SubPosReportObjectFactory {
@@ -163,11 +164,73 @@ public class SubPosReportObjectFactory {
 		String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
 		String ezPayQty = ezPayMap.get("count");
 
-		Map<String, String> halalPayMap = PaymentSettlementSQL
+		Map<String, String> payhalalMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_HALAL, businessDate);
-		String halalPay = BH.getBD(halalPayMap.get("sumAmount")).toString();
-		String halalPayQty = halalPayMap.get("count");
+						ParamConst.SETTLEMENT_TYPE_PAYHALAL, businessDate);
+		String payhalalPay = BH.getBD(payhalalMap.get("sumAmount")).toString();
+		String payhalalPayQty = payhalalMap.get("count");
+
+
+		Map<String, String> ipay88AlipayMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_ALIPAY, businessDate);
+		String ipay88Alipay = BH.getBD(ipay88AlipayMap.get("sumAmount")).toString();
+		String ipay88AlipayQty = ipay88AlipayMap.get("count");
+
+		Map<String, String> ipay88BoostMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_BOOST, businessDate);
+		String ipay88Boost = BH.getBD(ipay88BoostMap.get("sumAmount")).toString();
+		String ipay88BoostQty = ipay88BoostMap.get("count");
+
+
+		Map<String, String> ipay88McashMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_MCASH, businessDate);
+		String ipay88Mcash = BH.getBD(ipay88McashMap.get("sumAmount")).toString();
+		String ipay88McashQty = ipay88McashMap.get("count");
+
+		Map<String, String> ipay88TouchngoMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_TOUCHNGO, businessDate);
+		String ipay88Touchngo = BH.getBD(ipay88TouchngoMap.get("sumAmount")).toString();
+		String ipay88TouchngoQty = ipay88TouchngoMap.get("count");
+
+		Map<String, String> ipay88UnionMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_UNIONPAY, businessDate);
+		String ipay88Union = BH.getBD(ipay88UnionMap.get("sumAmount")).toString();
+		String ipay88UnionQty = ipay88UnionMap.get("count");
+
+		Map<String, String> ipay88MbbMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_MBB, businessDate);
+		String ipay88Mbb = BH.getBD(ipay88MbbMap.get("sumAmount")).toString();
+		String ipay88MbbQty = ipay88MbbMap.get("count");
+
+		Map<String, String> ipay88CimbMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_CIMB, businessDate);
+		String ipay88Cimb = BH.getBD(ipay88CimbMap.get("sumAmount")).toString();
+		String ipay88CimbQty = ipay88CimbMap.get("count");
+
+		Map<String, String> ipay88GrabMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_GRABPAY, businessDate);
+		String ipay88Grab = BH.getBD(ipay88GrabMap.get("sumAmount")).toString();
+		String ipay88GrabQty = ipay88GrabMap.get("count");
+
+		Map<String, String> ipay88NetsMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_NETS, businessDate);
+		String ipay88Nets = BH.getBD(ipay88NetsMap.get("sumAmount")).toString();
+		String ipay88NetsQty = ipay88NetsMap.get("count");
+
+		Map<String, String> ipay88Wepay = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_WEPAY, businessDate);
+		String ipay88WePay = BH.getBD(ipay88Wepay.get("sumAmount")).toString();
+		String ipay88WePayQty = ipay88Wepay.get("count");
 
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -577,8 +640,38 @@ public class SubPosReportObjectFactory {
 		reportDaySales.setVoucherQty(Integer.parseInt(voucherQty));
 		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
 		reportDaySales.setTotalHour(totalHour);
-        reportDaySales.setPayHalal(BH.getBD(halalPay).toString());
-        reportDaySales.setPayHalalQty(Integer.parseInt(halalPayQty));
+		reportDaySales.setPayHalal(BH.getBD(payhalalPay).toString());
+		reportDaySales.setPayHalalQty(Integer.parseInt(payhalalPayQty));
+
+		reportDaySales.setIpay88Alipay(BH.getBD(ipay88Alipay).toString());
+		reportDaySales.setIpay88AlipayQty(Integer.parseInt(ipay88AlipayQty));
+
+		reportDaySales.setIpay88Boost(BH.getBD(ipay88Boost).toString());
+		reportDaySales.setIpay88BoostQty(Integer.parseInt(ipay88BoostQty));
+
+		reportDaySales.setIpay88Mcash(BH.getBD(ipay88Mcash).toString());
+		reportDaySales.setIpay88McashQty(Integer.parseInt(ipay88McashQty));
+
+		reportDaySales.setIpay88TouchnGo(BH.getBD(ipay88Touchngo).toString());
+		reportDaySales.setIpay88TouchnGoQty(Integer.parseInt(ipay88TouchngoQty));
+
+		reportDaySales.setIpay88Unionpay(BH.getBD(ipay88Union).toString());
+		reportDaySales.setIpay88UnionpayQty(Integer.parseInt(ipay88UnionQty));
+
+		reportDaySales.setIpay88Mbb(BH.getBD(ipay88Mbb).toString());
+		reportDaySales.setIpay88MbbQty(Integer.parseInt(ipay88MbbQty));
+
+		reportDaySales.setIpay88Cimb(BH.getBD(ipay88Cimb).toString());
+		reportDaySales.setIpay88CimbQty(Integer.parseInt(ipay88CimbQty));
+
+		reportDaySales.setIpay88Grabpay(BH.getBD(ipay88Grab).toString());
+		reportDaySales.setIpay88GrabpayQty(Integer.parseInt(ipay88GrabQty));
+
+		reportDaySales.setIpay88Nets(BH.getBD(ipay88Nets).toString());
+		reportDaySales.setIpay88NetsQty(Integer.parseInt(ipay88NetsQty));
+
+		reportDaySales.setIpay88Wepay(BH.getBD(ipay88WePay).toString());
+		reportDaySales.setIpay88WepayQty(Integer.parseInt(ipay88WePayQty));
 		return reportDaySales;
 	}
 
@@ -1530,10 +1623,10 @@ public class SubPosReportObjectFactory {
 		long nowTime = System.currentTimeMillis();
 		for (long i = businessDate; i < nowTime; i = TimeUtil
 				.getCalendarNextPoint(i)) {
-			// Calendar hourCal = Calendar.getInstance();
+			// Calendar hourCal = Calendar.getInstance(Locale.US);
 			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 			// hourCal.set(Calendar.HOUR_OF_DAY, i);
-			// Calendar netHourCal = Calendar.getInstance();
+			// Calendar netHourCal = Calendar.getInstance(Locale.US);
 			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
 			Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
@@ -1640,10 +1733,10 @@ public class SubPosReportObjectFactory {
 //		long nowTime = System.currentTimeMillis();
 //		for (long i = businessDate; i < nowTime; i = TimeUtil
 //				.getCalendarNextPoint(i)) {
-//			// Calendar hourCal = Calendar.getInstance();
+//			// Calendar hourCal = Calendar.getInstance(Locale.US);
 //			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// hourCal.set(Calendar.HOUR_OF_DAY, i);
-//			// Calendar netHourCal = Calendar.getInstance();
+//			// Calendar netHourCal = Calendar.getInstance(Locale.US);
 //			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 //			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
 //			Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
@@ -2010,12 +2103,76 @@ public class SubPosReportObjectFactory {
 		String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
 		String ezPayQty = ezPayMap.get("count");
 
-		Map<String, String> halalPayMap = PaymentSettlementSQL
+		Map<String, String> payhalalMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
-						ParamConst.SETTLEMENT_TYPE_HALAL, businessDate,
+						ParamConst.SETTLEMENT_TYPE_PAYHALAL, businessDate,
 						sessionStatus);
-		String halalPay = BH.getBD(halalPayMap.get("sumAmount")).toString();
-		String halalPayQty = halalPayMap.get("count");
+		String payhalalPay = BH.getBD(payhalalMap.get("sumAmount")).toString();
+		String payhalalPayQty = payhalalMap.get("count");
+
+		Map<String, String> ipay88AlipayMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_ALIPAY, businessDate, sessionStatus);
+		String ipay88Alipay = BH.getBD(ipay88AlipayMap.get("sumAmount")).toString();
+		String ipay88AlipayQty = ipay88AlipayMap.get("count");
+
+		Map<String, String> ipay88BoostMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_BOOST, businessDate, sessionStatus);
+		String ipay88Boost = BH.getBD(ipay88BoostMap.get("sumAmount")).toString();
+		String ipay88BoostQty = ipay88BoostMap.get("count");
+
+
+		Map<String, String> ipay88McashMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_MCASH, businessDate, sessionStatus);
+		String ipay88Mcash = BH.getBD(ipay88McashMap.get("sumAmount")).toString();
+		String ipay88McashQty = ipay88McashMap.get("count");
+
+		Map<String, String> ipay88TouchngoMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_TOUCHNGO, businessDate, sessionStatus);
+		String ipay88Touchngo = BH.getBD(ipay88TouchngoMap.get("sumAmount")).toString();
+		String ipay88TouchngoQty = ipay88TouchngoMap.get("count");
+
+		Map<String, String> ipay88UnionMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_UNIONPAY, businessDate, sessionStatus);
+		String ipay88Union = BH.getBD(ipay88UnionMap.get("sumAmount")).toString();
+		String ipay88UnionQty = ipay88UnionMap.get("count");
+
+		Map<String, String> ipay88MbbMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_MBB, businessDate, sessionStatus);
+		String ipay88Mbb = BH.getBD(ipay88MbbMap.get("sumAmount")).toString();
+		String ipay88MbbQty = ipay88MbbMap.get("count");
+
+		Map<String, String> ipay88CimbMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_CIMB, businessDate, sessionStatus);
+		String ipay88Cimb = BH.getBD(ipay88CimbMap.get("sumAmount")).toString();
+		String ipay88CimbQty = ipay88CimbMap.get("count");
+
+		Map<String, String> ipay88GrabMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_GRABPAY, businessDate, sessionStatus);
+		String ipay88Grab = BH.getBD(ipay88GrabMap.get("sumAmount")).toString();
+		String ipay88GrabQty = ipay88GrabMap.get("count");
+
+		Map<String, String> ipay88NetsMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_NETS, businessDate, sessionStatus);
+		String ipay88Nets = BH.getBD(ipay88NetsMap.get("sumAmount")).toString();
+		String ipay88NetsQty = ipay88NetsMap.get("count");
+
+		Map<String, String> ipay88Wepay = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_IPAY88_WEPAY, businessDate, sessionStatus);
+		String ipay88WePay = BH.getBD(ipay88Wepay.get("sumAmount")).toString();
+		String ipay88WePayQty = ipay88Wepay.get("count");
+
+
+
 
 		Map<String, String> paypalpayMap = PaymentSettlementSQL
 				.getPaymentSettlementSumPaidAndCount(
@@ -2444,8 +2601,40 @@ public class SubPosReportObjectFactory {
 		reportDaySales.setVoucherQty(Integer.parseInt(voucherQty));
 		String totalHour = BH.getBDThirdFormat(BH.div(BH.getBD((reportDaySales.getUpdateTime() - reportDaySales.getCreateTime())/1000 + ""),BH.getBD(60*60), false).toString()).toString();
 		reportDaySales.setTotalHour(totalHour);
-        reportDaySales.setPayHalal(BH.getBD(halalPay).toString());
-        reportDaySales.setPayHalalQty(Integer.parseInt(halalPayQty));
+		reportDaySales.setPayHalal(BH.getBD(payhalalPay).toString());
+		reportDaySales.setPayHalalQty(Integer.parseInt(payhalalPayQty));
+
+		reportDaySales.setIpay88Alipay(BH.getBD(ipay88Alipay).toString());
+		reportDaySales.setIpay88AlipayQty(Integer.parseInt(ipay88AlipayQty));
+
+		reportDaySales.setIpay88Boost(BH.getBD(ipay88Boost).toString());
+		reportDaySales.setIpay88BoostQty(Integer.parseInt(ipay88BoostQty));
+
+		reportDaySales.setIpay88Mcash(BH.getBD(ipay88Mcash).toString());
+		reportDaySales.setIpay88McashQty(Integer.parseInt(ipay88McashQty));
+
+		reportDaySales.setIpay88TouchnGo(BH.getBD(ipay88Touchngo).toString());
+		reportDaySales.setIpay88TouchnGoQty(Integer.parseInt(ipay88TouchngoQty));
+
+		reportDaySales.setIpay88Unionpay(BH.getBD(ipay88Union).toString());
+		reportDaySales.setIpay88UnionpayQty(Integer.parseInt(ipay88UnionQty));
+
+		reportDaySales.setIpay88Mbb(BH.getBD(ipay88Mbb).toString());
+		reportDaySales.setIpay88MbbQty(Integer.parseInt(ipay88MbbQty));
+
+		reportDaySales.setIpay88Cimb(BH.getBD(ipay88Cimb).toString());
+		reportDaySales.setIpay88CimbQty(Integer.parseInt(ipay88CimbQty));
+
+		reportDaySales.setIpay88Grabpay(BH.getBD(ipay88Grab).toString());
+		reportDaySales.setIpay88GrabpayQty(Integer.parseInt(ipay88GrabQty));
+
+		reportDaySales.setIpay88Nets(BH.getBD(ipay88Nets).toString());
+		reportDaySales.setIpay88NetsQty(Integer.parseInt(ipay88NetsQty));
+
+		reportDaySales.setIpay88Wepay(BH.getBD(ipay88WePay).toString());
+		reportDaySales.setIpay88WepayQty(Integer.parseInt(ipay88WePayQty));
+
+
 		reportDaySales.setId(CommonSQL.getNextSeq(TableNames.ReportDaySales));
 		ReportDaySalesSQL.addReportDaySales(reportDaySales);
 
@@ -3081,10 +3270,10 @@ public class SubPosReportObjectFactory {
 		long nowTime = System.currentTimeMillis();
 		for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
 				.getCalendarNextPoint(i)) {
-			// Calendar hourCal = Calendar.getInstance();
+			// Calendar hourCal = Calendar.getInstance(Locale.US);
 			// hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 			// hourCal.set(Calendar.HOUR_OF_DAY, i);
-			// Calendar netHourCal = Calendar.getInstance();
+			// Calendar netHourCal = Calendar.getInstance(Locale.US);
 			// netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
 			// netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
 			Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
@@ -3436,7 +3625,7 @@ public class SubPosReportObjectFactory {
 	public Map<String, Object> loadDaySalesXZReport(long bizDateNow, SessionStatus sessionStatus) {
 		long oldtime = bizDateNow;
 
-		Calendar c = Calendar.getInstance();
+		Calendar c = Calendar.getInstance(Locale.US);
 		Date dt = new Date(bizDateNow);
 		c.setTime(dt); 
 		c.add(Calendar.DATE, -29); // Adding 5 days

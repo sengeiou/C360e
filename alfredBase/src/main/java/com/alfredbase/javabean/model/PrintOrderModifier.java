@@ -13,6 +13,7 @@ public class PrintOrderModifier implements Serializable{
 	private int qty;
 	private String amount;
 	private int orderDetailId;
+	private int isBill;
 	
 	public PrintOrderModifier(Integer orderDetailId, String itemName, String price, int qty, String amount){
 		this.itemName = itemName;
@@ -20,6 +21,15 @@ public class PrintOrderModifier implements Serializable{
 		this.qty = qty;
 		this.amount = amount;
 		this.orderDetailId = orderDetailId;
+	}
+
+	public PrintOrderModifier(Integer orderDetailId, String itemName, String price, int qty, String amount,int isBill){
+		this.itemName = itemName;
+		this.price =  price;
+		this.qty = qty;
+		this.amount = amount;
+		this.orderDetailId = orderDetailId;
+		this.isBill=isBill;
 	}
 	
 	public String getItemName() {
@@ -58,5 +68,13 @@ public class PrintOrderModifier implements Serializable{
 
 	public void setOrderDetailId(int orderDetailId) {
 		this.orderDetailId = orderDetailId;
+	}
+
+	public int getIsBill() {
+		return isBill;
+	}
+
+	public void setIsBill(int isBill) {
+		this.isBill = isBill;
 	}
 }

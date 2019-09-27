@@ -1,13 +1,16 @@
 package com.alfred.callnum.utils;
 
+import android.content.Context;
+
+import com.alfred.callnum.R;
 import com.alfred.callnum.adapter.CallBean;
 
 import java.util.LinkedList;
 
 
-public class MyQueue<T> {
+public class MyQueue {
     private String ob = "";
-    private LinkedList<T> list = new LinkedList<>();
+    private LinkedList list = new LinkedList();
 
     public void clear()//销毁队列
     {
@@ -20,7 +23,7 @@ public class MyQueue<T> {
         return list.isEmpty();
     }
 
-    public void enQueue(T o)//进队
+    public void enQueue(Object o)//进队
     {
 
         CallBean callBean = (CallBean) o;
@@ -30,12 +33,12 @@ public class MyQueue<T> {
 
     }
 
-    public T deQueue()//出队
+    public Object deQueue(Context context)//出队
     {
         if (!list.isEmpty()) {
             return list.removeFirst();
         }
-        return null;
+        return context.getString(R.string.empty_queue);
     }
 
     public int QueueLength()//获取队列长度
@@ -43,13 +46,10 @@ public class MyQueue<T> {
         return list.size();
     }
 
-    public T QueuePeek()//查看队首元素
+    public Object QueuePeek()//查看队首元素
     {
         return list.getFirst();
     }
 
-    public LinkedList<T> getList() {
-        return list;
-    }
 
 }

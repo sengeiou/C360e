@@ -5,11 +5,13 @@ apply plugin: 'bugsee'
 import com.android.build.gradle.api.BaseVariant
 
 bugsee {
+//    appToken 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+//    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
-            case 'release': 'ff9e1000-0bf4-4ecd-9c3b-2c8e5485ebdf'
+            case 'release': 'f252f398-4474-43c3-b287-38e6ce235894'
                 break
-            case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
                 break
         }
     }

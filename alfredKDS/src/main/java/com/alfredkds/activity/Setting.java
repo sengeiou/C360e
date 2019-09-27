@@ -1,6 +1,7 @@
 package com.alfredkds.activity;
 
 import android.app.TimePickerDialog;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -13,17 +14,22 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
+import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.TimeUtil;
+import com.alfredbase.utils.LanguageManager;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
@@ -35,7 +41,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Setting extends BaseActivity implements MyToggleButton.OnToggleStateChangeListeren {
+public class Setting extends BaseActivity implements MyToggleButton.OnToggleStateChangeListeren, LanguageManager.LanguageDialogListener {
     public static final String TAG = Setting.class.getSimpleName();
     public static final int HANDLER_LOGOUT_SUCCESS = 1;
     public static final int HANDLER_LOGOUT_FAILED = 2;
@@ -51,6 +57,12 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
 
     private MyToggleButton mt_kot_lan, mtPendingList, mtAllowPartial;
     private MyToggleButton mtKdsOnline;
+
+    private ImageView iv_language;
+    private LinearLayout ll_language_setting;
+    private AlertDialog alertLanguage;
+
+
     private SystemSettings settings;
 
     private Handler handler = new Handler() {
@@ -189,6 +201,12 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         }
 
         mtPendingList.setChecked(settings.isPendingList());
+        ll_language_setting = (LinearLayout) findViewById(R.id.ll_language_setting);
+        ll_language_setting.setOnClickListener(this);
+
+        iv_language = (ImageView) findViewById(R.id.iv_language);
+        iv_language.setImageDrawable(LanguageManager.getLanguageFlag(this));
+
 
     }
 
@@ -229,7 +247,10 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("device", kdsDevice);
                 parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
-                SyncCentre.getInstance().Logout(context, App.instance.getCurrentConnectedMainPos(), parameters, handler);
+//                SyncCentre.getInstance().Logout(context, App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPosList()) {
+                    SyncCentre.getInstance().Logout(context, mainPos, parameters, handler);
+                }
                 break;
             case R.id.btSave:
                 int stackCount = !TextUtils.isEmpty(etStackCount.getText()) ? Integer.parseInt(etStackCount.getText().toString()) : 0;
@@ -253,6 +274,8 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                             }
                         });
 
+            case R.id.ll_language_setting:
+                alertLanguage = LanguageManager.alertLanguage(this, this);
                 break;
             default:
                 break;
@@ -351,5 +374,13 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
             params.put("kds", kdsDevice);
             SyncCentre.getInstance().updateKdsStatus(this, ip, params, handler);
         }
+    }
+
+    @Override
+    public void setLanguage(final String language) {
+        if (alertLanguage != null) {
+            alertLanguage.dismiss();
+        }
+        App.getTopActivity().changeLanguage(language);
     }
 }

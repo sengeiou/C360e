@@ -1,6 +1,7 @@
 package com.alfred.callnum.http.server;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.alfred.callnum.adapter.CallBean;
 import com.alfred.callnum.global.App;
@@ -74,6 +75,19 @@ public class CallNumHttpServer extends AlfredHttpServer {
                 App.getTopActivity().httpRequestAction(App.instance.HANDLER_CLEAN_CALL, null);
                 Map<String, Object> map = new HashMap<>();
                 map.put("resultCode", ResultCode.SUCCESS);
+                return getJsonResponse(new Gson().toJson(map));
+            } else if (apiName.equals(APIName.POS_LANGUAGE)) {
+                Map<String, Object> map = new HashMap<>();
+                try {
+                    JSONObject jsonObject = new JSONObject(body);
+                    String version = jsonObject.optString("version");
+                    String language = jsonObject.optString("language");
+                    App.getTopActivity().changeLanguage(language);
+                    map.put("resultCode", ResultCode.SUCCESS);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 return getJsonResponse(new Gson().toJson(map));
             } else {
                 resp = getNotFoundResponse();

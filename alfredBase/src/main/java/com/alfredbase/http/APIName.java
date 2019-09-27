@@ -21,6 +21,8 @@ public class APIName {
     public static final String SEND_EMAIL = "sendRealTimeReport/getDataSendEmail";
 
     public static final String SETTLEMENT_GETOTHERPAYMENT = "settlement/getOtherPayment";
+    public static final String SETTLEMENT_GETPAYMENT_METHOD = "settlement/getBaseMediaPayment";
+
     public static final String RESTAURANT_BINDDEVICEID = "restaurant/bindDeviceId";
     public static final String RESTAURANT_DAYSALES_REPORT = "reportDaySales/getReportDaySales";
     public static final String POSORDER_GETORDERBYQRCODE = "order/getOrderByQrcode";
@@ -34,6 +36,8 @@ public class APIName {
     public static final String USER_UPDATEPASSWORD = "user/updatePassword";
     public static final String RESTAURANT_CHANGEPLACE = "restaurant/changePlace";
     public static final String RESTAURANT_GETPLACEINFONEW = "restaurant/getPlaceInfoNew";
+
+
     public static final String MEMBERSHIP_ACTIVATECARD = "membership/activateCard";
     public static final String MEMBERSHIP_OPERATEBALANCE = "membership/operateBalance";
     public static final String MEMBERSHIP_REPORTCARD = "membership/reportCard";
@@ -50,7 +54,19 @@ public class APIName {
     public static final String GET_REMAINING_STOCK = "/item/getRemainingStock";
     //3rd-party Serivce
     public static final String REQUEST_ALIPAY = "alipay/getAlipayUrl";
-    public static final String REQUEST_IPAY88 = "ipay88/getPayment";
+
+    //start pay88
+    public static final String REQUEST_IPAY88_LOGIN = "login/loginVerify";
+    public static final String REQUEST_IPAY88_QRCODE = "ipay88/generateQrCode";
+    public static final String REQUEST_IPAY88_CHECK_STATUS = "ipay88/checkPaymentStatus";
+    //end pay88
+
+    //start payhalal
+    public static final String REQUEST_PAYHALAL_QRCODE = "payhalal/generateQrCode";
+    public static final String REQUEST_PAYHALAL_CHECK_STATUS = "payhalal/getPaymentStatus";
+    //end payhalal
+
+
     /**
      * 以pos作为服务器
      */
@@ -70,6 +86,7 @@ public class APIName {
     public static final String TEMPORARY_DISH = "temporary_dish";
     public static final String GET_PRINTER = "get_printer";
     public static final String PRINT_KOT_DATA = "print_kot_data";
+    public static final String RE_PRINT_KOT = "re_print_kot";
 
     // 以下是KDS专用
     public static final String GET_PRINTERS = "get_printers";
@@ -78,6 +95,7 @@ public class APIName {
     public static final String UPDATE_EXISTING_KOT = "update_existing_kot";
     public static final String TRANSFER_KOT = "transfer_kot";
     public static final String TRANSFER_ITEM_KOT = "transfer_item_kot";
+    public static final String REFRESH_KOT = "refresh_kot";
     public static final String KOT_ITEM_COMPLETE = "kot_item_complete";
     public static final String KOT_COMPLETE = "kot_complete";
     public static final String CANCEL_COMPLETE = "cancel_complete";
@@ -159,6 +177,15 @@ public class APIName {
      * KotItemDetail sync cloud
      */
     public static final String SYNC_KOT_ITEM_DETAIL = "kot/kotItemDetail/create";
+
+
+    public static final String SET_LANGUAGE = "set_language"; //to server
+    public static final String POS_LANGUAGE = "pos_language"; //to client
+
+    public static final String GET_OTHER_RVC_PLACE_TABLE = "get_other_rvc_place_table"; //GET OTHER TABLE PLACE FROM OTHER RVC
+    public static final String GET_OTHER_RVC_TABLE = "get_other_rvc_table"; //GET OTHER TABLE
+    public static final String TRANSFER_TABLE_TO_OTHER_RVC = "send_order_to_other_rvc";
+    public static final String TRANSFER_ITEM_TO_OTHER_RVC = "transfer_item_to_other_rvc";
 
 
 }

@@ -2,6 +2,7 @@ package com.alfredbase.javabean;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class KotSummary implements Serializable {
 

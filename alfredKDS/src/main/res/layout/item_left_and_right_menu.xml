@@ -12,18 +12,19 @@
         android:layout_gravity="left"
         android:background="@color/deep_gray"
         android:gravity="center"
-        android:text="out of stock"
+        android:text="@string/out_of_stock"
         android:textColor="@color/white"/>
 
     <TextView
         android:id="@+id/right_menu"
         android:layout_width="120dp"
-        android:layout_height="match_parent"
+        android:layout_height="80dp"
         android:layout_gravity="right"
         android:background="@color/red2"
         android:gravity="center"
-        android:text="done"
+        android:text="@string/done"
         android:textColor="@color/white"/>
+
 
     <include layout="@layout/swipe_content"/>
 

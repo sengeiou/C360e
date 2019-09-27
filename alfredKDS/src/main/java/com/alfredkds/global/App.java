@@ -2,6 +2,7 @@ package com.alfredkds.global;
 
 import android.os.Build;
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
@@ -29,6 +30,7 @@ import com.alfredkds.activity.Welcome;
 import com.alfredkds.http.server.KdsHttpServer;
 import com.alfredkds.javabean.Kot;
 import com.alfredkds.view.SystemSettings;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -68,6 +70,7 @@ public class App extends BaseApplication {
     public static final int HANDLER_DELETE_KOT = 2;
     public static final int HANDLER_REFRESH_LOG = 107;
     private static final String DATABASE_NAME = "com.alfredkds";
+    public static final int HANDLER_RELOAD_KOT = 23;
     public static App instance;
     //for pairing
     private List<String> pairingIps = new ArrayList<>();
@@ -90,7 +93,7 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BugseeHelper.init(this, "47ab1db5-0e6a-4396-ae4c-0bb5f33d3134");
+        BugseeHelper.init(this, "856f76df-ba87-4e0a-9049-cfcd31a33a42");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
 
         systemSettings = new SystemSettings(this);
@@ -150,7 +153,6 @@ public class App extends BaseApplication {
             this.kdsDevice.setIP(CommonUtil.getLocalIpAddress());
             this.setKdsDevice(kdsDevice);
             LogUtil.d(TAG, "onIPChanged: " + this.kdsDevice.toString());
-
             SyncCentre.getInstance().kdsIpChange(this.getApplicationContext(),
                     this.kdsDevice.toMap(), null);
         }

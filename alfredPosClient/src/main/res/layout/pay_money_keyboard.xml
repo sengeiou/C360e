@@ -25,7 +25,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="退单"
+                android:text="@string/void_"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
 
@@ -42,7 +42,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="免费"
+                android:text="@string/free"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
 
@@ -59,7 +59,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="卡券\n核销"
+                android:text="@string/voucher"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
 
@@ -323,7 +323,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="50元"
+                android:text="50"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
 
@@ -340,7 +340,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="100元"
+                android:text="100"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
 
@@ -357,7 +357,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="200元"
+                android:text="200"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
 
@@ -374,7 +374,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="500元"
+                android:text="500"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
         </LinearLayout>
@@ -399,7 +399,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="删除"
+                android:text="@string/delete"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
 
@@ -416,7 +416,7 @@
                 android:layout_weight="8"
                 android:background="@drawable/bg_keyboard_selector"
                 android:gravity="center"
-                android:text="取消"
+                android:text="@string/cancel"
                 android:textColor="@color/text_gray_white_selector"
                 android:textSize="17sp" />
 
@@ -433,7 +433,7 @@
                 android:layout_weight="17"
                 android:background="@drawable/btn_ok_selector"
                 android:gravity="center"
-                android:text="确定"
+                android:text="@string/enter"
                 android:textColor="@color/white"
                 android:textSize="17sp" />
         </LinearLayout>

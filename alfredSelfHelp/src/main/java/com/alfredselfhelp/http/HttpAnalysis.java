@@ -440,7 +440,7 @@ public class HttpAnalysis {
             App.instance.setMainPosInfo(mainPosInfo);
             App.instance.setSessionStatus(sessionStatus);
             App.instance.setCurrencySymbol(currencySymbol, isDouble);
-            CoreData.getInstance().setUserKey(mainPosInfo.getRevenueId(), userKey);
+            CoreData.getInstance().setUserKey(mainPosInfo.getRevenueId(),userKey);
             return userKey;
         } catch (JSONException e) {
             e.printStackTrace();

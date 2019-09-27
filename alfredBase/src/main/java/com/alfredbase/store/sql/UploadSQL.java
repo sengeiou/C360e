@@ -12,6 +12,7 @@ import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderDetailTax;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
@@ -57,7 +58,7 @@ public class UploadSQL {
         List<OrderBill> orderBills = OrderBillSQL.getAllOrderBillByOrder(order);
 
         List<RoundAmount> roundAmounts = RoundAmountSQL.getRoundAmountForSync(order);
-
+        List<OrderPromotion> orderPromotions = PromotionDataSQL.getPromotionDataOrOrderid(order.getId());
         KotSummary kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
 
         List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(order.getId());
@@ -112,6 +113,7 @@ public class UploadSQL {
         map.put("voidSettlements", voidSettlements);
         map.put("alipaySettlements", alipaySettlements);
         map.put("weixinSettlements", weixinSettlements);
+        map.put("orderPromotions", orderPromotions);
         map.put("kotSummary", kotSummary);
         map.put("kotItemDetails", kotItemDetails);
         return map;

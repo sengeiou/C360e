@@ -4,6 +4,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -251,8 +252,7 @@ public class OrderDetailFireWindow implements OnClickListener {
 												orderDetail,
 												CoreData.getInstance()
 														.getItemDetailById(
-																orderDetail
-																		.getItemId()),
+																orderDetail.getItemId(), orderDetail.getItemName()),
 												kotSummary,
 												App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
 								kotItemDetail.setFireStatus(1);
@@ -302,7 +302,7 @@ public class OrderDetailFireWindow implements OnClickListener {
 									@Override
 									public void run() {
 										context.printerLoadingDialog
-												.setTitle(context.getResources().getString(R.string.send_kitchen));
+												.setTitle(context.getResources().getString(R.string.sending_to_kitchen));
 										context.printerLoadingDialog.showTime();
 									}
 								});

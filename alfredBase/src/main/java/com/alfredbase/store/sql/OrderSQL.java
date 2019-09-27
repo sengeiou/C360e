@@ -35,10 +35,10 @@ public class OrderSQL {
 			String sql = "insert into "
 					+ TableNames.Order
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount, "
-					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime," 
+					+ "total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type,discountPrice,inclusiveTaxName,inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getOrderOriginId(), order.getUserId(),
@@ -55,7 +55,10 @@ public class OrderSQL {
 							order.getAppOrderId(),order.getIsTakeAway(),
 					        order.getTableName(), order.getOrderRemark(),
 							order.getDiscountCategoryId(), order.getNumTag(),
-							order.getSubPosBeanId(),order.getPromotion()
+							order.getSubPosBeanId(),order.getPromotion(),
+							order.getOrderRound(),
+						    order.getWaiterInformation(),
+							order.getIsWaiterPrint()
 						});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +67,7 @@ public class OrderSQL {
 
 	/**
 	 * 修改订单详情OrderDetail，调用这个方法
-	 * 
+	 *
 	 * @param order
 	 */
 	public static void updateOrder(Order order) {
@@ -75,10 +78,10 @@ public class OrderSQL {
 
 		update(order);
 	}
-	
+
 	/**
 	 * 修改订单Order折扣，调用这个方法
-	 * 
+	 *
 	 * @param order
 	 */
 	public static void updateOrderAndOrderDetailByDiscount(Order order) {
@@ -89,8 +92,8 @@ public class OrderSQL {
 		calculateByOrderDiscount(order);
 		update(order);
 	}
-	
-	
+
+
 
 	public static void update(Order order) {
 		if (order == null) {
@@ -102,8 +105,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,promotion)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag,subPosBeanId,promotion,orderRound,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -120,7 +123,9 @@ public class OrderSQL {
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
-							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion()});
+							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion(),
+					         order.getOrderRound(),
+				             order.getWaiterInformation(),order.getIsWaiterPrint()});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,8 +139,8 @@ public class OrderSQL {
 					+ "(id,orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			db.execSQL(
 					sql,
 					new Object[] { order.getId(), order.getOrderOriginId(),
@@ -152,7 +157,10 @@ public class OrderSQL {
 							order.getInclusiveTaxPercentage(), order.getAppOrderId(),
 							order.getIsTakeAway(), order.getTableName(),
 							order.getOrderRemark(), order.getDiscountCategoryId(),
-							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion()});
+							order.getNumTag(), order.getSubPosBeanId(),order.getPromotion(),
+					        order.getOrderRound(),
+                            order.getWaiterInformation(),
+                            order.getIsWaiterPrint()});
 	}
 
 	public static void updateUnFinishedOrderFromWaiter(Order order) {
@@ -168,7 +176,20 @@ public class OrderSQL {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public static void updateFromWaiterName(Order order) {
+		if (order == null) {
+			return;
+		}
+		try {
+			String sql = "update " + TableNames.Order + " set waiterInformation = ?  where id = ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
+			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] {order.getWaiterInformation(),  order.getId()});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void updateOrderIsTakeAway(Order order, int isTakeAway) {
 		try {
 			String sql = "update " + TableNames.Order + " set isTakeAway = ?  where id = ? ";
@@ -179,7 +200,7 @@ public class OrderSQL {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void updateOrderNo(Order order) {
 		try {
 			String sql = "update " + TableNames.Order + " set orderNo = ?  where id = ? ";
@@ -192,39 +213,43 @@ public class OrderSQL {
 	}
 
 	private static void calculate(Order order) {
-		
+
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		OrderHelper.setOrderSubTotal(order, orderDetails);
 		updateOrderDetail(order);
 		orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
+		OrderHelper.setOrderBeforTax(order, orderDetails);
 		OrderHelper.setOrderDiscount(order, orderDetails);
 		OrderHelper.setOrderTax(order, orderDetails);
 		OrderHelper.setOrderTotal(order, orderDetails);
-		OrderHelper.setPromotion(order);
-
+		OrderHelper.setPromotion(order,orderDetails);
 		OrderHelper.setOrderInclusiveTaxPrice(order);
+
 		List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
 		if(orderSplits != null && orderSplits.size() > 0){
 			for(OrderSplit orderSplit : orderSplits){
 				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
 			}
 		}
+		//OrderSQL.updateOrder(order);
 	}
 	/**
 	 * 修改订单Order折扣，调用这个方法
-	 * 
+	 *
 	 * @param order
 	 */
-	private static void calculateByOrderDiscount(Order order){
-		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
-		OrderHelper.setOrderSubTotal(order, orderDetails);
-		OrderHelper.setOrderDiscount(order, orderDetails);
-		OrderHelper.setOrderTax(order, orderDetails);
-		OrderHelper.setOrderTotal(order, orderDetails);
-	}
+	private static void calculateByOrderDiscount(Order order) {
+        List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
+        OrderHelper.setOrderSubTotal(order, orderDetails);
+        OrderHelper.setOrderDiscount(order, orderDetails);
+        OrderHelper.setOrderTax(order, orderDetails);
+        OrderHelper.setOrderTotal(order, orderDetails);
+        OrderHelper.setPromotion(order,orderDetails);
+		OrderHelper.setOrderInclusiveTaxPrice(order);
+    }
 	/**
 	 * 修改订单Order折扣，调用这个方法
-	 * 
+	 *
 	 * @param order
 	 */
 	private static void updateOrderDetail(Order order) {
@@ -389,8 +414,8 @@ public class OrderSQL {
 					+ "(orderOriginId, userId, persons, orderStatus, subTotal, taxAmount, discountAmount,"
 					+ " total, sessionStatus, restId, revenueId, placeId, tableId, createTime, updateTime,"
 					+ "orderNo,businessDate,discount_rate,discount_type, discountPrice, inclusiveTaxName, inclusiveTaxPrice,"
-					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "inclusiveTaxPercentage, appOrderId,isTakeAway, tableName, orderRemark, discountCategoryId, numTag, subPosBeanId,promotion,orderRound,WaiterInformation,isWaiterPrint)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (Order order : orderList) {
@@ -454,6 +479,14 @@ public class OrderSQL {
 							order.getNumTag());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 30,
 							order.getSubPosBeanId());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 31,
+							order.getPromotion());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 32,
+							order.getOrderRound());
+					SQLiteStatementHelper.bindString(sqLiteStatement, 33,
+							order.getWaiterInformation());
+					SQLiteStatementHelper.bindLong(sqLiteStatement, 34,
+							order.getIsWaiterPrint());
 					sqLiteStatement.executeInsert();
 				}
 			db.setTransactionSuccessful();
@@ -466,7 +499,7 @@ public class OrderSQL {
 
 	public static ArrayList<Order> getAllOrder() {
 		ArrayList<Order> result = new ArrayList<Order>();
-		String sql = "select * from " + TableNames.Order + " order by id desc";
+		String sql = "select * from " + TableNames.Order + " where  tableId >= 0 order by id desc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -510,6 +543,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -526,7 +563,7 @@ public class OrderSQL {
 		ArrayList<Order> result = new ArrayList<Order>();
 		String sql = "select * from "
 				+ TableNames.Order
-				+ " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? "
+				+ " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? and tableId >= 0"
 				+ " and orderStatus in ("
 				+ ParamConst.ORDER_STATUS_UNPAY
 				+ ", "
@@ -579,6 +616,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -590,15 +631,15 @@ public class OrderSQL {
 			}
 		}
 		return result;
-	}	
-	
+	}
+
 	public static ArrayList<Order> getFinishedOrdersBySession(SessionStatus sessionStatus, long businessDate, long closeTime) {
 		ArrayList<Order> result = new ArrayList<Order>();
 		String sql = "select * from "
 				+ TableNames.Order
 				+ " where sessionStatus = ? and businessDate = ? and orderStatus = "
 				+ ParamConst.ORDER_STATUS_FINISHED
-				+ " and updateTime < ? and createTime > ?";
+				+ " and updateTime < ? and createTime > ?  and tableId >= 0";
 		SQLiteDatabase db = SQLExe.getDB();
 		Cursor cursor = null;
 		try {
@@ -643,6 +684,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -655,14 +700,14 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static ArrayList<Order> getAllOrderByTime(long businessDate) {
 		ArrayList<Order> result = new ArrayList<Order>();
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
 			cursor = db.query(TableNames.Order,
-					new String[] { " * " }, "businessDate = ? and orderStatus = " + ParamConst.ORDER_STATUS_FINISHED,
+					new String[] { " * " }, "businessDate = ? and orderStatus = " + ParamConst.ORDER_STATUS_FINISHED+" and tableId >= 0",
 					new String[] { String.valueOf(businessDate) }, "", "", "",
 					"");
 			int count = cursor.getCount();
@@ -704,6 +749,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -716,14 +765,14 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static ArrayList<Order> getAllOrderByTime(long businessDate,SessionStatus sessionStatus, long nowTime) {
 		ArrayList<Order> result = new ArrayList<Order>();
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
 			cursor = db.query(TableNames.Order,
-					new String[] { " * " }, "businessDate = ? and sessionStatus = ? and createTime > ? and updateTime < ? and orderStatus = " + ParamConst.ORDER_STATUS_FINISHED,
+					new String[] { " * " }, "businessDate = ? and sessionStatus = ? and createTime > ? and updateTime < ? and orderStatus = " + ParamConst.ORDER_STATUS_FINISHED+" and tableId >= 0",
 					new String[] { String.valueOf(businessDate), String.valueOf(sessionStatus.getSession_status()), String.valueOf(sessionStatus.getTime()), String.valueOf(nowTime)}, "", "", "",
 					"");
 			int count = cursor.getCount();
@@ -765,6 +814,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -787,12 +840,13 @@ public class OrderSQL {
 				+ TableNames.TableInfo+" t where od.tableId = t.posId and od.businessDate = ? "
 				+ " and od.sessionStatus = ? and od.createTime > ? and od.createTime < ? and t.status = "
 				+ ParamConst.TABLE_STATUS_DINING
-				+ " and od.orderStatus <> " 
+				+ " and od.orderStatus <> "
 				+ ParamConst.ORDER_STATUS_FINISHED
+				+ " and tableId >= 0"
 				+ " group by t.posId";
 		try {
 			cursor = db.rawQuery(sql, new String[] { String.valueOf(businessDate),
-					String.valueOf(sessionStatus.getSession_status()), 
+					String.valueOf(sessionStatus.getSession_status()),
 					String.valueOf(sessionStatus.getTime() ),String.valueOf(time)});
 			int count = cursor.getCount();
 			if (count < 1) {
@@ -835,7 +889,7 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static Order getLastOrderatTabel(int tableId) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order
@@ -882,6 +936,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -892,7 +950,7 @@ public class OrderSQL {
 				cursor.close();
 			}
 		}
-		return order;		
+		return order;
 	}
 	public static Order getOrderByAppOrderId(int appOrderId) {
 		Order order = null;
@@ -940,6 +998,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -955,7 +1017,139 @@ public class OrderSQL {
 
 	public static Order getUnfinishedOrderAtTable(int tableId, Long bizDate, SessionStatus sessionStatus) {
 		Order order = null;
-		if(tableId > 0) {
+		if(tableId >= 0) {
+			String sql = "select * from " + TableNames.Order
+					+ " where tableId = ? and orderStatus < ? and sessionStatus = ? and createTime > ? and businessDate = ?  and tableId >= 0 order by id DESC";
+			//sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ?
+			Cursor cursor = null;
+			try {
+				cursor = SQLExe.getDB().rawQuery(
+						sql,
+						new String[]{tableId + "",
+								ParamConst.ORDER_STATUS_HOLD + "",
+								String.valueOf(sessionStatus.getSession_status()),
+								String.valueOf(sessionStatus.getTime()),
+								String.valueOf(bizDate)});
+				int count = cursor.getCount();
+				if (count < 1) {
+					return order;
+				}
+				if (cursor.moveToFirst()) {
+					order = new Order();
+					order.setId(cursor.getInt(0));
+					order.setOrderOriginId(cursor.getInt(1));
+					order.setUserId(cursor.getInt(2));
+					order.setPersons(cursor.getInt(3));
+					order.setOrderStatus(cursor.getInt(4));
+					order.setSubTotal(cursor.getString(5));
+					order.setTaxAmount(cursor.getString(6));
+					order.setDiscountAmount(cursor.getString(7));
+					order.setTotal(cursor.getString(8));
+					order.setSessionStatus(cursor.getInt(9));
+					order.setRestId(cursor.getInt(10));
+					order.setRevenueId(cursor.getInt(11));
+					order.setPlaceId(cursor.getInt(12));
+					order.setTableId(cursor.getInt(13));
+					order.setCreateTime(cursor.getLong(14));
+					order.setUpdateTime(cursor.getLong(15));
+					order.setOrderNo(cursor.getInt(16));
+					order.setBusinessDate(cursor.getLong(17));
+					order.setDiscountRate(cursor.getString(18));
+					order.setDiscountType(cursor.getInt(19));
+					order.setDiscountPrice(cursor.getString(20));
+					order.setInclusiveTaxName(cursor.getString(21));
+					order.setInclusiveTaxPrice(cursor.getString(22));
+					order.setInclusiveTaxPercentage(cursor.getString(23));
+					order.setAppOrderId(cursor.getInt(24));
+					order.setIsTakeAway(cursor.getInt(25));
+					order.setTableName(cursor.getString(26));
+					order.setOrderRemark(cursor.getString(27));
+					order.setDiscountCategoryId(cursor.getString(28));
+					order.setNumTag(cursor.getString(29));
+					order.setSubPosBeanId(cursor.getInt(30));
+                    order.setPromotion(cursor.getString(31));
+                    order.setOrderRound(cursor.getString(32));
+					order.setWaiterInformation(cursor.getString(33));
+					order.setIsWaiterPrint(cursor.getInt(34));
+					return order;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			} finally {
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
+			}
+		}else{
+			String sql = "select * from " + TableNames.Order
+					+ " where orderStatus < ? and sessionStatus = ? and createTime > ? and businessDate = ?  and tableId >= 0 order by id DESC";
+			//sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ?
+			Cursor cursor = null;
+			try {
+				cursor = SQLExe.getDB().rawQuery(
+						sql,
+						new String[]{ParamConst.ORDER_STATUS_HOLD + "",
+								String.valueOf(sessionStatus.getSession_status()),
+								String.valueOf(sessionStatus.getTime()),
+								String.valueOf(bizDate)});
+				int count = cursor.getCount();
+				if (count < 1) {
+					return order;
+				}
+				if (cursor.moveToFirst()) {
+					order = new Order();
+					order.setId(cursor.getInt(0));
+					order.setOrderOriginId(cursor.getInt(1));
+					order.setUserId(cursor.getInt(2));
+					order.setPersons(cursor.getInt(3));
+					order.setOrderStatus(cursor.getInt(4));
+					order.setSubTotal(cursor.getString(5));
+					order.setTaxAmount(cursor.getString(6));
+					order.setDiscountAmount(cursor.getString(7));
+					order.setTotal(cursor.getString(8));
+					order.setSessionStatus(cursor.getInt(9));
+					order.setRestId(cursor.getInt(10));
+					order.setRevenueId(cursor.getInt(11));
+					order.setPlaceId(cursor.getInt(12));
+					order.setTableId(cursor.getInt(13));
+					order.setCreateTime(cursor.getLong(14));
+					order.setUpdateTime(cursor.getLong(15));
+					order.setOrderNo(cursor.getInt(16));
+					order.setBusinessDate(cursor.getLong(17));
+					order.setDiscountRate(cursor.getString(18));
+					order.setDiscountType(cursor.getInt(19));
+					order.setDiscountPrice(cursor.getString(20));
+					order.setInclusiveTaxName(cursor.getString(21));
+					order.setInclusiveTaxPrice(cursor.getString(22));
+					order.setInclusiveTaxPercentage(cursor.getString(23));
+					order.setAppOrderId(cursor.getInt(24));
+					order.setIsTakeAway(cursor.getInt(25));
+					order.setTableName(cursor.getString(26));
+					order.setOrderRemark(cursor.getString(27));
+					order.setDiscountCategoryId(cursor.getString(28));
+					order.setNumTag(cursor.getString(29));
+					order.setSubPosBeanId(cursor.getInt(30));
+                    order.setPromotion(cursor.getString(31));
+                    order.setOrderRound(cursor.getString(32));
+					order.setWaiterInformation(cursor.getString(33));
+					order.setIsWaiterPrint(cursor.getInt(34));
+					return order;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			} finally {
+				if (cursor != null && !cursor.isClosed()) {
+					cursor.close();
+				}
+			}
+		}
+		return order;
+	}
+
+	public static Order getWaitingListOrder(int tableId, Long bizDate, SessionStatus sessionStatus) {
+		Order order = null;
 			String sql = "select * from " + TableNames.Order
 					+ " where tableId = ? and orderStatus < ? and sessionStatus = ? and createTime > ? and businessDate = ? order by id DESC";
 			//sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ?
@@ -1015,79 +1209,19 @@ public class OrderSQL {
 					cursor.close();
 				}
 			}
-		}else{
-			String sql = "select * from " + TableNames.Order
-					+ " where orderStatus < ? and sessionStatus = ? and createTime > ? and businessDate = ? order by id DESC";
-			//sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ?
-			Cursor cursor = null;
-			try {
-				cursor = SQLExe.getDB().rawQuery(
-						sql,
-						new String[]{ParamConst.ORDER_STATUS_HOLD + "",
-								String.valueOf(sessionStatus.getSession_status()),
-								String.valueOf(sessionStatus.getTime()),
-								String.valueOf(bizDate)});
-				int count = cursor.getCount();
-				if (count < 1) {
-					return order;
-				}
-				if (cursor.moveToFirst()) {
-					order = new Order();
-					order.setId(cursor.getInt(0));
-					order.setOrderOriginId(cursor.getInt(1));
-					order.setUserId(cursor.getInt(2));
-					order.setPersons(cursor.getInt(3));
-					order.setOrderStatus(cursor.getInt(4));
-					order.setSubTotal(cursor.getString(5));
-					order.setTaxAmount(cursor.getString(6));
-					order.setDiscountAmount(cursor.getString(7));
-					order.setTotal(cursor.getString(8));
-					order.setSessionStatus(cursor.getInt(9));
-					order.setRestId(cursor.getInt(10));
-					order.setRevenueId(cursor.getInt(11));
-					order.setPlaceId(cursor.getInt(12));
-					order.setTableId(cursor.getInt(13));
-					order.setCreateTime(cursor.getLong(14));
-					order.setUpdateTime(cursor.getLong(15));
-					order.setOrderNo(cursor.getInt(16));
-					order.setBusinessDate(cursor.getLong(17));
-					order.setDiscountRate(cursor.getString(18));
-					order.setDiscountType(cursor.getInt(19));
-					order.setDiscountPrice(cursor.getString(20));
-					order.setInclusiveTaxName(cursor.getString(21));
-					order.setInclusiveTaxPrice(cursor.getString(22));
-					order.setInclusiveTaxPercentage(cursor.getString(23));
-					order.setAppOrderId(cursor.getInt(24));
-					order.setIsTakeAway(cursor.getInt(25));
-					order.setTableName(cursor.getString(26));
-					order.setOrderRemark(cursor.getString(27));
-					order.setDiscountCategoryId(cursor.getString(28));
-					order.setNumTag(cursor.getString(29));
-					order.setSubPosBeanId(cursor.getInt(30));
-					return order;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-
-			} finally {
-				if (cursor != null && !cursor.isClosed()) {
-					cursor.close();
-				}
-			}
-		}
 		return order;
 	}
-	
-	
-	public static Order getUnfinishedOrder(int orderId) {
+
+	public static Order getOrderByTableId(int tableId) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order
-				+ " where id = ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED + " order by id desc";
+				+ " where tableId = ? order by id DESC";
+		//sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ?
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(
 					sql,
-					new String[] { orderId + ""});
+					new String[]{tableId + ""});
 			int count = cursor.getCount();
 			if (count < 1) {
 				return order;
@@ -1138,10 +1272,74 @@ public class OrderSQL {
 		return order;
 	}
 
+
+	public static Order getUnfinishedOrder(int orderId) {
+		Order order = null;
+		String sql = "select * from " + TableNames.Order
+				+ " where id = ?  and tableId >= 0 and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED + " order by id desc";
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(
+					sql,
+					new String[] { orderId + ""});
+			int count = cursor.getCount();
+			if (count < 1) {
+				return order;
+			}
+			if (cursor.moveToFirst()) {
+				order = new Order();
+				order.setId(cursor.getInt(0));
+				order.setOrderOriginId(cursor.getInt(1));
+				order.setUserId(cursor.getInt(2));
+				order.setPersons(cursor.getInt(3));
+				order.setOrderStatus(cursor.getInt(4));
+				order.setSubTotal(cursor.getString(5));
+				order.setTaxAmount(cursor.getString(6));
+				order.setDiscountAmount(cursor.getString(7));
+				order.setTotal(cursor.getString(8));
+				order.setSessionStatus(cursor.getInt(9));
+				order.setRestId(cursor.getInt(10));
+				order.setRevenueId(cursor.getInt(11));
+				order.setPlaceId(cursor.getInt(12));
+				order.setTableId(cursor.getInt(13));
+				order.setCreateTime(cursor.getLong(14));
+				order.setUpdateTime(cursor.getLong(15));
+				order.setOrderNo(cursor.getInt(16));
+				order.setBusinessDate(cursor.getLong(17));
+				order.setDiscountRate(cursor.getString(18));
+				order.setDiscountType(cursor.getInt(19));
+				order.setDiscountPrice(cursor.getString(20));
+				order.setInclusiveTaxName(cursor.getString(21));
+				order.setInclusiveTaxPrice(cursor.getString(22));
+				order.setInclusiveTaxPercentage(cursor.getString(23));
+				order.setAppOrderId(cursor.getInt(24));
+				order.setIsTakeAway(cursor.getInt(25));
+				order.setTableName(cursor.getString(26));
+				order.setOrderRemark(cursor.getString(27));
+				order.setDiscountCategoryId(cursor.getString(28));
+				order.setNumTag(cursor.getString(29));
+				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
+				return order;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			if (cursor != null && !cursor.isClosed()) {
+				cursor.close();
+			}
+		}
+		return order;
+	}
+
 	public static ArrayList<Order> getAllFinishedOrders() {
 		ArrayList<Order> result = new ArrayList<Order>();
 		String sql = "select * from " + TableNames.Order
-				+ " where orderStatus == " + ParamConst.ORDER_STATUS_FINISHED + " order by id desc";
+				+ " where  tableId >= 0 and orderStatus == " + ParamConst.ORDER_STATUS_FINISHED + " order by id desc";
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
@@ -1185,6 +1383,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1197,7 +1399,7 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static Order getOrder(Integer orderID) {
 		Order order = null;
 		String sql = "select * from " + TableNames.Order + " where id = ?";
@@ -1238,6 +1440,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1252,7 +1458,7 @@ public class OrderSQL {
 	}
 
 	public static List<Order> getOrderByStatus(Integer orderStatus, SessionStatus sessionStatus, long nowTime) {
-		String sql = "select * from " + TableNames.Order + " where orderStatus = ? and sessionStatus = ? and createTime > ? and updateTime < ?";
+		String sql = "select * from " + TableNames.Order + " where tableId >= 0 and orderStatus = ? and sessionStatus = ? and createTime > ? and updateTime < ?";
 		ArrayList<Order> result = new ArrayList<Order>();
 		Cursor cursor = null;
 		try {
@@ -1299,6 +1505,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1323,7 +1533,7 @@ public class OrderSQL {
 
 	public static Order getOrderByUnPlay(SessionStatus sessionStatus) {
 		String sql = "select * from " + TableNames.Order
-				+ "  where sessionStatus = ? and createTime > ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
+				+ "  where sessionStatus = ? and createTime > ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED+" and tableId >= 0";
 		Order order = null;
 		Cursor cursor = null;
 		try {
@@ -1364,6 +1574,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				return order;
 			}
 		} catch (Exception e) {
@@ -1375,10 +1589,10 @@ public class OrderSQL {
 		}
 		return order;
 	}
-	
+
 	public static List<Order> getOrderListByUnPlay(SessionStatus sessionStatus) {
 		String sql = "select * from " + TableNames.Order
-				+ "  where sessionStatus = ? and createTime > ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
+				+ "  where sessionStatus = ? and createTime > ? and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED+" and tableId >= 0";
 		ArrayList<Order> result = new ArrayList<Order>();
 		Cursor cursor = null;
 		try {
@@ -1425,6 +1639,10 @@ public class OrderSQL {
 				order.setDiscountCategoryId(cursor.getString(28));
 				order.setNumTag(cursor.getString(29));
 				order.setSubPosBeanId(cursor.getInt(30));
+				order.setPromotion(cursor.getString(31));
+				order.setOrderRound(cursor.getString(32));
+				order.setWaiterInformation(cursor.getString(33));
+				order.setIsWaiterPrint(cursor.getInt(34));
 				result.add(order);
 			}
 		} catch (Exception e) {
@@ -1437,14 +1655,14 @@ public class OrderSQL {
 		}
 		return result;
 	}
-	
+
 	public static ArrayList<DashboardTotalDetailInfo> getTotalDetaiInfosForOrder(){
 		ArrayList<DashboardTotalDetailInfo> totalDetailInfos = new ArrayList<DashboardTotalDetailInfo>();
 		Cursor cursor = null;
 		SQLiteDatabase db = SQLExe.getDB();
 		try {
 			cursor = db.query(TableNames.Order,
-					new String[] { " sum(subTotal)", "sum(taxAmount)", "sum(discountAmount)", "sum(total)", "businessDate" }, "orderStatus = " + ParamConst.ORDER_STATUS_FINISHED,
+					new String[] { " sum(subTotal)", "sum(taxAmount)", "sum(discountAmount)", "sum(total)", "businessDate" }, "orderStatus = " + ParamConst.ORDER_STATUS_FINISHED+" and tableId >= 0",
 					new String[] { }, "businessDate", "", "",
 					"");
 			int count = cursor.getCount();
@@ -1471,12 +1689,12 @@ public class OrderSQL {
 			}
 		}
 		return totalDetailInfos;
-	
+
 	}
-	
+
 	public static int getSumCountBySessionType(int sessionStatus){
 		int sumCount = 0;
-		String sql = "select count(*) from "+ TableNames.Order + " where sessionStatus = ?";
+		String sql = "select count(*) from "+ TableNames.Order + " where tableId >= 0 and sessionStatus = ?";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(sessionStatus)});
@@ -1492,7 +1710,7 @@ public class OrderSQL {
 			}
 		}
 		return sumCount;
-	
+
 	}
 
 
@@ -1527,7 +1745,7 @@ public class OrderSQL {
 		int sumCount = 0;
 		String sql = "select count(0) from "
 				+ TableNames.Order
-				+ " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? and orderStatus = ?";
+				+ " where sessionStatus = ? and createTime > ? and updateTime < ? and businessDate = ? and orderStatus = ? ";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql,
@@ -1552,11 +1770,11 @@ public class OrderSQL {
 		return sumCount;
 
 	}
-	
+
 	/*计算流水*/
 	public static int getSumCountByBizDate(long bizDate){
 		int sumCount = 0;
-		String sql = "select orderNo from "+ TableNames.Order + " where id in (select max(id) from " + TableNames.Order + " where businessDate = ?)";
+		String sql = "select orderNo from "+ TableNames.Order + " where tableId >= 0 and id in (select max(id) from " + TableNames.Order + " where businessDate = ?)";
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql, new String[]{String.valueOf(bizDate)});
@@ -1572,7 +1790,7 @@ public class OrderSQL {
 			}
 		}
 		return sumCount;
-	
+
 	}
 
 	/*计算流水*/
@@ -1605,7 +1823,7 @@ public class OrderSQL {
 	public static List<String> getUsedTableNames() {
 		List<String> tableNames = new ArrayList<String>();
 		String sql = "select tableName from " + TableNames.Order
-				+ " where orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
+				+ " where tableId >= 0 and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
 		Cursor cursor = null;
 		try {
 			cursor = SQLExe.getDB().rawQuery(sql, null);
@@ -1621,7 +1839,27 @@ public class OrderSQL {
 
 		return tableNames;
 	}
-	
+
+	public static List<String> getUsedWaitingListNames() {
+		List<String> tableNames = new ArrayList<String>();
+		String sql = "select tableName from " + TableNames.Order
+				+ " where tableId < 0 and orderStatus <> " + ParamConst.ORDER_STATUS_FINISHED;
+		Cursor cursor = null;
+		try {
+			cursor = SQLExe.getDB().rawQuery(sql, null);
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				if (!TextUtils.isEmpty(cursor.getString(0))) {
+					tableNames.add(cursor.getString(0));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return tableNames;
+	}
+
 	public static void updateOrderStatus( int orderStatus, int id){
 
 		String sql = "update " + TableNames.Order + " set orderStatus = ? where id = ?" ;
@@ -1630,7 +1868,18 @@ public class OrderSQL {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
+	}
+
+	public static void updateWaiterPrint( int isWaiterPrint, int id){
+
+		String sql = "update " + TableNames.Order + " set isWaiterPrint = ? where id = ?" ;
+		try {
+			SQLExe.getDB().execSQL(sql, new Object[] {isWaiterPrint, id});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 	public static void updateOrderPersions( int persons, int id){
@@ -1641,7 +1890,7 @@ public class OrderSQL {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 	}
 
 
@@ -1664,6 +1913,6 @@ public class OrderSQL {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 	}
 }

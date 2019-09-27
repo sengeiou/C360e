@@ -62,6 +62,7 @@ public class TableNames {
 	public static final String RoundAmount = "RoundAmount_";
 	public static final String CPRoundAmount = "CPRoundAmount_";
 	public static final String ReportHourly = "ReportHourly_";
+	public static final String ReportDayPromotion = "ReportDayPromotion_";
 	public static final String KotItemModifier = "KotItemModifier_";
 	public static final String KotItemDetail = "KotItemDetail_";
 	public static final String EmpWorkLog = "EmpWorkLog_";
@@ -95,10 +96,12 @@ public class TableNames {
 	public static final String StoreValue = "StoreValue_";
 	public static final String RemainingStock = "RemainingStock_";
 	public static final String Promotion = "Promotion_";
-	public static final String PromotionData = "PromotionData_";
+	public static final String OrderPromotion = "OrderPromotion_";
 	public static final String PromotionWeek = "PromotionWeek_";
 	public static final String PromotionItem = "PromotionItem_";
 	public static final String PromotionOrder= "PromotionOrder_";
+	public static final String PromotionData= "PromotionData_";
+
 
 	public static final String EventLog= "EventLog_";
 }

@@ -147,11 +147,11 @@ public class ParamConst {
     public static final int FREE = 1;
 
 
-    //  1 堂吃, 2 打包, 3 外卖
+    //  0 堂吃, 1 打包, 2 外卖
     public static final int DINE_IN = 0;
     public static final int TAKE_AWAY = 1;
     public static final int APP_DELIVERY = 2;
-    public static final int NOT_TAKE_AWAY = -1;
+    public static final int NOT_TAKE_AWAY=DINE_IN;
 
     // 0:没有发送，1：发送中，2：发送成功, 3没有成功
     public static final int SYNC_MSG_UN_SEND = 0; // initial state create a new
@@ -186,6 +186,7 @@ public class ParamConst {
     public static final int SETTLEMENT_TYPE_EZLINK = 1002;
     public static final int SETTLEMENT_TYPE_PAYPAL = 1003;
     public static final int SETTLEMENT_TYPE_STORED_CARD = 1004;
+    public static final int SETTLEMENT_TYPE_STORED_CARD_SALES = 1005;
     public static final int SETTLEMENT_TYPE_BILL_ON_HOLD = 101;
     public static final int SETTLEMENT_TYPE_COMPANY = 102;
     public static final int SETTLEMENT_TYPE_HOURS_CHARGE = 103;
@@ -193,11 +194,28 @@ public class ParamConst {
     public static final int SETTLEMENT_TYPE_REFUND = 2001;
     public static final int SETTLEMENT_TYPE_ENTERTAINMENT = 105;
     public static final int SETTLEMENT_TYPE_THIRDPARTY = 106;
+    public static final int SETTLEMENT_TYPE_GROUPON = 3000;
     public static final int SETTLEMENT_TYPE_DELIVEROO = 3001;
     public static final int SETTLEMENT_TYPE_UBEREATS = 3002;
     public static final int SETTLEMENT_TYPE_FOODPANDA = 3003;
     public static final int SETTLEMENT_TYPE_VOUCHER = 4001;
     public static final int SETTLEMENT_TYPE_HALAL = 6001;// 马来西亚的QR支付
+    public static final int SETTLEMENT_TYPE_PAYHALAL = 21000;
+
+    public static final int SETTLEMENT_TYPE_IPAY88 = 20000;
+    public static final int SETTLEMENT_TYPE_IPAY88_WEPAY = 20317;
+    public static final int SETTLEMENT_TYPE_IPAY88_ALIPAY = 20233;
+    public static final int SETTLEMENT_TYPE_IPAY88_BOOST = 20327;
+    public static final int SETTLEMENT_TYPE_IPAY88_MCASH = 20328;
+    public static final int SETTLEMENT_TYPE_IPAY88_TOUCHNGO = 20337;
+    public static final int SETTLEMENT_TYPE_IPAY88_UNIONPAY = 20339;
+    public static final int SETTLEMENT_TYPE_IPAY88_MBB = 20345;
+    public static final int SETTLEMENT_TYPE_IPAY88_CIMB = 20346;
+    public static final int SETTLEMENT_TYPE_IPAY88_GRABPAY = 20347;
+    public static final int SETTLEMENT_TYPE_IPAY88_NETS = 20348;
+
+
+
 
     /**
      * 自定义支付选项，只用于页面展示 不做为数据存
@@ -250,6 +268,7 @@ public class ParamConst {
     public static final String JOB_DELETE_TMP_ITEM_KOT = "delete_tmp_item_kot";
     public static final String JOB_KOT_SUMMARY = "kot_summary";
     public static final String JOB_KOT_UPDATE_ORDER_COUNT = "kot_summary_update_order_count";
+    public static final String JOB_REFRESH_KOT = "refresh_kot";
 
     // Job用 标记transfer table 发送给KDS的装填
     public static final String JOB_MERGER_KOT = "merger_kot";
@@ -333,6 +352,25 @@ public class ParamConst {
      * 精确到小数点前一位四舍五入
      */
     public static final String ROUND_1DOLLAR = "ROUND_1DOLLAR";
+
+    /**
+     * 精确到小数点前一位四舍五入
+     */
+    public static final String ROUND_50DOLLAR = "ROUND_50DOLLAR";
+
+    /**
+     * 精确到小数点前一位四舍五入
+     */
+    public static final String ROUND_100DOLLAR = "ROUND_100DOLLAR";
+
+    /**
+     * 精确到小数点前一位四舍五入
+     */
+    public static final String ROUND_500DOLLAR = "ROUND_500DOLLAR";
+    /**
+     * 精确到小数点前一位四舍五入
+     */
+    public static final String ROUND_1000DOLLAR = "ROUND_1000DOLLAR";
     /**
      * 精确小数点后两位,向上四舍五入
      */
@@ -476,5 +514,65 @@ public class ParamConst {
     //promotion
     public static final int ITEM_PROMOTION = 0;
     public static final int ORDER_PROMOTION = 1;
+
+
+    //ipay88
+    public static final int PAY88_STATUS_NO_PROCESS = 0;
+    public static final int PAY88_STATUS_NO_REAL_DATE = 2;
+    public static final int PAY88_STATUS_PROCESSED = 1;
+    public static final int PAY88_STATUS_PROCESSED_ORDER = -1;
+    public static final int PAY88_STATUS_PROCESSED_ERROR = -2;
+
+
+    public static final String PAYHALAL_PAYMENT_STATUS_SUCCESS = "SUCCESS";
+    public static final String PAYHALAL_PAYMENT_STATUS_FAILED = "FAILED";
+    public static final String PAYHALAL_PAYMENT_STATUS_PENDING = "PENDING";
+    public static final String PAYHALAL_PAYMENT_STATUS_TIMEOUT = "TIMEOUT";
+
+
+//     233 Alipay,  339 Union Pay, dan 347 GrabPay
+
+
+    public static String getQRPaymentName(int paymentTypeId){
+        String type = "";
+        if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_ALIPAY){
+            type = "Alipay";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_BOOST){
+            type = "Boost";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_TOUCHNGO){
+            type = "Touch N Go";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_MCASH){
+            type = "Mcash";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_UNIONPAY){
+            type = "UnionPay";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_NETS){
+            type = "NetsPay";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_CIMB){
+            type = "Cimb Pay";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_MBB){
+            type = "Maybank QRPay";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_GRABPAY){
+            type = "GrabPay";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_WEPAY){
+            type = "WePay";
+        }
+        else if(paymentTypeId == SETTLEMENT_TYPE_PAYHALAL){
+            type = "PayHalal";
+        }
+        return type;
+    }
+    public static final int ENABLE_POS_TRAINING  = 1;
+    public static final int DISABLE_POS_TRAINING = 0;
+
+
 
 }

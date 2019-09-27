@@ -59,7 +59,8 @@
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:text="@string/settlement_void" 
+                android:text="@string/void_"
+				android:textAllCaps="true"
                 android:textColor="@color/text_color_selector"
                 android:textSize="@dimen/text_size_s"/>
 
@@ -74,7 +75,7 @@
 	            android:gravity="center"
 	            android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-	            android:text="Stored-Card"
+	            android:text="@string/stored_card"
 				android:textColor="@color/text_color_selector"
                 android:textSize="@dimen/text_size_s"/>
         </LinearLayout>

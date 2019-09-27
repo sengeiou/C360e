@@ -224,7 +224,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 			String modifiers = getItemModifiers(orderDetail);
 			
 			ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-					orderDetail.getItemId());
+					orderDetail.getItemId(),orderDetail.getItemName());
 			if (modifiers != null) {
 				holder.modifier.setText(modifiers);
 			}
@@ -524,7 +524,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					ParamConst.ORDERDETAIL_DEFAULT_GROUP_ID, order.getId());
 			if (orderDetailCount != 0) {
 				UIHelp.showToast(context,
-						context.getResources().getString(R.string.assign_items));
+						context.getResources().getString(R.string.assign_items_to_group));
 			} else {
 				PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
 						context);
@@ -582,7 +582,7 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
 					temporaryOrder.setOrderNo(order.getOrderNo());
 					App.instance.remoteBillPrint(printer, title, temporaryOrder,
-							orderItems, orderModifiers, taxMap, null, null);
+							orderItems, orderModifiers, taxMap, null, null,null);
 				}
 //				OrderBill orderBill = OrderBillSQL
 //						.getOrderBillByOrder(order);
@@ -623,13 +623,13 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					order,
 					App.instance.getUser().getFirstName()
 							+ App.instance.getUser().getLastName(),
-					TableInfoSQL.getTableById(order.getTableId()).getName(), 1);
+					TableInfoSQL.getTableById(order.getTableId()).getName(), 1,App.instance.getSystemSettings().getTrainType());
 			order.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
 			OrderSQL.update(order);
 			ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
 					.getInstance().getItemModifierList(order, OrderDetailSQL.getOrderDetails(order.getId()));
 			App.instance.remoteBillPrint(printer, title, order, orderItems,
-					orderModifiers, taxMap, null, null);
+					orderModifiers, taxMap, null, null,null);
 			handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
 			dismiss();
 		}

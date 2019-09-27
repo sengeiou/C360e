@@ -5,22 +5,17 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.alfredbase.ParamConst;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Printer;
-import com.alfredbase.javabean.User;
-import com.alfredbase.javabean.UserRestaurant;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
-import com.alfredbase.store.sql.UserRestaurantSQL;
-import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredposclient.global.App;
@@ -449,9 +444,9 @@ public class HTTPKDSRequest {
 
 //	public static void asyncSubmitKot(Context context, Map<String, Object> parameters, String url,
 //			AsyncHttpClient httpClient, final Handler handler) throws Exception {
-//						
-//		httpClient.post(context,url, 
-//					 new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF, 
+//
+//		httpClient.post(context,url,
+//					 new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
 //							 "UTF-8"),HttpAssembling.CONTENT_TYPE,
 //						new AsyncHttpResponseHandlerEx() {
 //							@Override
@@ -459,7 +454,7 @@ public class HTTPKDSRequest {
 //									byte[] responseBody) {
 //								super.onSuccess(statusCode, headers, responseBody);
 //								if (resultCode == ResultCode.SUCCESS) {
-//									
+//
 //								}
 //							}
 //							@Override
@@ -468,7 +463,7 @@ public class HTTPKDSRequest {
 //								if (error.getCause() instanceof ConnectException) {
 //								  throw new RuntimeException(error);
 //								}
-//							}			
+//							}
 //			});
 //	}
 
@@ -505,6 +500,32 @@ public class HTTPKDSRequest {
 
     public static void transferTable(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
                                      AsyncHttpClient httpClient) {
+        parameters.put("mainpos", App.instance.getMainPosInfo());
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters), "UTF-8"), HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            if (error.getCause() instanceof ConnectException) {
+                                throw new RuntimeException(error);
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void refreshSameGroupKDS(Context context, Map<String, Object> parameters, String url, final KDSDevice kds,
+                                           AsyncHttpClient httpClient) {
         parameters.put("mainpos", App.instance.getMainPosInfo());
         try {
             httpClient.post(context, url,

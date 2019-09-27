@@ -3,6 +3,7 @@ package com.alfredposclient.activity.kioskactivity.subpos;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,7 @@ public class SelectRevenue extends BaseActivity {
         ((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
         initTextTypeFace();
         loadingDialog = new LoadingDialog(this);
-        loadingDialog.setTitle("Search Revenue ...");
+        loadingDialog.setTitle(this.getString(R.string.search_revenue));
         loadingDialog.showByTime(5000);
         observable = RxBus.getInstance().register("RECEIVE_IP_ACTION");
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
@@ -96,7 +97,7 @@ public class SelectRevenue extends BaseActivity {
                 UIHelp.startConnectMainPOS(context);
                 break;
             case R.id.iv_refresh:
-                loadingDialog.setTitle("Search Revenue ...");
+                loadingDialog.setTitle(context.getString(R.string.search_revenue));
                 loadingDialog.showByTime(5000);
                 App.instance.searchRevenueIp();
                 break;
@@ -148,7 +149,7 @@ public class SelectRevenue extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     App.instance.setPairingIp(udpMsg.getIp());
-                    loadingDialog.setTitle("Loading");
+                    loadingDialog.setTitle(context.getString(R.string.loading));
                     loadingDialog.show();
                     SubPosSyncCentre.getInstance().chooseRevenue(context, handler);
                 }

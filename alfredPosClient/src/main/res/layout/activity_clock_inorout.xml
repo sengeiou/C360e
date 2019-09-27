@@ -39,7 +39,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Business Date"
+                    android:text="@string/business_date"
                     android:textSize="@dimen/text_size_m"
                     android:textColor="@color/black"/>
 
@@ -47,7 +47,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Staff"
+                    android:text="@string/staff"
                     android:textSize="@dimen/text_size_m"
                     android:textColor="@color/black"/>
 
@@ -55,7 +55,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Clock in Time"
+                    android:text="@string/clock_in"
                     android:textSize="@dimen/text_size_m"
                     android:textColor="@color/black"/>
             </LinearLayout>

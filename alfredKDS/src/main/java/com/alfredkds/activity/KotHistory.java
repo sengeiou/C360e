@@ -3,6 +3,7 @@ package com.alfredkds.activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,166 +36,173 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class KotHistory extends BaseActivity{
-	
-	public static final int HANDLER_SUCCEED = 1;
-	public static final int HANDLER_RECONNECT_POS = 10;
-	public static final int HANDLER_SEND_FAILURE = 3;
-	public static final int HANDLER_REFRESH = 2;
-	public MainPosInfo mainPosInfo ;
-	private ListView listView;
-	public KotHistoryAdapter adapter;
-	private TextView tv_table_name;
-	
-	@Override
-	protected void initView() {
-		super.initView();
-		setContentView(R.layout.activity_kot_history);
-		loadingDialog = new LoadingDialog(context);
-		loadingDialog.setTitle(context.getResources().getString(R.string.undoing));
-		mainPosInfo = App.instance.getCurrentConnectedMainPos();
-		tv_table_name = (TextView) findViewById(R.id.tv_table_name);
-		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-			tv_table_name.setVisibility(View.GONE);
-		}
-		TextView tv_order_n = (TextView)findViewById(R.id.tv_order_n);
-		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-			tv_order_n.setText(getResources().getString(R.string.order_no));
-		}else{
-			tv_order_n.setText(getResources().getString(R.string.order_id));
-		}
-		initListView();
-	}
-	
-	private void initListView() {
-		listView = (ListView) this.findViewById(R.id.lv_kot_history);
-		adapter = new KotHistoryAdapter(context);
-		adapter.setKotHistory(App.instance.getKotHistoryData());
-		listView.setAdapter(adapter);
-	}
-	
-	public Handler handler = new Handler(){
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case HANDLER_SUCCEED:
-				refresh();
-				break;
-			case HANDLER_RECONNECT_POS:
-				loadingDialog.dismiss();
-				DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
-						getString(R.string.cancel), getString(R.string.ok), null, 
-						new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								UIHelp.startConnectPOS(context);
-								finish();
-							}
-						});
-				break;
-			case HANDLER_SEND_FAILURE:
-				refresh();
-				break;
-			case HANDLER_REFRESH:
-				refresh();
-				break;
-			case ResultCode.CONNECTION_FAILED:
-				UIHelp.showToast(context,ResultCode.getErrorResultStr(context,(Throwable)msg.obj,
-						context.getResources().getString(R.string.revenue_center)));
-				break;
-			case App.HANDLER_KOTSUMMARY_IS_UNREAL:
-				loadingDialog.dismiss();
-				UIHelp.showToast(context,context.getResources().getString(R.string.order_discarded));
-				List<Object[]> kotHistory = App.instance.getKotHistoryData();
-				adapter.setKotHistory(kotHistory);
-				adapter.notifyDataSetChanged();	
-				break;
-			case App.HANDLER_KOT_COMPLETE_USER_FAILED:
-				App.instance.reload(context,handler);
-				break;
-			case Login.HANDLER_LOGIN:
-				refresh();
-			break;
-			default:
-				break;
-			}
-		};
-	};
-	
-	public void refresh() {
-		loadingDialog.dismiss();
-		adapter.setKotHistory(App.instance.getKotHistoryData());
-		adapter.notifyDataSetChanged();
-	}
-	public void httpRequestAction(int action, Object obj) {
-		handler.sendMessage(handler.obtainMessage(HANDLER_REFRESH));
-	};
-	
-	private class KotHistoryAdapter extends BaseAdapter{
+public class KotHistory extends BaseActivity {
 
-		private List<Object[]> kotHistory = new ArrayList<Object[]>();
-		private LayoutInflater inflater;
-		
-		public KotHistoryAdapter(Context context){
-			inflater = LayoutInflater.from(context);
-		}
-		
-		public List<Object[]> getKotHistory() {
-			return kotHistory;
-		}
+    public static final int HANDLER_SUCCEED = 1;
+    public static final int HANDLER_RECONNECT_POS = 10;
+    public static final int HANDLER_SEND_FAILURE = 3;
+    public static final int HANDLER_REFRESH = 2;
+    boolean isKiosk = true;
+    private ListView listView;
+    public KotHistoryAdapter adapter;
+    private TextView tv_table_name;
 
-		public void setKotHistory(List<Object[]> kotHistory) {
-				this.kotHistory = kotHistory;
-		}
+    @Override
+    protected void initView() {
+        super.initView();
+        setContentView(R.layout.activity_kot_history);
+        loadingDialog = new LoadingDialog(context);
+        loadingDialog.setTitle(context.getResources().getString(R.string.undoing));
+        for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPosList()) {
+            if (mainPos.getIsKiosk() != ParamConst.MAINPOSINFO_IS_KIOSK) {
+                isKiosk = false;
+            }
+        }
+        TextView tv_order_n = (TextView) findViewById(R.id.tv_order_n);
+        if (isKiosk) {
+            tv_table_name.setVisibility(View.GONE);
+            tv_order_n.setText(getResources().getString(R.string.order_no));
+        } else {
+            tv_order_n.setText(getResources().getString(R.string.order_id));
+        }
+        initListView();
+    }
+
+    private void initListView() {
+        listView = (ListView) this.findViewById(R.id.lv_kot_history);
+        adapter = new KotHistoryAdapter(context);
+        adapter.setKotHistory(App.instance.getKotHistoryData());
+        listView.setAdapter(adapter);
+    }
+
+    public Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case HANDLER_SUCCEED:
+                    refresh();
+                    break;
+                case HANDLER_RECONNECT_POS:
+                    loadingDialog.dismiss();
+                    DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
+                            getString(R.string.cancel), getString(R.string.ok), null,
+                            new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    UIHelp.startConnectPOS(context);
+                                    finish();
+                                }
+                            });
+                    break;
+                case HANDLER_SEND_FAILURE:
+                    refresh();
+                    break;
+                case HANDLER_REFRESH:
+                    refresh();
+                    break;
+                case ResultCode.CONNECTION_FAILED:
+                    UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
+                            context.getResources().getString(R.string.revenue_center)));
+                    break;
+                case App.HANDLER_KOTSUMMARY_IS_UNREAL:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, context.getResources().getString(R.string.order_discarded));
+                    List<Object[]> kotHistory = App.instance.getKotHistoryData();
+                    adapter.setKotHistory(kotHistory);
+                    adapter.notifyDataSetChanged();
+                    break;
+                case App.HANDLER_KOT_COMPLETE_USER_FAILED:
+                    App.instance.reload(context, handler);
+                    break;
+                case Login.HANDLER_LOGIN:
+                    refresh();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        ;
+    };
+
+    public void refresh() {
+        loadingDialog.dismiss();
+        adapter.setKotHistory(App.instance.getKotHistoryData());
+        adapter.notifyDataSetChanged();
+    }
+
+    public void httpRequestAction(int action, Object obj) {
+        handler.sendMessage(handler.obtainMessage(HANDLER_REFRESH));
+    }
+
+    ;
+
+    private class KotHistoryAdapter extends BaseAdapter {
+
+        private List<Object[]> kotHistory = new ArrayList<Object[]>();
+        private LayoutInflater inflater;
+
+        public KotHistoryAdapter(Context context) {
+            inflater = LayoutInflater.from(context);
+        }
+
+        public List<Object[]> getKotHistory() {
+            return kotHistory;
+        }
+
+        public void setKotHistory(List<Object[]> kotHistory) {
+            this.kotHistory = kotHistory;
+        }
 
 
-		@Override
-		public int getCount() {
-			return kotHistory.size();
-		}
+        @Override
+        public int getCount() {
+            return kotHistory.size();
+        }
 
-		@Override
-		public Object getItem(int position) {
-			return kotHistory.get(position);
-		}
+        @Override
+        public Object getItem(int position) {
+            return kotHistory.get(position);
+        }
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder = null;
-			if (convertView == null) {
-				convertView = inflater.inflate(R.layout.item_kot_history, null);
-				holder = new ViewHolder();
-				holder.kotId = (TextView) convertView.findViewById(R.id.tv_kotId);
-				holder.orderId = (TextView) convertView.findViewById(R.id.tv_orderId);
-				holder.table = (TextView) convertView.findViewById(R.id.tv_table);
-				holder.pos = (TextView) convertView.findViewById(R.id.tv_pos);
-				holder.data = (TextView) convertView.findViewById(R.id.tv_data);
-				holder.time = (TextView) convertView.findViewById(R.id.tv_time);
-				holder.dish = (TextView) convertView.findViewById(R.id.tv_dish);
-				holder.btn_reduction = (Button) convertView.findViewById(R.id.btn_reduction);
-				convertView.setTag(holder);
-			}else {
-				holder = (ViewHolder) convertView.getTag();
-			}
-			
-			final KotSummary kotSummary = (KotSummary) kotHistory.get(position)[0];
-			final KotItemDetail kotItemDetail = (KotItemDetail) kotHistory.get(position)[1];
-			holder.kotId.setText(kotSummary.getId()+"");
-			if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-				holder.table.setVisibility(View.GONE);
-				holder.orderId.setText(kotSummary.getNumTag() + IntegerUtils.fromat(kotSummary.getRevenueCenterIndex(), kotSummary.getOrderNoString()));
-			}else {
-				holder.orderId.setText(kotSummary.getOrderId()+"");
-				holder.table.setText(kotSummary.getTableName()+"");
-			}
-			holder.pos.setText(kotSummary.getRevenueCenterName()+"");
-			holder.data.setText(TimeUtil.getPrintDate(kotSummary.getCreateTime())+"");
-			holder.time.setText(TimeUtil.getPrintTime(kotSummary.getCreateTime())+"");
-			holder.dish.setText((String)kotHistory.get(position)[2]);
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.item_kot_history, null);
+                holder = new ViewHolder();
+                holder.kotId = (TextView) convertView.findViewById(R.id.tv_kotId);
+                holder.orderId = (TextView) convertView.findViewById(R.id.tv_orderId);
+                holder.table = (TextView) convertView.findViewById(R.id.tv_table);
+                holder.pos = (TextView) convertView.findViewById(R.id.tv_pos);
+                holder.data = (TextView) convertView.findViewById(R.id.tv_data);
+                holder.time = (TextView) convertView.findViewById(R.id.tv_time);
+                holder.dish = (TextView) convertView.findViewById(R.id.tv_dish);
+                holder.btn_reduction = (Button) convertView.findViewById(R.id.btn_reduction);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            final KotSummary kotSummary = (KotSummary) kotHistory.get(position)[0];
+            final KotItemDetail kotItemDetail = (KotItemDetail) kotHistory.get(position)[1];
+            holder.kotId.setText(kotSummary.getId() + "");
+
+            if (isKiosk) {
+                holder.table.setVisibility(View.GONE);
+                holder.orderId.setText(kotSummary.getNumTag() + IntegerUtils.formatLocale(kotSummary.getRevenueCenterIndex(), kotSummary.getOrderNoString()));
+            } else {
+                holder.orderId.setText(kotSummary.getOrderId() + "");
+                holder.table.setText(kotSummary.getTableName() + "");
+            }
+            holder.pos.setText(kotSummary.getRevenueCenterName() + "");
+            holder.data.setText(TimeUtil.getPrintDate(kotSummary.getCreateTime()) + "");
+            holder.time.setText(TimeUtil.getPrintTime(kotSummary.getCreateTime()) + "");
+            holder.dish.setText((String) kotHistory.get(position)[2]);
 //			if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_DONE ||
 //					(kotItemDetail.getKotStatus() == ParamConst.KOTS_STATUS_UNDONE &&
 //					kotItemDetail.getFinishQty() != 0)) {
@@ -230,19 +238,19 @@ public class KotHistory extends BaseActivity{
 //				holder.btn_reduction.setText(R.string.kot_in_progress);
 //				holder.btn_reduction.setBackgroundColor(Color.GRAY);
 //			}
-			return convertView;
-		}
-	}
-	
-	class ViewHolder{
-		public TextView kotId;
-		public TextView orderId;
-		public TextView table;
-		public TextView pos;
-		public TextView data;
-		public TextView time;
-		public TextView dish;
-		public Button btn_reduction;
-	}
-	
+            return convertView;
+        }
+    }
+
+    class ViewHolder {
+        public TextView kotId;
+        public TextView orderId;
+        public TextView table;
+        public TextView pos;
+        public TextView data;
+        public TextView time;
+        public TextView dish;
+        public Button btn_reduction;
+    }
+
 }

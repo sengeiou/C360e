@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="45dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white">
 
     <TextView
@@ -9,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
        	android:layout_centerInParent="true"
-        android:text="Kitchen Name"
+        tools:text="Kitchen Name"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_m" />
 
@@ -20,7 +21,7 @@
         android:layout_toLeftOf="@+id/iv_refresh"
         android:layout_centerVertical="true"
         android:src="@drawable/top_callnum_selector"
-        android:text="Call Number"
+        android:text="@string/call"
         android:padding="10dp"/>
 
     <ImageView

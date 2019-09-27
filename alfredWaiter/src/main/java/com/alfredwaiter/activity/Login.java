@@ -12,9 +12,11 @@ import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
@@ -94,6 +96,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case HANDLER_LOGIN: {
+                    initBugseeModifier();
                     SyncCentre.getInstance().getRestaurantInfo(context, new HashMap<String, Object>(), handler);
                     break;
                 }
@@ -122,6 +125,23 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 
         ;
     };
+
+    private void initBugseeModifier() {
+        Restaurant restaurant = RestaurantSQL.getRestaurant();
+        if (restaurant != null) {
+            BugseeHelper.setEmail(restaurant.getEmail());
+            BugseeHelper.setAttribute("restaurant_id", restaurant.getId());
+            BugseeHelper.setAttribute("restaurant_company_id", restaurant.getCompanyId());
+            BugseeHelper.setAttribute("restaurant_address", restaurant.getAddressPrint());
+            BugseeHelper.setAttribute("restaurant_country", restaurant.getCountry());
+            BugseeHelper.setAttribute("restaurant_city", restaurant.getCity());
+        }
+
+        String employeeId = Store.getString(context, Store.EMPLOYEE_ID);
+        BugseeHelper.setAttribute("employee_id", employeeId);
+
+//        throw new NullPointerException("Test Crash");
+    }
 
     private static final int KEY_LENGTH = 5;
     private StringBuffer keyBuf = new StringBuffer();

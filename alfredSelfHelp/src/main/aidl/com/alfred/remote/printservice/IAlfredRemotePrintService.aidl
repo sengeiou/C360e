@@ -13,10 +13,10 @@ interface IAlfredRemotePrintService {
 	void deleteOldPrinterMsg(String businessDate);
 
 	void printKOT(String printer,String summary, String detail, String modifiers,
-						boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire);
+						boolean oneprint, boolean doublePrint, int kotFontSize, boolean isFire,int trainType);
 
 	void printKioskKOT(String printer,String summary, String detail, String modifiers,
-						boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize );
+						boolean oneprint, boolean doublePrint, String orderNo, int kotFontSize,int trainType);
 
 	void printBillSummary(String printer,String summary, String detail, String modifiers, int kotFontSize);
 
@@ -25,13 +25,13 @@ interface IAlfredRemotePrintService {
     							String order, String orderDetail,
     							String modifiers,String tax, String payment,
     							boolean doubleprint, boolean doubleReceipts,
-    							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble);
+    							String rounding, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr,String promotiomData,String formatType,boolean isInstructions);
 
     	void printKioskBill(String printer, String title,
     							String order, String orderDetail,
     							String modifiers,String tax, String payment,
     							boolean doubleprint, boolean doubleReceipts,
-    							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble);
+    							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String promotiomData,String formatType);
 
 
 	void kickCashDrawer(String printer);
@@ -63,8 +63,9 @@ interface IAlfredRemotePrintService {
 							String order, String orderDetail,
 							String modifiers,String tax, String payment,
 							boolean doubleprint, boolean doubleReceipts,
-							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr);
+							String rounding, String orderNo, String currencySymbol, boolean openDrawer, boolean isDouble,String info,String orderNoStr,String formatType);
 
-    void printPromotionAnalysisReport(String xzType, String printer, String title, String orderPromotion,String itemPromotion,String promotion);
+    void printPromotionAnalysisReport(String xzType, String printer, String title, String reportDayPromotion);
+    void printIpay88Qrcode(String printer, String id, String printerTitle,  String paymentMethod, String amount, inout byte[] qrCodeBitmap);
 
 }

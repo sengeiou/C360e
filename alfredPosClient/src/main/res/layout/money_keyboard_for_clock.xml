@@ -116,7 +116,7 @@
                 android:layout_width="@dimen/dp90"
                 android:layout_height="@dimen/dp90"
                 android:gravity="center"
-                android:text="@string/clock_delete_btn" />
+                android:text="@string/delete" />
 
         </LinearLayout>
     </LinearLayout>
@@ -133,7 +133,7 @@
             android:layout_width="@dimen/dp120"
             android:layout_height="@dimen/dp180"
             android:gravity="center"
-            android:text="@string/clock_in_btn" />
+            android:text="@string/clock_in" />
 
         <Button
             android:id="@+id/btn_ClockOut"

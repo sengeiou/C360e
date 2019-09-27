@@ -1,28 +1,30 @@
 package com.alfredbase.utils;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.alfredbase.BaseApplication;
+import com.alfredbase.ParamConst;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import android.text.TextUtils;
-
-import com.alfredbase.BaseApplication;
-import com.alfredbase.ParamConst;
+import java.util.Locale;
 
 public class TimeUtil {
     public static final SimpleDateFormat FORMATTER = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss");
+            "yyyy-MM-dd HH:mm:ss", Locale.US);
 
     public static final SimpleDateFormat YMDFORMATTER = new SimpleDateFormat(
-            "yyyy-MM-dd");
+            "yyyy-MM-dd", Locale.US);
 
     public static final SimpleDateFormat MDYFORMATTER = new SimpleDateFormat(
-            "MM-dd-yyyy");
+            "MM-dd-yyyy", Locale.US);
 
     public static final SimpleDateFormat FORMATTER_CARD_EXPIRY_DATE = new SimpleDateFormat(
-            "MM/yy");
+            "MM/yy", Locale.US);
 
     public static String getTime() {
         return FORMATTER.format(new Date());
@@ -41,34 +43,36 @@ public class TimeUtil {
     }
 
     public static final SimpleDateFormat PRINTER_FORMAT_DATE = new SimpleDateFormat(
-            "dd/MM/yyyy");
+            "dd/MM/yyyy", Locale.US);
 
     public static final SimpleDateFormat PRINTER_FORMAT_DATE_TIME = new SimpleDateFormat(
-            "dd/MM/yyyy HH:mm");
+            "dd/MM/yyyy HH:mm", Locale.US);
     public static final SimpleDateFormat PRINTING_FORMAT_DATE = new SimpleDateFormat(
-            "yyyy-MM-dd");
+            "yyyy-MM-dd", Locale.US);
 
     public static final SimpleDateFormat PRINTER_FORMAT_TIME = new SimpleDateFormat(
-            "HH:mm");
+            "HH:mm", Locale.US);
     public static final SimpleDateFormat FORMATTER_TIME = new SimpleDateFormat(
-            "HH:mm:ss");
+            "HH:mm:ss", Locale.US);
 
-    public static final SimpleDateFormat CLOSE_BILL_DATA_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    public static final SimpleDateFormat CLOSE_BILL_DATA_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
 
     public static final SimpleDateFormat PRINTER_DELIVERY_DATE_TIME = new SimpleDateFormat(
-            "dd/MM/yyyy, HH:mm");
+            "dd/MM/yyyy, HH:mm", Locale.US);
 
     public static String getPrintDate(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
-        if (BaseApplication.countryCode == ParamConst.CHINA)
+        if (BaseApplication.countryCode == ParamConst.CHINA) {
             return YMDFORMATTER.format(calendar.getTime());
-        else
+        }
+        else {
             return PRINTER_FORMAT_DATE.format(calendar.getTime());
+        }
     }
 
     public static String getPrintDateTime(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         if (BaseApplication.countryCode == ParamConst.CHINA)
             return YMDFORMATTER.format(calendar.getTime());
@@ -77,7 +81,7 @@ public class TimeUtil {
     }
 
     public static String getPrintingDate(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         if (BaseApplication.countryCode == ParamConst.CHINA)
             return YMDFORMATTER.format(calendar.getTime());
@@ -101,26 +105,26 @@ public class TimeUtil {
     }
 
     public static String getPrintTime(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         return PRINTER_FORMAT_TIME.format(calendar.getTime());
     }
 
     public static String getCloseBillDataTime(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         return CLOSE_BILL_DATA_TIME.format(calendar.getTime());
     }
 
     public static String getDeliveryDataTime(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         return PRINTER_DELIVERY_DATE_TIME.format(calendar.getTime());
     }
 
 
     public static String getTimeFormat(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         return FORMATTER.format(calendar.getTime());
     }
@@ -157,7 +161,7 @@ public class TimeUtil {
     public static String getSubTimeFormat(long time) {
         long time1 = System.currentTimeMillis() - time;
         long result = 0;
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(getTimeInMillsByZero(0) + time1);
         try {
             result = (calendar.getTimeInMillis());
@@ -176,7 +180,7 @@ public class TimeUtil {
     }
 
     public static int dayForWeek() {
-        Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance(Locale.US);
         int dayForWeek = 0;
         if (c.get(Calendar.DAY_OF_WEEK) == 1) {
             dayForWeek = 0;
@@ -187,7 +191,7 @@ public class TimeUtil {
     }
 
     public static int getWeek(long time) {
-        Calendar cd = Calendar.getInstance();
+        Calendar cd = Calendar.getInstance(Locale.US);
         cd.setTime(new Date(time));
         int week = cd.get(Calendar.DAY_OF_WEEK);
         int mWeek = 0;
@@ -210,7 +214,7 @@ public class TimeUtil {
     }
 
     public static long getTimeInMillis() {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(Locale.US);
         cal.set(1970, 0, 01);
         return cal.getTimeInMillis();
     }
@@ -220,7 +224,7 @@ public class TimeUtil {
      * 获取0点时间
      */
     public static long getTimeInMillsByZero(int day) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(Locale.US);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -259,13 +263,13 @@ public class TimeUtil {
      * @return
      */
     public static String getCardExpiryDateStr(long cardExpiryDate) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(cardExpiryDate);
         return FORMATTER_CARD_EXPIRY_DATE.format(calendar.getTime());
     }
 
     public static Calendar getCalendarByZero(int day) {
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance(Locale.US);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -281,7 +285,7 @@ public class TimeUtil {
      * @return
      */
     public static long getCalendarNextPoint(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) + 1);
         calendar.set(Calendar.MINUTE, 0);
@@ -291,7 +295,7 @@ public class TimeUtil {
     }
 
     public static long getNewBusinessDate() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -300,7 +304,7 @@ public class TimeUtil {
     }
 
     public static long getBusinessDateByDay(long businessDate, int day) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(businessDate);
         calendar.set(Calendar.DAY_OF_YEAR, calendar.get(Calendar.DAY_OF_YEAR) + day);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -311,7 +315,7 @@ public class TimeUtil {
     }
 
     public static long getBeforeYesterday(long businessDate) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(businessDate);
         calendar.set(Calendar.DAY_OF_YEAR, calendar.get(Calendar.DAY_OF_YEAR) - 2);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -323,14 +327,14 @@ public class TimeUtil {
     }
 
     public static int getTimeHour(long time) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         return calendar.get(Calendar.HOUR_OF_DAY);
     }
 
     public static long getTimeBeforeTwoHour() {
         long time = System.currentTimeMillis();
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(time);
         calendar.add(Calendar.HOUR_OF_DAY, -2);
         return calendar.getTimeInMillis();

@@ -5,79 +5,77 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.SettlementRestaurant;
-
-
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class SettlementRestaurantSQL {
 
     public static void addSettlementRestaurant(List<SettlementRestaurant> settlementRestaurants) {
-        if (settlementRestaurants == null)
-        {
+        if (settlementRestaurants == null) {
             return;
-            }
-            SQLiteDatabase db = SQLExe.getDB();
-            try {
-                db.beginTransaction();
+        }
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            db.beginTransaction();
 
-                String sql = "replace into "
-                        + TableNames.SettlementRestaurant
-                        + "(id,restaurantId,mediaId,adjustmentsId,onlineServiceId,type,remarks,discriptionId,otherPaymentId)"
-                        + " values (?,?,?,?,?,?,?,?,?)";
-                SQLiteStatement sqLiteStatement = db.compileStatement(
-                        sql);
-                for (SettlementRestaurant settlementRestaurant : settlementRestaurants) {
-                    SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
-                            settlementRestaurant.getId());
-                    SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
-                            settlementRestaurant.getRestaurantId());
-                    SQLiteStatementHelper.bindLong(sqLiteStatement, 3,
-                            settlementRestaurant.getMediaId());
-                    SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
-                            settlementRestaurant.getAdjustmentsId());
-                    SQLiteStatementHelper.bindLong(sqLiteStatement, 5,
-                            settlementRestaurant.getOnlineServiceId());
-                    SQLiteStatementHelper.bindLong(sqLiteStatement, 6,
-                           settlementRestaurant.getType());
-                    SQLiteStatementHelper.bindString(sqLiteStatement, 7,
-                           settlementRestaurant.getRemarks());
-                    SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
-                            settlementRestaurant.getDiscriptionId());
-                    SQLiteStatementHelper.bindString(sqLiteStatement, 9,
-                          settlementRestaurant.getOtherPaymentId());
-                    sqLiteStatement.executeInsert();
-                }
-                db.setTransactionSuccessful();
+            String sql = "replace into "
+                    + TableNames.SettlementRestaurant
+                    + "(id,restaurantId,mediaId,adjustmentsId,onlineServiceId,type,remarks,discriptionId,otherPaymentId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
+            SQLiteStatement sqLiteStatement = db.compileStatement(
+                    sql);
+            for (SettlementRestaurant settlementRestaurant : settlementRestaurants) {
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
+                        settlementRestaurant.getId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
+                        settlementRestaurant.getRestaurantId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 3,
+                        settlementRestaurant.getMediaId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
+                        settlementRestaurant.getAdjustmentsId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 5,
+                        settlementRestaurant.getOnlineServiceId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 6,
+                        settlementRestaurant.getType());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 7,
+                        settlementRestaurant.getRemarks());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
+                        settlementRestaurant.getDiscriptionId());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 9,
+                        settlementRestaurant.getOtherPaymentId());
+                sqLiteStatement.executeInsert();
+            }
+            db.setTransactionSuccessful();
 
 
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-                db.endTransaction();
-            }
+        } finally {
+            db.endTransaction();
+        }
     }
 
 
     public static ArrayList<SettlementRestaurant> getAllSettlementRestaurant() {
-        ArrayList<SettlementRestaurant> result = new  ArrayList<SettlementRestaurant>();
+        ArrayList<SettlementRestaurant> result = new ArrayList<SettlementRestaurant>();
         String sql = "select * from " + TableNames.SettlementRestaurant;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql, new String[] {});
+            cursor = db.rawQuery(sql, new String[]{});
             int count = cursor.getCount();
             if (count < 1) {
                 return result;
             }
             SettlementRestaurant settlementRestaurant = null;
 
-            if (cursor.moveToFirst() == false)
-            {
+            if (cursor.moveToFirst() == false) {
 
                 Log.e("SettlementRestaurant", "您的CITY表中无数据: ");
 
@@ -108,15 +106,13 @@ public class SettlementRestaurantSQL {
     }
 
 
-
-
     public static SettlementRestaurant getSettlementRestaurant(int paid) {
         SettlementRestaurant result = null;
-        String sql = "select * from " + TableNames.SettlementRestaurant+ " where id = ?";
+        String sql = "select * from " + TableNames.SettlementRestaurant + " where id = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
-            cursor = db.rawQuery(sql,new String[] {paid+""});
+            cursor = db.rawQuery(sql, new String[]{paid + ""});
 //            int count = cursor.getCount();
 //            if (count < 1) {
 //                return result;
@@ -145,10 +141,11 @@ public class SettlementRestaurantSQL {
         }
         return result;
     }
+
     public static void deleteSettlementRestaurant(SettlementRestaurant settlementRestaurant) {
         String sql = "delete from " + TableNames.SettlementRestaurant + " where id = ?";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] { settlementRestaurant.getId() });
+            SQLExe.getDB().execSQL(sql, new Object[]{settlementRestaurant.getId()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -157,10 +154,28 @@ public class SettlementRestaurantSQL {
     public static void deleteAllSettlementRestaurant() {
         String sql = "delete from " + TableNames.SettlementRestaurant;
         try {
-            SQLExe.getDB().execSQL(sql, new Object[] {});
+            SQLExe.getDB().execSQL(sql, new Object[]{});
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
+    public static void deleteAllSettlementRestaurantCustom() {
+        String sql = "delete from " + TableNames.SettlementRestaurant + " where otherPaymentId IS NOT NULL and id != ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{ParamConst.SETTLEMENT_TYPE_IPAY88});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteAllSettlementRestaurantIpay88HalalPayment() {
+        String sql = "delete from " + TableNames.SettlementRestaurant + " where otherPaymentId IS NULL  or id = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{ParamConst.SETTLEMENT_TYPE_IPAY88});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

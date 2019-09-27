@@ -166,7 +166,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Transfer Table, Print"
+                                    android:text="@string/print_transfer_table"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -291,7 +291,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:padding="10dp"
-                                android:text="@string/print_before_close_bill"
+                                android:text="@string/print_check"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
@@ -420,7 +420,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="@string/print_direction"
+                                    android:text="@string/print_direction_up"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -501,12 +501,96 @@
 
                         </LinearLayout>
 
+
+                        <LinearLayout
+                            android:id="@+id/ll_print_instructions"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+
+                            <View
+
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
+                                android:id="@+id/rl_print_instructions"
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_print_instructions"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/print_preparation_instructions"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredposclient.view.MyToggleButton
+                                    android:id="@+id/mt_print_instructions"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_print_waiter_once"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+
+                            <View
+
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@color/black" />
+
+                            <RelativeLayout
+                                android:id="@+id/rl_print_waiter_once"
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_print_waiter_once"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:padding="10dp"
+                                    android:text="@string/waiter_print_bill_once"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+
+                                <com.alfredposclient.view.MyToggleButton
+                                    android:id="@+id/mt_print_waiter_once"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
                         <LinearLayout
                             android:id="@+id/ll_include_plu_void"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                             android:visibility="gone"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:visibility="gone">
 
 
                             <View
@@ -596,7 +680,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:padding="10dp"
-                                android:text="Auto Receive Online Order"
+                                android:text="@string/auto_receive_online_order"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
@@ -625,7 +709,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:padding="10dp"
-                                android:text="Lock Manual Ordering"
+                                android:text="@string/lock_manual_ordering"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
@@ -660,7 +744,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
                                 android:padding="10dp"
-                                android:text="Auto go to Table"
+                                android:text="@string/auto_go_to_table"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/text_size_m" />
 
@@ -673,6 +757,60 @@
                                 android:layout_marginRight="10dp" />
                         </RelativeLayout>
                     </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/ll_language_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ll_app_order"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/box_system_setting"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="60dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:padding="10dp"
+                                android:text="@string/language"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_m" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:padding="10dp">
+
+                                <ImageView
+                                    android:id="@+id/iv_language"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_marginRight="8dp" />
+
+                                <TextView
+                                    android:id="@+id/tv_language"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/language"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
+                            </LinearLayout>
+
+                        </RelativeLayout>
+                    </LinearLayout>
+
                 </RelativeLayout>
 
                 <LinearLayout
@@ -738,7 +876,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Print PLU Category"
+                                    android:text="@string/print_plu_category"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -767,7 +905,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Print PLU Item"
+                                    android:text="@string/print_plu_item"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -796,7 +934,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Print PLU Modifier"
+                                    android:text="@string/print_plu_modifier"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -825,7 +963,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Print Hourly Payments"
+                                    android:text="@string/print_hourly_payments"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -861,7 +999,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Enable Screen Lock"
+                                    android:text="@string/enable_screen_lock"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -896,7 +1034,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_centerVertical="true"
                                         android:padding="10dp"
-                                        android:text="@string/of_pax"
+                                        android:text="@string/no_of_pax"
                                         android:textColor="@color/black"
                                         android:textSize="@dimen/text_size_m" />
 
@@ -928,7 +1066,7 @@
                                     android:layout_centerVertical="true"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:text="Screen Lock Time"
+                                    android:text="@string/screen_lock_time"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -976,7 +1114,7 @@
                                     android:layout_centerVertical="true"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:text="@string/color_select_goods"
+                                    android:text="@string/menu_background_setting"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1039,7 +1177,7 @@
                                 android:id="@+id/ll_set_pos_mode"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
-                                android:visibility="gone"
+                                android:visibility="visible"
                                 android:layout_gravity="center_horizontal">
 
                                 <TextView
@@ -1048,8 +1186,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:paddingLeft="10dp"
-
-                                    android:text="pos mode : "
+                                    android:text="@string/pos_mode"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1061,24 +1198,32 @@
 
                                     android:layout_marginLeft="30dp"
                                     android:layout_toRightOf="@id/tv_pos_mode"
-                                    android:text="style"
+                                    android:text="@string/style"
                                     android:textColor="@color/black"
-
                                     android:textSize="20dp"
+                                    android:visibility="gone"
 
 
                                     />
 
-                                <ImageView
-                                    android:layout_width="wrap_content"
+                                <com.alfredposclient.view.MyToggleButton
+                                    android:id="@+id/mt_pos_mode_type"
+                                    android:layout_width="100dp"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentRight="true"
-                                    android:layout_marginRight="10dp"
-                                    android:padding="15dp"
-                                    android:src="@drawable/setting_icon"
-                                    android:visibility="invisible" />
+                                    android:layout_centerVertical="true"
+                                    android:layout_marginRight="10dp" />
+                                <!--<ImageView-->
+                                    <!--android:layout_width="wrap_content"-->
+                                    <!--android:layout_height="wrap_content"-->
+                                    <!--android:layout_alignParentRight="true"-->
+                                    <!--android:layout_marginRight="10dp"-->
+                                    <!--android:padding="15dp"-->
+                                    <!--android:src="@drawable/setting_icon"-->
+                                    <!--android:visibility="invisible" />-->
 
                             </RelativeLayout>
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
@@ -1091,14 +1236,14 @@
                                 android:layout_gravity="center_horizontal">
 
                                 <TextView
-                                android:id="@+id/tv_callnum"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:paddingLeft="10dp"
-                                android:text="Number Calling Settingsss"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/text_size_m" />
+                                    android:id="@+id/tv_callnum"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:paddingLeft="10dp"
+                                    android:text="@string/number_calling_setting_one_style"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/text_size_m" />
 
                                 <TextView
                                     android:id="@+id/tv_callnum_style"
@@ -1108,7 +1253,7 @@
 
                                     android:layout_marginLeft="30dp"
                                     android:layout_toRightOf="@id/tv_callnum"
-                                    android:text="style"
+                                    android:text="@string/style"
                                     android:textColor="@color/black"
 
                                     android:textSize="20dp"
@@ -1146,12 +1291,11 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:layout_weight="3"
+                                    android:hint="@string/calling_header"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:hint="Calling Header"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
-
 
 
                             </LinearLayout>
@@ -1160,6 +1304,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="1dp"
                                 android:background="@color/black" />
+
                             <LinearLayout
                                 android:id="@+id/ll_callnum_footer"
                                 android:layout_width="match_parent"
@@ -1173,9 +1318,9 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:layout_weight="3"
+                                    android:hint="@string/calling_footer"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:hint="Calling Footer"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1203,7 +1348,7 @@
                                     android:layout_weight="3"
                                     android:padding="12dp"
                                     android:paddingLeft="10dp"
-                                    android:text="Max Order No"
+                                    android:text="@string/max_order_no"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1236,7 +1381,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerVertical="true"
                                     android:padding="10dp"
-                                    android:text="Cancel instead of Void"
+                                    android:text="@string/cancel_instead_of_void"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/text_size_m" />
 
@@ -1282,7 +1427,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Version:"
+            android:text="@string/version"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_s" />
     </LinearLayout>

@@ -1,6 +1,7 @@
 package com.alfredkds.http.server;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -93,7 +94,11 @@ public class KdsHttpServer extends AlfredHttpServer {
                 } else if (uri.equals(APIName.CLOSE_SESSION)) {
                     App.instance.ringUtil.playRingOnce();
                     resp = handlerSessionClose(body);
-                } else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
+                } else if (uri.equals(APIName.REFRESH_KOT)) {
+                    App.instance.ringUtil.playRingOnce();
+                    resp = handlerRefreshKot();
+                }
+                else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
                     resp = handlerTmpKot(body);
                 } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
                     App.instance.ringUtil.playRingOnce();
@@ -104,7 +109,21 @@ public class KdsHttpServer extends AlfredHttpServer {
                     resp = handlerSubmitSummary(body);
                 } else if (uri.equals(APIName.UPDATE_ORDER_COUNT)) {
                     resp = handlerUpdateOrderCount(body);
-                } else {
+                } else if (uri.equals(APIName.POS_LANGUAGE)) {
+                    Map<String, Object> map = new HashMap<>();
+                    try {
+                        JSONObject jsonObject = new JSONObject(body);
+                        String version = jsonObject.optString("version");
+                        String language = jsonObject.optString("language");
+                        App.getTopActivity().changeLanguage(language);
+                        map.put("resultCode", ResultCode.SUCCESS);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    return getJsonResponse(new Gson().toJson(map));
+                }
+                else {
                     resp = getNotFoundResponse();
                 }
             }
@@ -1247,6 +1266,18 @@ public class KdsHttpServer extends AlfredHttpServer {
                     }
                 });
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        result.put("resultCode", ResultCode.SUCCESS);
+        Response resp = this.getJsonResponse(new Gson().toJson(result));
+        return resp;
+    }
+
+    private Response handlerRefreshKot() {
+        Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            App.getTopActivity().httpRequestAction(App.HANDLER_RELOAD_KOT, null);
         } catch (Exception e) {
             e.printStackTrace();
         }

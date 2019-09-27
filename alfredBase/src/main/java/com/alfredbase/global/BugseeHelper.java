@@ -23,7 +23,7 @@ public class BugseeHelper {
         options.put(Bugsee.Option.ShakeToTrigger, false);
 
         if (BuildConfig.DEBUG) {
-            Bugsee.launch(application, "2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2", options);
+            Bugsee.launch(application, "f4eb9760-2327-4253-9f5b-533ee0e711c6", options);
         } else {
             Bugsee.launch(application, token, options);
         }
@@ -77,6 +77,14 @@ public class BugseeHelper {
 
     public static void log(String message) {
         Bugsee.log(message);
+    }
+
+    public static void reportBugsee() {
+        try {
+            throw new NullPointerException();
+        } catch (NullPointerException ex) {
+
+        }
     }
 
 }

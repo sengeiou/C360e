@@ -27,7 +27,7 @@
         <!--android:background="@android:color/holo_green_light"-->
         <!--android:text="222"-->
         <!--android:textSize="20sp" />-->
-        >
+<!--        >-->
 
         <RelativeLayout
             android:id="@+id/ll_lan_progress"
@@ -54,17 +54,17 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_s" />
 
-            <TextView
-                android:id="@+id/tv_complete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="Complete"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_s"
-                android:visibility="gone" />
-        </RelativeLayout>
+          <TextView
+              android:id="@+id/tv_complete"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:text="@string/completed"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_size_s"
+              android:layout_centerInParent="true"
+              android:visibility="gone" />
+      </RelativeLayout>
 
         <View
             android:layout_width="1dp"
@@ -185,7 +185,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:background="@color/color_kotview"
-                    android:text="complete"
+                    android:text="@string/completed"
                     android:textColor="@color/white" />
 
                 <Button
@@ -196,7 +196,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     android:background="@color/color_kotview"
-                    android:text="call"
+                    android:text="@string/call"
                     android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>

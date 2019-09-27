@@ -27,13 +27,15 @@ public class Tax {
 	private Long createTime;
 
 	private Long updateTime;
+     //	0 No  1 Yes
+	private  Integer beforeDiscount;
 
 	public Tax() {
 	}
 
 	public Tax(Integer id, Integer companyId, Integer restaurantId,
 			String taxName, String taxPercentage, Integer taxType,
-			Integer status, Long createTime, Long updateTime) {
+			Integer status, Long createTime, Long updateTime,Integer beforeDiscount) {
 		super();
 		this.id = id;
 		this.companyId = companyId;
@@ -44,6 +46,7 @@ public class Tax {
 		this.status = status;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
+		this.beforeDiscount=beforeDiscount;
 	}
 
 	public Integer getId() {
@@ -136,13 +139,28 @@ public class Tax {
 		this.updateTime = updateTime;
 	}
 
+	public Integer getBeforeDiscount() {
+		return beforeDiscount;
+	}
+
+	public void setBeforeDiscount(Integer beforeDiscount) {
+		this.beforeDiscount = beforeDiscount;
+	}
+
 	@Override
 	public String toString() {
-		return "Tax [id=" + id + ", companyId=" + companyId + ", restaurantId="
-				+ restaurantId + ", taxName=" + taxName + ", taxPercentage="
-				+ taxPercentage + ", taxType=" + taxType + ", status=" + status
-				+ ", createTime=" + createTime + ", updateTime=" + updateTime
-				+ "]";
+		return "Tax{" +
+				"id=" + id +
+				", companyId=" + companyId +
+				", restaurantId=" + restaurantId +
+				", taxName='" + taxName + '\'' +
+				", taxPercentage='" + taxPercentage + '\'' +
+				", taxType=" + taxType +
+				", status=" + status +
+				", createTime=" + createTime +
+				", updateTime=" + updateTime +
+				", beforeDiscount=" + beforeDiscount +
+				'}';
 	}
 
 }

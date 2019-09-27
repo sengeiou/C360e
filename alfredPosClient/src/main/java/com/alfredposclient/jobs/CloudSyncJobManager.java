@@ -37,7 +37,7 @@ public class CloudSyncJobManager {
 	private JobManager syncJobManager;
 	private Context context;
     private ScheduledExecutorService scheduler = null;
-    int trainType; //-1 第一次打开   0正常模式  1培训模式
+    int trainType;  //-1. 第一次打开   0.正常模式  1. 培训模式
     public CloudSyncJobManager(Context mContext) {
 		super();
 		this.context = mContext;
@@ -245,7 +245,7 @@ public class CloudSyncJobManager {
                     syncMsg.setCurrCount(currCount);
                     syncMsg.setBillNo(billNo);
                     SyncMsgSQL.add(syncMsg);
-                    syncOrderJob = new SyncMsgJob(revenueCenterId, HttpAPI.ORDER_DATA, uuid,
+                    syncOrderJob = new SyncMsgJob(revenueCenterId, HttpAPI.LOG_DATA, uuid,
                             orderId, bizDate, syncMsg.getCreateTime());
                     this.syncJobManager.addJobInBackground(syncOrderJob);
                 }

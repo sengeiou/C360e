@@ -11,13 +11,13 @@ import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.ConsumingRecords;
 import com.alfredbase.javabean.HappyHour;
 import com.alfredbase.javabean.HappyHourWeek;
-import com.alfredbase.javabean.Ipay88PaymentResult;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.ItemPromotion;
+import com.alfredbase.javabean.LoginQrPayment;
 import com.alfredbase.javabean.LoginResult;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.MonthlyPLUReport;
@@ -115,19 +115,6 @@ import java.util.List;
 
 public class HttpAnalysis {
     public static final String TAG = HttpAnalysis.class.getSimpleName();
-
-    public static Ipay88PaymentResult requestIpay88Payment(int statusCode, Header[] headers,
-                                                           byte[] responseBody) {
-        Ipay88PaymentResult result = null;
-        try {
-            JSONObject object = new JSONObject(new String(responseBody));
-            Gson gson = new Gson();
-            result = gson.fromJson(object.toString(), Ipay88PaymentResult.class);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 
     public static LoginResult login(int statusCode, Header[] headers,
                                     byte[] responseBody) {
@@ -442,21 +429,96 @@ public class HttpAnalysis {
         try {
             JSONObject object = new JSONObject(new String(responseBody));
             Gson gson = new Gson();
+
             List<PaymentMethod> pamentMethodList = gson.fromJson(
                     object.getString("pamentMethodList"),
                     new TypeToken<ArrayList<PaymentMethod>>() {
                     }.getType());
-            CoreData.getInstance().setPamentMethodList(pamentMethodList == null ? new ArrayList<PaymentMethod>() : pamentMethodList);
-            PaymentMethodSQL.deleteAllPaymentMethod();
-            PaymentMethodSQL.addPaymentMethod(pamentMethodList);
 
+            PaymentMethodSQL.deleteAllPaymentMethodCustom();
+            PaymentMethodSQL.addPaymentMethod(pamentMethodList);
+            CoreData.getInstance().setPamentMethodList(PaymentMethodSQL.getAllPaymentMethod());
 
             List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurants"),
                     new TypeToken<ArrayList<SettlementRestaurant>>() {
                     }.getType());
-            CoreData.getInstance().setSettlementRestaurant(settlementRestaurant);
-            SettlementRestaurantSQL.deleteAllSettlementRestaurant();
+            SettlementRestaurantSQL.deleteAllSettlementRestaurantCustom();
             SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurant);
+            CoreData.getInstance().setSettlementRestaurant(SettlementRestaurantSQL.getAllSettlementRestaurant());
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getPaymentMethod(int statusCode, Header[] headers,
+                                        byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+
+            List<SettlementRestaurant> settlementRestaurant = gson.fromJson(object.getString("settlementRestaurants"),
+                    new TypeToken<ArrayList<SettlementRestaurant>>() {
+                    }.getType());
+            SettlementRestaurantSQL.deleteAllSettlementRestaurantIpay88HalalPayment();
+            String ipay88PaymentId = null;
+
+
+            ArrayList<SettlementRestaurant> settlementRestaurantNonIpay = new ArrayList<>();
+            ArrayList<PaymentMethod> ipay88PaymentMethods = new ArrayList<>();
+            ArrayList<SettlementRestaurant> settlementRestaurantCustom = new ArrayList<>();
+            for (SettlementRestaurant settle : settlementRestaurant) {
+                if (!(settle.getMediaId() == ParamConst.SETTLEMENT_TYPE_DELIVEROO ||
+                        settle.getMediaId() == ParamConst.SETTLEMENT_TYPE_UBEREATS ||
+                        settle.getMediaId() == ParamConst.SETTLEMENT_TYPE_FOODPANDA ||
+                        settle.getMediaId() == ParamConst.SETTLEMENT_TYPE_STORED_CARD ||
+                        settle.getMediaId() == ParamConst.SETTLEMENT_TYPE_STORED_CARD_SALES ||
+                        settle.getMediaId() == ParamConst.SETTLEMENT_TYPE_EZLINK ||
+                        settle.getMediaId() == ParamConst.SETTLEMENT_TYPE_GROUPON)) {
+                    if (settle.getMediaId() > ParamConst.SETTLEMENT_TYPE_IPAY88 && settle.getMediaId() < ParamConst.SETTLEMENT_TYPE_PAYHALAL) {
+                        if (TextUtils.isEmpty(ipay88PaymentId)) {
+                            ipay88PaymentId = "" + settle.getId();
+                        } else {
+                            ipay88PaymentId += "|" + settle.getId();
+                        }
+
+                        PaymentMethod ipay88Method = new PaymentMethod();
+                        ipay88Method.setId(settle.getId());
+                        ipay88Method.setRestaurantId(settle.getRestaurantId());
+                        ipay88Method.setPaymentTypeId(Long.valueOf(settle.getMediaId()));
+                        ipay88PaymentMethods.add(ipay88Method);
+                    } else {
+                        if (TextUtils.isEmpty(settle.getOtherPaymentId())) {
+                            settlementRestaurantNonIpay.add(settle);
+                        } else {
+                            settlementRestaurantCustom.add(settle);
+                        }
+                    }
+                }
+            }
+            if (settlementRestaurantNonIpay.size() > 0) {
+                SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurantNonIpay);
+            }
+
+            PaymentMethodSQL.deleteAllPaymentMethodIpay88Halal();
+            if (ipay88PaymentMethods.size() > 0) {
+                PaymentMethodSQL.addPaymentMethod(ipay88PaymentMethods);
+                CoreData.getInstance().setPamentMethodList(PaymentMethodSQL.getAllPaymentMethod());
+
+                ArrayList<SettlementRestaurant> settlementRestaurants = new ArrayList<>();
+                SettlementRestaurant settlementPay88 = new SettlementRestaurant();
+                settlementPay88.setId(ParamConst.SETTLEMENT_TYPE_IPAY88);
+                settlementPay88.setRestaurantId(ipay88PaymentMethods.get(0).getRestaurantId());
+                settlementPay88.setMediaId(ParamConst.SETTLEMENT_TYPE_IPAY88);
+                settlementPay88.setOtherPaymentId(ipay88PaymentId);
+                settlementRestaurants.add(settlementPay88);
+                SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurants);
+            }
+            if (settlementRestaurantCustom.size() > 0) {
+                SettlementRestaurantSQL.addSettlementRestaurant(settlementRestaurantCustom);
+            }
+            CoreData.getInstance().setSettlementRestaurant(SettlementRestaurantSQL.getAllSettlementRestaurant());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -947,4 +1009,22 @@ public class HttpAnalysis {
         }
         return userTimeSheetList;
     }
+
+    //start pay88
+    public static void saveLoginQRPayment(byte[] responseBody) {
+        LoginQrPayment result = null;
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            Gson gson = new Gson();
+            result = gson.fromJson(object.toString(), LoginQrPayment.class);
+//            CoreData.getInstance().setLoginQrPayment(result);
+            Store.saveObject(App.instance, Store.LOGIN_QRPAYMENT, result);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //end pay88
+
+
 }

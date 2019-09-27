@@ -1,6 +1,8 @@
 
 package com.alfredposclient.jobs;
 
+import android.util.Log;
+
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.http.APIName;
@@ -191,6 +193,20 @@ public class KotJob extends Job {
         failCount = 0;
     }
 
+    //for refresh all kds in one group
+    public KotJob(KDSDevice kds, ArrayList<KotItemDetail> itemDetails, String method) {
+        super(new Params(Priority.MID).requireNetwork().persist().groupBy("kot"));
+        //group the order, we don't want to send two in parallel
+        //use a negative id so that it cannot collide w/ twitter ids
+        long time = System.currentTimeMillis();
+        localId = -time;
+        apiName = APIName.REFRESH_KOT;
+        data.put("kotItemDetails", itemDetails);
+        data.put("method", method);
+        this.kds = kds;
+        failCount = 0;
+    }
+
     @Override
     public void onAdded() {
         //job has been secured to disk, add item to database
@@ -321,6 +337,8 @@ public class KotJob extends Job {
                 SyncCentre.getInstance().deleteKdsLogOnBalancer(kds, context, data, null);
             } else if (APIName.UPDATE_KDS_STATUS.equals(apiName)) {
                 SyncCentre.getInstance().updateKdsStatus(kds, context, data, null);
+            } else if (APIName.REFRESH_KOT.equals(apiName)) {
+                SyncCentre.getInstance().refreshSameGroupKDS(kds, context, data);
             }
             LogUtil.d(TAG, "KOT JOB Successful");
             LogUtil.log("KOT JOB Successful");

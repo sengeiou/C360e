@@ -9,11 +9,13 @@ bugly {
 }
 
 bugsee {
+//    appToken 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+//    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
             case 'release': '5f8647d4-30e6-4599-8dd0-ab8c5bd39f84'
                 break
-            case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
                 break
         }
     }
@@ -49,13 +51,13 @@ android {
     sourceSets {
         main {
             res.srcDirs =
-                    [
-                            'src/main/res/layout/subpos',
-                            'src/main/res/layout/subpos/layout',
-                            'src/main/res/layout',
-                            'src/main/res'
+                [
+                    'src/main/res/layout/subpos',
+                    'src/main/res/layout/subpos/layout',
+                    'src/main/res/layout',
+                    'src/main/res'
 
-                    ]
+                ]
         }
     }
     //配置keystore签名
@@ -105,6 +107,16 @@ android {
 //        exclude 'LICENSE.txt'
 //    }
     buildToolsVersion '27.0.3'
+    flavorDimensions 'default'
+    productFlavors {
+        dev {
+            dimension = 'default'
+            applicationIdSuffix = '.debug'
+        }
+        prod {
+            dimension = 'default'
+        }
+    }
 }
 repositories {
 
@@ -117,9 +129,9 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation project(':alfredBase')
-    implementation project(':alfredTaskQueue')
-    implementation project(':galleryfinal')
+   implementation project(':alfredBase')
+   implementation project(':alfredTaskQueue')
+   implementation project(':galleryfinal')
 //    compile rootProject.ext.libSupportV4
 //    compile 'com.path:android-priority-jobqueue:1.1.2'
 //    compile 'com.birbit:android-priority-jobqueue:2.0.0'
@@ -129,7 +141,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-appindexing:8.4.0'
     implementation 'com.sunmi:DS_Lib:1.0.3'
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation(name: 'barcode_scanner_library_v2.0.8.0', ext: 'aar')
+    implementation(name:'barcode_scanner_library_v2.0.8.0', ext:'aar')
     implementation "org.igniterealtime.smack:smack-android-extensions:4.2.0-alpha3"
     implementation "org.igniterealtime.smack:smack-tcp:4.2.0-alpha3"
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
@@ -138,4 +150,6 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    implementation files('libs/glide-3.6.0.jar')
+
 }

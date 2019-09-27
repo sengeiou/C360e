@@ -38,6 +38,8 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
         super.initView();
         setContentView(R.layout.activity_sunmi);
 
+
+
         sunmi_rg = (RadioGroup) findViewById(R.id.sunmi_rg);
         sunmi_select_picture_rbt = (RadioButton) findViewById(R.id.sunmi_select_picture_rbt);
         sunmi_select_text_rbt = (RadioButton) findViewById(R.id.sunmi_select_text_rbt);
@@ -148,7 +150,7 @@ public class SunmiActivity extends BaseActivity implements View.OnClickListener 
                 if (resultList.size() > 0) {
                     imgsPath.clear();
                     int i = resultList.size();
-                    style_url_btn.setText("Selected " + i + "" + " images");
+                    style_url_btn.setText(getString(R.string.category_select)+" " + i + "" + " "+getString(R.string.images));
                     for (PhotoInfo p : resultList) {
                         imgsPath.add(p.getPhotoPath());
                     }

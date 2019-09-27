@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/setting"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_m"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/separatorHeader"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/tvTitle"
+        android:background="#dedede" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_below="@+id/separatorHeader"
+        android:layout_above="@+id/tv_version"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/llBalancer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
@@ -61,8 +90,8 @@
                 android:id="@+id/etStackCount"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:gravity="center"
+                android:inputType="number"
                 android:padding="10dp" />
 
             <Button
@@ -72,6 +101,7 @@
                 android:layout_marginLeft="@dimen/activity_vertical_margin"
                 android:background="@drawable/sync_box"
                 android:text="SAVE" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -127,37 +157,10 @@
     <LinearLayout
         android:id="@+id/llNormal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvPendingList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:text="Pending List"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_m" />
-
-            <com.alfredkds.view.MyToggleButton
-                android:id="@+id/mtPendingList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -194,6 +197,33 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/tvPendingList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:text="Pending List"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_m" />
+
+            <com.alfredkds.view.MyToggleButton
+                android:id="@+id/mtPendingList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
                 android:id="@+id/tvAllowPartialComplete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -206,10 +236,7 @@
             <com.alfredkds.view.MyToggleButton
                 android:id="@+id/mtAllowPartial"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
@@ -233,10 +260,49 @@
             <com.alfredkds.view.MyToggleButton
                 android:id="@+id/mtKdsOnline"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sync_box"
+            android:gravity="center"
+            android:layout_marginTop="25dp"
+            android:text="@string/kot_history_"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_small" />
+
+        <LinearLayout
+            android:id="@+id/ll_language_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_reset"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/box_key_number_selector"
+            android:gravity="center"
+            android:minWidth="320dp"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp" />
+                android:padding="10dp"
+                android:text="@string/language"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_m" />
+
+
+            <ImageView
+                android:id="@+id/iv_language"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginRight="8dp" />
+
 
         </LinearLayout>
 
@@ -251,49 +317,31 @@
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_small" />
 
-        <TextView
-            android:id="@+id/tv_history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/sync_box"
-            android:gravity="center"
-            android:text="@string/kot_history_"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small" />
-
-        <TextView
-            android:id="@+id/tv_switch_account"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="300dp"
-            android:background="@drawable/sync_box"
-            android:gravity="center"
-            android:text="@string/switch_account"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small" />
-
-        <TextView
-            android:id="@+id/tv_version"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_small" />
-
     </LinearLayout>
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:id="@+id/tv_switch_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/sync_box"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="@string/setting"
+        android:layout_marginTop="25dp"
+        android:text="@string/switch_account"
         android:textColor="@color/black"
-        android:textSize="@dimen/text_size_m"
-        android:textStyle="bold" />
+        android:layout_marginBottom="16dp"
+        android:textSize="@dimen/text_size_small" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#dedede" />
-</LinearLayout>
+    </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/black"
+        tools:text="version"
+        android:textSize="@dimen/text_size_small" />
+</RelativeLayout>

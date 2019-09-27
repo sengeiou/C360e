@@ -8,7 +8,6 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
-import com.alfredbase.javabean.ItemPromotion;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
@@ -173,8 +172,8 @@ public class OrderDetailSQL {
                     + "(id,orderId, orderOriginId, userId, itemId,itemName,itemNum, orderDetailStatus, orderDetailType,reason, printStatus, itemPrice,"
                     + " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
                     + " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
-                    + " fireStatus,itemUrl,barCode)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " fireStatus,itemUrl,barCode,orderDetailRound)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{orderDetail.getId(),
@@ -209,7 +208,8 @@ public class OrderDetailSQL {
                             orderDetail.getMainCategoryId(),
                             orderDetail.getFireStatus(),
                             orderDetail.getItemUrl(),
-                            orderDetail.getBarCode()
+                            orderDetail.getBarCode(),
+                            orderDetail.getOrderDetailRound()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -226,8 +226,8 @@ public class OrderDetailSQL {
                     + "(id,orderId, orderOriginId, userId, itemId,itemName,itemNum, orderDetailStatus, orderDetailType,reason, printStatus, itemPrice,"
                     + " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
                     + " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
-                    + " fireStatus,itemUrl, barCode)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " fireStatus,itemUrl, barCode,orderDetailRound)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{orderDetail.getId(),
@@ -262,7 +262,8 @@ public class OrderDetailSQL {
                             orderDetail.getMainCategoryId(),
                             orderDetail.getFireStatus(),
                             orderDetail.getItemUrl(),
-                            orderDetail.getBarCode()
+                            orderDetail.getBarCode(),
+                            orderDetail.getOrderDetailRound()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -385,8 +386,8 @@ public class OrderDetailSQL {
                     + "(id, orderId, orderOriginId, userId, itemId, itemName, itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
                     + " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
                     + " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
-                    + " fireStatus,itemUrl, barCode)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " fireStatus,itemUrl, barCode, orderDetailRound)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(sql);
             for (OrderDetail orderDetail : orderDetailList) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
@@ -459,6 +460,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 35,
                         orderDetail.getBarCode());
+                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -482,8 +484,8 @@ public class OrderDetailSQL {
                     + "(orderId, orderOriginId, userId, itemId, itemName, itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
                     + " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
                     + " groupId,isOpenItem, specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
-                    + " fireStatus,itemUrl, barCode)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " fireStatus,itemUrl, barCode,orderDetailRound)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(sql);
             for (OrderDetail orderDetail : orderDetailList) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
@@ -554,7 +556,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 34,
                         orderDetail.getBarCode());
-
+                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
 
                 sqLiteStatement.executeInsert();
             }
@@ -573,8 +575,8 @@ public class OrderDetailSQL {
                     + "(orderId, orderOriginId, userId, itemId, itemName, itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
                     + " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
                     + " groupId,isOpenItem,specialInstractions, orderSplitId, isTakeAway, weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
-                    + " fireStatus,itemUrl, barCode)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " fireStatus,itemUrl, barCode,orderDetailRound)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{orderDetail.getOrderId(),
@@ -608,7 +610,8 @@ public class OrderDetailSQL {
                             orderDetail.getMainCategoryId(),
                             orderDetail.getFireStatus(),
                             orderDetail.getItemUrl(),
-                            orderDetail.getBarCode()
+                            orderDetail.getBarCode(),
+                            orderDetail.getOrderDetailRound()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -622,8 +625,8 @@ public class OrderDetailSQL {
                     + "(id, orderId, orderOriginId, userId, itemId, itemName,itemNum, orderDetailStatus, orderDetailType, reason, printStatus, itemPrice,"
                     + " taxPrice, discountPrice, modifierPrice, realPrice, createTime, updateTime,discountRate,discountType,fromOrderDetailId,isFree,"
                     + " groupId,isOpenItem,specialInstractions, orderSplitId, isTakeAway,weight, isItemDiscount, isSet, appOrderDetailId, mainCategoryId,"
-                    + " fireStatus,itemUrl, barCode)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " fireStatus,itemUrl, barCode,orderDetailRound)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{orderDetail.getId(),
@@ -658,7 +661,8 @@ public class OrderDetailSQL {
                             orderDetail.getMainCategoryId(),
                             orderDetail.getFireStatus(),
                             orderDetail.getItemUrl(),
-                            orderDetail.getBarCode()
+                            orderDetail.getBarCode(),
+                            orderDetail.getOrderDetailRound()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -715,6 +719,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1025,6 +1030,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1097,6 +1103,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1160,6 +1167,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1231,6 +1239,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1299,6 +1308,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1372,6 +1382,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1402,6 +1413,14 @@ public class OrderDetailSQL {
                 + " where orderId = ? and orderStatus > "
                 + ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
                 + ") order by groupId desc";
+//        String sql = "select * from " + TableNames.OrderDetail
+//                + " where orderId = ? and orderDetailType <> " +
+//                +ParamConst.ORDERDETAIL_TYPE_VOID
+//                + " and groupId not in (select groupId from "
+//                + TableNames.OrderSplit
+//                + " where orderId = ? and orderStatus > "
+//                + ParamConst.ORDERSPLIT_ORDERSTATUS_UNPAY
+//                + ") order by groupId desc";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
@@ -1449,6 +1468,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1520,6 +1540,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1537,6 +1558,71 @@ public class OrderDetailSQL {
         ArrayList<OrderDetail> result = new ArrayList<OrderDetail>();
         String sql = "select * from " + TableNames.OrderDetail
                 + " where orderId = ? and isFree = " + ParamConst.NOT_FREE;
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{order.getId() + ""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            OrderDetail orderDetail = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                orderDetail = new OrderDetail();
+                orderDetail.setId(cursor.getInt(0));
+                orderDetail.setOrderId(cursor.getInt(1));
+                orderDetail.setOrderOriginId(cursor.getInt(2));
+                orderDetail.setUserId(cursor.getInt(3));
+                orderDetail.setItemId(cursor.getInt(4));
+                orderDetail.setItemName(cursor.getString(5));
+                orderDetail.setItemNum(cursor.getInt(6));
+                orderDetail.setOrderDetailStatus(cursor.getInt(7));
+                orderDetail.setOrderDetailType(cursor.getInt(8));
+                orderDetail.setReason(cursor.getString(9));
+                orderDetail.setPrintStatus(cursor.getInt(10));
+                orderDetail.setItemPrice(cursor.getString(11));
+                orderDetail.setTaxPrice(cursor.getString(12));
+                orderDetail.setDiscountPrice(cursor.getString(13));
+                orderDetail.setModifierPrice(cursor.getString(14));
+                orderDetail.setRealPrice(cursor.getString(15));
+                orderDetail.setCreateTime(cursor.getLong(16));
+                orderDetail.setUpdateTime(cursor.getLong(17));
+                orderDetail.setDiscountRate(cursor.getString(18));
+                orderDetail.setDiscountType(cursor.getInt(19));
+                orderDetail.setFromOrderDetailId(cursor.getInt(20));
+                orderDetail.setIsFree(cursor.getInt(21));
+                orderDetail.setGroupId(cursor.getInt(22));
+                orderDetail.setIsOpenItem(cursor.getInt(23));
+                orderDetail.setSpecialInstractions(cursor.getString(24));
+                orderDetail.setOrderSplitId(cursor.getInt(25));
+                orderDetail.setIsTakeAway(cursor.getInt(26));
+                orderDetail.setWeight(cursor.getString(27));
+                orderDetail.setIsItemDiscount(cursor.getInt(28));
+                orderDetail.setIsSet(cursor.getInt(29));
+                orderDetail.setAppOrderDetailId(cursor.getInt(30));
+                orderDetail.setMainCategoryId(cursor.getInt(31));
+                orderDetail.setFireStatus(cursor.getInt(32));
+                orderDetail.setItemUrl(cursor.getString(33));
+                orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
+                result.add(orderDetail);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static ArrayList<OrderDetail> getUnFreeOrderDetailsWithOutSplit(Order order, String orderSpliteIds) {
+        ArrayList<OrderDetail> result = new ArrayList<OrderDetail>();
+        String sql = "select * from " + TableNames.OrderDetail
+                + " where orderId = ?  and orderSplitId not in (" + orderSpliteIds + ")and isFree = " + ParamConst.NOT_FREE;
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
@@ -1651,6 +1737,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1718,6 +1805,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -1806,6 +1894,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1891,6 +1980,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1952,6 +2042,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 orderDetails.add(orderDetail);
             }
         } catch (Exception e) {
@@ -2016,6 +2107,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 orderDetails.add(orderDetail);
             }
         } catch (Exception e) {
@@ -2081,6 +2173,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 orderDetails.add(orderDetail);
             }
         } catch (Exception e) {
@@ -2279,6 +2372,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -2340,6 +2434,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -2399,6 +2494,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -2524,6 +2620,16 @@ public class OrderDetailSQL {
                 + " where orderId = ?";
         try {
             SQLExe.getDB().execSQL(sql, new Object[]{order.getId()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteOrderDetailByOrderOutsideOrderSplit(int orderId, String orderSplitIds) {
+        String sql = "delete from " + TableNames.OrderDetail
+                + " where orderId = ? and orderSplitId not in(" + orderSplitIds + ")";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{orderId});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2710,6 +2816,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 orderDetails.add(orderDetail);
             }
         } catch (Exception e) {
@@ -2774,6 +2881,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 orderDetails.add(orderDetail);
             }
         } catch (Exception e) {
@@ -2838,6 +2946,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 orderDetails.add(orderDetail);
             }
         } catch (Exception e) {
@@ -2904,6 +3013,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 orderDetails.add(orderDetail);
             }
         } catch (Exception e) {
@@ -2967,6 +3077,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 orderDetails.add(orderDetail);
             }
         } catch (Exception e) {
@@ -3030,6 +3141,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -3131,6 +3243,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
 
@@ -3174,6 +3287,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
             cursor = db.rawQuery(sql3,
@@ -3216,6 +3330,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {
@@ -3479,6 +3594,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
 
@@ -3522,6 +3638,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
             cursor = db.rawQuery(sql3,
@@ -3564,6 +3681,7 @@ public class OrderDetailSQL {
                 orderDetail.setFireStatus(cursor.getInt(32));
                 orderDetail.setItemUrl(cursor.getString(33));
                 orderDetail.setBarCode(cursor.getString(34));
+                orderDetail.setOrderDetailRound(cursor.getString(35));
                 result.add(orderDetail);
             }
         } catch (Exception e) {

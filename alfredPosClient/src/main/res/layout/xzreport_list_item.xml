@@ -16,7 +16,7 @@
         android:textSize="15sp"
         android:layout_marginLeft="5dp"
         android:textColor="@color/text_light_black"
-        android:text="Item" />
+        android:text="@string/item" />
 
     <TextView
         android:id="@+id/xzreport_item_num"

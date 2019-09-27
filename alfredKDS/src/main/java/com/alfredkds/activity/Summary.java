@@ -3,6 +3,7 @@ package com.alfredkds.activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,248 +50,256 @@ import java.util.Map;
 
 /**
  * 有多少桌点同样的菜，筛选出来
- * 
+ *
  * @author
  */
 public class Summary extends BaseActivity {
-	private static final int HANDLER_REFRESH = 30;
-	
-	private ListView dishNamesListView;
-	private DishNamesAdapter dishNamesAdapter;
-	private ListView kotDetailsListView;
-	private KotDetailsAdapter kotdetailsAdapter;
-	private FinishQtyWindow finishQtyPop;
-	private MainPosInfo mainPosInfo;
-	private TextView tv_table_name;
-	private TextView tv_item_qyt;
-	
-	@Override
-	protected void initView() {
-		super.initView();
-		setContentView(R.layout.activity_kot_filter);
-		loadingDialog = new LoadingDialog(context);
-		loadingDialog.setTitle(context.getResources().getString(R.string.sending));
-		mainPosInfo = App.instance.getCurrentConnectedMainPos();
-		tv_table_name = (TextView) findViewById(R.id.tv_table_name);
-		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
-			tv_table_name.setVisibility(View.GONE);
-		}
-		tv_item_qyt = (TextView) findViewById(R.id.tv_item_qyt);
-		finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
-		initDishNames();
-		initKotDetailsListView();
-	}
-	
-	public void initDishNames(){
-		dishNamesListView = (ListView) this.findViewById(R.id.lv_dish_names);
-		dishNamesAdapter = new DishNamesAdapter();
-		dishNamesAdapter.setDishNames(App.instance.getDishNames());
-		dishNamesListView.setAdapter(dishNamesAdapter);
-		dishNamesListView.setOnItemClickListener(new OnItemClickListener() {
+    private static final int HANDLER_REFRESH = 30;
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,int position, 
-					long id) {
-				dishNamesAdapter.setSelectItem(position);
-				dishNamesAdapter.notifyDataSetInvalidated();  
-				String dishName = (String) dishNamesAdapter.getItem(position);
-				kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(dishName));
-				kotdetailsAdapter.notifyDataSetChanged();
-			}
-		});
-	}
+    private ListView dishNamesListView;
+    private DishNamesAdapter dishNamesAdapter;
+    private ListView kotDetailsListView;
+    private KotDetailsAdapter kotdetailsAdapter;
+    private FinishQtyWindow finishQtyPop;
+    private TextView tv_table_name;
+    private TextView tv_item_qyt;
+    private boolean isKiosk = true;
+
+    @Override
+    protected void initView() {
+        super.initView();
+        setContentView(R.layout.activity_kot_filter);
+        loadingDialog = new LoadingDialog(context);
+        loadingDialog.setTitle(context.getResources().getString(R.string.sending));
+        for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPosList()) {
+            if (mainPos.getIsKiosk() != ParamConst.MAINPOSINFO_IS_KIOSK) {
+                isKiosk = false;
+            }
+        }
+        tv_table_name = (TextView) findViewById(R.id.tv_table_name);
+        if (isKiosk) {
+            tv_table_name.setVisibility(View.GONE);
+        }
+        tv_item_qyt = (TextView) findViewById(R.id.tv_item_qyt);
+        finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
+        initDishNames();
+        initKotDetailsListView();
+    }
+
+    public void initDishNames() {
+        dishNamesListView = (ListView) this.findViewById(R.id.lv_dish_names);
+        dishNamesAdapter = new DishNamesAdapter();
+        dishNamesAdapter.setDishNames(App.instance.getDishNames());
+        dishNamesListView.setAdapter(dishNamesAdapter);
+        dishNamesListView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                dishNamesAdapter.setSelectItem(position);
+                dishNamesAdapter.notifyDataSetInvalidated();
+                String dishName = (String) dishNamesAdapter.getItem(position);
+                kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(dishName));
+                kotdetailsAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		int unDoneNum = KotItemDetailSQL.getAllUnDoneKotItemDetailCount();
-		tv_item_qyt.setText(unDoneNum + "");
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int unDoneNum = KotItemDetailSQL.getAllUnDoneKotItemDetailCount();
+        tv_item_qyt.setText(unDoneNum + "");
+    }
 
-	private void initKotDetailsListView(){
-		kotDetailsListView = (ListView) this.findViewById(R.id.lv_kot_details);
-		kotdetailsAdapter = new KotDetailsAdapter(context);
-		if (!App.instance.getDishNames().isEmpty()) {
-			kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(App.instance.getDishNames().get(0)));
-		}
-		kotDetailsListView.setAdapter(kotdetailsAdapter);
-	}
-	
-	public Handler handler = new Handler(){
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case HANDLER_REFRESH:
-				dishNamesAdapter.setSelectItem(getPosition());
-				dishNamesAdapter.setDishNames(App.instance.getDishNames());
-				dishNamesAdapter.notifyDataSetChanged();
-				if (dishName != null) {
-					kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(dishName));
-					kotdetailsAdapter.notifyDataSetChanged();
-					if (popupWindow != null && popupWindow.isShowing()) {
-						popItemAdapter.setKot(App.instance.getKot((KotSummary)App.instance.getKotDishDetail(dishName).get(index)[0]));
-						popItemAdapter.notifyDataSetChanged();
-					}
-				}else {
-					kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(App.instance.getDishNames().get(0)));
-					kotdetailsAdapter.notifyDataSetChanged();
-				}
-				break;
-			case App.HANDLER_REFRESH_KOT:
-				loadingDialog.dismiss();
-				List<KotItemDetail> skotItemDetails = (List<KotItemDetail>) msg.obj;
-				kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(skotItemDetails.get(0).getItemName()));
-				kotdetailsAdapter.notifyDataSetChanged();
-				if(popItemAdapter != null)
-					popItemAdapter.notifyDataSetChanged();
-				break;
-			case App.HANDLER_RECONNECT_POS:
-				loadingDialog.dismiss();
-				DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
-						getString(R.string.cancel), getString(R.string.ok), null, 
-						new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								UIHelp.startConnectPOS(context);
-								finish();
-							}
-						});
-				break;
-			case App.HANDLER_SEND_FAILURE:
-				loadingDialog.dismiss();
-				List<KotItemDetail> fkotItemDetails = (List<KotItemDetail>) msg.obj;
-				kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(fkotItemDetails.get(0).getItemName()));
-				kotdetailsAdapter.notifyDataSetChanged();
-				break;
-			case App.HANDLER_RETURN_ERROR:
-				loadingDialog.dismiss();
-				UIHelp.showToast(context,ResultCode.getErrorResultStrByCode(context,(Integer)msg.obj, null));
-				break;
-			case App.HANDLER_RETURN_ERROR_SHOW:
-				loadingDialog.dismiss();
-				List<KotItemDetail> mkotItemDetails = (List<KotItemDetail>) msg.obj;
-				kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(mkotItemDetails.get(0).getItemName()));
-				kotdetailsAdapter.notifyDataSetChanged();
-				break;
-			case App.HANDLER_SEND_FAILURE_SHOW:
-				UIHelp.showToast(context,context.getResources().getString(R.string.reconnect_pos_));
-				break;
-			case ResultCode.CONNECTION_FAILED:
-				loadingDialog.dismiss();
-				UIHelp.showToast(context,ResultCode.getErrorResultStr(context,(Throwable)msg.obj,
-						context.getResources().getString(R.string.revenue_center)));
-				break;
-			case App.HANDLER_KOTSUMMARY_IS_UNREAL:
-				loadingDialog.dismiss();
-				UIHelp.showToast(context,context.getResources().getString(R.string.order_discarded));
-				List<String> dishNames = App.instance.getDishNames();
-				if (dishNames.isEmpty()) {
-					dishNamesAdapter.setDishNames(dishNames);
-					dishNamesAdapter.notifyDataSetChanged();
-					kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(dishName));
-					kotdetailsAdapter.notifyDataSetChanged();
-					if (popupWindow != null && popupWindow.isShowing()) {
-						popupWindow.dismiss();
-					}
-					return;
-				}
-				if (dishNames.contains(dishName)) {
-					dishNamesAdapter.setSelectItem(getPosition());
-					dishNamesAdapter.setDishNames(dishNames);
-					dishNamesAdapter.notifyDataSetChanged();
-					kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(dishName));
-					kotdetailsAdapter.notifyDataSetChanged();
-					if (popupWindow != null && popupWindow.isShowing()) {
-						popupWindow.dismiss();
-					}
-				}else {
-					dishNamesAdapter.setSelectItem(0);
-					dishNamesAdapter.setDishNames(dishNames);
-					dishNamesAdapter.notifyDataSetChanged();
-					kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(App.instance.getDishNames().get(0)));
-					kotdetailsAdapter.notifyDataSetChanged();
-					if (popupWindow != null && popupWindow.isShowing()) {
-						popupWindow.dismiss();
-					}
-				}
-			case App.HANDLER_KOT_COMPLETE_USER_FAILED:
-				App.instance.reload(context,handler);
-				break;
-			case Login.HANDLER_LOGIN:
-				if (loadingDialog.isShowing()) {
-					loadingDialog.dismiss();
-				}
-				if(popupWindow != null && popupWindow.isShowing()){
-					popupWindow.dismiss();
-				}
-				dishNamesAdapter.setSelectItem(0);
-				dishNamesAdapter.setDishNames(App.instance.getDishNames());
-				dishNamesAdapter.notifyDataSetChanged();
-				if (!App.instance.getDishNames().isEmpty()) {
-					kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(App.instance.getDishNames().get(0)));
-				}
-				kotdetailsAdapter.notifyDataSetChanged();
-				kotDetailsListView.setAdapter(kotdetailsAdapter);
-				break;
-			default:
-				break;
-			}
-		};
-	};
-	
-	public void httpRequestAction(int action, Object obj) {
-		handler.sendMessage(handler.obtainMessage(HANDLER_REFRESH,null));
-	};
-	
-	public class DishNamesAdapter extends BaseAdapter{
+    private void initKotDetailsListView() {
+        kotDetailsListView = (ListView) this.findViewById(R.id.lv_kot_details);
+        kotdetailsAdapter = new KotDetailsAdapter(context);
+        if (!App.instance.getDishNames().isEmpty()) {
+            kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(App.instance.getDishNames().get(0)));
+        }
+        kotDetailsListView.setAdapter(kotdetailsAdapter);
+    }
 
-		public List<String> dishNames = Collections.emptyList();
-		private LayoutInflater inflater;
-		private int selectItem = 0;
-		
-		public void setSelectItem(int selectItem) { 
-			this.selectItem = selectItem;
-		}
-		
-		public int getSelectItem(){
-			return selectItem;
-		}
-		
-		public DishNamesAdapter(){
-			this.inflater = LayoutInflater.from(context);
-		}
-		
-		public void setDishNames(List<String> dishNames){
-			this.dishNames = dishNames;
-		}
-		
-		@Override
-		public int getCount() {
-			return dishNames.size();
-		}
+    public Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case HANDLER_REFRESH:
+                    dishNamesAdapter.setSelectItem(getPosition());
+                    dishNamesAdapter.setDishNames(App.instance.getDishNames());
+                    dishNamesAdapter.notifyDataSetChanged();
+                    if (dishName != null) {
+                        kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(dishName));
+                        kotdetailsAdapter.notifyDataSetChanged();
+                        if (popupWindow != null && popupWindow.isShowing()) {
+                            popItemAdapter.setKot(App.instance.getKot((KotSummary) App.instance.getKotDishDetail(dishName).get(index)[0]));
+                            popItemAdapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(App.instance.getDishNames().get(0)));
+                        kotdetailsAdapter.notifyDataSetChanged();
+                    }
+                    break;
+                case App.HANDLER_REFRESH_KOT:
+                    loadingDialog.dismiss();
+                    List<KotItemDetail> skotItemDetails = (List<KotItemDetail>) msg.obj;
+                    kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(skotItemDetails.get(0).getItemName()));
+                    kotdetailsAdapter.notifyDataSetChanged();
+                    if (popItemAdapter != null)
+                        popItemAdapter.notifyDataSetChanged();
+                    break;
+                case App.HANDLER_RECONNECT_POS:
+                    loadingDialog.dismiss();
+                    DialogFactory.commonTwoBtnDialog(context, "", getString(R.string.reconnect_pos),
+                            getString(R.string.cancel), getString(R.string.ok), null,
+                            new OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    UIHelp.startConnectPOS(context);
+                                    finish();
+                                }
+                            });
+                    break;
+                case App.HANDLER_SEND_FAILURE:
+                    loadingDialog.dismiss();
+                    List<KotItemDetail> fkotItemDetails = (List<KotItemDetail>) msg.obj;
+                    kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(fkotItemDetails.get(0).getItemName()));
+                    kotdetailsAdapter.notifyDataSetChanged();
+                    break;
+                case App.HANDLER_RETURN_ERROR:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, ResultCode.getErrorResultStrByCode(context, (Integer) msg.obj, null));
+                    break;
+                case App.HANDLER_RETURN_ERROR_SHOW:
+                    loadingDialog.dismiss();
+                    List<KotItemDetail> mkotItemDetails = (List<KotItemDetail>) msg.obj;
+                    kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(mkotItemDetails.get(0).getItemName()));
+                    kotdetailsAdapter.notifyDataSetChanged();
+                    break;
+                case App.HANDLER_SEND_FAILURE_SHOW:
+                    UIHelp.showToast(context, context.getResources().getString(R.string.reconnect_pos_));
+                    break;
+                case ResultCode.CONNECTION_FAILED:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
+                            context.getResources().getString(R.string.revenue_center)));
+                    break;
+                case App.HANDLER_KOTSUMMARY_IS_UNREAL:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, context.getResources().getString(R.string.order_discarded));
+                    List<String> dishNames = App.instance.getDishNames();
+                    if (dishNames.isEmpty()) {
+                        dishNamesAdapter.setDishNames(dishNames);
+                        dishNamesAdapter.notifyDataSetChanged();
+                        kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(dishName));
+                        kotdetailsAdapter.notifyDataSetChanged();
+                        if (popupWindow != null && popupWindow.isShowing()) {
+                            popupWindow.dismiss();
+                        }
+                        return;
+                    }
+                    if (dishNames.contains(dishName)) {
+                        dishNamesAdapter.setSelectItem(getPosition());
+                        dishNamesAdapter.setDishNames(dishNames);
+                        dishNamesAdapter.notifyDataSetChanged();
+                        kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(dishName));
+                        kotdetailsAdapter.notifyDataSetChanged();
+                        if (popupWindow != null && popupWindow.isShowing()) {
+                            popupWindow.dismiss();
+                        }
+                    } else {
+                        dishNamesAdapter.setSelectItem(0);
+                        dishNamesAdapter.setDishNames(dishNames);
+                        dishNamesAdapter.notifyDataSetChanged();
+                        kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(App.instance.getDishNames().get(0)));
+                        kotdetailsAdapter.notifyDataSetChanged();
+                        if (popupWindow != null && popupWindow.isShowing()) {
+                            popupWindow.dismiss();
+                        }
+                    }
+                case App.HANDLER_KOT_COMPLETE_USER_FAILED:
+                    App.instance.reload(context, handler);
+                    break;
+                case Login.HANDLER_LOGIN:
+                    if (loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+                    }
+                    if (popupWindow != null && popupWindow.isShowing()) {
+                        popupWindow.dismiss();
+                    }
+                    dishNamesAdapter.setSelectItem(0);
+                    dishNamesAdapter.setDishNames(App.instance.getDishNames());
+                    dishNamesAdapter.notifyDataSetChanged();
+                    if (!App.instance.getDishNames().isEmpty()) {
+                        kotdetailsAdapter.setKotDishNames(App.instance.getKotDishDetail(App.instance.getDishNames().get(0)));
+                    }
+                    kotdetailsAdapter.notifyDataSetChanged();
+                    kotDetailsListView.setAdapter(kotdetailsAdapter);
+                    break;
+                default:
+                    break;
+            }
+        }
 
-		@Override
-		public Object getItem(int position) {
-			return dishNames.get(position);
-		}
+        ;
+    };
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+    public void httpRequestAction(int action, Object obj) {
+        handler.sendMessage(handler.obtainMessage(HANDLER_REFRESH, null));
+    }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder = null;
-			if (convertView == null) {
-				convertView = inflater.inflate(R.layout.item_dish_names, null);
-				holder = new ViewHolder();
-				holder.dishName = (TextView) convertView.findViewById(R.id.tv_dish_name);
-				convertView.setTag(holder);
-			}else {
-				holder = (ViewHolder) convertView.getTag();
-			}
-			holder.dishName.setText(dishNames.get(position));
+    ;
+
+    public class DishNamesAdapter extends BaseAdapter {
+
+        public List<String> dishNames = Collections.emptyList();
+        private LayoutInflater inflater;
+        private int selectItem = 0;
+
+        public void setSelectItem(int selectItem) {
+            this.selectItem = selectItem;
+        }
+
+        public int getSelectItem() {
+            return selectItem;
+        }
+
+        public DishNamesAdapter() {
+            this.inflater = LayoutInflater.from(context);
+        }
+
+        public void setDishNames(List<String> dishNames) {
+            this.dishNames = dishNames;
+        }
+
+        @Override
+        public int getCount() {
+            return dishNames.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return dishNames.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.item_dish_names, null);
+                holder = new ViewHolder();
+                holder.dishName = (TextView) convertView.findViewById(R.id.tv_dish_name);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.dishName.setText(dishNames.get(position));
 //			if(selectItem >= getCount()){
 //				selectItem = 0;
 //				dishName = dishNames.get(selectItem);
@@ -355,7 +364,7 @@ public class Summary extends BaseActivity {
 			}else {
 				holder = (ViewHolder2) convertView.getTag();
 			}
-			if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+			if (isKiosk) {
 				holder.table.setVisibility(View.GONE);
 			}
 			final KotSummary kotSummary = (KotSummary) kotDishNames.get(position)[0];
@@ -380,7 +389,7 @@ public class Summary extends BaseActivity {
 				holder.send.setBackgroundColor(Color.GRAY);
 			}else if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_VOID) {
 				holder.send.setClickable(false);
-				holder.send.setText("void");
+				holder.send.setText(context.getResources().getString(R.string.void_));
 				holder.send.setBackgroundColor(Color.GRAY);
 			}else {
 				holder.send.setFocusable(true);
@@ -449,7 +458,7 @@ public class Summary extends BaseActivity {
 		TextView date = (TextView) view.findViewById(R.id.tv_date);
 		TextView time = (TextView) view.findViewById(R.id.tv_time);
 		TextView tv_kiosk_order_id = (TextView) view.findViewById(R.id.tv_kiosk_order_id);
-		if (mainPosInfo.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
+		if (isKiosk) {
 			tv_kiosk_order_id.setVisibility(View.VISIBLE);
 			table.setVisibility(View.GONE);
 			orderId.setVisibility(View.GONE);
@@ -459,9 +468,9 @@ public class Summary extends BaseActivity {
 			orderId.setVisibility(View.VISIBLE);
 		}
 		kotId.setText(kot.getKotSummary().getId()+"");
-		orderId.setText(context.getResources().getString(R.string.order_id_)+kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo()+"");
-		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_id_) +kot.getKotSummary().getNumTag()+ IntegerUtils.fromat(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
-		table.setText(context.getResources().getString(R.string.table_) + kot.getKotSummary().getTableName()+"");
+		orderId.setText(context.getResources().getString(R.string.order_no)+kot.getKotSummary().getNumTag()+kot.getKotSummary().getOrderNo()+"");
+		tv_kiosk_order_id.setText(context.getResources().getString(R.string.order_no) +kot.getKotSummary().getNumTag()+ IntegerUtils.formatLocale(kot.getKotSummary().getRevenueCenterIndex(), kot.getKotSummary().getOrderNo() + ""));
+        table.setText(context.getResources().getString(R.string.table) + " - " + kot.getKotSummary().getTableName() + "");
 		posName.setText(kot.getKotSummary().getRevenueCenterName()+"");
 		date.setText(TimeUtil.getPrintDate(kot.getKotSummary().getCreateTime()));
 		time.setText(TimeUtil.getPrintTime(kot.getKotSummary().getCreateTime()));

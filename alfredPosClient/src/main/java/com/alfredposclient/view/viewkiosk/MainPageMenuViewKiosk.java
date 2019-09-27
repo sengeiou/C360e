@@ -44,7 +44,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BitmapUtil;
@@ -133,6 +132,11 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //		initItemMainCategory();
 //		initItemDetail();
 //		initItemCategory(current_index);
+    }
+
+    public void refreshAllMenu(){
+        TwoLevelMenuAdapter twoLevelMenuAdapter = (TwoLevelMenuAdapter) twoLevelMenu.getAdapter();
+        twoLevelMenuAdapter.notifyDataSetChanged();
     }
 
     public void setParam(Order order, Handler handler) {
@@ -632,7 +636,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                                 .getItemAtPosition(position);
                         RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
                         if (remainingStock != null) {
-                            DialogFactory.commonTwoBtnInputIntDialog(parent, false, "Num", "", "CANCEL", "DONE",
+                            DialogFactory.commonTwoBtnInputIntDialog(parent, false, parent.getString(R.string.num), "", parent.getString(R.string.cancel), context.getString(R.string.done).toUpperCase(),
                                     null,
                                     new OnClickListener() {
                                         @Override
@@ -683,7 +687,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
                                         msg.obj = orderDetail;
                                         handler.sendMessage(msg);
                                     }else{
-                                        UIHelp.showShortToast(parent, "Out Of Stock!");
+                                        UIHelp.showShortToast(parent, parent.getString(R.string.out_of_stock));
                                     }
                                 }
                             });
@@ -973,7 +977,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
         if (!bitmap.isRecycled())
             bitmap.recycle();
         ll_menu.setVisibility(View.GONE);
-        ((TextView) findViewById(R.id.tv_item_name)).setText(CoreData.getInstance().getItemDetailById(orderDetail.getItemId()).getItemName());
+        ((TextView) findViewById(R.id.tv_item_name)).setText(CoreData.getInstance().getItemDetailById(orderDetail.getItemId(),orderDetail.getItemName()).getItemName());
         ObjectAnimator animator1 = ObjectAnimator.ofFloat(iv_up, "y",
                 iv_up.getY(), iv_up.getY() - iv_up.getHeight()).setDuration(
                 OPEN_DELAY);

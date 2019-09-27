@@ -61,7 +61,7 @@
                 android:id="@+id/tv_nur_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Grab &amp; Go"
+                android:text="@string/takeaway"
                 android:textColor="@color/green"
                 android:textSize="18sp" />
 

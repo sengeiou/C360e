@@ -3,15 +3,20 @@ package com.alfredposclient.popupwindow;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
@@ -24,10 +29,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.VerifyDialog;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.AlipaySettlement;
 import com.alfredbase.javabean.BohHoldSettlement;
 import com.alfredbase.javabean.CardsSettlement;
@@ -41,6 +48,7 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
+import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.SettlementRestaurant;
 import com.alfredbase.javabean.TableInfo;
@@ -71,28 +79,42 @@ import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.TextTypeFace;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.EditSettlementPage;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.StoredCardActivity;
+import com.alfredposclient.activity.SyncData;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
+import com.alfredposclient.adapter.Ipay88SettlementAdapter;
 import com.alfredposclient.adapter.OrderDetailAdapter;
+import com.alfredposclient.adapter.SettlementAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.SyncCentre;
 import com.alfredposclient.global.UIHelp;
+import com.alfredposclient.javabean.Ipay88CheckStatusDao;
+import com.alfredposclient.javabean.Ipay88QrDao;
+import com.alfredposclient.javabean.PayHalalQrDao;
+import com.alfredposclient.javabean.PayhalalCheckStatusDao;
 import com.alfredposclient.view.CloseMoneyKeyboard;
 import com.alfredposclient.view.CloseMoneyKeyboard.KeyBoardClickListener;
 import com.alfredposclient.view.SettlementDetailItemView;
 import com.alfredposclient.view.SettlementDetailItemView.ViewResultCall;
+import com.alfredposclient.view.dialog.Ipay88Dialog;
 import com.alfredposclient.view.dialog.MediaDialog;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.gson.Gson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener {
+public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener, SettlementAdapter.ClickListener, Ipay88SettlementAdapter.ClickListener {
     private String TAG = CloseOrderWindow.class.getSimpleName();
     private static final int DURATION_1 = 300;
     private static final int DURATION_2 = 200;
@@ -162,7 +184,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private TextView tv_wechat_ali_amount_due_num;
     private TextView tv_wechat_ali_amount_paid_num;
 
-    private Button tv_other_media;
     private boolean isMenuClose = false;
     private ImageView iv_card_img;
     private LinearLayout ll_all_settlements;
@@ -181,13 +202,24 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private String referenceNum;
 
     PaymentMethod paymentMethod = new PaymentMethod();
-
+    private BigDecimal cardAmountPaidNum;
 
     private boolean isFirstClickCash = false;
     List<PaymentMethod> pamentMethodlist = new ArrayList<PaymentMethod>();
     EditText et_special_settlement_person_name;
     MediaDialog mediaDialog;
+    private LoadingDialog loadingDialog;
+    private Ipay88Dialog ipay88dialog;
+    private AlertDialog paymentDialog;
+    PayHalalQrDao payHalalQrDao;
+    private long qrRefId = 0;
+
     private List<PaymentSettlement> paymentSettlements = new ArrayList<>();
+
+
+    private ArrayList<SettlementRestaurant> paymentSettleRestaurant = new ArrayList<>();
+    private SettlementAdapter settlementAdapter;
+
 
     //	private BigDecimal includTax;
     public CloseOrderWindow(BaseActivity parent, View parentView,
@@ -307,7 +339,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
         contentView.findViewById(R.id.tv_Others).setOnClickListener(this);
         contentView.findViewById(R.id.tv_exact).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_VISA).setOnClickListener(this);
         contentView.findViewById(R.id.iv_UnionPay_CN).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_200).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_150).setOnClickListener(this);
@@ -316,13 +347,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         contentView.findViewById(R.id.tv_cash_20).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_10).setOnClickListener(this);
         contentView.findViewById(R.id.tv_cash_5).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_MasterCard).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_NETS).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_UnionPay).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_JCB).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_AMERICAN).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_dinersclub).setOnClickListener(this);
-        contentView.findViewById(R.id.iv_halal).setOnClickListener(this);
 
         contentView.findViewById(R.id.tv_BILL_on_HOLD).setOnClickListener(this);
         contentView.findViewById(R.id.tv_VOID).setOnClickListener(this);
@@ -338,9 +362,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         contentView.findViewById(R.id.tv_voucher_event)
                 .setOnClickListener(this);
 
-        tv_other_media = (Button) contentView.findViewById(R.id.tv_other_media);
 
-        tv_other_media.setOnClickListener(this);
         btn_close_bill.setOnClickListener(this);
         btn_print_receipt.setOnClickListener(this);
         btn_void_all_closed.setOnClickListener(this);
@@ -378,7 +400,21 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         });
         lv_list.setAdapter(orderDetailAdapter);
 
+        setSettlementAdapter();
+        loadingDialog = new LoadingDialog(parent);
+        loadingDialog.setTitle(parent.getResources().getString(R.string.loading));
 
+
+    }
+
+    private void setSettlementAdapter() {
+        paymentSettleRestaurant.addAll(CoreData.getInstance().getSettlementRestaurant());
+        settlementAdapter = new SettlementAdapter(paymentSettleRestaurant, this);
+        RecyclerView recyclerView = (RecyclerView) contentView.findViewById(R.id.rv_settlement);
+        int numberOfColumns = 3;
+        recyclerView.setLayoutManager(new GridLayoutManager(parent, numberOfColumns));
+        recyclerView.setAdapter(settlementAdapter);
+        settlementAdapter.notifyDataSetChanged();
     }
 
     private void init() {
@@ -408,6 +444,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             cash_num = BH.getBD(ParamConst.DOUBLE_ZERO);
             change_num = BH.getBD(ParamConst.DOUBLE_ZERO);
         }
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
         initBillSummary();
     }
 
@@ -466,13 +507,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         TextView tv_discount = (TextView) view
                 .findViewById(R.id.tv_discount);
         textTypeFace.setTrajanProRegular(tv_discount);
-        tv_discount.setText(parent.getResources().getString(R.string.discount_));
+        tv_discount.setText(parent.getResources().getString(R.string.discount));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_discount_num));
         TextView tv_taxes = (TextView) view
                 .findViewById(R.id.tv_taxes);
         textTypeFace.setTrajanProRegular(tv_taxes);
-        tv_taxes.setText(parent.getResources().getString(R.string.taxes_));
+        tv_taxes.setText(parent.getResources().getString(R.string.taxes));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_taxes_num));
         TextView tv_cash_200 = (TextView) view
@@ -514,8 +555,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_media));
 
-        textTypeFace.setTrajanProRegular((Button) view
-                .findViewById(R.id.tv_other_media));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_adjustment));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -527,8 +566,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_stored_card));
 
-//        textTypeFace.setTrajanProRegular((TextView) view
-//                .findViewById(R.id.tv_other_media));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_delivery));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -656,7 +693,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
 
             settlementNum = BH.getBD(sumPaidamount);
-            if (settlementNum.compareTo(BH.getBD(order.getTotal())) > -1) {
+            if (settlementNum.compareTo(BH.getReplace(BH.formatMoney(order.getTotal()))) > -1) {
                 remainTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
             } else {
                 remainTotal = BH.sub(BH.getBD(order.getTotal()),
@@ -671,6 +708,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //		tv_item_count_num.setText(getItemNumSum() + "");
         tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
         tv_discount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString());
+
         tv_taxes_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString());
         tv_total_bill_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString());
 //		tv_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(roundAmount.getRoundBalancePrice()).toString());
@@ -760,7 +798,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                 }
                             });
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
-                            if (roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.formatMoney("0.00")) != 0) {
+                            if (roundAmount != null && BH.getBD(roundAmount.getRoundBalancePrice()).compareTo(BH.getBD("0.00")) != 0) {
                                 order.setTotal(BH.sub(BH.getBD(order.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
                                 OrderSQL.update(order);
                                 if (parent instanceof EditSettlementPage) {
@@ -954,7 +992,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 View.INVISIBLE);
         switch (type) {
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
-                tv_special_settlement_title.setText("ENTERTAINMENT");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.entertainment));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.VISIBLE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
@@ -965,13 +1003,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 rl_special_settlement_phone.setVisibility(View.VISIBLE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_VOID:
-                tv_special_settlement_title.setText("VOID");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.void_));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_REFUND:
-                tv_special_settlement_title.setText("REFUND");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.refund));
 //			remainTotal = BH.sub(remainTotal, BH.add(BH.getBD(order.getTaxAmount()), includTax, false), true);
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
@@ -1004,7 +1042,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         }
         if (App.instance.countryCode == ParamConst.CHINA) {
             if (cardsName.equals("UNIONPAY"))
-                tv_cards_name.setText("银联");
+                tv_cards_name.setText("UNIONPAY");
             else if (cardsName.equals("MASTERCARD"))
                 tv_cards_name.setText("Master Card");
             else
@@ -1022,7 +1060,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         if (!App.instance.getSystemSettings().isCardRounding()) {
 
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
-            tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotal.toString()).toString());
+            cardAmountPaidNum = remainTotal;
+            tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotal.toString()));
             tv_cards_rounding_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
         } else {
             BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
@@ -1035,7 +1074,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
             tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()).toString());
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotalAfterRound.toString()).toString());
-            tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotalAfterRound.toString()).toString());
+            cardAmountPaidNum = remainTotalAfterRound;
+            tv_cards_amount_paid_num.setText(BH.formatMoney(remainTotalAfterRound.toString()));
         }
         selectView = tv_card_no_num;
         tv_cards_amount_paid_num.setBackgroundColor(parent.getResources().getColor(
@@ -1130,7 +1170,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         App.instance.setClosingOrderId(order.getId());
         this.orderBill = orderBill;
         this.startX = startX;
-        tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
+        tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0));
         this.order = order;
         this.oldTotal = this.order.getTotal();
         if (parent instanceof EditSettlementPage) {
@@ -1336,7 +1376,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
     public void voidItem(final OrderDetail orderDetail) {
-        DialogFactory.commonTwoBtnDialog(parent, "Warring", "This action is irreversible,\n Are you sure ?", "YES", "NO", new OnClickListener() {
+        DialogFactory.commonTwoBtnDialog(parent, parent.getString(R.string.warning), parent.getString(R.string.operation_irreversible), parent.getString(R.string.yes).toUpperCase(), parent.getString(R.string.no).toUpperCase(), new OnClickListener() {
             @Override
             public void onClick(View v) {
                 OrderDetailSQL.setOrderDetailToVoidOrFreeForClosedOrder(orderDetail, oldTotal);
@@ -1409,21 +1449,15 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
             // 支付方式的点击事件
             switch (v.getId()) {
-                case R.id.tv_Others: {
+                case R.id.tv_Others:
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     isFirstClickCash = true;
                     break;
-                }
-                case R.id.tv_exact: {
+                case R.id.tv_exact:
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     isFirstClickCash = true;
                     clickEnterAction();
-                }
-                case R.id.iv_VISA: {
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_VISA);
                     break;
-                }
-
                 case R.id.tv_cash_200:
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     selectNumberAction(200);
@@ -1458,71 +1492,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     selectNumberAction(5);
                     isFirstClickCash = true;
-                    break;
-                case R.id.iv_MasterCard:
-                    openMoneyKeyboard(View.GONE,
-                            ParamConst.SETTLEMENT_TYPE_MASTERCARD);
-                    break;
-                case R.id.iv_NETS:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_NETS);
-                    break;
-                case R.id.iv_UnionPay_CN:
-                case R.id.iv_UnionPay:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_UNIPAY);
-                    break;
-                case R.id.iv_JCB:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_JCB);
-                    break;
-                case R.id.iv_AMERICAN:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_AMEX);
-                    break;
-                case R.id.iv_dinersclub:
-                    openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL);
-                    break;
-
-                case R.id.tv_other_media:
-                    List<SettlementRestaurant> settle;
-                    pamentMethodlist.clear();
-                    settle = CoreData.getInstance().getSettlementRestaurant();
-                    if (settle != null && !settle.isEmpty()) {
-
-                        if (!TextUtils.isEmpty(settle.get(0).getOtherPaymentId().toString())) {
-
-                            String[] strarray = settle.get(0).getOtherPaymentId().toString().split("[|]");
-                            for (int i = 0; i < strarray.length; i++) {
-                                PaymentMethod pa = new PaymentMethod();
-                                pa = CoreData.getInstance().getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
-
-                                if (pa == null) {
-                                    return;
-                                } else {
-                                    pamentMethodlist.add(pa);
-                                }
-
-                            }
-                        }
-                    }
-
-                    mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
-                    mediaDialog.setPaymentClickListener(this);
-                    break;
-                case R.id.iv_halal: {
-                    if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
-                        showPaymentReminder();
-                        return;
-                    }
-                    String payHalalOrderId = order.getRestId() + "" + order.getRevenueId() + "" + orderBill.getBillNo();
-                    String url = String.format("https://payhalal.me/qr/%s/%s/%s", "1001", BH.getBD(order.getTotal()).toString(), payHalalOrderId);
-                    DialogFactory.commonTwoBtnQRDialog(parent, url, "Back", "Paid", null, new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            referenceNum = (String) v.getTag();
-                            viewTag = ParamConst.SETTLEMENT_TYPE_HALAL;
-                            paymentTypeId = ParamConst.SETTLEMENT_TYPE_HALAL;
-                            clickEnterAction();
-                        }
-                    });
-                }
                 break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
@@ -2009,20 +1978,15 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             clickClearAction();
 
         } else if ("200".equals(key)) {
-
             selectNumberAction(200);
 
         } else if ("100".equals(key)) {
-
-
             selectNumberAction(100);
 
         } else if ("50".equals(key)) {
-
             selectNumberAction(50);
 
         } else if ("10".equals(key)) {
-
             selectNumberAction(10);
 
         } else {
@@ -2041,6 +2005,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 .setText(BH.formatMoney(num).toString());
         BigDecimal cashNum = BH.getBD(num);
         BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+
+        remainTotalAfterRound = BH.getBD(BH.formatMoney(remainTotalAfterRound.toString()));
         int change = cashNum.compareTo(remainTotalAfterRound);
         if (change >= 0) {
             BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
@@ -2057,12 +2023,18 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         BigDecimal cashNum = BH.IsDouble()
                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                 : BH.getBD(show.toString());
+        if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+        {
+            cashNum = BH.IsDouble()
+                    ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                    : BH.getBD(show.toString());
+        }
         BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
         int change = cashNum.compareTo(remainTotalAfterRound);
         if (change > 0) {
             BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
             tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-                    + BH.formatMoney(changeNum.toString()).toString());
+                    + BH.formatMoney(changeNum.toString()));
         } else {
             tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
         }
@@ -2075,8 +2047,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         switch (viewTag) {
             case ParamConst.SETTLEMENT_TYPE_CASH: {
                 String showStr = tv_total_amount_num.getText().toString();
-                BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(showStr));
+                BigDecimal showStrBigDecimal = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getReplace(showStr));
                 BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+                remainTotalAfterRound = BH.getReplace(BH.formatMoney(remainTotalAfterRound.toString()));
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > 0) {
                     showStr = remainTotalAfterRound.toString();
                 } else {
@@ -2091,6 +2064,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                     order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                     OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
+                    disableButtons();
                     OrderSQL.update(order);
                     paymentSettlement.setCashChange(BH.sub(showStrBigDecimal,
                             remainTotalAfterRound, true).toString());
@@ -2114,7 +2088,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
                 if (paymentMethod.getIsTax() == 0) {
                     //不计税
-                    deleteVoidOrEntTax();
+                    // deleteVoidOrEntTax();
+                    ToastUtils.showToast(parent, "setting error\n");
+
+                    return;
                 }
                 BigDecimal paidBD = BH.getBD(paymentMethod.getPartAcount());
                 if (viewTag == ParamConst.SETTLEMENT_CUSTOM_PART) {
@@ -2131,6 +2108,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                         PaymentSQL.updatePaymentAmount(order.getTotal(), order.getId().intValue());
                         order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                        disableButtons();
                         OrderSQL.update(order);
                     } else {
                         settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2186,7 +2164,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 PaymentSettlement paymentSettlement = null;
                 //四舍五入
                 if (!App.instance.getSystemSettings().isCardRounding()) {
-                    paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
+                    paidBD = cardAmountPaidNum;
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
                                 .getInstance().getPaymentSettlementForCard(
@@ -2195,6 +2173,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                         paidBD.toString());
                         if (paidBD.compareTo(remainTotal) > -1) {
                             order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                            disableButtons();
                             OrderSQL.update(order);
                         } else {
                             settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2203,7 +2182,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                     }
                 } else {
-                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(tv_cards_amount_paid_num.getText().toString()));
+                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), cardAmountPaidNum);
                     BigDecimal remainTotalAlfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
@@ -2215,6 +2194,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                             RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                             order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                             OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
+                            disableButtons();
                             OrderSQL.update(order);
                         } else {
                             settlementNum = BH.getBD(PaymentSettlementSQL
@@ -2257,6 +2237,22 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 }
             }
             break;
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_ALIPAY:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_BOOST:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_TOUCHNGO:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_MCASH:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_UNIONPAY:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_NETS:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_CIMB:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_MBB:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_GRABPAY:
+            case ParamConst.SETTLEMENT_TYPE_IPAY88_WEPAY: {
+                payWithIpay88();
+            }
+            break;
+            case ParamConst.SETTLEMENT_TYPE_PAYHALAL:
+                payWithPayHalal();
+                break;
             case ParamConst.SETTLEMENT_TYPE_STORED_CARD: {
 //			String amount = ((TextView) findViewById(R.id.tv_residue_total))
 //					.getText().toString();
@@ -2623,15 +2619,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 printBill(true, null);
             }
         }
-
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                KotSummary kotSummary = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
-//                App.instance.getKdsJobManager().deleteKotItemDetailLogOnBalancer(kotSummary);
-//            }
-//        }).start();
-
     }
 
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {
@@ -2658,6 +2645,14 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         initBillSummary();
     }
 
+    private void disableButtons() {
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
+    }
+
     private void clickOtherAction(String key) {
         show.append(key);
         switch (viewTag) {
@@ -2671,6 +2666,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 BigDecimal shownum = BH.IsDouble()
                         ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                         : BH.getBD(show.toString());
+                if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+                {
+                    shownum = BH.IsDouble()
+                            ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                            : BH.getBD(show.toString());
+                }
+
 //                BigDecimal shownum = BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true);
                 tv_total_amount_num.setText(BH.formatMoney(shownum.toString()).toString());
 
@@ -2686,12 +2688,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 if (selectView != null && selectView == tv_cards_amount_paid_num) {
                     selectView.setInputType(InputType.TYPE_CLASS_NUMBER);
                     if (TextUtils.isEmpty(show)) {
-                        selectView.setText(BH.formatMoney(0).toString());
+                        selectView.setText(BH.formatMoney(0));
                     } else {
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
-
+                        if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+                        {
+                            selectBD = BH.IsDouble()
+                                    ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                                    : BH.getBD(show.toString());
+                        }
                         if (!BH.compare(selectBD, remainTotal)) {
                             selectView.setText(selectBD.toString());
                         } else {
@@ -2743,6 +2750,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
+                        if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+                        {
+                            selectBD = BH.IsDouble()
+                                    ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                                    : BH.getBD(show.toString());
+                        }
                         if (!BH.compare(selectBD, remainTotal)) {
                             selectView.setText(selectBD.toString());
                         } else {
@@ -2783,6 +2796,12 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 BigDecimal shownum = BH.IsDouble()
                         ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                         : BH.getBD(show.toString());
+                if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+                {
+                    shownum = BH.IsDouble()
+                            ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                            : BH.getBD(show.toString());
+                }
 //                BigDecimal shownum = BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true);
                 tv_part_total_amount_num.setText(BH.formatMoney(shownum.toString()).toString());
 
@@ -2965,34 +2984,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             verifyDialog.show("PAMENTMETHOD", null);
 
         } else {
-            if ("IPAY88".equalsIgnoreCase(paym.getNameOt())) {
-                //TODO: request generated QR Code to server
-                showDialogIpay88();
-            } else {
-                initPayment();
-            }
+            initPayment();
         }
-    }
-
-    private void showDialogIpay88() {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("amount", order.getTotal());
-        parameters.put("backendURL", 1);
-        parameters.put("barcodeNo", 1);
-        parameters.put("currency", "MYR");
-//        parameters.put("merchantCode", 1);
-        parameters.put("paymentId", paymentMethod.getPaymentTypeId());
-        parameters.put("prodDesc", 1);
-        parameters.put("refNo", 1);
-        parameters.put("remark", 1);
-        parameters.put("signature", 1);
-        parameters.put("signatureType", 1);
-        parameters.put("terminalID", 1);
-        parameters.put("userContact", 1);
-        parameters.put("userEmail", 1);
-        parameters.put("userName", 1);
-        parameters.put("lang", 1);
-        SyncCentre.getInstance().requestIpay88Payment(parent, parameters, handler);
     }
 
     private void initPayment() {
@@ -3041,7 +3034,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 viewTag = ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE;
                 //备注
                 if (paymentMethod.getIsMsg() == 1) {
-                    tv_special_settlement_title.setText("CUSTOM");
+                    tv_special_settlement_title.setText(parent.getResources().getString(R.string.custom).toUpperCase());
                     rl_special_settlement_person.setVisibility(View.GONE);
                     rl_special_settlement_phone.setVisibility(View.GONE);
                     contentView.findViewById(R.id.ll_special_settlement).setVisibility(
@@ -3087,7 +3080,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             viewTag = ParamConst.SETTLEMENT_CUSTOM_ALL;
 //            ispart = paymentMethod.getIsPart();
             if (paymentMethod.getIsMsg() == 1) {
-                tv_special_settlement_title.setText("CUSTOM");
+                tv_special_settlement_title.setText(parent.getResources().getString(R.string.custom).toUpperCase());
                 rl_special_settlement_person.setVisibility(View.GONE);
                 rl_special_settlement_phone.setVisibility(View.GONE);
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(
@@ -3162,4 +3155,452 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         }
     }
 
+
+    //start qrpayment
+    private void showQrPaymentDialog(BigDecimal amount, final String url) {
+        paymentDialog = new AlertDialog.Builder(parent).create();
+        paymentDialog.show();
+        paymentDialog.setCancelable(true);
+        paymentDialog.setCanceledOnTouchOutside(false);
+
+        Window window = paymentDialog.getWindow();
+        window.setContentView(R.layout.dialog_ipay88_payment_layout);
+        window.setBackgroundDrawableResource(android.R.color.transparent);
+
+        final ImageView ivQrcode = (ImageView) paymentDialog.findViewById(R.id.iv_qrcode_ipay88);
+        TextView tvTitle = (TextView) paymentDialog.findViewById(R.id.tv_qrcode_title);
+        TextView tvAmount = (TextView) paymentDialog.findViewById(R.id.tv_qrcode_amount);
+        Button btnPaid = (Button) paymentDialog.findViewById(R.id.btn_qrcode_paid);
+        Button btnCancel = (Button) paymentDialog.findViewById(R.id.btn_qrcode_cancel);
+
+
+        final String title = "Please Scan the QR Code \n" + ParamConst.getQRPaymentName(paymentTypeId);
+        final String total = App.instance.getLocalRestaurantConfig().getCurrencySymbol() + amount;
+        tvAmount.setText(total);
+        tvTitle.setText(title);
+
+        Glide.with(parent)
+                .load(url)
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>(200, 200) {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                        App.instance.showSunmiQrimg(parent, title, total, bitmap);
+                        ivQrcode.setImageBitmap(bitmap);
+
+                        TableInfo tables = TableInfoSQL.getTableById(order.getTableId());
+                        PrinterTitle title = ObjectFactory.getInstance()
+                                .getPrinterTitleForQRCode(
+                                        App.instance.getRevenueCenter(),
+                                        App.instance.getUser().getFirstName()
+                                                + App.instance.getUser().getLastName(),
+                                        tables.getName());
+
+                        App.instance.printQrByBitmap(App.instance.getCahierPrinter(),
+                                title, ParamConst.getQRPaymentName(paymentTypeId), "" + orderBill.getBillNo(), total, bitmap);
+
+                    }
+                });
+
+
+        btnCancel.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                payHalalQrDao = null;
+                paymentDialog.dismiss();
+            }
+        });
+
+        btnPaid.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYHALAL) {
+                    checkStatusPayhalal();
+                } else {
+                    checkStatusIpay88();
+                }
+
+            }
+        });
+
+
+    }
+
+    //    start ipay88
+    @Override
+    public void ipay88SettlementAdapteronClick(PaymentMethod paymentMethod) {
+        viewTag = paymentMethod.getPaymentTypeId().intValue();
+        paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
+        clickEnterAction();
+    }
+
+    private void payWithIpay88() {
+        loadingDialog.show();
+        payment_amount = remainTotal;
+        paymentType = viewTag;
+        callQrcodeIpay88();
+    }
+
+
+    private void callQrcodeIpay88() {
+        String currency = App.instance.getLocalRestaurantConfig().getCurrencySymbol(); //TODO pay88 check symbol to currency
+        String orderName = null;
+        for (int i = 0; i < orderDetails.size(); i++) {
+            if (!TextUtils.isEmpty(orderName)) {
+                orderName += ", " + orderDetails.get(i).getItemName();
+            } else {
+                orderName = orderDetails.get(i).getItemName();
+            }
+        }
+
+        qrRefId = orderBill.getBillNo();//Long.parseLong(orderBill.getBillNo()+""+(System.currentTimeMillis() / 1000));
+        SyncCentre.getInstance().qrcodePay88(parent,
+                paymentTypeId,
+                payment_amount,
+                currency,
+                orderName,
+                qrRefId,
+                "12345678",
+                "customer@mail.com",
+                "customer",
+                qrPaymentHandler);
+    }
+
+    private void checkStatusIpay88() {
+        SyncCentre.getInstance().checkStatusPay88(parent, qrRefId, payment_amount, qrPaymentHandler);
+    }
+
+    private void saveIpay88() {
+        if (ipay88dialog != null) {
+            ipay88dialog.dismiss();
+            ipay88dialog.close();
+        }
+        if (paymentDialog != null) {
+            paymentDialog.dismiss();
+        }
+        PaymentSQL.addPayment(payment);
+        PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+                .getPaymentSettlement(payment, paymentTypeId,
+                        order.getTotal());
+        PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+        payment_amount = remainTotal;
+        paymentType = viewTag;
+        order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+        OrderSQL.update(order);
+        AlipaySettlement alipaySettlement = ObjectFactory.getInstance().getAlipaySettlement(payment, paymentSettlement, "", "");
+        if (newPaymentMapList != null) {
+            Map<String, Object> paymentMap = new HashMap<String, Object>();
+            paymentMap.put("newPaymentSettlement", paymentSettlement);
+            paymentMap.put("newSubPaymentSettlement", alipaySettlement);
+            newPaymentMapList.add(paymentMap);
+        }
+
+        initBillSummary();
+        if (viewTag != ParamConst.SETTLEMENT_TYPE_STORED_CARD)
+
+            closeMoneyKeyboard();
+
+        if (settlementNum.compareTo(BH.getBD(order.getTotal())) == 0) {
+            if (viewTag == ParamConst.SETTLEMENT_TYPE_CASH) {
+                if (TextUtils.isEmpty(tv_change_num.getText().toString())) {
+                    printBill(true, null);
+                } else {
+                    printBill(true, tv_change_num.getText().toString());
+                }
+            } else {
+                printBill(true, null);
+            }
+        }
+    }
+//end ipay88
+
+    //start payhalal
+    private void payWithPayHalal() {
+        loadingDialog.show();
+        paymentTypeId = ParamConst.SETTLEMENT_TYPE_PAYHALAL;
+        viewTag = paymentTypeId;
+        paymentType = paymentTypeId;
+        payment_amount = remainTotal;
+
+        if (CoreData.getInstance().getLoginResult().getUserKey() == null) {
+            SyncCentre.getInstance().loginQRPayment(parent, qrPaymentHandler);
+        } else {
+            callQrcodePayhalal();
+        }
+    }
+
+
+    private void callQrcodePayhalal() {
+        String currency = App.instance.getLocalRestaurantConfig().getCurrencySymbol(); //TODO pay88 check symbol to currency
+        String orderName = null;
+        for (int i = 0; i < orderDetails.size(); i++) {
+            if (!TextUtils.isEmpty(orderName)) {
+                orderName += ", " + orderDetails.get(i).getItemName();
+            } else {
+                orderName = orderDetails.get(i).getItemName();
+            }
+        }
+
+        qrRefId = orderBill.getBillNo();//Long.parseLong(orderBill.getBillNo()+""+(System.currentTimeMillis() / 1000));
+        SyncCentre.getInstance().qrcodePayHalal(parent,
+                paymentTypeId,
+                payment_amount,
+                currency,
+                orderName,
+                qrRefId,
+                "12345678",
+                "customer@mail.com",
+                "customer",
+                qrPaymentHandler);
+    }
+
+    private void checkStatusPayhalal() {
+        PayHalalQrDao.ResultData data = payHalalQrDao.getResultData();
+        SyncCentre.getInstance().checkStatusPayHalal(parent, data.getCurrency(), qrRefId, data.getTransaction_id(), payment_amount, qrPaymentHandler);
+    }
+
+    private void savePayhalal() {
+        if (ipay88dialog != null) {
+            ipay88dialog.dismiss();
+            ipay88dialog.close();
+        }
+        if (paymentDialog != null) {
+            paymentDialog.dismiss();
+        }
+        PaymentSQL.addPayment(payment);
+        PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
+                .getPaymentSettlement(payment, paymentTypeId,
+                        order.getTotal());
+        PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
+        payment_amount = remainTotal;
+        paymentType = viewTag;
+        order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+        OrderSQL.update(order);
+        AlipaySettlement alipaySettlement = ObjectFactory.getInstance().getAlipaySettlement(payment, paymentSettlement, "", "");
+        if (newPaymentMapList != null) {
+            Map<String, Object> paymentMap = new HashMap<String, Object>();
+            paymentMap.put("newPaymentSettlement", paymentSettlement);
+            paymentMap.put("newSubPaymentSettlement", alipaySettlement);
+            newPaymentMapList.add(paymentMap);
+        }
+        initBillSummary();
+        if (viewTag != ParamConst.SETTLEMENT_TYPE_STORED_CARD)
+
+            closeMoneyKeyboard();
+
+        if (settlementNum.compareTo(BH.getBD(order.getTotal())) == 0) {
+            if (viewTag == ParamConst.SETTLEMENT_TYPE_CASH) {
+                if (TextUtils.isEmpty(tv_change_num.getText().toString())) {
+                    printBill(true, null);
+                } else {
+                    printBill(true, tv_change_num.getText().toString());
+                }
+            } else {
+                printBill(true, null);
+            }
+        }
+    }
+    //end payhalal
+
+    private Handler qrPaymentHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case SyncData.HANDLER_LOGIN_QRPAYMENT: {
+                    if (msg.obj != null) {
+                        if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_PAYHALAL) {
+                            callQrcodePayhalal();
+                        } else {
+                            callQrcodeIpay88();
+                        }
+                    } else {
+                        loadingDialog.dismiss();
+                    }
+
+                }
+                break;
+                case SyncData.HANDLER_QRCODE_PAY88: {
+                    boolean isValid = false;
+                    boolean isCheckStatus = false;
+                    if (msg.obj != null) {
+                        String result = msg.obj.toString();
+                        if (result.contains("ipay88QrCode")) {
+                            Ipay88QrDao dao = new Gson().fromJson(result, Ipay88QrDao.class);
+                            if (dao.getIpay88QrCode() != null) {
+                                if (dao.getResultCode() == ResultCode.SUCCESS) {
+                                    isValid = true;
+                                    String qr = dao.getIpay88QrCode().getQrCode();
+                                    BigDecimal amount = payment_amount;
+                                    if (TextUtils.isEmpty(qr)) {
+                                        isValid = false;
+                                    } else {
+                                        showQrPaymentDialog(amount, qr);
+                                    }
+                                } else {
+                                    try {
+                                        if (!TextUtils.isEmpty(dao.getIpay88QrCode().getErrorMessage())) {
+                                            if ((dao.getIpay88QrCode().getErrorMessage() + "").contains("Already paid")) {
+                                                isCheckStatus = true;
+                                            }
+                                        }
+                                    } catch (NullPointerException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        UIHelp.showToast(parent, "Something went wrong, Could not connect to iPay88 Service for requesting QR-Code");
+
+                    }
+                    loadingDialog.dismiss();
+                    if (isCheckStatus) {
+                        loadingDialog.show();
+                        checkStatusIpay88();
+                    }
+                }
+                break;
+                case SyncData.HANDLER_CHECK_STATUS_PAY88: {
+                    boolean isValid = false;
+                    if (msg.obj != null) {
+                        String result = msg.obj.toString();
+                        if (result.contains("paymentStatus")) {
+                            Ipay88CheckStatusDao dao = new Gson().fromJson(result, Ipay88CheckStatusDao.class);
+                            if (dao.getPaymentStatus() != null) {
+                                String status = dao.getPaymentStatus().getStatus();
+                                if (status.equals("" + ParamConst.PAY88_STATUS_PROCESSED)) {
+                                    isValid = true;
+                                    saveIpay88();
+                                } else if (status.equals("" + ParamConst.PAY88_STATUS_PROCESSED_ORDER)) {
+                                    isValid = true;
+                                    saveIpay88();
+                                }
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        UIHelp.showToast(parent, "Please scan the qrcode for pay the bill");
+                    }
+                    loadingDialog.dismiss();
+                }
+                break;
+                case SyncData.HANDLER_QRCODE_PAYHALAL: {
+                    boolean isValid = false;
+                    if (msg.obj != null) {
+                        String result = msg.obj.toString();
+                        if (result.contains("\"resultCode\":1")) {
+                            PayHalalQrDao dao = new Gson().fromJson(result, PayHalalQrDao.class);
+                            if (dao.getResultData() != null) {
+                                isValid = true;
+                                String qr = dao.getResultData().getQr_code().getImage_url();
+                                BigDecimal amount = payment_amount;
+                                if (TextUtils.isEmpty(qr)) {
+                                    isValid = false;
+                                } else {
+                                    payHalalQrDao = dao;
+                                    showQrPaymentDialog(amount, qr);
+                                }
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        UIHelp.showToast(parent, "Something went wrong, Could not connect to Payhalal Service for requesting QR-Code");
+                    }
+                    loadingDialog.dismiss();
+                }
+                break;
+                case SyncData.HANDLER_CHECK_STATUS_PAYHALAL: {
+                    boolean isValid = false;
+                    if (msg.obj != null) {
+                        String result = msg.obj.toString();
+                        if (result.contains("\"resultCode\":1")) {
+                            PayhalalCheckStatusDao dao = new Gson().fromJson(result, PayhalalCheckStatusDao.class);
+                            if (dao.getResultData() != null) {
+                                String status = dao.getResultData().getStatus();
+                                if (status.toUpperCase().equals(ParamConst.PAYHALAL_PAYMENT_STATUS_SUCCESS)) {
+                                    isValid = true;
+                                    savePayhalal();
+                                }
+                            }
+                        }
+                    }
+                    if (!isValid) {
+                        UIHelp.showToast(parent, "Please scan the qrcode for pay the bill");
+                    }
+                    loadingDialog.dismiss();
+                }
+                break;
+
+            }
+        }
+    };
+
+    @Override
+    public void settlementAdapteronClick(SettlementRestaurant settlementRestaurant) {
+        switch (settlementRestaurant.getMediaId()) {
+            case ParamConst.SETTLEMENT_TYPE_VISA: {
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_VISA);
+                break;
+            }
+            case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
+                openMoneyKeyboard(View.GONE,
+                        ParamConst.SETTLEMENT_TYPE_MASTERCARD);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_NETS:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_NETS);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_UNIPAY:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_UNIPAY);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_JCB:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_JCB);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_AMEX:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_AMEX);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL:
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL);
+                break;
+
+            case ParamConst.SETTLEMENT_CUSTOM_PAYMENT:
+            case ParamConst.SETTLEMENT_TYPE_CASH:
+                List<SettlementRestaurant> otherPaymentSettle;
+                pamentMethodlist.clear();
+                otherPaymentSettle = CoreData.getInstance().getSettlementRestaurant();
+                if (otherPaymentSettle != null && !otherPaymentSettle.isEmpty()) {
+                    for (int x = 0; x < otherPaymentSettle.size(); x++) {
+                        if (!TextUtils.isEmpty(otherPaymentSettle.get(x).getOtherPaymentId()) && otherPaymentSettle.get(x).getMediaId() != ParamConst.SETTLEMENT_TYPE_IPAY88) {
+                            String[] strarray = otherPaymentSettle.get(x).getOtherPaymentId().toString().split("[|]");
+                            for (int i = 0; i < strarray.length; i++) {
+                                PaymentMethod pa = new PaymentMethod();
+                                pa = CoreData.getInstance().getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
+                                if (pa == null) {
+                                    return;
+                                } else {
+                                    pamentMethodlist.add(pa);
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                mediaDialog = new MediaDialog(parent, handler, pamentMethodlist);
+                mediaDialog.setPaymentClickListener(this);
+                break;
+            case ParamConst.SETTLEMENT_TYPE_HALAL:
+            case ParamConst.SETTLEMENT_TYPE_PAYHALAL:
+                viewTag = ParamConst.SETTLEMENT_TYPE_PAYHALAL;
+                paymentTypeId = ParamConst.SETTLEMENT_TYPE_PAYHALAL;
+                clickEnterAction();
+                break;
+            case ParamConst.SETTLEMENT_TYPE_IPAY88:
+                ipay88dialog = new Ipay88Dialog(parent, this);
+                break;
+            default:
+                break;
+        }
+    }
+
+    //end qrpayment
 }

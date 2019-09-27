@@ -30,6 +30,8 @@ public class Store {
     public static final String LOGIN_RESULT = "LOGIN_RESULT";
     public static final String SESSION_STATUS = "SESSION_STATUS";
     public static final String BUSINESS_DATE = "BUSINESS_DATE";
+	public static final String TRAIN_TYPE = "TRAIN_TYPE";
+	public static final String TRAIN_FIRST = "TRAIN_FIRST";
 
     public static final String EMPLOYEE_ID = "EMPLOYEE_ID";
     public static final String PASSWORD = "PASSWORD";
@@ -147,64 +149,69 @@ public class Store {
     public static final String OPEN_BALANCE = "OPEN_BALANCE";
     public static final String KDS_LANDSCAPE = "KDS_LANDSCAPE";
     public static final String DEFAULT_VIEW = "default_view";
-    public static final String REPORT_ORDER_TIMELY = "report_order_timely";
+	public static final String PRINT_INSTRUCTIONS = "PRINT_INSTRUCTIONS";
+	public static final String PRINT_WAITER_ONCE = "PRINT_WAITER_ONCE";
+	public static final String TRAINING = "training";
 
-    //subPos
-    public static final String MAIN_POS_IP = "MAIN_POS_IP";
-    // call num
-    public static final String CALL_STYLE = "CALL_STYLE";
-    public static final String CALL_NUMBER_TYPE = "CALL_NUMBER_TYPE";
-    public static final String CALL_NUM_HEADER = "CALL_NUM_HEADER";
-    public static final String CALL_NUM_FOOTER = "CALL_NUM_FOOTER";
-    public static final String CALL_NUM_UPDATE = "CALL_NUM_UPDATE";
+	public static final String REPORT_ORDER_TIMELY = "report_order_timely";// 实时订单
 
-    public static final String CALL_IP = "CALL_IP";
+	//subPos
+	public static final String MAIN_POS_IP = "MAIN_POS_IP";
+	// call num
+	public static final String CALL_STYLE = "CALL_STYLE";
+	public static final String CALL_NUMBER_TYPE="CALL_NUMBER_TYPE";
+	public static final String CALL_NUM_HEADER = "CALL_NUM_HEADER";
+	public static final String CALL_NUM_FOOTER = "CALL_NUM_FOOTER";
+	public static final String CALL_NUM_UPDATE = "CALL_NUM_UPDATE";
 
-    //kpm
-    public static final String KPM_IP = "KPM_IP";
-    public static final String KPM_CC_IP = "KPM_CC_IP";
-    public static final String KPM_USER = "kpm_user";
-    public static final String MAIN_URL = "main_url";
 
-    public static final String KPM_TIME = "kpm_time";
+	public static final String CALL_IP="CALL_IP";
 
-    public static final String KPMG_PAYMENT_TYPE = "kpmg_payment_type";
+	//kpm
+	public static final String KPM_IP="KPM_IP";
+	public static final String KPM_CC_IP="KPM_CC_IP";
+	public static final String KPM_USER = "kpm_user";
+	public static final String MAIN_URL = "main_url";
 
-    public static final String REPORT_NO_SPLIT_VALUE = "report_no_split_value";
-    //  副屏显示
-    public static final String PATH_IMAGE = "IMAGE_PATH";
-    public static final String SHOW_STYLE = "SHOW_STYLE";
+	public static final String KPM_TIME = "kpm_time";
 
-    public static final String LOCK_PASSWORD = "LOCK_PASSWORD";
+	public static final String KPMG_PAYMENT_TYPE = "kpmg_payment_type";
 
-    public static final String ISFIRDT = "ISFIRDT";
-    public static final String WELCOME_PATH = "WELCOME_PATH";
-    public static final String VIDEO_IMAGE = "VIDEO_IMAGE";
-    public static final String TEXTSIZE = "TEXTSIZE";
-    public static final String SCREENSIZE = "SCREENSIZE";
+	public static final String REPORT_NO_SPLIT_VALUE = "report_no_split_value";
+//  副屏显示
+public static final String PATH_IMAGE = "IMAGE_PATH";
+	public static final String SHOW_STYLE = "SHOW_STYLE";
 
-    private Store() {
-    }
+	public static final String LOCK_PASSWORD = "LOCK_PASSWORD";
 
-    ;
+	public static final String ISFIRDT = "ISFIRDT";
+	public static final String WELCOME_PATH = "WELCOME_PATH";
+	public static final String VIDEO_IMAGE = "VIDEO_IMAGE";
+	public static final String TEXTSIZE = "TEXTSIZE";
+	public static final String SCREENSIZE = "SCREENSIZE";
 
-    public static final long DEFAULT_LONG_TYPE = -1L;
-    public static final float DEFAULT_FLOAT_TYPE = -123;
-    public static final int DEFAULT_INT_TYPE = -123;  // 副屏只显示文字
 
-    public static final int SUNMI_IMG = -122;  // 只显示图片
-    public static final int SUNMI_TEXT = -123;  // 副屏只显示文字
-    public static final int SUNMI_IMG_TEXT = -124;  // 显示图片和文字
-    public static final int SUNMI_VIDEO = -121;
-    public static final int SUNMI_VIDEO_TEXT = -125;
+	public static final long DEFAULT_LONG_TYPE = -1L;
+	public static final float DEFAULT_FLOAT_TYPE = -123;
+	public static final int DEFAULT_INT_TYPE = -123;  // 副屏只显示文字
 
-    private static final int TYPE_INT = 1;
-    private static final int TYPE_STRING = 1;
-    private static final int TYPE_DOUBLE = 1;
-    private static final int TYPE_LONG = 1;
+	public static final int SUNMI_IMG = -122;  // 只显示图片
+	public static final int SUNMI_TEXT = -123;  // 副屏只显示文字
+	public static final int SUNMI_IMG_TEXT = -124;  // 显示图片和文字
+	public static final int SUNMI_VIDEO = -121;
+	public static final int SUNMI_VIDEO_TEXT = -125;
+
+	private static final int TYPE_INT = 1;
+	private static final int TYPE_STRING = 1;
+	private static final int TYPE_DOUBLE = 1;
+	private static final int TYPE_LONG = 1;
 
 
     public static final String DEFAULT_STRING_TYPE = "";
+    //start pay88
+    public static final String LOGIN_QRPAYMENT = "LOGIN_QRPAYMENT";
+    //endpay88
+
 
     public static SharedPreferences getSharedPreferences(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(

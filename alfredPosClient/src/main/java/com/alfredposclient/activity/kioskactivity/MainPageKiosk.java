@@ -39,6 +39,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
+import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
@@ -80,6 +81,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
+import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
@@ -141,6 +143,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import rx.Observable;
@@ -311,9 +314,9 @@ public class MainPageKiosk extends BaseActivity {
         ScreenSizeUtil.initScreenScale(context);
         verifyDialog = new VerifyDialog(context, handler);
         loadingDialog = new LoadingDialog(context);
-        loadingDialog.setTitle("Loading");
+        loadingDialog.setTitle(context.getString(R.string.loading));
         printerLoadingDialog = new PrinterLoadingDialog(context);
-        printerLoadingDialog.setTitle("Sending to Kitchen");
+        printerLoadingDialog.setTitle(context.getString(R.string.sending_to_kitchen));
         selectOrderSplitDialog = new SelectOrderSplitDialog(context, handler);
 
         topMenuView = (TopMenuViewKiosk) findViewById(R.id.topMenuView);
@@ -350,7 +353,22 @@ public class MainPageKiosk extends BaseActivity {
                 findViewById(R.id.lv_order), handler);
         setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
                 handler);
+        PlaceInfo placeInfo = PlaceInfoSQL.getKioskPlaceInfo();
+        if (placeInfo == null) {
+            placeInfo = ObjectFactory.getInstance().addNewPlace(App.instance.getRevenueCenter().getRestaurantId().intValue(),
+                    App.instance.getRevenueCenter().getId().intValue(), "kiosk");
+            placeInfo.setIsKiosk(1);
+            PlaceInfoSQL.addPlaceInfo(placeInfo);
+        }
         currentTable = TableInfoSQL.getKioskTable();
+        if(currentTable == null){
+            currentTable = ObjectFactory.getInstance().addNewTable("table_1_1", placeInfo.getRestaurantId().intValue(), placeInfo.getRevenueId().intValue(), placeInfo.getId().intValue(), 480,800);
+            currentTable.setIsKiosk(1);
+            TableInfoSQL.updateTables(currentTable);
+        }
+        if(currentTable == null){
+//            currentOrder = ObjectFactory.getInstance().getTa
+        }
         view_top = findViewById(R.id.view_top);
         setData();
         observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
@@ -446,7 +464,7 @@ public class MainPageKiosk extends BaseActivity {
                 App.instance.getIndexOfRevenueCenter(),
                 ParamConst.ORDER_STATUS_OPEN_IN_POS,
                 App.instance.getLocalRestaurantConfig()
-                        .getIncludedTax().getTax());
+                        .getIncludedTax().getTax(),"");
     }
 
     private void getTableStatusInfo() {
@@ -693,14 +711,16 @@ public class MainPageKiosk extends BaseActivity {
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser()
                                                     .getLastName(),
-                                            currentTable.getName(), 1);
+                                            currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
                             currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
                             OrderSQL.update(currentOrder);
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
                                             .getId()));
+                            List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
+
                             App.instance.remoteBillPrint(printer, title, currentOrder,
-                                    orderItems, orderModifiers, taxMap, null, null);
+                                    orderItems, orderModifiers, taxMap, null, null,orderPromotions);
                         }
                     } else {
                         UIHelp.showToast(context, context.getResources().getString(R.string.no_items));
@@ -749,7 +769,7 @@ public class MainPageKiosk extends BaseActivity {
                                         paidOrder,
                                         App.instance.getUser().getFirstName()
                                                 + App.instance.getUser().getLastName(),
-                                        currentTable.getName(), 1);
+                                        currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
 
                         if (!TextUtils.isEmpty(changeNum)) {
@@ -790,17 +810,18 @@ public class MainPageKiosk extends BaseActivity {
                         if (orderItems.size() > 0 && printer != null) {
                             RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(paidOrder);
 //
+                            List<OrderPromotion>  orderPromotions= PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
 
 //                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
 //
 //                            } else {
                             if (!App.instance.isRevenueKiosk()) {
                                 App.instance.remoteBillPrint(printer, title, paidOrder,
-                                        orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                            orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,orderPromotions);
                             } else {
                                 if (printer.getIsLablePrinter() == 0) {
                                     App.instance.remoteBillPrint(printer, title, paidOrder,
-                                            orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,orderPromotions);
                                 }
                             }
 //                            }
@@ -840,8 +861,8 @@ public class MainPageKiosk extends BaseActivity {
                                                 orderDetail,
                                                 CoreData.getInstance()
                                                         .getItemDetailById(
-                                                                orderDetail
-                                                                        .getItemId()),
+                                                                orderDetail.getItemId(),
+                                                                orderDetail.getItemName()),
                                                 kotSummary,
                                                 App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                 kotItemDetail.setItemNum(orderDetail
@@ -878,7 +899,7 @@ public class MainPageKiosk extends BaseActivity {
                                             paidOrder,
                                             App.instance.getUser().getFirstName()
                                                     + App.instance.getUser().getLastName(),
-                                            currentTable.getName(), 1);
+                                            currentTable.getName(), 1,App.instance.getSystemSettings().getTrainType());
 
                             Map<String, Object> orderMap = new HashMap<String, Object>();
 
@@ -1003,7 +1024,7 @@ public class MainPageKiosk extends BaseActivity {
                         RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(temporaryOrder);
 //                        if (App.instance.getSystemSettings().isPrintBill()) {
                         App.instance.remoteBillPrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount);
+                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,null);
 //                        }
                     }
 //
@@ -1122,9 +1143,15 @@ public class MainPageKiosk extends BaseActivity {
                 }
                 case VIEW_EVENT_ADD_ORDER_DETAIL:
                     addOrderDetail((OrderDetail) msg.obj);
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case VIEW_EVENT_SET_DATA:
                     setData();
+                    if(msg.arg1 > 0){ // When need refresh Menu List
+                        mainPageMenuView.refreshAllMenu();
+                    }
                     break;
                 case MainPage.VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
                     setData();
@@ -1172,7 +1199,7 @@ public class MainPageKiosk extends BaseActivity {
                                     }
                                 }
                             }).start();
-                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                            setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
                         } else {
                             handler.sendMessage(handler
                                     .obtainMessage(MainPageKiosk.VIEW_EVENT_DISMISS_TABLES));
@@ -1194,7 +1221,7 @@ public class MainPageKiosk extends BaseActivity {
                                 .intValue()) {
                             currentTable = newTable;
                             if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
-                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_pax));
+                                setPAXWindow.show(SetPAXWindow.GENERAL_ORDER, context.getResources().getString(R.string.no_of_pax));
                             } else {
                                 handler.sendMessage(handler
                                         .obtainMessage(MainPageKiosk.VIEW_EVENT_DISMISS_TABLES));
@@ -1203,10 +1230,7 @@ public class MainPageKiosk extends BaseActivity {
                             DialogFactory.commonTwoBtnDialog(
                                     context,
                                     context.getResources().getString(R.string.table_transfer),
-                                    context.getResources().getString(R.string.transfer_) +
-                                            oldTable.getName() +
-                                            context.getResources().getString(R.string.to) +
-                                            newTable.getName() + "?",
+                                    context.getResources().getString(R.string.ask_transfer_table, oldTable.getName(), newTable.getName()),
                                     context.getResources().getString(R.string.no),
                                     context.getResources().getString(R.string.yes), null, new OnClickListener() {
                                         @Override
@@ -1566,7 +1590,7 @@ public class MainPageKiosk extends BaseActivity {
                         //	UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
 
                     } else {
-                        UIHelp.showToast(context, String.format(context.getResources().getString(R.string.no_set_item_print), itemName));
+                        UIHelp.showToast(context, String.format(Locale.US,context.getResources().getString(R.string.no_set_item_print), itemName));
                     }
 
                 }
@@ -1616,7 +1640,7 @@ public class MainPageKiosk extends BaseActivity {
                     break;
                 case VIEW_EVENT_TANSFER_PAX:
                     String pax = (String) msg.obj;
-                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_pax));
+                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_of_pax));
                     break;
                 case VIEW_EVENT_VOID_OR_FREE:
                     verifyDialog.show(HANDLER_MSG_OBJECT_VOID_OR_FREE,
@@ -1661,14 +1685,14 @@ public class MainPageKiosk extends BaseActivity {
                     if (orderDetail.getIsTakeAway() != ParamConst.TAKE_AWAY) {
                         orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
                         if (orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " " + context.getResources().getString(R.string.app_take_away));
+                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions() + " " + context.getResources().getString(R.string.takeaway));
                         } else {
-                            orderDetail.setSpecialInstractions(context.getResources().getString(R.string.app_take_away));
+                            orderDetail.setSpecialInstractions(context.getResources().getString(R.string.takeaway));
                         }
                     } else {
                         orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                         if (orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.take_away), "").replace(context.getResources().getString(R.string.app_take_away), ""));
+                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.takeaway), "").replace(context.getResources().getString(R.string.takeaway), ""));
                         }
                     }
                     OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
@@ -1820,7 +1844,7 @@ public class MainPageKiosk extends BaseActivity {
                 if (count == 0) {
                     selectOrderSplitDialog.show(orderSplits, currentOrder);
                 } else {
-                    UIHelp.showToast(context, context.getResources().getString(R.string.assign_items));
+                    UIHelp.showToast(context, context.getResources().getString(R.string.assign_items_to_group));
                 }
             }
         } else {
@@ -1947,7 +1971,7 @@ public class MainPageKiosk extends BaseActivity {
         List<ItemModifier> itemModifiers = CoreData.getInstance()
                 .getItemModifiers(
                         CoreData.getInstance().getItemDetailById(
-                                orderDetail.getItemId()));
+                                orderDetail.getItemId(), orderDetail.getItemName()));
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         setData();
 //        sendKOTTmpToKDS(orderDetail);
@@ -2173,10 +2197,10 @@ public class MainPageKiosk extends BaseActivity {
                         App.instance.getIndexOfRevenueCenter(),
                         ParamConst.ORDER_STATUS_OPEN_IN_POS,
                         App.instance.getLocalRestaurantConfig()
-                                .getIncludedTax().getTax());
+                                .getIncludedTax().getTax(),"");
                 List<TempOrderDetail> tempOrderDetails = TempOrderDetailSQL.getTempOrderDetailByAppOrderId(appOrderId);
                 for (TempOrderDetail tempOrderDetail : tempOrderDetails) {
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId());
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tempOrderDetail.getItemId(),tempOrderDetail.getItemName());
                     if (itemDetail == null) {
                         continue;
                     }
@@ -2233,7 +2257,7 @@ public class MainPageKiosk extends BaseActivity {
             if (appOrderId == 0)
                 return;
             if (orderDetails != null && orderDetails.size() != 0) {
-                DialogFactory.showOneButtonCompelDialog(context, "警告", "请先关闭或删除当前订单", null);
+                DialogFactory.showOneButtonCompelDialog(context, getString(R.string.warning), getString(R.string.close_the_last_order), null);
             } else {
                 loadingDialog.show();
                 initAppOrder(currentTable);
@@ -2282,7 +2306,7 @@ public class MainPageKiosk extends BaseActivity {
             canClose = true;
         }
         if (canClose) {
-            DialogFactory.commonTwoBtnInputDialog(context, false, "Actual in Drawer", "Enter amount of cash in drawer", "CANCEL", "DONE",
+            DialogFactory.commonTwoBtnInputDialog(context, false, context.getString(R.string.start_drawer), context.getString(R.string.enter_amount_of_cash_in_drawer), context.getString(R.string.cancel), context.getString(R.string.done).toUpperCase(),
                     new OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -2306,7 +2330,7 @@ public class MainPageKiosk extends BaseActivity {
 
     // 只在副Pos中调用
     private void sendXReportToMainPos(final String actualAmount) {
-        printerLoadingDialog.setTitle("Printing X Report");
+        printerLoadingDialog.setTitle(getString(R.string.printing_x_report));
         printerLoadingDialog.show();
         new Thread(new Runnable() {
 
@@ -2375,7 +2399,7 @@ public class MainPageKiosk extends BaseActivity {
                                 App.instance.getRevenueCenter().getId(),
                                 "X" + reportDaySales.getReportNoStr(),
                                 App.instance.getUser().getFirstName()
-                                        + App.instance.getUser().getLastName(), null, bizDate);
+                                        + App.instance.getUser().getLastName(), null, bizDate,App.instance.getSystemSettings().getTrainType());
 
                 // Open Cash drawer
                 App.instance.kickOutCashDrawer(cashierPrinter);
@@ -2418,7 +2442,7 @@ public class MainPageKiosk extends BaseActivity {
                         if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
                             printerLoadingDialog.dismiss();
                         }
-                        loadingDialog.setTitle("send data to main pos");
+                        loadingDialog.setTitle(getString(R.string.send_to_pos));
                         loadingDialog.show();
                     }
                 });

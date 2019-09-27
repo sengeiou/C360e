@@ -173,7 +173,7 @@ public class DevicesAdapter extends CustomAdapter {
             holder.ll_auto_add.setOnClickListener(listener);
             if (printerDevice.getDevice_id() != -1) {
                 //  holder.devices_unbund_tv.setOnClickListener(ocl);
-                holder.devices_unbund_tv.setText("Printer Added");
+                holder.devices_unbund_tv.setText(con.getResources().getString(R.string.printer_added));
                 holder.img_delete.setOnClickListener(ocl);
                 holder.devices_unbund_tv.setBackgroundColor(con.getResources().getColor(R.color.green));
                 // holder.devices_unbund_tv.setBackgroundColor(R.color.green);
@@ -187,7 +187,7 @@ public class DevicesAdapter extends CustomAdapter {
 
                 holder.devices_unbund_tv.setOnClickListener(listener);
                 holder.ll_auto_add.setOnClickListener(listener);
-                holder.devices_unbund_tv.setText("Add Printer");
+                holder.devices_unbund_tv.setText(con.getResources().getString(R.string.add_printer));
                 holder.devices_unbund_tv.setBackgroundColor(con.getResources().getColor(R.color.red1));
                 holder.img_delete.setVisibility(View.GONE);
                 if (printerDevice.getIP().contains(",")) {
@@ -229,7 +229,7 @@ public class DevicesAdapter extends CustomAdapter {
 
         @Override
         public void onClick(final View view) {
-            KpmDialogFactory.commonTwoBtnDialog(App.getTopActivity(), con.getResources().getString(R.string.warning), "Unassign will disconnect Printer!", con.getResources().getString(R.string.cancel), con.getResources().getString(R.string.ok), null, new OnClickListener() {
+            KpmDialogFactory.commonTwoBtnDialog(App.getTopActivity(), con.getResources().getString(R.string.warning), con.getResources().getString(R.string.unassign_will_disconnect_printer), con.getResources().getString(R.string.cancel), con.getResources().getString(R.string.ok), null, new OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -246,7 +246,7 @@ public class DevicesAdapter extends CustomAdapter {
         public void onClick(View view) {
             if (ButtonClickTimer.canClick(view)) {
                 PrinterDevice device = (PrinterDevice) view.getTag();
-                if(device.getDevice_id() == -1) {
+                if (device.getDevice_id() == -1) {
                     handler.sendMessage(handler.obtainMessage(DevicesActivity.ASSIGN_PRINTER_DEVICE, device));
                 }
             }

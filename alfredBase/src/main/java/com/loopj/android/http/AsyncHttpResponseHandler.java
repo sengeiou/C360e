@@ -21,6 +21,7 @@ package com.loopj.android.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Locale;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -189,7 +190,7 @@ public abstract class AsyncHttpResponseHandler implements ResponseHandlerInterfa
      * @param totalSize    total size of file
      */
     public void onProgress(int bytesWritten, int totalSize) {
-        Log.v(LOG_TAG, String.format("Progress %d from %d (%2.0f%%)", bytesWritten, totalSize, (totalSize > 0) ? (bytesWritten * 1.0 / totalSize) * 100 : -1));
+        Log.v(LOG_TAG, String.format(Locale.US,"Progress %d from %d (%2.0f%%)", bytesWritten, totalSize, (totalSize > 0) ? (bytesWritten * 1.0 / totalSize) * 100 : -1));
     }
 
     /**
@@ -230,7 +231,7 @@ public abstract class AsyncHttpResponseHandler implements ResponseHandlerInterfa
      * @param retryNo number of retry
      */
     public void onRetry(int retryNo) {
-        Log.d(LOG_TAG, String.format("Request retry no. %d", retryNo));
+        Log.d(LOG_TAG, String.format(Locale.US,"Request retry no. %d", retryNo));
     }
 
     public void onCancel() {

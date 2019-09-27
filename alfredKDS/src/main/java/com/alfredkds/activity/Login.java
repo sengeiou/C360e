@@ -11,10 +11,12 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.view.Numerickeyboard;
 import com.alfredbase.view.Numerickeyboard.KeyBoardClickListener;
@@ -106,6 +108,7 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
                         Store.putString(context, Store.EMPLOYEE_ID, old_employee_ID);
                         Store.putString(context, Store.PASSWORD, password);
 
+                        initBugseeModifier();
                         if (App.instance.isBalancer()) {
                             UIHelp.startLogScreen(context);
                         } else {
@@ -136,6 +139,23 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
 
     private static final int KEY_LENGTH = 5;
     private StringBuffer keyBuf = new StringBuffer();
+
+    private void initBugseeModifier() {
+        Restaurant restaurant = RestaurantSQL.getRestaurant();
+        if (restaurant != null) {
+            BugseeHelper.setEmail(restaurant.getEmail());
+            BugseeHelper.setAttribute("restaurant_id", restaurant.getId());
+            BugseeHelper.setAttribute("restaurant_company_id", restaurant.getCompanyId());
+            BugseeHelper.setAttribute("restaurant_address", restaurant.getAddressPrint());
+            BugseeHelper.setAttribute("restaurant_country", restaurant.getCountry());
+            BugseeHelper.setAttribute("restaurant_city", restaurant.getCity());
+        }
+
+        String employeeId = Store.getString(context, Store.EMPLOYEE_ID);
+        BugseeHelper.setAttribute("employee_id", employeeId);
+
+//        throw new NullPointerException("Test Crash");
+    }
 
     @Override
     public void onKeyBoardClick(String key) {

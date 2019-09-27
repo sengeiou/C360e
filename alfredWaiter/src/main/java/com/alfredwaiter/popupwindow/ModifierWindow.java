@@ -49,16 +49,17 @@ public class ModifierWindow {
     private List<ModifierVariance> modifierVariances = new ArrayList<ModifierVariance>();
     private TextView tv_description_info;
     private List<Integer> modifierIds = new ArrayList<Integer>();
-    public ModifierWindow(BaseActivity context,Handler handler, View parentView) {
+
+    public ModifierWindow(BaseActivity context, Handler handler, View parentView) {
         this.context = context;
         this.handler = handler;
         this.parentView = parentView;
         init();
     }
 
-    private void init(){
+    private void init() {
         contentView = View.inflate(context, R.layout.modifier_popwindow, null);
-        popupWindow = new PopupWindow(parentView, (int)ScreenSizeUtil.width, (int)ScreenSizeUtil.height/ 3 * 2);
+        popupWindow = new PopupWindow(parentView, (int) ScreenSizeUtil.width, (int) ScreenSizeUtil.height / 3 * 2);
         popupWindow.setAnimationStyle(R.style.bottomInOutStyle);
 //        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popupWindow.setContentView(contentView);
@@ -79,7 +80,7 @@ public class ModifierWindow {
             @Override
             public void onClick(View v) {
                 BugseeHelper.buttonClicked(v);
-                DialogFactory.commonTwoBtnInputDialog(context,false, "Description", "Please input description", "cancel", "Save", null, new View.OnClickListener() {
+                DialogFactory.commonTwoBtnInputDialog(context, false, context.getString(R.string.description), context.getString(R.string.please_input_description), context.getString(R.string.cancel), context.getString(R.string.save), null, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         BugseeHelper.buttonClicked(v);
@@ -105,7 +106,7 @@ public class ModifierWindow {
 
     public void show(ItemDetail itemDetail) {
 
-        if(itemDetail == null)
+        if (itemDetail == null)
             return;
         this.itemDetail = itemDetail;
         tv_description_info.setText("");
@@ -121,7 +122,7 @@ public class ModifierWindow {
         varianceModifiers();
     }
 
-    private void varianceModifiers(){
+    private void varianceModifiers() {
 
         List<ItemModifier> itemModifiers = CoreData.getInstance()
                 .getItemModifiers(itemDetail);
@@ -134,27 +135,27 @@ public class ModifierWindow {
         }
         for (int i = 0; i < modifierTitel.size(); i++) {
             List<Modifier> modifiers = CoreData.getInstance().getModifiers(modifierTitel.get(i));
-            if(modifiers.size() > 0){
+            if (modifiers.size() > 0) {
                 ModifierVariance modifierVariance = new ModifierVariance();
                 modifierVariance.setModifierName1(modifierTitel.get(i).getCategoryName());
                 modifierVariance.setModifier(false);
                 modifierVariances.add(modifierVariance);
             }
             ModifierVariance modifierVariance = null;
-            for(int j = 0; j < modifiers.size(); j++){
+            for (int j = 0; j < modifiers.size(); j++) {
                 Modifier modifier = modifiers.get(j);
 //                if(modifier.getIsDefault().intValue() == 1){
 //                    modifierIds.add(modifier.getId());
 //                }
-                if(j%2 == 0){
+                if (j % 2 == 0) {
                     modifierVariance = new ModifierVariance();
                     modifierVariance.setModifierId1(modifier.getId());
                     modifierVariance.setModifierName1(modifier.getModifierName());
                     modifierVariance.setModifier(true);
-                    if(j + 1 == modifiers.size()){
+                    if (j + 1 == modifiers.size()) {
                         modifierVariances.add(modifierVariance);
                     }
-                }else if(modifierVariance != null){
+                } else if (modifierVariance != null) {
                     modifierVariance.setModifierId2(modifier.getId());
                     modifierVariance.setModifierName2(modifier.getModifierName());
                     modifierVariances.add(modifierVariance);
@@ -170,11 +171,11 @@ public class ModifierWindow {
         context.getWindow().setAttributes(lp);
     }
 
-    private void initData(){
+    private void initData() {
 
     }
 
-    protected  class ModifierAdapter extends BaseAdapter {
+    protected class ModifierAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -194,11 +195,11 @@ public class ModifierWindow {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHold viewHold = null;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = View.inflate(context, R.layout.modifier_item, null);
                 viewHold = new ViewHold();
                 convertView.setTag(viewHold);
-            }else{
+            } else {
                 viewHold = (ViewHold) convertView.getTag();
             }
 
@@ -206,11 +207,11 @@ public class ModifierWindow {
             viewHold.tv_item1 = (TextView) convertView.findViewById(R.id.tv_item1);
 //            viewHold.tv_item2 = (TextView) convertView.findViewById(R.id.tv_item2);
 
-            if(modifierVariance.isModifier()){
-                if(!IntegerUtils.isEmptyOrZero(modifierVariance.getModifierId1()) && !TextUtils.isEmpty(modifierVariance.getModifierName1())){
+            if (modifierVariance.isModifier()) {
+                if (!IntegerUtils.isEmptyOrZero(modifierVariance.getModifierId1()) && !TextUtils.isEmpty(modifierVariance.getModifierName1())) {
                     viewHold.tv_item1.setText(modifierVariance.getModifierName1());
                     viewHold.tv_item1.setTag(modifierVariance.getModifierId1());
-                }else{
+                } else {
                     viewHold.tv_item1.setText("");
                 }
 //                if (modifierVariance.isModifier() && !IntegerUtils.isEmptyOrZero(modifierVariance.getModifierId2()) && !TextUtils.isEmpty(modifierVariance.getModifierName2())) {
@@ -219,10 +220,10 @@ public class ModifierWindow {
 //                }else{
 //                    viewHold.tv_item2.setText("");
 //                }
-                if(modifierIds.contains(viewHold.tv_item1.getTag())){
+                if (modifierIds.contains(viewHold.tv_item1.getTag())) {
                     viewHold.tv_item1.setBackground(context.getResources().getDrawable(R.drawable.modifier_bg_selected));
                     viewHold.tv_item1.setTextColor(context.getResources().getColor(R.color.white));
-                }else{
+                } else {
                     viewHold.tv_item1.setBackground(context.getResources().getDrawable(R.drawable.modifier_bg));
                     viewHold.tv_item1.setTextColor(context.getResources().getColor(R.color.black));
                 }
@@ -237,10 +238,10 @@ public class ModifierWindow {
                     @Override
                     public void onClick(View v) {
                         BugseeHelper.buttonClicked(v);
-                        if(modifierIds.contains(v.getTag())){
+                        if (modifierIds.contains(v.getTag())) {
                             modifierIds.remove(v.getTag());
-                        }else{
-                            modifierIds.add((Integer)v.getTag());
+                        } else {
+                            modifierIds.add((Integer) v.getTag());
                         }
                         notifyDataSetChanged();
                     }
@@ -257,7 +258,7 @@ public class ModifierWindow {
 //                    }
 //                });
 
-            }else{
+            } else {
                 viewHold.tv_item1.setText(modifierVariance.getModifierName1());
                 viewHold.tv_item1.setTextColor(context.getResources().getColor(R.color.black));
                 viewHold.tv_item1.setOnClickListener(null);
@@ -268,7 +269,8 @@ public class ModifierWindow {
             }
             return convertView;
         }
-        class ViewHold{
+
+        class ViewHold {
             TextView tv_item1;
 //            TextView tv_item2;
         }

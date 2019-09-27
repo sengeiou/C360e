@@ -5,9 +5,9 @@ import com.android.build.gradle.api.BaseVariant
 bugsee {
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
-            case 'release': '36e98eb2-f473-4c02-a9e8-518a77a7e27c'
+            case 'release': '5cc128ed-939d-428a-9060-2813a324b2f2'
                 break
-            case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
                 break
         }
     }
@@ -45,6 +45,14 @@ android {
         debug {
         }
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
 //    android.applicationVariants.all { variant ->
 //        variant.outputs.each { output ->
 //            def outputFile = output.outputFile
@@ -69,7 +77,7 @@ android {
         }
     }
 
-
+    //useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {

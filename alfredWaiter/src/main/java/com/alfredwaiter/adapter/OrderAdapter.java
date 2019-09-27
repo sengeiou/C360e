@@ -102,7 +102,7 @@ public class OrderAdapter extends BaseExpandableListAdapter {
 		tv_name.setText(itemDetail.getItemName());
 		textTypeFace.setTrajanProRegular(tv_name);
 		TextView tv_price = (TextView) view.findViewById(R.id.tv_price);
-		tv_price.setText(App.instance.getCurrencySymbol() + BH.getBD(itemDetail.getPrice()).toString());
+		tv_price.setText(App.instance.getCurrencySymbol() + itemDetail.getPrice());
 		textTypeFace.setTrajanProRegular(tv_price);
 		ImageView img_icon = (ImageView) view.findViewById(R.id.img_icon);
 		String url = itemDetail.getImgUrl();

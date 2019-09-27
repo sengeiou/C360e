@@ -1,7 +1,6 @@
 package com.alfredkds.activity;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import com.moonearly.utils.service.UdpServiceCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -34,7 +32,9 @@ import rx.functions.Action1;
 
 public class SelectRevenue extends BaseActivity {
     List<UdpMsg> udpMsgList = new ArrayList<>();
+    List<UdpMsg> selectedMsgList = new ArrayList<>();
     private ListView listView;
+//    private TextView tv_select_pos;
     private RevenueListAdapter revenueListAdapter;
     private TextTypeFace textTypeFace;
     private Observable<UdpMsg> observable;
@@ -52,9 +52,12 @@ public class SelectRevenue extends BaseActivity {
         ((TextView) findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
         initTextTypeFace();
         loadingDialog = new LoadingDialog(this);
-        loadingDialog.setTitle("Search Revenue ...");
+        loadingDialog.setTitle(this.getString(R.string.search_revenue));
         loadingDialog.showByTime(5000);
-        observable = RxBus.getInstance().register("RECEIVE_IP_ACTION");
+//        tv_select_pos = (TextView) findViewById(R.id.tv_select_pos);
+//        tv_select_pos.setVisibility(View.GONE);
+
+        observable = RxBus.getInstance().register(RxBus.RECEIVE_IP_ACTION);
         observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<UdpMsg>() {
             @Override
             public void call(UdpMsg udpMsg) {
@@ -65,6 +68,11 @@ public class SelectRevenue extends BaseActivity {
                 }
                 udpMsgList.add(udpMsg);
                 revenueListAdapter.notifyDataSetChanged();
+                if (udpMsgList.size() > 1) {
+//                    tv_select_pos.setVisibility(View.VISIBLE);
+                } else {
+//                    tv_select_pos.setVisibility(View.GONE);
+                }
             }
         });
         App.instance.startUDPService(App.UDP_INDEX_KDS, "KDS", new UdpServiceCallBack() {
@@ -98,7 +106,7 @@ public class SelectRevenue extends BaseActivity {
                 UIHelp.startConnectPOS(context);
                 break;
             case R.id.iv_refresh:
-                loadingDialog.setTitle("Search Revenue ...");
+                loadingDialog.setTitle(context.getString(R.string.search_revenue));
                 loadingDialog.showByTime(5000);
                 App.instance.searchRevenueIp();
                 break;
@@ -161,7 +169,15 @@ public class SelectRevenue extends BaseActivity {
             } else {
                 holder = (ViewHolder) arg1.getTag();
             }
+
+
             final UdpMsg udpMsg = udpMsgList.get(arg0);
+            if (selectedMsgList.contains(udpMsg)) {
+                holder.tv_text.setBackgroundResource(R.color.gray);
+            } else {
+                holder.tv_text.setBackgroundResource(R.color.white);
+            }
+
             textTypeFace.setTrajanProRegular(holder.tv_text);
             holder.tv_text.setText(udpMsg.getName() + "\n" + udpMsg.getIp());
 

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
+import com.alfredselfhelp.R;
 import com.alfredselfhelp.global.App;
 import com.alfredselfhelp.javabean.NurTagDto;
 import com.nordicid.nurapi.NurTag;
@@ -38,7 +39,7 @@ public class OrderDetailRFIDHelp {
             for (int i = 0; i < nurTagStorage.size(); i++) {
                 NurTag nurTag = nurTagStorage.get(i);
                 if(nurTag.getEpcString().length() < 20){
-                    UIHelp.showSoShortToast(App.getTopActivity(), "Invalid product, please refer this item to Counter Staff");
+                    UIHelp.showSoShortToast(App.getTopActivity(), App.getTopActivity().getString(R.string.invalid_product));
                     continue;
                 }
                 String barCode = nurTag.getEpcString().substring(0,20);
@@ -82,7 +83,7 @@ public class OrderDetailRFIDHelp {
             for (int i = 0; i < nurTagStorage.size(); i++) {
                 NurTag nurTag = nurTagStorage.get(i);
                 if(nurTag.getEpcString().length() < 20){
-                    UIHelp.showSoShortToast(App.getTopActivity(), "Invalid product, please refer this item to Counter Staff");
+                    UIHelp.showSoShortToast(App.getTopActivity(), App.getTopActivity().getString(R.string.invalid_product));
                     continue;
                 }
                 String barCode = nurTag.getEpcString().substring(0,20);

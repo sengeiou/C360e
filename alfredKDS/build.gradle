@@ -4,11 +4,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'bugsee'
 
 bugsee {
+//    appToken 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+//    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
-            case 'release': '47ab1db5-0e6a-4396-ae4c-0bb5f33d3134'
+            case 'release': '856f76df-ba87-4e0a-9049-cfcd31a33a42'
                 break
-            case 'debug': '2cecb9d3-e94e-44c9-a9ee-7cd1f11a51f2'
+            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
                 break
         }
     }
@@ -38,6 +40,7 @@ android {
         debug {
         }
     }
+ //   useLibrary 'org.apache.http.legacy'
     android {
         lintOptions {
             checkReleaseBuilds false

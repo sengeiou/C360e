@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.8"
-        android:text="@string/online_order_no"
+        android:text="@string/order_no"
         android:textColor="@color/black"
         android:textSize="20dp" />
 
@@ -22,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:text="@string/sub_total_"
+        android:text="@string/subtotal"
         android:textColor="@color/black"
         android:textSize="20dp" />
     
@@ -47,7 +47,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.7"
-        android:text="收银员"
+        android:text="@string/cashier"
         android:textColor="@color/black"
         android:singleLine="true"
         android:textSize="20dp" />
@@ -57,7 +57,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="时间"
+        android:text="@string/time"
         android:textColor="@color/black"
         android:singleLine="true"
         android:textSize="20dp" />
@@ -67,7 +67,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
-        android:text="Edit settlement"
+        android:text="@string/edit_settlement"
         android:textSize="10dp"
         android:gravity="center"/>
 
@@ -78,7 +78,7 @@
         android:layout_weight="0.4"
         android:singleLine="false"
         android:textSize="10dp"
-        android:text="Reprint"
+        android:text="@string/reprint"
         android:gravity="center"
         android:layout_marginLeft="12dp"/>
 

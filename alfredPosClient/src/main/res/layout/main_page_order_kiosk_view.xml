@@ -30,7 +30,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textColor="@color/black"
-            android:text="Pax: 0"
+            android:text="0 Pax"
 			android:textSize="@dimen/text_size_big"/>
 	</LinearLayout>
     <com.alfredbase.view.DashedLine
@@ -169,7 +169,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="@string/sub_total"
+                android:text="@string/subtotal"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_small" />
 
@@ -205,7 +205,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Item"
+                android:text="@string/item"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_small" />
 
@@ -214,7 +214,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="Sub Total"
+                android:text="@string/subtotal"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_small" />
 
@@ -223,7 +223,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="Discount "
+                android:text="@string/discount"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_small" />
 
@@ -232,7 +232,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Taxes "
+                android:text="@string/taxes"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>

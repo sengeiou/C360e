@@ -73,10 +73,12 @@ import com.nordicid.nurapi.NurTag;
 import com.nordicid.nurapi.NurTagStorage;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -146,7 +148,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     private KpmTextTypeFace textTypeFace;
     private VideoView mVideoView;
     Dialog yesDialog;
-    private Dialog paymentDialog,stockDialog;
+    private Dialog paymentDialog, stockDialog;
     private int CCPaymentType = CC_TYPE_CC;
     private OrderSelfDialog dialog;
 
@@ -156,9 +158,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         setContentView(R.layout.activity_menu);
         init();
         startTimer(3000);
-         App.instance.startADKpm();
+        App.instance.startADKpm();
 
- }
+    }
 
     private void initVideo() {
         mVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/raw/aaa"));
@@ -174,26 +176,26 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         });
     }
 
-    private void startTimer(long delay){
+    private void startTimer(long delay) {
         try {
-            if(timer == null){
+            if (timer == null) {
                 timer = new Timer();
             }
             timer.schedule(new MyTimerTask(), delay);
-        }catch (Exception e){
-            Log.e("Error",e.getMessage());
+        } catch (Exception e) {
+            Log.e("Error", e.getMessage());
         }
 
     }
 
-    private void cancelTimer(){
+    private void cancelTimer() {
         try {
             if (timer != null) {
                 timer.cancel();
                 timer = null;
             }
-        }catch (Exception e){
-            Log.e("Error",e.getMessage());
+        } catch (Exception e) {
+            Log.e("Error", e.getMessage());
         }
     }
 
@@ -235,23 +237,23 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     ItemDetail itemDetail = (ItemDetail) map.get("itemDetail");
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 
-                        if(remainingStock != null) {
-                            int qty = remainingStock.getQty() - remainingStock.getMinQty();
-                            OrderDetail orderDetail = getItemOrderDetail(itemDetail);
-                            if ((orderDetail != null && qty > orderDetail.getItemNum())
-                                    || (orderDetail == null && qty > 0)) {
-                                updateitemOrderDetail(itemDetail,
-                                        1);
-                            }
-                        }else{
+                    if (remainingStock != null) {
+                        int qty = remainingStock.getQty() - remainingStock.getMinQty();
+                        OrderDetail orderDetail = getItemOrderDetail(itemDetail);
+                        if ((orderDetail != null && qty > orderDetail.getItemNum())
+                                || (orderDetail == null && qty > 0)) {
                             updateitemOrderDetail(itemDetail,
                                     1);
                         }
+                    } else {
+                        updateitemOrderDetail(itemDetail,
+                                1);
+                    }
                     refreshTotal();
                     refreshList();
 
                 }
-                    break;
+                break;
                 case App.HANDLER_REFRESH_TIME:
                     Intent intent = new Intent();
                     intent.setClass(MenuActivity.this, MainActivity.class);
@@ -269,13 +271,13 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                    if (count == 0) {
 //
 //                    } else {
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId());
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(),orderDetail.getItemName());
                     RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
 
                     if (remainingStock != null) {
-                        int qty=remainingStock.getQty()-remainingStock.getMinQty();
-                        if(qty < count){
-                            UIHelp.showToastTransparentForKPMG(App.instance, "Item has ran out of stock");
+                        int qty = remainingStock.getQty() - remainingStock.getMinQty();
+                        if (qty < count) {
+                            UIHelp.showToastTransparentForKPMG(App.instance, getString(R.string.out_of_stock));
                             cartAdater.notifyDataSetChanged();
                             return;
                         }
@@ -286,7 +288,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(nurOrder.getTotal()));
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                 }
-                    break;
+                break;
 
                 case VIEW_COMMIT_ORDER_SUCCEED: {
                     PaymentSettlement paymentSettlement = (PaymentSettlement) msg.obj;
@@ -298,14 +300,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         e.printStackTrace();
                     }
                     rl_cart_num.setVisibility(View.GONE);
-                    if(paymentSettlement != null) {
-                        UIHelp.showToastTransparentForKPMG(App.instance, "Success");
-                    }else{
-                        UIHelp.showToastTransparentForKPMG(App.instance, "Please go to counter");
+                    if (paymentSettlement != null) {
+                        UIHelp.showToastTransparentForKPMG(App.instance, getString(R.string.succeed));
+                    } else {
+                        UIHelp.showToastTransparentForKPMG(App.instance, getString(R.string.please_go_to_counter));
                     }
                     MenuActivity.this.finish();
                 }
-                    break;
+                break;
                 case VIEW_COMMIT_ORDER_FAILED:
                     if (loadingDialog != null && loadingDialog.isShowing()) {
                         loadingDialog.dismiss();
@@ -313,28 +315,28 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                    UIHelp.showToast(context, "Please try again !");
                     break;
                 case VIEW_CC_CONNECT_SUCCEED:
-                    if(CCPaymentType == CC_TYPE_CC) {
-                        CCCentre.getInstance().startPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 90*1000);
-                    }else{
-                        CCCentre.getInstance().startEZLinkPay(new DecimalFormat("0").format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 20*1000);
+                    if (CCPaymentType == CC_TYPE_CC) {
+                        CCCentre.getInstance().startPay(new DecimalFormat("0", new DecimalFormatSymbols(Locale.US)).format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 90 * 1000);
+                    } else {
+                        CCCentre.getInstance().startEZLinkPay(new DecimalFormat("0", new DecimalFormatSymbols(Locale.US)).format(BH.mul(BH.getBD(nurOrder.getTotal()), BH.getBD("100"), false)), 20 * 1000);
                     }
                     break;
                 case VIEW_CC_CONNECT_FAILED:
-                    if(paymentDialog != null && paymentDialog.isShowing()){
+                    if (paymentDialog != null && paymentDialog.isShowing()) {
                         paymentDialog.dismiss();
                     }
-                    paymentDialog = KpmDialogFactory.kpmTipsDialog(context, "Connection Down",
-                            "Please proceed to the POS counter for\ncash payment",
+                    paymentDialog = KpmDialogFactory.kpmTipsDialog(context, getString(R.string.connection_down),
+                            getString(R.string.cash_payment_at_counter),
                             R.drawable.icon_tip_cq, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
 
                                 }
-                            },false);
+                            }, false);
                     postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if(paymentDialog != null && paymentDialog.isShowing()){
+                            if (paymentDialog != null && paymentDialog.isShowing()) {
                                 paymentDialog.dismiss();
                             }
                             OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
@@ -343,28 +345,28 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     }, 3000);
                     break;
                 case VIEW_CC_PAYMENT_FAILED:
-                    if(paymentDialog != null && paymentDialog.isShowing()){
+                    if (paymentDialog != null && paymentDialog.isShowing()) {
                         paymentDialog.dismiss();
                     }
-                    String title = "Credit Card Invalid";
-                    String content = "Please try with QR code payment or proceed to\nthe POS counter for cash payment";
-                    if(CCPaymentType != CC_TYPE_CC){
+                    String title = context.getString(R.string.credit_card_invalid);
+                    String content = context.getString(R.string.cash_payment_at_counter);
+                    if (CCPaymentType != CC_TYPE_CC) {
                         title = "EZ-Link Invalid";
-                        content = "Please proceed to the counter \nfor cash payment";
+                        content = context.getString(R.string.cash_payment_at_counter);
                     }
                     paymentDialog = KpmDialogFactory.kpmTipsDialog(context, title, content
                             ,
                             R.drawable.icon_tip_card, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                                @Override
+                                public void onClick(View v) {
 
-                        }
-                    },false);
+                                }
+                            }, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if(paymentDialog != null && paymentDialog.isShowing()){
+                            if (paymentDialog != null && paymentDialog.isShowing()) {
                                 paymentDialog.dismiss();
                             }
                             OrderBill orderBill = ObjectFactory.getInstance().getOrderBill(nurOrder, App.instance.getRevenueCenter());
@@ -382,8 +384,8 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     if (paymentDialog != null && paymentDialog.isShowing()) {
                         paymentDialog.dismiss();
                     }
-                    paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
+                    paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, context.getString(R.string.thank_you),
+                            context.getString(R.string.take_your_receipt), R.drawable.icon_paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
@@ -396,24 +398,24 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             Payment payment = ObjectFactory.getInstance().getPayment(nurOrder, orderBill);
                             PaymentSettlement paymentSettlement;
                             int paymentTypeId = paymentType;
-                            if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_VISA){
+                            if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_VISA) {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_VISA);
-                                if(paymentMethod != null){
+                                if (paymentMethod != null) {
                                     paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
-                            }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_MASTERCARD){
+                            } else if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_MASTERCARD) {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_MC);
-                                if(paymentMethod != null){
+                                if (paymentMethod != null) {
                                     paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
-                            }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK){
+                            } else if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK) {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_EZ);
-                                if(paymentMethod != null){
+                                if (paymentMethod != null) {
                                     paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
-                            }else {
+                            } else {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_OTHER);
-                                if(paymentMethod != null){
+                                if (paymentMethod != null) {
                                     paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }
@@ -422,14 +424,14 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         }
                     }, 5000);
                 }
-                    break;
+                break;
                 case VIEW_CC_PAYMENT_NO_CARDNUM_SUCCEED: {
                     final int paymentType = (int) msg.obj;
                     if (paymentDialog != null && paymentDialog.isShowing()) {
                         paymentDialog.dismiss();
                     }
-                    paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
+                    paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, context.getString(R.string.thank_you),
+                            context.getString(R.string.take_your_receipt), R.drawable.icon_paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
@@ -441,24 +443,24 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                             Payment payment = ObjectFactory.getInstance().getPayment(nurOrder, orderBill);
                             PaymentSettlement paymentSettlement;
                             int paymentTypeId = paymentType;
-                            if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_VISA){
+                            if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_VISA) {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_VISA);
-                                if(paymentMethod != null){
+                                if (paymentMethod != null) {
                                     paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
-                            }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_MASTERCARD){
+                            } else if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_MASTERCARD) {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_MC);
-                                if(paymentMethod != null){
+                                if (paymentMethod != null) {
                                     paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
-                            }else if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK){
+                            } else if (paymentTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK) {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_EZ);
-                                if(paymentMethod != null){
+                                if (paymentMethod != null) {
                                     paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
-                            }else {
+                            } else {
                                 PaymentMethod paymentMethod = PaymentMethodSQL.getPaymentMethodByNameOt(CUSTOM_PAYMENT_OTHER);
-                                if(paymentMethod != null){
+                                if (paymentMethod != null) {
                                     paymentTypeId = paymentMethod.getPaymentTypeId().intValue();
                                 }
                             }
@@ -467,15 +469,15 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                         }
                     }, 5000);
                 }
-                    break;
+                break;
 
                 case VIEW_PAYMENT_STORED_CARDNUM_SUCCEED: {
 
                     if (paymentDialog != null && paymentDialog.isShowing()) {
                         paymentDialog.dismiss();
                     }
-                    paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, "Thank You",
-                            "Please remember to take your receipt.", R.drawable.icon_paid, false);
+                    paymentDialog = KpmDialogFactory.kpmCompleteDialog(context, context.getString(R.string.thank_you),
+                            context.getString(R.string.take_your_receipt), R.drawable.icon_paid, false);
                     CCCentre.getInstance().disconnect();
                     postDelayed(new Runnable() {
                         @Override
@@ -496,9 +498,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     break;
                 case VIEW_CHECK_SOTCK_NUM_SUCCEED:
 
-                        if (loadingDialog != null && loadingDialog.isShowing()) {
-                            loadingDialog.dismiss();
-                        }
+                    if (loadingDialog != null && loadingDialog.isShowing()) {
+                        loadingDialog.dismiss();
+                    }
 //                    String ip = Store.getString(App.instance, Store.KPM_CC_IP);
 //                    paymentAction(ip);
 
@@ -519,30 +521,30 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     boolean isStock = false;
                     for (int i = 0; i < orderDetails.size(); i++) {
                         OrderDetail orderDetail = orderDetails.get(i);
-                        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
+                        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId(),orderDetail.getItemName());
                         RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
-                        if(remainingStock!=null) {
+                        if (remainingStock != null) {
                             int qty = remainingStock.getQty() - remainingStock.getMinQty();
                             int num = orderDetail.getItemNum();
-                            if(qty <= 0){
+                            if (qty <= 0) {
                                 isStock = true;
                                 removeOrderDetails.add(orderDetail);
-                            }else if (num > qty) {
+                            } else if (num > qty) {
                                 isStock = true;
                                 updateCartOrderDetail(orderDetail,
                                         qty);
                             }
                         }
                     }
-                    for(OrderDetail orderDetail : removeOrderDetails){
+                    for (OrderDetail orderDetail : removeOrderDetails) {
                         updateCartOrderDetail(orderDetail,
                                 0);
                     }
                     tv_total_price.setText("S" + App.instance.getCurrencySymbol() + BH.formatMoney(nurOrder.getTotal()));
                     tv_total_price.setTextColor(context.getResources().getColor(R.color.green));
                     if (isStock) {
-                        stockDialog = KpmDialogFactory.kpmOutStockDialog(context, "Out of stock",
-                                "Sorry the item you have selected is no longer available. Please re-confirm your order.", R.drawable.out_of_stock,
+                        stockDialog = KpmDialogFactory.kpmOutStockDialog(context, context.getString(R.string.out_of_stock),
+                                context.getString(R.string.item_not_available_reorder), R.drawable.out_of_stock,
                                 new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -550,7 +552,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                                     }
                                 }, false);
 
-                    }else {
+                    } else {
                         String ip = Store.getString(App.instance, Store.KPM_CC_IP);
                         paymentAction(ip);
                     }
@@ -566,10 +568,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     };
 
 
-    private void commitOrder(OrderBill orderBill, Payment payment, PaymentSettlement paymentSettlement, String cardNum){
-        loadingDialog.setTitle("Committing Order...");
+    private void commitOrder(OrderBill orderBill, Payment payment, PaymentSettlement paymentSettlement, String cardNum) {
+        loadingDialog.setTitle(getString(R.string.order));
         loadingDialog.show();
-        SyncCentre.getInstance().commitOrder(context, nurOrder, orderBill, orderDetails, payment,paymentSettlement, handler, cardNum);
+        SyncCentre.getInstance().commitOrder(context, nurOrder, orderBill, orderDetails, payment, paymentSettlement, handler, cardNum);
     }
 
     private void init() {
@@ -685,7 +687,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
             @Override
             public void onNoClick() {
                 if (dialog != null && dialog.isShowing()) {
-                    if(ButtonClickTimer.canClick()) {
+                    if (ButtonClickTimer.canClick()) {
                         startTimer(3000);
                     }
                     dialog.dismiss();
@@ -701,11 +703,11 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     dialog.dismiss();
                 }
                 String ip = Store.getString(App.instance, Store.KPM_CC_IP);
-                if(TextUtils.isEmpty(ip)){
-                    UIHelp.showToastTransparentForKPMG(App.instance, "Please contact Staff for IP Address");
-                }else {
+                if (TextUtils.isEmpty(ip)) {
+                    UIHelp.showToastTransparentForKPMG(App.instance, getString(R.string.contact_staff_for_ip));
+                } else {
                     //TODO
-                    loadingDialog.setTitle("Checking  stock");
+                    loadingDialog.setTitle(getString(R.string.checking_stock));
 //                  List<RemainingStockVo> remainingStockList=new  ArrayList<RemainingStockVo>();
 //                  Map<String,Object>  numMap=new HashMap<>();
 //                    for (int i = 0; i <orderDetails.size() ; i++) {
@@ -716,7 +718,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                     remainingStockList.add(remainingStock);
 //                    }
 //                    numMap.put("remainingStockList",remainingStockList);
-                    SyncCentre.getInstance().getRemainingStock(MenuActivity.this,handler);
+                    SyncCentre.getInstance().getRemainingStock(MenuActivity.this, handler);
 //                    paymentAction(ip);
                 }
             }
@@ -763,7 +765,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         if (itemDetailNumMap.size() > 0) {
             final List<ItemDetailDto> itemDetailDtos = new ArrayList<>(itemDetailNumMap.values());
             if (itemDetailDtos != null) {
-//                loadingDialog.setTitle("Loading");
+//                loadingDialog.setTitle(context.getString(R.string.loading));
 //                loadingDialog.show();
 //                new Thread(new Runnable() {
 //                    @Override
@@ -774,21 +776,21 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
                 boolean showToast = false;
                 for (ItemDetailDto itemDetailDto : itemDetailDtos) {
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId());
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(itemDetailDto.getItemId(),itemDetailDto.getItemName());
                     OrderDetail selectedOrderDetail = null;
-                    if(orderDetails != null && orderDetails.size() > 0){
-                        for(OrderDetail orderDetail : orderDetails){
-                            if(orderDetail.getItemId().intValue() == itemDetail.getId().intValue()){
+                    if (orderDetails != null && orderDetails.size() > 0) {
+                        for (OrderDetail orderDetail : orderDetails) {
+                            if (orderDetail.getItemId().intValue() == itemDetail.getId().intValue()) {
                                 selectedOrderDetail = orderDetail;
                                 break;
                             }
                         }
                     }
-                    if(selectedOrderDetail != null){
+                    if (selectedOrderDetail != null) {
                         selectedOrderDetail.setItemNum(selectedOrderDetail.getItemNum().intValue() + 1);
                         SelfOrderHelper.getInstance().calculateOrderDetail(nurOrder, selectedOrderDetail);
                         SelfOrderHelper.getInstance().calculate(nurOrder, orderDetails);
-                    }else {
+                    } else {
                         OrderDetail orderDetail = SelfOrderHelper.getInstance()
                                 .createOrderDetailForWaiter(nurOrder, itemDetail,
                                         0, App.instance.getUser());
@@ -799,7 +801,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 }
 
                 if (showToast && mVideoView.getVisibility() == View.VISIBLE && ll_view_cart.getVisibility() == View.VISIBLE) {
-                    UIHelp.showToastTransparentForKPMG(App.instance, "Item(s) have been added!");
+                    UIHelp.showToastTransparentForKPMG(App.instance, getString(R.string.item_added));
                 }
 
                 if (showToast && ll_view_cart_list.getVisibility() == View.VISIBLE
@@ -833,10 +835,10 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                                 orderDetails.remove(i);
                                 map.put(barCode, num.intValue() - orderDetail.getItemNum());
                             } else {
-                                if(orderDetail.getItemNum() > num.intValue()){
+                                if (orderDetail.getItemNum() > num.intValue()) {
                                     orderDetail.setItemNum(orderDetail.getItemNum() - num.intValue());
                                     SelfOrderHelper.getInstance().calculateOrderDetail(nurOrder, orderDetail);
-                                }else{
+                                } else {
                                     orderDetails.remove(i);
                                 }
                                 map.remove(barCode);
@@ -881,7 +883,6 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
 
-
     private OrderDetail getItemOrderDetail(ItemDetail itemDetail) {
         OrderDetail orderDetail = SelfOrderHelper.getInstance().getOrderDetailFromList(itemDetail, orderDetails);
 
@@ -891,8 +892,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                            0, App.instance.getUser());
 //        }
 
-      return orderDetail;
+        return orderDetail;
     }
+
     private void updateitemOrderDetail(ItemDetail itemDetail, int count) {
         OrderDetail orderDetail = SelfOrderHelper.getInstance().getOrderDetailFromList(itemDetail, orderDetails);
         if (orderDetail != null) {
@@ -933,7 +935,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mClassAdapter = new ClassAdapter(context, itemCategorys, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
-                if(itemCategorys != null && itemCategorys.size() > 0) {
+                if (itemCategorys != null && itemCategorys.size() > 0) {
                     ItemCategory itemCategory = itemCategorys.get(position);
                     // isMoved = true;
                     //   App.isleftMoved = true;
@@ -981,7 +983,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         mDetailAdapter = new MenuDetailAdapter(context, itemDetails, new RvListener() {
             @Override
             public void onItemClick(int id, int position) {
-                if(!ButtonClickTimer.canClickShort()){
+                if (!ButtonClickTimer.canClickShort()) {
                     return;
                 }
                 ItemDetail itemDetail = itemDetails.get(position);
@@ -1120,6 +1122,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
     public long lastClickTime;
+
     public boolean canClick() {
         long currentTimeMillis = System.currentTimeMillis();
         if (currentTimeMillis - lastClickTime > 500) {
@@ -1134,7 +1137,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 
     @Override
     protected void handlerClickEvent(View v) {
-        if(!canClick()){
+        if (!canClick()) {
             return;
         }
         switch (v.getId()) {
@@ -1188,7 +1191,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                     ll_order_dialog.setVisibility(View.GONE);
                     cartView();
                 } else {
-                    UIHelp.showToastTransparentForKPMG(App.instance, "Please Choose Menu First !");
+                    UIHelp.showToastTransparentForKPMG(App.instance, getString(R.string.select_menu_first));
                 }
 
                 break;
@@ -1196,12 +1199,12 @@ public class MenuActivity extends BaseActivity implements CheckListener {
                 CCPaymentType = CC_TYPE_CC;
                 paymentCheck();
             }
-                break;
+            break;
             case R.id.ll_view_order_ez: {
                 CCPaymentType = CC_TYPE_EZ;
                 paymentCheck();
             }
-                break;
+            break;
 
 
             case R.id.ll_view_order_qc: {
@@ -1211,7 +1214,7 @@ public class MenuActivity extends BaseActivity implements CheckListener {
 //                map.put("revenueId", getIntent().getIntExtra("revenueId", 0));
 //                map.put("consumeAmount", getIntent().getStringExtra("consumeAmount"));
 //                map.put("operateType", getIntent().getIntExtra("operateType", -1));
-            //  SyncCentre.getInstance().updateStoredCardValue(MenuActivity.this,map,handler);
+                //  SyncCentre.getInstance().updateStoredCardValue(MenuActivity.this,map,handler);
             }
             break;
             case R.id.tv_dialog_ok:
@@ -1225,9 +1228,9 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         }
     }
 
-    private void paymentCheck(){
+    private void paymentCheck() {
         if (orderDetails == null || orderDetails.size() == 0) {
-            UIHelp.showToastTransparentForKPMG(App.instance, "Please Choose Menu First !");
+            UIHelp.showToastTransparentForKPMG(App.instance, getString(R.string.select_menu_first));
             return;
         }
         cancelTimer();
@@ -1241,26 +1244,27 @@ public class MenuActivity extends BaseActivity implements CheckListener {
         App.instance.stopADKpm();
         ll_view_cart.setVisibility(View.GONE);
         ll_view_pay.setVisibility(View.VISIBLE);
-        if(paymentDialog != null && paymentDialog.isShowing()){
+        if (paymentDialog != null && paymentDialog.isShowing()) {
             paymentDialog.dismiss();
         }
 
-        String ccTitle = "Credit Card\nPayment in progress…";
-        if(CCPaymentType != CC_TYPE_CC){
-            ccTitle = "EZ-Link\nPayment in progress…";
+        String ccTitle = "Credit Card";
+        if (CCPaymentType != CC_TYPE_CC) {
+            ccTitle = "EZ-Link";
         }
+        ccTitle += "\n"+getString(R.string.payment_in_progress);
         paymentDialog = KpmDialogFactory.qcDialog(context, ccTitle,
                 "", R.drawable.credit_card, false,
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(CCCentre.getInstance().canCancel()){
+                        if (CCCentre.getInstance().canCancel()) {
 //                                CCCentre.getInstance().
-                        }else{
-                            UIHelp.showToastTransparentForKPMG(App.instance, "Can not back !");
+                        } else {
+                            UIHelp.showToastTransparentForKPMG(App.instance, getString(R.string.cannot_back));
                         }
                     }
-                },false);
+                }, false);
         CCCentre.getInstance().connect(ip);
 
 //        new Thread(new Runnable() {
@@ -1464,18 +1468,21 @@ public class MenuActivity extends BaseActivity implements CheckListener {
     }
 
     private void timeSlot() {
-        Calendar cal = Calendar.getInstance();// 当前日期
+        Calendar cal = Calendar.getInstance(Locale.US);// 当前日期
         int hour = cal.get(Calendar.HOUR_OF_DAY);// 获取小时
         int minute = cal.get(Calendar.MINUTE);// 获取分钟
         if (hour >= 0 && hour < 12) {
-            tv_time.setText("Morning!");
-        } else if (hour >= 12 && hour < 17) {
+            tv_time.setText(getString(R.string.morning));
+        } else if (hour >= 12 && hour < 15) {
 //            System.out.println("在外围外");
-            tv_time.setText("Afternoon!");
+            tv_time.setText(getString(R.string.midday));
+        } else if (hour >= 15 && hour < 17) {
+//            System.out.println("在外围外");
+            tv_time.setText(getString(R.string.afternoon));
         } else if (hour >= 17 && hour < 20) {
-            tv_time.setText("Evening!");
+            tv_time.setText(getString(R.string.evening));
         } else if (hour >= 20 && hour < 24) {
-            tv_time.setText("Night!");
+            tv_time.setText(getString(R.string.night));
         }
 
     }

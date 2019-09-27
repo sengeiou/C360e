@@ -31,7 +31,8 @@
 
                     android:layout_gravity="center_horizontal"
                      android:layout_marginTop="120dp"
-                    android:text="@string/changes"
+                    android:text="@string/change_amount"
+                    android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="48sp" />
 

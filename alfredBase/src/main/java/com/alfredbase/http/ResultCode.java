@@ -23,6 +23,8 @@ public class ResultCode {
 	 * 成功
 	 */
 	public static final int SUCCESS = 1;
+
+	public static final int SUCCESS_WAITER_ONCE = 100;
 	
 
 	/**
@@ -127,6 +129,10 @@ public class ResultCode {
 	 */
 	public static final int USER_NO_PERMIT = -3001;
 
+	/**
+	 *	no  permission	  用户模式不同 （Train）
+	 */
+	public static final int USER_POS_TYPE = -3002;
 
     public static final int APP_ORDER_REFUND = -1007;
 
@@ -204,7 +210,7 @@ public class ResultCode {
 	public static final int IS_NOT_KIOSK = -989;
 
 	public static final int SESSION_HAS_CHANGE = -988;
-
+	public static final int ORDER_PRINT = -1990;
 	/**
 	 * waiter提交的拆单在POS机上已经结账的返回
 	 */
@@ -264,23 +270,23 @@ public class ResultCode {
 		case CUSTOMER_QRCODE_INVALIDATE:
 			return context.getResources().getString(R.string.qrcode_expire);
 		case CARD_BALANCE_NOT_ENOUGH:
-			return "The stored card balance is not enough";
+			return context.getResources().getString(R.string.stored_card_balance_not_enough);
 		case CARD_PAST_DUE:
-			return "The stored card has past due";
+			return context.getResources().getString(R.string.stored_card_has_past_due);
 		case RESTAURANT_CANNOT_USE_CARD:
-			return "Your restaurant can not use stored card";
+			return context.getResources().getString(R.string.restaurant_cannot_use_stored_card);
 		case COMPANY_CANNOT_USE_CARD :
-			return "You can not use stored card";
+			return context.getResources().getString(R.string.cannot_use_stored_card);
 		case APP_ORDER_STATUS_ERROR:
-			return "The App Order status is error";
+			return context.getResources().getString(R.string.order)+" " +context.getResources().getString(R.string.error);
 		case APP_ORDER_REFUND:
-			return "The App Order have been cancelled!";
+			return context.getResources().getString(R.string.order)+" " +context.getResources().getString(R.string.cancel);
 		case PHONE_HAS_USED:
-			return "The mobile phone number has been registered!";
+			return context.getResources().getString(R.string.number_has_registered);
 		case CARD_QUERY_FAIL:
-			return "There is no record";
+			return context.getResources().getString(R.string.no_data);
 		case ORDER_NO_PLACE:
-			return "Cannot Print";
+			return context.getResources().getString(R.string.cannot_print);
 		case APP_VERSION_UNREAL:
 			if(TextUtils.isEmpty(information)){
 				return context.getResources().getString(R.string.upgrade_new_version);
@@ -289,7 +295,7 @@ public class ResultCode {
 						context.getResources().getString(R.string.comatible_pos);
 			}
 		case IS_NOT_KIOSK:
-			return "Please choose the kiosk revenue";
+			return context.getResources().getString(R.string.please_choose_the_kiosk_revenue);
 		}
 
 		return "";

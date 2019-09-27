@@ -152,9 +152,7 @@ public class FinishQtyWindow implements OnClickListener, KeyBoardClickListener {
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     popupWindow.dismiss();
-                }
-
-                ;
+                };
             });
             set.start();
 

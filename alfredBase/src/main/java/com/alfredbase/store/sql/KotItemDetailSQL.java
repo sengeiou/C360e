@@ -1086,6 +1086,19 @@ public class KotItemDetailSQL {
         }
     }
 
+    public static void deleteAllKotItemDetail(Integer revenueId) {
+        String deleteByRevenue = "";
+        if (revenueId != null) {
+            deleteByRevenue = " where revenueId = " + revenueId;
+        }
+        String sql = "delete from " + TableNames.KotItemDetail + deleteByRevenue;
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void deleteAllKotItemDetailByKotSummary(KotSummary kotSummary) {
         String sql = "delete from " + TableNames.KotItemDetail + " where kotSummaryId = ?";
         try {

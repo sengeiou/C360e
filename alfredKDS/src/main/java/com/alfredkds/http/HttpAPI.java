@@ -3,43 +3,36 @@ package com.alfredkds.http;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.alfredbase.ParamConst;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
-import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.system.VersionUpdate;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.CommonSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
+import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.utils.DialogFactory;
-import com.alfredbase.utils.KDSLogUtil;
-import com.alfredbase.utils.LogUtil;
 import com.alfredkds.activity.KotHistory;
 import com.alfredkds.activity.Login;
 import com.alfredkds.activity.SelectKitchen;
 import com.alfredkds.activity.Setting;
 import com.alfredkds.global.App;
-import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.ConnectException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,8 +51,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -122,8 +114,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -134,6 +125,9 @@ public class HttpAPI {
                                         HttpAnalysis.getPrinterList(statusCode, headers, responseBody)));
                             } else if (resultCode == ResultCode.USER_NO_PERMIT) {
                                 handler.sendEmptyMessage(ResultCode.USER_NO_PERMIT);
+                            } else if (resultCode == ResultCode.USER_POS_TYPE) {
+
+                                diaLogTrain();
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
@@ -229,8 +223,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -267,14 +260,16 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
+                            } else if (resultCode == ResultCode.USER_POS_TYPE) {
+
+                                diaLogTrain();
                             } else {
 //								elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
@@ -302,8 +297,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -311,6 +305,9 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
 
+                            } else if (resultCode == ResultCode.USER_POS_TYPE) {
+
+                                diaLogTrain();
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
@@ -383,8 +380,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -398,6 +394,9 @@ public class HttpAPI {
                                 } else {
                                     handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT, kotItemDetails));
                                 }
+                            } else if (resultCode == ResultCode.USER_POS_TYPE) {
+
+                                diaLogTrain();
                             } else if (resultCode == ResultCode.USER_NO_PERMIT) {
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_RECONNECT_POS));
                             } else if (resultCode == ResultCode.KOT_COMPLETE_USER_FAILED) {
@@ -433,7 +432,6 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             error.printStackTrace();
                             List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
-
                             for (int i = 0; i < kotItemDetails.size(); i++) {
                                 KotItemDetail kotItemDetail = kotItemDetails.get(i);
                                 KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
@@ -462,8 +460,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -474,6 +471,9 @@ public class HttpAPI {
                                 KotItemDetail kotItemDetail = (KotItemDetail) parameters.get("kotItemDetail");
                                 KotItemDetailSQL.deleteKotItemDetail(kotItemDetail);
                                 handler.sendMessage(handler.obtainMessage(KotHistory.HANDLER_SUCCEED));
+                            } else if (resultCode == ResultCode.USER_POS_TYPE) {
+
+                                diaLogTrain();
                             } else if (resultCode == ResultCode.USER_NO_PERMIT) {
                                 handler.sendMessage(handler.obtainMessage(KotHistory.HANDLER_RECONNECT_POS));
                             } else if (resultCode == ResultCode.KOT_COMPLETE_USER_FAILED) {
@@ -515,8 +515,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -529,6 +528,9 @@ public class HttpAPI {
                                 }
                                 handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
 
+                            } else if (resultCode == ResultCode.USER_POS_TYPE) {
+
+                                diaLogTrain();
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
@@ -557,8 +559,7 @@ public class HttpAPI {
         }
         try {
             httpClient.post(context, url,
-                    new StringEntity(new Gson().toJson(parameters) + EOF,
-                            "UTF-8"), CONTENT_TYPE,
+                    kdsBaseInfo(parameters), CONTENT_TYPE,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers,
@@ -566,6 +567,9 @@ public class HttpAPI {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
                                 handler.sendMessage(handler.obtainMessage(Setting.HANDLER_LOGOUT_SUCCESS));
+                            } else if (resultCode == ResultCode.USER_POS_TYPE) {
+
+                                diaLogTrain();
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
                             }
@@ -614,5 +618,42 @@ public class HttpAPI {
                 UIHelp.showToast(App.getTopActivity(), ResultCode.getErrorResultStrByCode(App.instance, resultCode, information));
             }
         });
+    }
+
+    public static StringEntity kdsBaseInfo(Map<String, Object> map)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+
+        int type = Store.getInt(App.instance, Store.TRAIN_TYPE);
+        map.put("trainType", type);
+
+        StringEntity entity = new StringEntity(gson.toJson(map) + EOF,
+                "UTF-8");
+        return entity;
+    }
+
+    private static void diaLogTrain() {
+        App.getTopActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                App.getTopActivity().showOneButtonCompelDialog("Mode Change",
+                        "Please relogin",
+                        new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                KotSummarySQL.deleteAllKotSummary(null);
+                                KotItemDetailSQL.deleteAllKotItemDetail(null);
+                                KotItemModifierSQL.deleteAllKotItemModifier(null);
+//							App.instance.popAllActivityExceptOne(EmployeeID.class);
+                                UIHelp.startWelcome(App.getTopActivity());
+                                App.instance.popAllActivityExceptOne(Login.class);
+                            }
+                        });
+
+            }
+        });
+
     }
 }
