@@ -56,25 +56,27 @@ public class LogActivity extends BaseActivity {
         KDSLog kdsLog = gson.fromJson(Store.getString(this, Store.KDS_LOGS), KDSLog.class);
 
         StringBuilder sb = new StringBuilder();
-        for (KDSHistory kdsHistory : kdsLog.kdsHistories) {
-            sb.append(kdsHistory.kdsDevice.getName());
-            sb.append(", ");
-            sb.append(kdsHistory.kdsDevice.getIP());
-            sb.append(", ");
-            sb.append("Status : ");
-            sb.append(kdsHistory.kdsDevice.getKdsStatus());
-            sb.append("\n");
-            sb.append("Items :");
-            sb.append("\n");
-
-            for (KotItemDetail kotItemDetail : kdsHistory.kotItemDetails) {
-                sb.append("- ");
-                sb.append(kotItemDetail.getItemName());
+        if (kdsLog != null) {
+            for (KDSHistory kdsHistory : kdsLog.kdsHistories) {
+                sb.append(kdsHistory.kdsDevice.getName());
+                sb.append(", ");
+                sb.append(kdsHistory.kdsDevice.getIP());
+                sb.append(", ");
+                sb.append("Status : ");
+                sb.append(kdsHistory.kdsDevice.getKdsStatus());
                 sb.append("\n");
-            }
+                sb.append("Items :");
+                sb.append("\n");
 
-            sb.append("-----------------------------------");
-            sb.append("\n\n");
+                for (KotItemDetail kotItemDetail : kdsHistory.kotItemDetails) {
+                    sb.append("- ");
+                    sb.append(kotItemDetail.getItemName());
+                    sb.append("\n");
+                }
+
+                sb.append("-----------------------------------");
+                sb.append("\n\n");
+            }
         }
         return sb.toString();
     }
