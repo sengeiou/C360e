@@ -96,6 +96,7 @@ import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TimeUtil;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
@@ -1194,6 +1195,12 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (!fromThisRVC) {
+                        return;
+                    }
+                    TableInfo tableInfo = TableInfoSQL.getTableById(currentTable.getPosId());
+
+                    if (tableInfo.getIsLocked() == 1){
+                        ToastUtils.showToast(MainPage.this,"Transfer table on Going");
                         return;
                     }
                     if (currentTable != null) {

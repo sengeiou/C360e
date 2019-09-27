@@ -1280,7 +1280,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
     public Response doPost(String apiName, Method mothod,
                            Map<String, String> params, String body) {
         LogUtil.d(TAG, "apiName : " + apiName + " body : " + body);
-        JSONObject jsonObject;
+        final JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(body);
         } catch (JSONException e) {
@@ -1379,7 +1379,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
             try {
                 Order order = new Gson().fromJson(orderData, Order.class);
                 if (order != null && TableInfoSQL.getTableById(tableId) != null) {
-                    handlerTransferFromOtherRvc(jsonObject);
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            handlerTransferFromOtherRvc(jsonObject);
+                        }
+                    }).start();
+
 
                     Order currentOrder = OrderSQL.getLastOrderatTabel(tableId);
                     result.put("toOrder", new Gson().toJson(currentOrder));
@@ -1393,9 +1400,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
             }
             Log.wtf("Test_sendOrderToOtherRVC", "result_getto_" + new Gson().toJson(jsonObject));
 
-
-            App.getTopActivity().httpRequestAction(
-                    MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
             return getJsonResponse(new Gson().toJson(result));
         } else if (apiName.equals(APIName.TRANSFER_ITEM_TO_OTHER_RVC)) {
             return handlerTransferItemFromOtherRvc(jsonObject);
@@ -3586,6 +3590,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order.setRestId(CoreData.getInstance().getRestaurant().getId());
 
             TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
+            tableInfo.setIsLocked(1);
             order.setPlaceId(tableInfo.getPlacesId());
             order.setTableName(tableInfo.getName());
             order.setTableId(tableInfo.getPosId());
@@ -3597,10 +3602,24 @@ public class MainPosHttpServer extends AlfredHttpServer {
             OrderSQL.addOrder(order);
             Order last = OrderSQL.getLastOrderatTabel(targetTableId);
 
+            TableInfoSQL.updateTables(tableInfo);
+
+            MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
+
+            if (App.getTopActivity() != null)
+                App.getTopActivity().httpRequestAction(
+                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
 
             addOrderDetailFromOtherRVC(last, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
 
-            MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
+            tableInfo.setIsLocked(0);
+            TableInfoSQL.updateTables(tableInfo);
+            if (App.getTopActivity() != null){
+
+                App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
+
+            }
+
 
             //todo transfer add KOT on KDS
         } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
