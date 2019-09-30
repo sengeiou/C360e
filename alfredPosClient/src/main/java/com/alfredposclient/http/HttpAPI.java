@@ -3054,20 +3054,20 @@ public class HttpAPI {
         List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
         parameters.put("orderDetail", new Gson().toJson(orderDetails));
 
+
         KotSummary kot = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
         parameters.put("kotSummary", new Gson().toJson(kot));
 
         ArrayList<KotItemDetail> kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderId(currentOrder.getId());
         parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
 
-        ArrayList<ArrayList<KotItemModifier>> kotItemModifiers = new ArrayList<>();
+        ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
         for (KotItemDetail itemDetail : kotItemDetail) {
             ArrayList<KotItemModifier> kotItemModifier = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(itemDetail.getId());
-            kotItemModifiers.add(kotItemModifier);
+            kotItemModifiers.addAll(kotItemModifier);
 
         }
         parameters.put("kotItemModifier", new Gson().toJson(kotItemModifiers));
-
 
         List<OrderBill> orderbill = OrderBillSQL.getAllOrderBillByOrder(currentOrder);
         parameters.put("orderBill", new Gson().toJson(orderbill));
@@ -3079,6 +3079,7 @@ public class HttpAPI {
         parameters.put("orderSplit", new Gson().toJson(orderSplit));
 
         parameters.put("tableId", tableId); //selected tableId
+        parameters.put("tableName", currentOrder.getTableName()); //selected tableId
 
         try {
             httpClient.post(context, url,
@@ -3135,6 +3136,26 @@ public class HttpAPI {
         parameters.put("orderDetail", new Gson().toJson(transfItemOrderDetail));
         parameters.put("tableId", tableId); //selected tableId
         parameters.put("pack", pack); //selected tableId
+
+        KotItemDetail kotItemDetail = null;
+        ArrayList<KotItemModifier> kotModifiers = new ArrayList<>();
+        ArrayList<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(transfItemOrderDetail.getId());
+        parameters.put("orderModifier", new Gson().toJson(orderModifiers));
+
+            OrderBill orderbill = OrderBillSQL.getOrderBillByOnlyOrder(oldOrder.getId());
+                parameters.put("orderBill", new Gson().toJson(orderbill));
+
+            KotSummary kot = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
+                parameters.put("kotSummary", new Gson().toJson(kot));
+
+            kotItemDetail = KotItemDetailSQL.getKotItemDetailById(oldOrder.getId());
+            parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+
+        if (kotItemDetail !=  null){
+            kotModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+        }
+        parameters.put("kotModifier", new Gson().toJson(kotModifiers));
+
 
 
         Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));

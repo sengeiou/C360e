@@ -30,8 +30,8 @@ public class TableInfoSQL {
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
                     + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
-                    + " resolutionWidth, resolutionHeight)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " resolutionWidth, resolutionHeight, isLocked)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{newTable.getPosId(), newTable.getName(), newTable.getImageName(),
@@ -41,7 +41,7 @@ public class TableInfoSQL {
                             newTable.getIsDecorate(), newTable.getUnionId(), newTable.getIsActive(),
                             newTable.getPacks(), newTable.getRotate(), newTable.getCreateTime(),
                             newTable.getUpdateTime(), newTable.getOrders(), newTable.getIsKiosk(),
-                            newTable.getResolutionWidth(), newTable.getResolutionHeight()});
+                            newTable.getResolutionWidth(), newTable.getResolutionHeight(), newTable.getIsLocked()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,8 +60,8 @@ public class TableInfoSQL {
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
                     + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
-                    + " resolutionWidth, resolutionHeight)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " resolutionWidth, resolutionHeight, isLocked)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{newTable.getPosId(), newTable.getName(), newTable.getImageName(),
@@ -71,7 +71,7 @@ public class TableInfoSQL {
                             newTable.getIsDecorate(), newTable.getUnionId(), newTable.getIsActive(),
                             newTable.getPacks(), newTable.getRotate(), newTable.getCreateTime(),
                             newTable.getUpdateTime(), newTable.getOrders(), newTable.getIsKiosk(),
-                            newTable.getResolutionWidth(), newTable.getResolutionHeight()});
+                            newTable.getResolutionWidth(), newTable.getResolutionHeight(), newTable.getIsLocked()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,8 +88,8 @@ public class TableInfoSQL {
                     + TableNames.TableInfo
                     + "(posId, name, imageName, restaurantId, revenueId, xAxis, yAxis, placesId, resolution, shape, type,"
                     + " status, isDecorate, unionId, isActive, packs, rotate, createTime, updateTime, orders, isKiosk, "
-                    + " resolutionWidth, resolutionHeight)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " resolutionWidth, resolutionHeight,isLocked)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (TableInfo newTable : newTablesList) {
@@ -139,6 +139,8 @@ public class TableInfoSQL {
                         newTable.getResolutionWidth());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 23,
                         newTable.getResolutionHeight());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 24,
+                        newTable.getIsLocked());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -195,6 +197,7 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 newTable.setResolutionWidth(cursor.getInt(21));
                 newTable.setResolutionHeight(cursor.getInt(22));
+                newTable.setIsLocked(cursor.getInt(23));
                 result.add(newTable);
             }
         } catch (Exception e) {
@@ -249,6 +252,7 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 newTable.setResolutionWidth(cursor.getInt(21));
                 newTable.setResolutionHeight(cursor.getInt(22));
+                newTable.setIsLocked(cursor.getInt(23));
                 result.add(newTable);
             }
         } catch (Exception e) {
@@ -300,6 +304,7 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 newTable.setResolutionWidth(cursor.getInt(21));
                 newTable.setResolutionHeight(cursor.getInt(22));
+                newTable.setIsLocked(cursor.getInt(23));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -343,6 +348,7 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 newTable.setResolutionWidth(cursor.getInt(21));
                 newTable.setResolutionHeight(cursor.getInt(22));
+                newTable.setIsLocked(cursor.getInt(23));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -387,6 +393,7 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 newTable.setResolutionWidth(cursor.getInt(21));
                 newTable.setResolutionHeight(cursor.getInt(22));
+                newTable.setIsLocked(cursor.getInt(23));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -431,6 +438,7 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 newTable.setResolutionWidth(cursor.getInt(21));
                 newTable.setResolutionHeight(cursor.getInt(22));
+                newTable.setIsLocked(cursor.getInt(23));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -501,6 +509,7 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 newTable.setResolutionWidth(cursor.getInt(21));
                 newTable.setResolutionHeight(cursor.getInt(22));
+                newTable.setIsLocked(cursor.getInt(23));
                 result.add(newTable);
             }
         } catch (Exception e) {
@@ -596,6 +605,7 @@ public class TableInfoSQL {
                 newTable.setIsKiosk(cursor.getInt(20));
                 newTable.setResolutionWidth(cursor.getInt(21));
                 newTable.setResolutionHeight(cursor.getInt(22));
+                newTable.setIsLocked(cursor.getInt(23));
                 result = newTable;
             }
         } catch (Exception e) {

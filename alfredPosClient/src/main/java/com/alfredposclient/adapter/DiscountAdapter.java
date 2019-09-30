@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Order;
@@ -34,15 +35,17 @@ public class DiscountAdapter extends BaseAdapter {
     private List<ItemMainCategory> list = new ArrayList<ItemMainCategory>();
     private SparseBooleanArray sparseBooleanArray = new SparseBooleanArray();
     private Order order;
+
     public DiscountAdapter(BaseActivity activity, Order order) {
         sparseBooleanArray.clear();
         this.order = order;
         List<Integer> ids = new ArrayList<Integer>();
         List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(order.getId());
-        if (orderDetails != null && orderDetails.size() != 0){
+        if (orderDetails != null && orderDetails.size() != 0) {
             list.clear();
-            for (int i = 0; i < orderDetails.size(); i++){
+            for (int i = 0; i < orderDetails.size(); i++) {
                 OrderDetail detail = orderDetails.get(i);
+
                 ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(detail.getItemId(), detail.getItemName());
                 if(itemDetail != null)
                 {
@@ -61,19 +64,19 @@ public class DiscountAdapter extends BaseAdapter {
         this.activity = activity;
     }
 
-    public String getSelectedItem(int discountType){
+    public String getSelectedItem(int discountType) {
         String discountCategoryId = "";
         boolean has = false;
-        if(sparseBooleanArray.size() > 0 ){
+        if (sparseBooleanArray.size() > 0) {
             has = true;
             OrderDetailSQL.updateDiscountTypeBeforeByMainCategoryId(order.getId().intValue());
-            for(int i = 0; i < sparseBooleanArray.size(); i ++){
-                int key  = sparseBooleanArray.keyAt(i);
-                if(sparseBooleanArray.get(key)) {
+            for (int i = 0; i < sparseBooleanArray.size(); i++) {
+                int key = sparseBooleanArray.keyAt(i);
+                if (sparseBooleanArray.get(key)) {
                     OrderDetailSQL.updateDiscountTypeByMainCategoryId(discountType, key, order.getId());
-                    if(!TextUtils.isEmpty(discountCategoryId)){
+                    if (!TextUtils.isEmpty(discountCategoryId)) {
                         discountCategoryId = discountCategoryId + "," + key;
-                    }else{
+                    } else {
                         discountCategoryId = key + "";
                     }
                 }
@@ -101,43 +104,43 @@ public class DiscountAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
-        if (convertView == null){
+        if (convertView == null) {
             convertView = LayoutInflater.from(activity).inflate(R.layout.discount_item, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.discount_name = (TextView) convertView.findViewById(R.id.discount_name);
             viewHolder.discount_select = (CheckBox) convertView.findViewById(R.id.discount_select);
             convertView.setTag(viewHolder);
 
-        }else {
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-            if (list != null){
-                if (list.size() != 0){
-                    final ItemMainCategory itemMainCategory = list.get(position);
-                    TextTypeFace textTypeFace = TextTypeFace.getInstance();
-                    textTypeFace.setTrajanProRegular(viewHolder.discount_name);
-                    viewHolder.discount_name.setText(itemMainCategory.getMainCategoryName());
-                    viewHolder.discount_select.setTag(itemMainCategory.getId().intValue());
-                    viewHolder.discount_select.setChecked(sparseBooleanArray.get(itemMainCategory.getId().intValue()));
-                    viewHolder.discount_select.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            CheckBox checkBox = (CheckBox)v;
-                            if(checkBox.isChecked()){
-                                sparseBooleanArray.put((Integer) v.getTag(), checkBox.isChecked());
-                            }else{
-                                sparseBooleanArray.delete((Integer) v.getTag());
-                            }
-
+        if (list != null) {
+            if (list.size() != 0) {
+                final ItemMainCategory itemMainCategory = list.get(position);
+                TextTypeFace textTypeFace = TextTypeFace.getInstance();
+                textTypeFace.setTrajanProRegular(viewHolder.discount_name);
+                viewHolder.discount_name.setText(itemMainCategory.getMainCategoryName());
+                viewHolder.discount_select.setTag(itemMainCategory.getId().intValue());
+                viewHolder.discount_select.setChecked(sparseBooleanArray.get(itemMainCategory.getId().intValue()));
+                viewHolder.discount_select.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CheckBox checkBox = (CheckBox) v;
+                        if (checkBox.isChecked()) {
+                            sparseBooleanArray.put((Integer) v.getTag(), checkBox.isChecked());
+                        } else {
+                            sparseBooleanArray.delete((Integer) v.getTag());
                         }
-                    });
-                }
+
+                    }
+                });
             }
+        }
 
         return convertView;
     }
 
-    class ViewHolder{
+    class ViewHolder {
         TextView discount_name;
         CheckBox discount_select;
     }

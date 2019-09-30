@@ -1780,6 +1780,8 @@ public class DataHelper {
                     + " ADD COLUMN isWaiterPrint INTEGER default 0 ");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN promotionQty INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.TableInfo
+                    + " ADD COLUMN isLocked INTEGER default 0");
 
             db.execSQL("ALTER TABLE " + TableNames.KotItemModifier
                     + " ADD COLUMN kotItemDetailUniqueId TEXT");
