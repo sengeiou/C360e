@@ -2186,7 +2186,7 @@ public class ObjectFactory {
             long time = System.currentTimeMillis();
             if (kotSummary == null) {
                 kotSummary = new KotSummary();
-                Integer id = CommonSQL.getNextSeq(TableNames.KotSummary);
+                Integer id = CommonSQL.getKotNextSeq(TableNames.KotSummary);
                 kotSummary.setId(id);
                 kotSummary.setUniqueId(CommonSQL.getUniqueId());
                 kotSummary.setOrderId(order.getId());
@@ -2224,7 +2224,8 @@ public class ObjectFactory {
             if (kotSummary == null) {
                 kotSummary = new KotSummary();
 
-                int next = CommonSQL.getNextSeq(TableNames.KotSummary);
+                int next = CommonSQL.getKotNextSeq(TableNames.KotSummary);
+//                int next = CommonSQL.getNextSeq(TableNames.KotSummary);
 //                int nextWithRevId = Integer.parseInt(revenueCenter.getId() + "0");
 //                if (next < nextWithRevId) {
 //                    next = Integer.parseInt(order.getRevenueId() + "" + next);
@@ -2280,7 +2281,8 @@ public class ObjectFactory {
             if (kotSummary == null) {
                 kotSummary = new KotSummary();
 
-                int next = CommonSQL.getNextSeq(TableNames.KotSummary);
+                int next = CommonSQL.getKotNextSeq(TableNames.KotSummary);
+//                int next = CommonSQL.getNextSeq(TableNames.KotSummary);
 //                int nextWithRevId = Integer.parseInt(revenueCenter.getId() + "0");
 //                if (next < nextWithRevId) {
 //                    next = Integer.parseInt(order.getRevenueId() + "" + next);
@@ -2331,7 +2333,8 @@ public class ObjectFactory {
                 long time = System.currentTimeMillis();
                 kotItemDetail = new KotItemDetail();
 
-                int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
+                int next = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
+//                int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
 //                int nextWithRevId = Integer.parseInt(order.getRevenueId() + "0");
 //                if (next < nextWithRevId) {
 //                    next = Integer.parseInt(order.getRevenueId() + "" + next);
@@ -2364,6 +2367,7 @@ public class ObjectFactory {
                 kotItemDetail.setUnFinishQty(orderDetail.getItemNum()); // 新创建的都是跟ItemNum一样
                 kotItemDetail.setCategoryId(categoryId);
                 kotItemDetail.setIsTakeAway(orderDetail.getIsTakeAway());
+                kotItemDetail.setKotSummaryUniqueId(kotSummary.getUniqueId());
                 KotItemDetailSQL.update(kotItemDetail);
             } else {
                 kotItemDetail.setUnFinishQty(orderDetail.getItemNum());
@@ -2377,7 +2381,8 @@ public class ObjectFactory {
         KotItemDetail kotItemDetail = new KotItemDetail();
         synchronized (lock_getKotItemDetail) {
 
-            int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
+            int next = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
+//            int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
 //            int nextWithRevId = Integer.parseInt(cpKotItemDetail.getRevenueId() + "0");
 //            if (next < nextWithRevId) {
 //                next = Integer.parseInt(cpKotItemDetail.getRevenueId() + "" + next);
@@ -2409,6 +2414,7 @@ public class ObjectFactory {
             kotItemDetail.setUnFinishQty(orderDetail.getItemNum()); // 新创建的都是跟ItemNum一样
             kotItemDetail.setCategoryId(cpKotItemDetail.getCategoryId());
             kotItemDetail.setIsTakeAway(cpKotItemDetail.getIsTakeAway());
+            kotItemDetail.setKotSummaryUniqueId(cpKotItemDetail.getKotSummaryUniqueId());
             KotItemDetailSQL.update(kotItemDetail);
         }
         return kotItemDetail;
@@ -2423,7 +2429,8 @@ public class ObjectFactory {
                 long time = System.currentTimeMillis();
                 kotItemDetail = new KotItemDetail();
 
-                int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
+                int next = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
+//                int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
 //                int nextWithRevId = Integer.parseInt(mainKotItemDetail.getRevenueId() + "0");
 //                if (next < nextWithRevId) {
 //                    next = Integer.parseInt(mainKotItemDetail.getRevenueId() + "" + next);
@@ -2456,6 +2463,7 @@ public class ObjectFactory {
                 kotItemDetail.setCategoryId(ParamConst.KOTITEMDETAIL_CATEGORYID_SUB);
                 kotItemDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
                 kotItemDetail.setFireStatus(kotItemDetail.getFireStatus());
+                kotItemDetail.setKotSummaryUniqueId(mainKotItemDetail.getKotSummaryUniqueId());
                 KotItemDetailSQL.update(kotItemDetail);
             }
         }
@@ -2475,7 +2483,8 @@ public class ObjectFactory {
             if (kotItemModifier == null) {
                 kotItemModifier = new KotItemModifier();
 
-                int next = CommonSQL.getNextSeq(TableNames.KotItemModifier);
+                int next = CommonSQL.getKotNextSeq(TableNames.KotItemModifier);
+//                int next = CommonSQL.getNextSeq(TableNames.KotItemModifier);
 //                int nextWithRevId = Integer.parseInt(kotItemDetail.getRevenueId() + "0");
 //                if (next < nextWithRevId) {
 //                    next = Integer.parseInt(kotItemDetail.getRevenueId() + "" + next);
@@ -2514,7 +2523,8 @@ public class ObjectFactory {
             if (kotNotification == null) {
                 kotNotification = new KotNotification();
 
-                int next = CommonSQL.getNextSeq(TableNames.KotNotification);
+                int next = CommonSQL.getKotNextSeq(TableNames.KotNotification);
+//                int next = CommonSQL.getNextSeq(TableNames.KotNotification);
 //                int nextWithRevId = Integer.parseInt(kotItemDetail.getRevenueId() + "0");
 //                if (next < nextWithRevId) {
 //                    next = Integer.parseInt(kotItemDetail.getRevenueId() + "" + next);
@@ -2540,6 +2550,7 @@ public class ObjectFactory {
                 kotNotification.setUnFinishQty(kotItemDetail.getUnFinishQty());
                 kotNotification.setKotItemDetailId(kotItemDetail.getId());
                 kotNotification.setKotItemNum(kotItemDetail.getItemNum());
+                kotNotification.setKotItemDetailUniqueId(kotItemDetail.getUniqueId());
                 KotNotificationSQL.update(kotNotification);
             } else {
                 kotNotification.setStatus(ParamConst.KOTNOTIFICATION_STATUS_NORMAL);

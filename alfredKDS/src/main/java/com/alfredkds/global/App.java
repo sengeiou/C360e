@@ -351,7 +351,7 @@ public class App extends BaseApplication {
 
             kot = new Kot();
             kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(
-                    kotSummaries.get(i).getRevenueCenterId(), kotSummaries.get(i).getId(),
+                    kotSummaries.get(i).getRevenueCenterId(), kotSummaries.get(i).getUniqueId(),
                     kotSummaries.get(i).getOrderId());
 
             boolean isPlaceOrder = false;

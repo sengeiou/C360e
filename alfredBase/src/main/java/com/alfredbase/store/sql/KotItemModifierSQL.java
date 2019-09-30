@@ -22,8 +22,8 @@ public class KotItemModifierSQL {
         try {
             String sql = "replace into "
                     + TableNames.KotItemModifier
-                    + "(id, kotItemDetailId, modifierId, modifierName, modifierNum, status, printerId, uniqueId)"
-                    + " values (?,?,?,?,?,?,?,?)";
+                    + "(id, kotItemDetailId, modifierId, modifierName, modifierNum, status, printerId, uniqueId, kotItemDetailUniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{kotItemModifier.getId(),
@@ -33,7 +33,8 @@ public class KotItemModifierSQL {
                             kotItemModifier.getModifierNum(),
                             kotItemModifier.getStatus(),
                             kotItemModifier.getPrinterId(),
-                            kotItemModifier.getUniqueId()
+                            kotItemModifier.getUniqueId(),
+                            kotItemModifier.getKotItemDetailUniqueId()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,8 +50,8 @@ public class KotItemModifierSQL {
             db.beginTransaction();
             String sql = "replace into "
                     + TableNames.KotItemModifier
-                    + "(id, kotItemDetailId, modifierId, modifierName, modifierNum, status, printerId, uniqueId)"
-                    + " values (?,?,?,?,?,?,?,?)";
+                    + "(id, kotItemDetailId, modifierId, modifierName, modifierNum, status, printerId, uniqueId, kotItemDetailUniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (KotItemModifier kotItemModifier : kotItemModifiers) {
@@ -70,6 +71,8 @@ public class KotItemModifierSQL {
                         kotItemModifier.getPrinterId());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 8,
                         kotItemModifier.getUniqueId());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 9,
+                        kotItemModifier.getKotItemDetailUniqueId());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -96,13 +99,14 @@ public class KotItemModifierSQL {
                     .moveToNext()) {
                 kotItemModifier = new KotItemModifier();
                 kotItemModifier.setId(cursor.getInt(0));
-                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
-                kotItemModifier.setModifierId(cursor.getInt(2));
-                kotItemModifier.setModifierName(cursor.getString(3));
-                kotItemModifier.setModifierNum(cursor.getInt(4));
-                kotItemModifier.setStatus(cursor.getInt(5));
-                kotItemModifier.setPrinterId(cursor.getInt(6));
-                kotItemModifier.setUniqueId(cursor.getString(7));
+                kotItemModifier.setUniqueId(cursor.getString(1));
+                kotItemModifier.setKotItemDetailId(cursor.getInt(2));
+                kotItemModifier.setModifierId(cursor.getInt(3));
+                kotItemModifier.setModifierName(cursor.getString(4));
+                kotItemModifier.setModifierNum(cursor.getInt(5));
+                kotItemModifier.setStatus(cursor.getInt(6));
+                kotItemModifier.setPrinterId(cursor.getInt(7));
+                kotItemModifier.setKotItemDetailUniqueId(cursor.getString(8));
                 result.add(kotItemModifier);
             }
         } catch (Exception e) {
@@ -124,14 +128,23 @@ public class KotItemModifierSQL {
             cursor = SQLExe.getDB().rawQuery(sql, new String[]{kotItemDetailId + "", modifierId + ""});
             if (cursor.moveToFirst()) {
                 kotItemModifier = new KotItemModifier();
+//                kotItemModifier.setId(cursor.getInt(0));
+//                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
+//                kotItemModifier.setModifierId(cursor.getInt(2));
+//                kotItemModifier.setModifierName(cursor.getString(3));
+//                kotItemModifier.setModifierNum(cursor.getInt(4));
+//                kotItemModifier.setStatus(cursor.getInt(5));
+//                kotItemModifier.setPrinterId(cursor.getInt(6));
+//                kotItemModifier.setUniqueId(cursor.getString(7));
                 kotItemModifier.setId(cursor.getInt(0));
-                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
-                kotItemModifier.setModifierId(cursor.getInt(2));
-                kotItemModifier.setModifierName(cursor.getString(3));
-                kotItemModifier.setModifierNum(cursor.getInt(4));
-                kotItemModifier.setStatus(cursor.getInt(5));
-                kotItemModifier.setPrinterId(cursor.getInt(6));
-                kotItemModifier.setUniqueId(cursor.getString(7));
+                kotItemModifier.setUniqueId(cursor.getString(1));
+                kotItemModifier.setKotItemDetailId(cursor.getInt(2));
+                kotItemModifier.setModifierId(cursor.getInt(3));
+                kotItemModifier.setModifierName(cursor.getString(4));
+                kotItemModifier.setModifierNum(cursor.getInt(5));
+                kotItemModifier.setStatus(cursor.getInt(6));
+                kotItemModifier.setPrinterId(cursor.getInt(7));
+                kotItemModifier.setKotItemDetailUniqueId(cursor.getString(8));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -159,14 +172,23 @@ public class KotItemModifierSQL {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
                 kotItemModifier = new KotItemModifier();
+//                kotItemModifier.setId(cursor.getInt(0));
+//                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
+//                kotItemModifier.setModifierId(cursor.getInt(2));
+//                kotItemModifier.setModifierName(cursor.getString(3));
+//                kotItemModifier.setModifierNum(cursor.getInt(4));
+//                kotItemModifier.setStatus(cursor.getInt(5));
+//                kotItemModifier.setPrinterId(cursor.getInt(6));
+//                kotItemModifier.setUniqueId(cursor.getString(7));
                 kotItemModifier.setId(cursor.getInt(0));
-                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
-                kotItemModifier.setModifierId(cursor.getInt(2));
-                kotItemModifier.setModifierName(cursor.getString(3));
-                kotItemModifier.setModifierNum(cursor.getInt(4));
-                kotItemModifier.setStatus(cursor.getInt(5));
-                kotItemModifier.setPrinterId(cursor.getInt(6));
-                kotItemModifier.setUniqueId(cursor.getString(7));
+                kotItemModifier.setUniqueId(cursor.getString(1));
+                kotItemModifier.setKotItemDetailId(cursor.getInt(2));
+                kotItemModifier.setModifierId(cursor.getInt(3));
+                kotItemModifier.setModifierName(cursor.getString(4));
+                kotItemModifier.setModifierNum(cursor.getInt(5));
+                kotItemModifier.setStatus(cursor.getInt(6));
+                kotItemModifier.setPrinterId(cursor.getInt(7));
+                kotItemModifier.setKotItemDetailUniqueId(cursor.getString(8));
                 result.add(kotItemModifier);
             }
         } catch (Exception e) {
@@ -196,14 +218,23 @@ public class KotItemModifierSQL {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
                 kotItemModifier = new KotItemModifier();
+//                kotItemModifier.setId(cursor.getInt(0));
+//                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
+//                kotItemModifier.setModifierId(cursor.getInt(2));
+//                kotItemModifier.setModifierName(cursor.getString(3));
+//                kotItemModifier.setModifierNum(cursor.getInt(4));
+//                kotItemModifier.setStatus(cursor.getInt(5));
+//                kotItemModifier.setPrinterId(cursor.getInt(6));
+//                kotItemModifier.setUniqueId(cursor.getString(7));
                 kotItemModifier.setId(cursor.getInt(0));
-                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
-                kotItemModifier.setModifierId(cursor.getInt(2));
-                kotItemModifier.setModifierName(cursor.getString(3));
-                kotItemModifier.setModifierNum(cursor.getInt(4));
-                kotItemModifier.setStatus(cursor.getInt(5));
-                kotItemModifier.setPrinterId(cursor.getInt(6));
-                kotItemModifier.setUniqueId(cursor.getString(7));
+                kotItemModifier.setUniqueId(cursor.getString(1));
+                kotItemModifier.setKotItemDetailId(cursor.getInt(2));
+                kotItemModifier.setModifierId(cursor.getInt(3));
+                kotItemModifier.setModifierName(cursor.getString(4));
+                kotItemModifier.setModifierNum(cursor.getInt(5));
+                kotItemModifier.setStatus(cursor.getInt(6));
+                kotItemModifier.setPrinterId(cursor.getInt(7));
+                kotItemModifier.setKotItemDetailUniqueId(cursor.getString(8));
                 result.add(kotItemModifier);
             }
         } catch (Exception e) {

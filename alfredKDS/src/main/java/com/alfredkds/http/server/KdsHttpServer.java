@@ -729,6 +729,10 @@ public class KdsHttpServer extends AlfredHttpServer {
                         if (CommonSQL.isFakeId(kotSummary.getId())) {
                             kotSummary.setId(kotSummary.getOriginalId());
                         }
+
+                        if (CommonSQL.isFakeId(kotSummary.getUniqueId())) {
+                            kotSummary.setUniqueId(kotSummary.getOriginalUniqueId());
+                        }
                     }
 
                     KotSummarySQL.update(kotSummary);
@@ -736,7 +740,9 @@ public class KdsHttpServer extends AlfredHttpServer {
                         if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_EXPEDITER) {
                             for (KotItemDetail kotItemDetail : kotItemDetails) {
                                 int kotSummaryId = CommonSQL.isFakeId(kotSummary.getId()) ? kotSummary.getOriginalId() : kotSummary.getId();
+                                String kotSummaryUniqueId = CommonSQL.isFakeId(kotSummary.getUniqueId()) ? kotSummary.getOriginalUniqueId() : kotSummary.getUniqueId();
                                 kotItemDetail.setKotSummaryId(kotSummaryId);//set original id
+                                kotItemDetail.setKotSummaryUniqueId(kotSummaryUniqueId);//set original id
                             }
                         }
 
@@ -1051,13 +1057,13 @@ public class KdsHttpServer extends AlfredHttpServer {
                         } else {//sub kds with fake id
                             int KotSummaryId = CommonSQL.isFakeId(kotSummary.getId()) ? kotSummary.getOriginalId() : kotSummary.getId();
                             KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(KotSummaryId, kotSummary.getRevenueCenterId());
-                            String fakeId = kotSummary.getUniqueId();
+                            String fakeUniqueId = kotSummary.getUniqueId();
 
                             if (kotSummaryLocal != null) {
                                 KotSummarySQL.updateKotSummaryOrderCountByUniqueId(kotSummary.getOrderDetailCount(),
                                         kotSummaryLocal.getUniqueId());
 
-                                fakeId = CommonSQL.getFakeUniqueId();
+                                fakeUniqueId = CommonSQL.getFakeUniqueId();
                             }
 
 
@@ -1078,7 +1084,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                                     isFire = true;
                                 } else {
-//                                    kotItemDetails.get(i).setKotSummaryId(fakeId);//assign to fake id
+                                    kotItemDetails.get(i).setKotSummaryUniqueId(fakeUniqueId);//assign to fake id
                                     KotItemDetailSQL.update(kotItemDetails.get(i));
                                     orderDetailIds.add(kotItemDetails.get(i).getOrderDetailId());
                                 }
@@ -1086,7 +1092,7 @@ public class KdsHttpServer extends AlfredHttpServer {
 
                             if (!isFire) {
                                 KotSummarySQL.deleteKotSummaryTmp(kotSummary);
-                                kotSummary.setUniqueId(fakeId);
+                                kotSummary.setUniqueId(fakeUniqueId);
 //                                kotSummary.setOrderDetailCount(kotItemDetails.size());
                                 KotSummarySQL.addKotSummary(kotSummary);
                             }

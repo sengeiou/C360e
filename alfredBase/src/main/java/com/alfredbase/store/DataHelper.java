@@ -1785,6 +1785,10 @@ public class DataHelper {
                     + " ADD COLUMN kotItemDetailUniqueId TEXT");
             db.execSQL("ALTER TABLE " + TableNames.KotSummary
                     + " ADD COLUMN originalUniqueId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotItemDetail
+                    + " ADD COLUMN kotSummaryUniqueId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotNotification
+                    + " ADD COLUMN kotItemDetailUniqueId TEXT");
 
         }
 

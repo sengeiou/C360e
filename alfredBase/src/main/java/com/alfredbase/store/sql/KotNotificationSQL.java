@@ -118,19 +118,19 @@ public class KotNotificationSQL {
                     .moveToNext()) {
                 notification = new KotNotification();
                 notification.setId(cursor.getInt(0));
-                notification.setOrderId(cursor.getInt(1));
-                notification.setOrderDetailId(cursor.getInt(2));
-                notification.setRevenueCenterId(cursor.getInt(3));
-                notification.setTableName(cursor.getString(4));
-                notification.setRevenueCenterName(cursor.getString(5));
-                notification.setItemName(cursor.getString(6));
-                notification.setQty(cursor.getInt(7));
-                notification.setSession(cursor.getInt(8));
-                notification.setStatus(cursor.getInt(9));
-                notification.setUnFinishQty(cursor.getInt(10));
-                notification.setKotItemDetailId(cursor.getInt(11));
-                notification.setKotItemNum(cursor.getInt(12));
-                notification.setUniqueId(cursor.getString(13));
+                notification.setUniqueId(cursor.getString(1));
+                notification.setOrderId(cursor.getInt(2));
+                notification.setOrderDetailId(cursor.getInt(3));
+                notification.setRevenueCenterId(cursor.getInt(4));
+                notification.setTableName(cursor.getString(5));
+                notification.setRevenueCenterName(cursor.getString(6));
+                notification.setItemName(cursor.getString(7));
+                notification.setQty(cursor.getInt(8));
+                notification.setSession(cursor.getInt(9));
+                notification.setStatus(cursor.getInt(10));
+                notification.setUnFinishQty(cursor.getInt(11));
+                notification.setKotItemDetailId(cursor.getInt(12));
+                notification.setKotItemNum(cursor.getInt(13));
                 result.add(notification);
             }
         } catch (Exception e) {
@@ -145,7 +145,7 @@ public class KotNotificationSQL {
     }
 
     public static KotNotification getKotNotification(int orderDetailId, int kotItemDetailId) {
-        KotNotification result = null;
+        KotNotification notification = null;
         String sql = "select * from " + TableNames.KotNotification
                 + " where orderDetailId = ? and kotItemDetailId = ?";
         Cursor cursor = null;
@@ -153,21 +153,35 @@ public class KotNotificationSQL {
         try {
             cursor = db.rawQuery(sql, new String[]{orderDetailId + "", kotItemDetailId + ""});
             if (cursor.moveToFirst()) {
-                result = new KotNotification();
-                result.setId(cursor.getInt(0));
-                result.setOrderId(cursor.getInt(1));
-                result.setOrderDetailId(cursor.getInt(2));
-                result.setRevenueCenterId(cursor.getInt(3));
-                result.setTableName(cursor.getString(4));
-                result.setRevenueCenterName(cursor.getString(5));
-                result.setItemName(cursor.getString(6));
-                result.setQty(cursor.getInt(7));
-                result.setSession(cursor.getInt(8));
-                result.setStatus(cursor.getInt(9));
-                result.setUnFinishQty(cursor.getInt(10));
-                result.setKotItemDetailId(cursor.getInt(11));
-                result.setKotItemNum(cursor.getInt(12));
-                result.setUniqueId(cursor.getString(13));
+                notification = new KotNotification();
+//                result.setId(cursor.getInt(0));
+//                result.setOrderId(cursor.getInt(1));
+//                result.setOrderDetailId(cursor.getInt(2));
+//                result.setRevenueCenterId(cursor.getInt(3));
+//                result.setTableName(cursor.getString(4));
+//                result.setRevenueCenterName(cursor.getString(5));
+//                result.setItemName(cursor.getString(6));
+//                result.setQty(cursor.getInt(7));
+//                result.setSession(cursor.getInt(8));
+//                result.setStatus(cursor.getInt(9));
+//                result.setUnFinishQty(cursor.getInt(10));
+//                result.setKotItemDetailId(cursor.getInt(11));
+//                result.setKotItemNum(cursor.getInt(12));
+//                result.setUniqueId(cursor.getString(13));
+                notification.setId(cursor.getInt(0));
+                notification.setUniqueId(cursor.getString(1));
+                notification.setOrderId(cursor.getInt(2));
+                notification.setOrderDetailId(cursor.getInt(3));
+                notification.setRevenueCenterId(cursor.getInt(4));
+                notification.setTableName(cursor.getString(5));
+                notification.setRevenueCenterName(cursor.getString(6));
+                notification.setItemName(cursor.getString(7));
+                notification.setQty(cursor.getInt(8));
+                notification.setSession(cursor.getInt(9));
+                notification.setStatus(cursor.getInt(10));
+                notification.setUnFinishQty(cursor.getInt(11));
+                notification.setKotItemDetailId(cursor.getInt(12));
+                notification.setKotItemNum(cursor.getInt(13));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,7 +191,7 @@ public class KotNotificationSQL {
                 cursor.close();
             }
         }
-        return result;
+        return notification;
     }
 
     public static int getAllKotNotificationQty() {

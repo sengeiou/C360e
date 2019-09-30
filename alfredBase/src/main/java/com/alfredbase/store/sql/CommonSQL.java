@@ -34,6 +34,29 @@ public class CommonSQL {
         }
     }
 
+    public static int getKotNextSeq(String tableName) {
+        synchronized (tableName) {
+            int seq = 0;
+            String sql = "select id from " + tableName
+                    + " where id = (select max(id) from " + tableName + ")";
+            Cursor cursor = null;
+            try {
+                cursor = SQLExe.getDB().rawQuery(sql, new String[]{});
+                if (cursor.moveToFirst()) {
+                    seq = cursor.getInt(0);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            } finally {
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+            }
+            return seq + 1;
+        }
+    }
+
     public static String getUniqueId() {
         return UUID.randomUUID().toString();
     }
