@@ -14,9 +14,10 @@ import java.util.List;
 
 
 public class MycallAdapter extends RvAdapter<CallBean> {
-    public List<CallBean> callList = new ArrayList<CallBean>();
+    public List<CallBean> callList;
     ScaleAnimation scaleAnimation;
     private Context mContext;
+    private int printerGroupId;
 
     public MycallAdapter(Context context, List<CallBean> list, RvListener listener) {
 
@@ -53,6 +54,14 @@ public class MycallAdapter extends RvAdapter<CallBean> {
     @Override
     protected RvHolder getHolder(View view, int viewType) {
         return new MyCallHolder(view, viewType, listener);
+    }
+
+    public int getPrinterGroupId() {
+        return printerGroupId;
+    }
+
+    public void setPrinterGroupId(int printerGroupId) {
+        this.printerGroupId = printerGroupId;
     }
 
     public void setAnimation() {

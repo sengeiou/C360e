@@ -1230,6 +1230,36 @@ public class HttpAPI {
 
     }
 
+    public static void syncKotItemDetail(Context context, SyncMsg syncMsg,
+                                         String url, SyncHttpClient httpClient) {
+        StringEntity entity = null;
+        try {
+            entity = HttpAssembling.getUploadOrderInfoParam(syncMsg);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (entity != null) {
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                            } else {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            throw new RuntimeException(error);
+                        }
+                    });
+        }
+    }
 
     /*
      * Sync order and XZReport data from POS to Cloud
@@ -2444,6 +2474,52 @@ public class HttpAPI {
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             System.out.print("192.168.20.102========onFailure:" + error.getMessage());
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void callAppNo(final Context context, String url,
+                                 AsyncHttpClient httpClient, String params) {
+        try {
+
+            JSONObject jsonObject = new JSONObject(params);
+            String num = jsonObject.getString("callNumber");
+            String tag = jsonObject.getString("numTag");
+            String printerName = jsonObject.getString("printerName");
+            int printerGroupId = jsonObject.getInt("printerGroupId");
+
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("callNumber", num);
+            requestParams.put("printerGroupId", printerGroupId);
+            requestParams.put("printerName", printerName);
+            requestParams.put("callType", App.instance.getSystemSettings().getCallStyle());
+
+            if (Store.getBoolean(App.instance, Store.CALL_NUM_UPDATE, false)) {
+                requestParams.put("header", Store.getString(App.instance, Store.CALL_NUM_HEADER));
+                requestParams.put("footer", Store.getString(App.instance, Store.CALL_NUM_FOOTER));
+            }
+
+            if (TextUtils.isEmpty(tag)) {
+                requestParams.put("callTag", 0);
+            } else {
+                byte t = (byte) tag.charAt(0);
+                requestParams.put("callTag", t % 64);
+            }
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            Store.putBoolean(App.instance, Store.CALL_NUM_UPDATE, false);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
                         }
                     }
             );

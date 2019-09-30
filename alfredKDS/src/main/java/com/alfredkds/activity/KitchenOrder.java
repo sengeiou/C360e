@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +26,12 @@ import com.alfredbase.BaseActivity;
 import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.utils.DialogFactory;
@@ -48,18 +49,20 @@ import com.alfredkds.javabean.KotItem;
 import com.alfredkds.view.FinishQtyWindow;
 import com.alfredkds.view.KOTArrayAdapter;
 import com.alfredkds.view.KOTArrayLanAdapter;
+import com.alfredkds.view.PendingListAdapter;
 import com.alfredkds.view.PopItemAdapter;
 import com.alfredkds.view.PopItemListView;
 import com.alfredkds.view.PopItemListView.RemoveDirection;
 import com.alfredkds.view.PopItemListView.RemoveListener;
 import com.alfredkds.view.SwipeItemLayout;
-import com.alfredkds.view.SwipeMenuRecyclerView;
 import com.alfredkds.view.TopBarView;
 import com.alfredkds.view.Type;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,10 +73,11 @@ public class KitchenOrder extends BaseActivity {
     public static final int HANDLER_TRANSFER_KOT = 3;
     public static final int HANDLER_MERGER_KOT = 4;
 
-    private RecyclerView ll_orders;    //水平列表
+    private RecyclerView ll_orders, rcvPendingList;    //水平列表
     public KOTArrayAdapter adapter;
     public KOTArrayLanAdapter madapter;
     private List<Kot> kots = new ArrayList<Kot>();
+    private PendingListAdapter pendingListAdapter;
 
     private TopBarView topBarView;    //页面顶部view
 
@@ -96,7 +100,7 @@ public class KitchenOrder extends BaseActivity {
         setContentView(R.layout.activity_kitchen_order);
         loadingDialog = new LoadingDialog(context);
         loadingDialog.setTitle(context.getResources().getString(R.string.loading));
-        mainPosInfo = App.instance.getCurrentConnectedMainPos();
+        mainPosInfo = App.instance.getCurrentConnectedMainPosList();
         App.instance.setRing();
 
 //		filter = new IntentFilter();
@@ -106,22 +110,99 @@ public class KitchenOrder extends BaseActivity {
         //ll_progress_list = (LinearLayout) findViewById(R.id.ll_progress_list);
         //initProgressList();
         ll_orders = (RecyclerView) findViewById(R.id.ll_orders);
+        rcvPendingList = (RecyclerView) findViewById(R.id.rcvPendingList);
         tv_order_qyt = (TextView) findViewById(R.id.tv_order_qyt);
         li_title = (LinearLayout) findViewById(R.id.li_lan_title);
 
+        pendingListAdapter = new PendingListAdapter(this, getKotItemsData());
+        rcvPendingList.setLayoutManager(new LinearLayoutManager(this));
+        rcvPendingList.setAdapter(pendingListAdapter);
 
         finishQtyPop = new FinishQtyWindow(context, findViewById(R.id.rl_root), handler);
+
+        if (App.instance.getSystemSettings().isPendingList()) {
+            rcvPendingList.setVisibility(View.VISIBLE);
+        } else {
+            rcvPendingList.setVisibility(View.GONE);
+        }
 
         initTopBarView();
         initTextTypeFace();
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    private List<KotItem> getKotItemsData() {
+        kots = App.instance.getRefreshKots();
+        Map<Integer, KotItem> map = new HashMap<>();
+
+        for (KotItem kotItem : getKotItem(kots)) {
+            if (map.containsKey(kotItem.getItemId())) {
+                int qty = map.get(kotItem.getItemId()).getQty() + kotItem.getQty();
+                map.get(kotItem.getItemId()).setQty(qty);
+            } else {
+                map.put(kotItem.getItemId(), kotItem);
+            }
+        }
+
+        return new ArrayList<>(map.values());
+    }
+
     public Handler handler = new Handler() {
         public void handleMessage(Message msg) {
+            if (pendingListAdapter != null) {
+                pendingListAdapter.setData(getKotItemsData());
+            }
+
             switch (msg.what) {
+                case ResultCode.USER_NO_PERMIT:
+                    loadingDialog.dismiss();
+                    UIHelp.showToast(context, context.getResources().getString(R.string.pairing_fails));
+                    break;
                 case App.HANDLER_NEW_KOT:
                     kots = App.instance.getRefreshKots();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.setAddFirstItem(true);
+                        madapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kotItems.size() + "");
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.setAddFirstItem(true);
+                        adapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kots.size() + "");
+                    }
+
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        kadapter.setKot(App.instance.getKot(kotSummary));
+                        kadapter.notifyDataSetChanged();
+                    }
+                    break;
+                case App.HANDLER_NEXT_KOT:
+                    kots = App.instance.getRefreshKots();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.setAddFirstItem(true);
+                        madapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kotItems.size() + "");
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.setAddFirstItem(true);
+                        adapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kots.size() + "");
+                    }
+
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        kadapter.setKot(App.instance.getKot(kotSummary));
+                        kadapter.notifyDataSetChanged();
+                    }
+                    break;
+                case App.HANDLER_TMP_KOT:
+                    kots = App.instance.getRefreshKots();
+
                     if (App.instance.getSystemSettings().isKdsLan()) {
                         madapter.setKots(getKotItem(kots));
                         madapter.setAddFirstItem(true);
@@ -270,10 +351,16 @@ public class KitchenOrder extends BaseActivity {
                     if (!TextUtils.isEmpty(str)) {
                         loadingDialog.show();
                         Map<String, Object> parameters = new HashMap<String, Object>();
-                        parameters.put("callnumber", str);
+                        parameters.put("callNumber", str);
                         parameters.put("numTag", numTag);
-                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId());
-                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, pos, parameters, handler, id);
+
+                        Printer printer = App.instance.getPrinter();
+                        if (printer != null) {
+                            parameters.put("printerGroupId", printer.getId());
+                            parameters.put("printerName", printer.getPrinterName());
+                        }
+
+                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, kotItem.getKotItemDetailUniqueId());
                     } else {
                         UIHelp.showToast(KitchenOrder.this, getString(R.string.order_number_cannot_empty));
                     }
@@ -288,11 +375,16 @@ public class KitchenOrder extends BaseActivity {
                     if (!TextUtils.isEmpty(str)) {
                         loadingDialog.show();
                         Map<String, Object> parameters = new HashMap<String, Object>();
-                        parameters.put("callnumber", str);
+                        parameters.put("callNumber", str);
                         parameters.put("numTag", numTag);
-                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(k.getRevenueCenterId());
-                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, pos, parameters, handler, id);
 
+                        Printer printer = App.instance.getPrinter();
+                        if (printer != null) {
+                            parameters.put("printerGroupId", printer.getId());
+                            parameters.put("printerName", printer.getPrinterName());
+                        }
+
+                        SyncCentre.getInstance().callSpecifyNum(KitchenOrder.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, null);
                     } else {
                         UIHelp.showToast(KitchenOrder.this, getString(R.string.order_number_cannot_empty));
                     }
@@ -319,11 +411,12 @@ public class KitchenOrder extends BaseActivity {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", kotSummary);
                             parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                             parameters.put("type", 1);
-                            MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId());
-                            SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                    pos, parameters, handler, -1);
+                            parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
 
+                            SyncCentre.getInstance().kotComplete(KitchenOrder.this,
+                                    App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler, -1);
                             loadingDialog.show();
                         }
                     });
@@ -362,23 +455,90 @@ public class KitchenOrder extends BaseActivity {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", kotSummary1);
                             parameters.put("kotItemDetails", itemDetails);
+                            parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
                             parameters.put("type", 1);
-                            MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary1.getRevenueCenterId());
+                            parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary1.getRevenueCenterId()));
                             SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                    pos, parameters, handler, 1);
-
+                                    App.instance.getCurrentConnectedMainPos(kotSummary1.getRevenueCenterId()), parameters, handler, 1);
                             loadingDialog.show();
                         }
                     });
-                case App.HANDLER_RELOAD_KOT:
-                    App.instance.reload(context, handler);
+                case App.HANDLER_KOT_NEXT:
+                    //region next kds
+                    Bundle bundle2 = msg.getData();
+                    String kotStr = bundle2.getString("kot");
+                    String kidStr = bundle2.getString("kotItemDetails");
+                    String kimStr = bundle2.getString("kotItemModifiers");
+
+                    final Kot kot = new Gson().fromJson(kotStr, Kot.class);
+                    if (kot == null) return;
+
+                    final List<KotItemDetail> kotItemDetails = new Gson().fromJson(kidStr, new TypeToken<List<KotItemDetail>>() {
+                    }.getType());
+                    final List<KotItemModifier> kotItemModifiers = new Gson().fromJson(kimStr, new TypeToken<List<KotItemModifier>>() {
+                    }.getType());
+
+                    String titleNext = getResources().getString(R.string.warning);
+                    String contentNext = "Are you sure bring to next kds?";
+                    String leftNext = getResources().getString(R.string.no);
+                    String rightNext = getResources().getString(R.string.yes);
+                    DialogFactory.commonTwoBtnDialog(KitchenOrder.this, titleNext, contentNext,
+                            leftNext, rightNext, null, new OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Map<String, Object> parameters = new HashMap<>();
+                                    parameters.put("kotSummary", kot.getKotSummary());
+//                                    parameters.put("kotItemDetails", kot.getKotItemDetails());
+                                    parameters.put("kotItemDetails", kotItemDetails);
+//                                    parameters.put("kotModifiers", kot.getKotItemModifiers());
+                                    parameters.put("kotModifiers", kotItemModifiers);
+                                    parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+                                    parameters.put("type", 1);
+
+                                    MainPosInfo mainPosInfo = App.instance.getCurrentConnectedMainPos(kot.getKotSummary().getRevenueCenterId());
+
+                                    if (mainPosInfo != null) {
+                                        parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
+                                        SyncCentre.getInstance().kotNextKDS(KitchenOrder.this,
+                                                mainPosInfo, parameters, handler, -1);
+
+                                        loadingDialog.show();
+                                    }
+                                }
+                            });
+                    //endregion
+                    break;
+                case App.HANDLER_KOT_NEXT_SUCCESS:
+                    loadingDialog.dismiss();
+                    kots = App.instance.getRefreshKots();
+                    if (App.instance.getSystemSettings().isKdsLan()) {
+                        madapter.setKots(getKotItem(kots));
+                        madapter.setAddFirstItem(true);
+                        madapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kotItems.size() + "");
+                    } else {
+                        adapter.setKots(kots);
+                        adapter.setAddFirstItem(true);
+                        adapter.notifyDataSetChanged();
+
+                        tv_order_qyt.setText(kots.size() + "");
+                    }
+
+                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                        kadapter.setKot(App.instance.getKot(KitchenOrder.this.kotSummary));
+                        kadapter.notifyDataSetChanged();
+                    }
+                    break;
+                case App.HANDLER_KOT_NEXT_FAILED:
+                    loadingDialog.dismiss();
+                    refresh();
                     break;
                 default:
                     break;
             }
         }
 
-        ;
     };
 
     /**
@@ -432,7 +592,7 @@ public class KitchenOrder extends BaseActivity {
 
     @Override
     public void httpRequestAction(int action, Object obj) {
-        handler.sendMessage(handler.obtainMessage(action, null));
+        handler.sendMessage(handler.obtainMessage(action, obj));
     }
 
 //	private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -458,7 +618,6 @@ public class KitchenOrder extends BaseActivity {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
         }
-
 
         doubleBackToExitPressedOnce = false;
 
@@ -492,6 +651,10 @@ public class KitchenOrder extends BaseActivity {
                         int unFinishQty = kotItemDetail.getUnFinishQty();
                         KotItem item = new KotItem();
 
+                        if (kotItemDetail.getKotStatus() != ParamConst.KOT_STATUS_TMP) {
+                            item.setPlaceOrder(true);
+                        }
+
                         KotSummary kotSummary = kot.getKotSummary();
                         item.setOrderNo(kotSummary.getOrderNo());
                         if (TextUtils.isEmpty(kotSummary.getTableName())) {
@@ -511,7 +674,7 @@ public class KitchenOrder extends BaseActivity {
                         } else {
                             String itemName = kotItemDetail.getItemName();
                             if (kotSummary.getIsTakeAway() == ParamConst.TAKE_AWAY || kotItemDetail.getIsTakeAway() == ParamConst.TAKE_AWAY) {
-                                itemName = itemName + "(" + this.getString(R.string.takeaway) + ")";
+                                itemName = itemName + "(Take Away)";
                             }
                             item.setItemDetailName(itemName);
                         }
@@ -520,6 +683,8 @@ public class KitchenOrder extends BaseActivity {
                         item.setCallType(kotItemDetail.getCallType());
                         item.setQty(unFinishQty);
                         item.setItemDetailId(kotItemDetail.getId());
+                        item.setKotItemDetailUniqueId(kotItemDetail.getUniqueId());
+                        item.setItemId(kotItemDetail.getItemId());
                         List<KotItemModifier> itemModifierlist = kot.getKotItemModifiers();
                         if (itemModifierlist != null && itemModifierlist.size() > 0) {
                             for (int s = 0; s < itemModifierlist.size(); s++) {
@@ -581,6 +746,19 @@ public class KitchenOrder extends BaseActivity {
             adapter.setKots(kots);
             ll_orders.setAdapter(adapter);
             tv_order_qyt.setText(kots.size() + "");
+
+            if (pendingListAdapter == null) {
+                pendingListAdapter = new PendingListAdapter(context, getKotItemsData());
+                rcvPendingList.setAdapter(pendingListAdapter);
+            }
+
+            if (App.instance.getSystemSettings().isPendingList()) {
+                rcvPendingList.setVisibility(View.VISIBLE);
+            } else {
+                rcvPendingList.setVisibility(View.GONE);
+            }
+
+            pendingListAdapter.setData(getKotItemsData());
         }
 
     }
@@ -638,10 +816,10 @@ public class KitchenOrder extends BaseActivity {
                         parameters.put("kotSummary", kotSummary);
                         parameters.put("kotItemDetails", itemDetails);
                         parameters.put("type", 1);
-                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId());
+                        parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+                        parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
                         SyncCentre.getInstance().kotComplete(KitchenOrder.this,
-                                pos, parameters, handler, -1);
-
+                                App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler, -1);
                         loadingDialog.show();
 
 
@@ -684,7 +862,7 @@ public class KitchenOrder extends BaseActivity {
         kitchen_tv_orderremark.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         TextView tv_kiosk_order_id = (TextView) view.findViewById(R.id.tv_kiosk_order_id);
-        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId());
+        MainPosInfo pos = App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId());
         if (pos.getIsKiosk() == ParamConst.MAINPOSINFO_IS_KIOSK) {
             tv_kiosk_order_id.setVisibility(View.VISIBLE);
             orderId.setVisibility(View.GONE);
@@ -746,7 +924,7 @@ public class KitchenOrder extends BaseActivity {
         popItemAdapter = new PopItemAdapter(context);
         popItemAdapter.setKot(kot);
         popItemListView.setAdapter(popItemAdapter);
-        reKot = (SwipeMenuRecyclerView) view.findViewById(R.id.re_kot);
+        reKot = (RecyclerView) view.findViewById(R.id.re_kot);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         reKot.setLayoutManager(linearLayoutManager);
 //        DividerItemDecoration dividerItemDecoration =
@@ -814,9 +992,10 @@ public class KitchenOrder extends BaseActivity {
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("kotSummary", popKot.getKotSummary());
                             parameters.put("kotItemDetails", itemDetails);
-                            MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(popKot.getKotSummary().getRevenueCenterId());
+                            parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+                            parameters.put("userKey", CoreData.getInstance().getUserKey(popKot.getKotSummary().getRevenueCenterId()));
                             SyncCentre.getInstance().kotComplete(context,
-                                    pos, parameters, handler, -1);
+                                    App.instance.getCurrentConnectedMainPos(popKot.getKotSummary().getRevenueCenterId()), parameters, handler, -1);
                         }
 
                         break;
@@ -836,9 +1015,13 @@ public class KitchenOrder extends BaseActivity {
                                         Map<String, Object> parameters = new HashMap<String, Object>();
                                         parameters.put("orderDetailId", orderDetailId);
 
-                                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kot.getKotSummary().getRevenueCenterId());
-                                        SyncCentre.getInstance().updateRemainingStock(context,
-                                                pos, parameters, handler);
+                                        List<MainPosInfo> connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+                                        for (MainPosInfo mainPosInfo : connectedMainPos) {
+                                            parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
+
+                                            SyncCentre.getInstance().updateRemainingStock(context,
+                                                    App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                                        }
                                     }
                                 });
                         break;
@@ -946,10 +1129,14 @@ public class KitchenOrder extends BaseActivity {
                             int orderDetailId = kot.getKotItemDetails().get(position).getOrderDetailId();
                             Map<String, Object> parameters = new HashMap<String, Object>();
                             parameters.put("orderDetailId", orderDetailId);
-                            MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(kot.getKotSummary().getRevenueCenterId());
-                            SyncCentre.getInstance().updateRemainingStock(context,
-                                    pos, parameters, handler);
 
+                            List<MainPosInfo> connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+                            for (MainPosInfo mainPosInfo : connectedMainPos) {
+                                parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
+
+                                SyncCentre.getInstance().updateRemainingStock(context,
+                                        App.instance.getCurrentConnectedMainPos(), parameters, handler);
+                            }
                         }
                     });
 
@@ -982,44 +1169,11 @@ public class KitchenOrder extends BaseActivity {
                 final Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("kotSummary", popKot.getKotSummary());
                 parameters.put("kotItemDetails", itemDetails);
-
-                new Handler().postDelayed(new Runnable() {
-
-                    public void run() {
-
-                        MainPosInfo pos = App.instance.getCurrentConnectedMainPosByRevenueCenterId(popKot.getKotSummary().getRevenueCenterId());
-                        SyncCentre.getInstance().kotComplete(context,
-                                pos, parameters, handler, -1);
-
-
-                    }
-
-                }, 300);
-
-
-//                    public void run(){
-//
-//                        SyncCentre.getInstance().kotComplete(context,
-//                                App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
-//
-//
-//                    }
-//
-//                };
-//                new Thread() {
-//                    public void run() {
-//                        try {
-//                            Thread.sleep(3000);
-//                            SyncCentre.getInstance().kotComplete(context,
-//                                    App.instance.getCurrentConnectedMainPos(), parameters, handler, -1);
-//
-//                        } catch (InterruptedException e) {
-//                            // TODO Auto-generated catch block
-//                            e.printStackTrace();
-//                        }
-//
-//                    }}
-
+                parameters.put("kdsId", App.instance.getKdsDevice().getDevice_id());
+                parameters.put("userKey", CoreData.getInstance().getUserKey(popKot.getKotSummary().getRevenueCenterId()));
+                SyncCentre.getInstance().kotComplete(context,
+                        App.instance.getCurrentConnectedMainPos(popKot.getKotSummary().getRevenueCenterId()),
+                        parameters, handler, -1);
             }
         }
     };
@@ -1143,7 +1297,7 @@ public class KitchenOrder extends BaseActivity {
                 holder.itemView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //   mItemTouchListener.onItemClick(holder.mContent.getText().toString());
+                        mItemTouchListener.onItemClick(holder.mContent.getText().toString());
 
                     }
                 });
@@ -1151,22 +1305,8 @@ public class KitchenOrder extends BaseActivity {
                     holder.mLeftMenu.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            holder.mSwipeItemLayout.close();
-//                           new Thread() {
-//                               public void run() {
-//                                   try {
-//                                       Thread.sleep(3000);
-//
-//                                   } catch (InterruptedException e) {
-//                                       // TODO Auto-generated catch block
-//                                       e.printStackTrace();
-//                                   }
-//
-//
-//                               }};
                             mItemTouchListener.onLeftMenuClick("" + holder.getAdapterPosition());
-
-
+                            holder.mSwipeItemLayout.close();
                         }
                     });
                 }

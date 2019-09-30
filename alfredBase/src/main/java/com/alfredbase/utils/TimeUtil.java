@@ -129,6 +129,35 @@ public class TimeUtil {
         return FORMATTER.format(calendar.getTime());
     }
 
+    public static String getTimeByFormat(long time, SimpleDateFormat format) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
+        return format.format(calendar.getTime());
+    }
+
+    public static long getTimeFromString(String time, SimpleDateFormat format) {
+        try {
+            Date date = format.parse(time);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public static long getMillisOfTime(int hour, int minutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2019);
+        cal.set(Calendar.MONTH, 3);
+        cal.set(Calendar.DATE, 3);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minutes);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTimeInMillis();
+    }
+
     public static String getSubTimeFormat(long time) {
         long time1 = System.currentTimeMillis() - time;
         long result = 0;

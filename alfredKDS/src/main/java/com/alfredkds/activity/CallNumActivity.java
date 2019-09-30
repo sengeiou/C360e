@@ -4,10 +4,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.widget.TextView;
+
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.global.BugseeHelper;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredkds.R;
@@ -46,20 +49,26 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
             tv_quantity.setText("");
             finish();
         } else if ("Enter".equals(key)) {
-            if(!ButtonClickTimer.canClick()){
+            if (!ButtonClickTimer.canClick()) {
                 return;
             }
             String str = tv_quantity.getText().toString();
             if (!TextUtils.isEmpty(str)) {
                 loadingDialog.show();
+
+                Printer printer = App.instance.getPrinter();
                 Map<String, Object> parameters = new HashMap<String, Object>();
-                parameters.put("callnumber", str);
+                parameters.put("callNumber", str);
                 parameters.put("numTag", "");
-                for(MainPosInfo mainPos :  App.instance.getCurrentConnectedMainPos()) {
-                    SyncCentre.getInstance().callSpecifyNum(CallNumActivity.this, mainPos, parameters, handler, -1);
+
+                if (printer != null) {
+                    parameters.put("printerGroupId", printer.getId());
+                    parameters.put("printerName", printer.getPrinterName());
                 }
-            }else {
-                UIHelp.showToast(CallNumActivity.this, getString(R.string.order_number_cannot_empty));
+
+                SyncCentre.getInstance().callSpecifyNum(CallNumActivity.this, App.instance.getCurrentConnectedMainPos(), parameters, handler, null);
+            } else {
+                UIHelp.showToast(CallNumActivity.this, "The order number can not be empty");
             }
         } else if ("C".equals(key)) {
             tv_quantity.setText("");
@@ -71,11 +80,11 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
         }
     }
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case ResultCode.SUCCESS:
                     tv_quantity.setText("");
                     loadingDialog.dismiss();
@@ -83,7 +92,7 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
                 case ResultCode.CONNECTION_FAILED:
                     tv_quantity.setText("");
                     loadingDialog.dismiss();
-                    UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable)msg.obj,
+                    UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
                             context.getResources().getString(R.string.revenue_center)));
                     break;
             }
@@ -93,7 +102,7 @@ public class CallNumActivity extends BaseActivity implements CallNumboard.KeyBoa
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (loadingDialog != null && loadingDialog.isShowing()){
+        if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
     }

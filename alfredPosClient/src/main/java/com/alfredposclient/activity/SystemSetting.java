@@ -1319,22 +1319,26 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 //	}
 
 
-    private void dialogChoice() {
-        final String items[] = {"1", "2", "4"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, 3);
+	private void dialogChoice() {
+		final String items[] = {"1", "2", "4", "5"};
+		AlertDialog.Builder builder = new AlertDialog.Builder(this,3);
 
-        int postion;
-        if (settings.getCallStyle() == 1) {
-            postion = 0;
-        } else if (settings.getCallStyle() == 2) {
-            postion = 1;
-        } else {
-            postion = 2;
-        }
-        builder.setSingleChoiceItems(items, postion,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+		int postion = 0;
+		if(settings.getCallStyle()==1)
+		{
+			postion=0;
+		}else if(settings.getCallStyle()==2){
+			postion=1;
+		}else if (settings.getCallStyle() == 4){
+			postion=2;
+		} else if (settings.getCallStyle() == 5) {
+			postion=3;
+		}
+
+		builder.setSingleChoiceItems(items, postion,
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
 
                         settings.setCallStyle(Integer.valueOf(items[which]).intValue());
                         tv_callnum_style.setText(settings.getCallStyle() + " " + getString(R.string.style));

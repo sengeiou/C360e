@@ -46,7 +46,7 @@ import java.util.List;
 public class OrderHelper {
 	/**
 	 * 获取订单详情的Tax
-	 * 
+	 *
 	 * @param orderDetail
 	 * @return
 	 */
@@ -270,7 +270,7 @@ public class OrderHelper {
 
 	/**
 	 * 获取订单详情的基础价格，计算方式：实收金额=(菜单金额-HappyHour金额+配料金额)*数量，也就是UI中的subTotal
-	 * 
+	 *
 	 * @param order
 	 * @param orderDetail
 	 * @return
@@ -370,7 +370,7 @@ public class OrderHelper {
 
 	/**
 	 * 得到所有配料的价格
-	 * 
+	 *
 	 * @param order
 	 * @param orderDetail
 	 * @return
@@ -391,7 +391,7 @@ public class OrderHelper {
 
 	/**
 	 * 得到当前orderDetail的折扣信息
-	 * 
+	 *
 	 * @param orderDetail
 	 * @return
 	 */
@@ -1410,7 +1410,7 @@ public class OrderHelper {
 						BH.getBD(order.getDiscountAmount()), false),
 				BH.getBD(order.getTaxAmount()), true).toString());
 	}
-	
+
 	public static void setOrderInclusiveTaxPrice(Order order){
 		if(order.getInclusiveTaxPercentage() != null){
 			order.setInclusiveTaxPrice(BH
@@ -1428,21 +1428,21 @@ public class OrderHelper {
 //									true).toString());
 		}
 	}
-	
+
 	public static void setOrderTotalAlfterRound(Order order, RoundAmount roundAmount){
 		if(order != null && roundAmount != null){
 			order.setTotal(BH.add(BH.getBD(order.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
 		}
-		
+
 	}
-	
+
 	public static void setOrderSplitTotalAlfterRound(OrderSplit orderSplit, RoundAmount roundAmount){
 		if(orderSplit != null && roundAmount != null){
 			orderSplit.setTotal(BH.add(BH.getBD(orderSplit.getTotal()), BH.getBD(roundAmount.getRoundBalancePrice()), true).toString());
 		}
-		
+
 	}
-	
+
 	public static void setOrderSplitInclusiveTaxPrice(OrderSplit orderSplit){
 		if(orderSplit.getInclusiveTaxPercentage() != null){
 //			orderSplit.setInclusiveTaxPrice(BH
@@ -1461,7 +1461,7 @@ public class OrderHelper {
 
 		}
 	}
-	
+
 	public static void setOrderSplitDiscount(Order order, OrderSplit orderSplit,
 			List<OrderDetail> orderDetails) {
 //			BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
@@ -1520,7 +1520,7 @@ public class OrderHelper {
 		}
 			orderSplit.setDiscountAmount(BH.getBD(discount).toString());
 	}
-	
+
 	public static void setOrderSplitSubTotal(Order order, OrderSplit orderSplit,
 			List<OrderDetail> orderDetails) {
 		BigDecimal subTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
@@ -1533,7 +1533,7 @@ public class OrderHelper {
 		}
 		orderSplit.setSubTotal(BH.getBD(subTotal).toString());
 	}
-	
+
 	public static void setOrderSplitTax(Order order, OrderSplit orderSplit, List<OrderDetail> orderDetails){
 		/*
 		BigDecimal tax = BH.getBD(ParamConst.DOUBLE_ZERO);
@@ -1575,7 +1575,7 @@ public class OrderHelper {
 		}
 		orderSplit.setTaxAmount(BH.getBD(orderSplitTax).toString());
 	}
-	
+
 	public static void setOrderSplitTotal(Order order, OrderSplit orderSplit, List<OrderDetail> orderDetails){
 		orderSplit.setTotal(BH.add(
 				BH.sub(BH.getBD(orderSplit.getSubTotal()),
@@ -1705,7 +1705,7 @@ public class OrderHelper {
 		}
 		return false;
 	}
-	
+
 	// 只有添加默认modifier
 	public static void addDefaultModifiers(Order order, OrderDetail orderDetail) {
 		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
@@ -1737,7 +1737,7 @@ public class OrderHelper {
 							}else{
 								printId = prints.get(0).getId().intValue();
 							}
-						
+
 						}
 						OrderModifier orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, modifier, printId);
 						OrderModifierSQL.addOrderModifier(orderModifier);
@@ -1745,9 +1745,9 @@ public class OrderHelper {
 				}
 			}
 		}
-		
+
 	}
-	
+
 
 	public static void setOrderModifierPirceAndNum(OrderDetail orderDetail, int num){
 		List<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiers(orderDetail);
@@ -1763,10 +1763,10 @@ public class OrderHelper {
 			orderModifier.setModifierPrice(BH.mul(BH.getBD(orderModifier.getModifierItemPrice()), BH.getBD(modifierNum), true).toString());
 			OrderModifierSQL.updateOrderModifier(orderModifier);
 		}
-		
+
 	}
-	
-	
+
+
 	/*:加入流水号 */
 	public static int calculateOrderNo(long bizDate) {
 		int maxOrderNo = Store.getInt(BaseApplication.instance, Store.MAX_ORDER_NO, 0);

@@ -68,14 +68,24 @@ public class SelectKitchen extends BaseActivity {
                 kdsDevice.setName(printer.getPrinterName());
                 kdsDevice.setIP(CommonUtil.getLocalIpAddress());
                 kdsDevice.setMac(CommonUtil.getLocalMacAddress(context));
+                kdsDevice.setKdsType(printer.getPrinterUsageType());
+
                 App.instance.setPrinter(printer);
                 App.instance.setKdsDevice(kdsDevice);
+
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 parameters.put("device", kdsDevice);
                 parameters.put("deviceType", ParamConst.DEVICE_TYPE_KDS);
-                for(String pairingIp : App.instance.getPairingIp()) {
-                    SyncCentre.getInstance().pairingComplete(context, pairingIp, parameters,
-                            handler);
+
+                List<String> ips = new ArrayList<>();
+//                if (App.instance.isBalancer()) {
+                    ips.addAll(App.instance.getAllPairingIp());
+//                } else {
+//                    ips.add(App.instance.getPairingIp());
+//                }
+
+                for (String ip : ips) {
+                    SyncCentre.getInstance().pairingComplete(context, ip, parameters, handler);
                 }
             }
         });
@@ -94,6 +104,9 @@ public class SelectKitchen extends BaseActivity {
     public void handlerClickEvent(View v) {
         super.handlerClickEvent(v);
     }
+
+    private int pairingSize = App.instance.getAllPairingIp().size();
+    private int pairingCount = 0;
 
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
@@ -120,25 +133,32 @@ public class SelectKitchen extends BaseActivity {
                 // break;
                 case ResultCode.SUCCESS:
                     // Store POS device Info once pairing success
-                    loadingDialog.dismiss();
-                    UIHelp.startLogin(context);
-                    finish();
+                    pairingCount++;
+                    if (pairingCount >= pairingSize) {
+                        loadingDialog.dismiss();
+                        UIHelp.startLogin(context);
+                        finish();
+                    }
                     break;
                 case HANDLER_ERROR:
                     loadingDialog.dismiss();
+                    pairingCount = 0;
                     //remove KDS info
                     Store.remove(context, Store.KDS_DEVICE);
                     break;
                 case ResultCode.CONNECTION_FAILED:
                     loadingDialog.dismiss();
+                    pairingCount = 0;
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
                             context.getResources().getString(R.string.revenue_center)));
                     break;
                 default:
                     break;
             }
-		};
-	};
+        }
+
+        ;
+    };
 
     class KitchenListAdapter extends BaseAdapter {
         private Context context;
