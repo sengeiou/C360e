@@ -117,6 +117,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SubPosBeanSQL;
@@ -1511,6 +1512,7 @@ public class App extends BaseApplication {
 
     /* Get all users currently connected to POS */
     public void addActiveUser(String userKey, User user) {
+        getActiveUser();
         activeUsers.put(userKey, user);
         Store.saveObject(this, Store.USER_AND_KEY, activeUsers);
     }
@@ -1545,6 +1547,15 @@ public class App extends BaseApplication {
         return this.kdsDevices.get(deviceid);
     }
 
+    public void setKdsDevice(KDSDevice kdsDevice) {
+        for (KDSDevice kdsDeviceLocal : getKDSDevices().values()) {
+            if (kdsDeviceLocal.getDevice_id() == kdsDevice.getDevice_id()) {
+                kdsDeviceLocal.setKdsStatus(kdsDevice.getKdsStatus());
+                break;
+            }
+        }
+    }
+
     public Map<Integer, KDSDevice> getKDSDevices() {
         return this.kdsDevices;
     }
@@ -1575,6 +1586,31 @@ public class App extends BaseApplication {
 
     public void removeRVCDevices() {
         this.rvcDevices.clear();
+    }
+
+    private KDSDevice kdsBalancer = null;
+    private Printer printerBalancer = null;
+
+    public Printer getPrinterBalancer() {
+        if (printerBalancer == null) {
+            for (Printer printer : PrinterSQL.getAllPrinter()) {
+                if (printer.getPrinterUsageType() == Printer.KDS_BALANCER) {
+                    this.printerBalancer = printer;
+                    break;
+                }
+            }
+        }
+        return printerBalancer;
+    }
+
+    public KDSDevice getBalancerKDSDevice() {
+        if (kdsBalancer == null) {
+            Printer printer = getPrinterBalancer();
+            int printerBalancerId = printer != null ? printer.getId() : 0;
+            this.kdsBalancer = this.kdsDevices.get(printerBalancerId);
+        }
+
+        return kdsBalancer;
     }
 
     public User getUser() {

@@ -750,10 +750,10 @@ public class DataHelper {
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, revenueId INTEGER, revenueName TEXT, businessDate LONG, hour INTEGER, amountQty INTEGER, amountPrice TEXT)");
             db.execSQL("CREATE TABLE "
                     + TableNames.KotItemModifier
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, kotItemDetailId INTEGER, modifierId INTEGER, modifierName TEXT, modifierNum INTEGER, status INTEGER)");
+                    + "(id INTEGER, uniqueId TEXT PRIMARY KEY, kotItemDetailId INTEGER, modifierId INTEGER, modifierName TEXT, modifierNum INTEGER, status INTEGER)");
             db.execSQL("CREATE TABLE "
                     + TableNames.KotItemDetail
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, revenueId INTEGER, orderId INTEGER, orderDetailId INTEGER, printerGroupId INTEGER, kotSummaryId INTEGER, itemName TEXT, itemNum INTEGER, finishQty INTEGER, sessionStatus INTEGER, kotStatus INTEGER, specialInstractions TEXT, version INTEGER,createTime LONG,updateTime LONG)");
+                    + "(id INTEGER, uniqueId TEXT PRIMARY KEY, restaurantId INTEGER, revenueId INTEGER, orderId INTEGER, orderDetailId INTEGER, printerGroupId INTEGER, kotSummaryId INTEGER, itemName TEXT, itemNum INTEGER, finishQty INTEGER, sessionStatus INTEGER, kotStatus INTEGER, specialInstractions TEXT, version INTEGER,createTime LONG,updateTime LONG)");
             db.execSQL("CREATE TABLE "
                     + TableNames.EmpWorkLog
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, empId INTEGER, empName TEXT, loginTime INTEGER, logoutTime INTEGER,totalHours INTEGER,status INTEGER)");
@@ -762,10 +762,10 @@ public class DataHelper {
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER,  revenueId INTEGER, userId INTEGER, empId INTEGER, empName TEXT, businessDate LONG, type INTEGER, comment  TEXT,cash TEXT, createTime LONG)");
             db.execSQL("CREATE TABLE "
                     + TableNames.KotSummary
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, revenueCenterId INTEGER, tableId INTEGER, tableName TEXT, revenueCenterName TEXT, status INT, createTime LONG,updateTime LONG, businessDate LONG)");
+                    + "(id INTEGER, uniqueId TEXT PRIMARY KEY, orderId INTEGER, revenueCenterId INTEGER, tableId INTEGER, tableName TEXT, revenueCenterName TEXT, status INT, createTime LONG,updateTime LONG, businessDate LONG)");
             db.execSQL("CREATE TABLE "
                     + TableNames.KotNotification
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderId INTEGER, orderDetailId INTEGER, revenueCenterId INTEGER, tableName TEXT, revenueCenterName TEXT,itemName TEXT, qty INTEGER, session INTEGER, status INTEGER)");
+                    + "(id INTEGER, uniqueId TEXT PRIMARY KEY, orderId INTEGER, orderDetailId INTEGER, revenueCenterId INTEGER, tableName TEXT, revenueCenterName TEXT,itemName TEXT, qty INTEGER, session INTEGER, status INTEGER)");
             db.execSQL("CREATE TABLE "
                     + TableNames.UserTimeSheet
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, businessDate LONG, restaurantId INTEGER, revenueId INTEGER, userId INTEGER, empId INTEGER, empName TEXT, loginTime LONG, logoutTime LONG, totalHours DOUBLE, status INTEGER)");
@@ -1668,6 +1668,50 @@ public class DataHelper {
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN promotionTotal TEXT");
 
+            db.execSQL("ALTER TABLE "
+                    + TableNames.PrinterGroup
+                    + " ADD COLUMN  printerType INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.PrinterGroup
+                    + " ADD COLUMN  isChildGroup INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Printer
+                    + " ADD COLUMN  printerUsageType INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.Printer
+                    + " ADD COLUMN  printerGroupType INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  expectedTime LONG default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  startTime LONG default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  endTime LONG default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  itemType INTEGER default 0");
+            db.execSQL("ALTER TABLE "
+                    + TableNames.KotItemDetail
+                    + " ADD COLUMN  itemId INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN kotSummaryLog TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN kdsType INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN orderDetailCount INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN originalId INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN isNext INTEGER default 0");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN completeTime LONG default 0");
+            db.execSQL("ALTER TABLE " + TableNames.OrderBill
+                    + " ADD COLUMN printTime LONG default 0");
+            db.execSQL("ALTER TABLE " + TableNames.PrinterGroup
+                    + " ADD COLUMN sequenceNumber INTEGER default 0");
+
 
         }
         private void onUpgradeForOldVersion31(SQLiteDatabase db){
@@ -1736,6 +1780,15 @@ public class DataHelper {
                     + " ADD COLUMN isWaiterPrint INTEGER default 0 ");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
                     + " ADD COLUMN promotionQty INTEGER default 0");
+
+            db.execSQL("ALTER TABLE " + TableNames.KotItemModifier
+                    + " ADD COLUMN kotItemDetailUniqueId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotSummary
+                    + " ADD COLUMN originalUniqueId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotItemDetail
+                    + " ADD COLUMN kotSummaryUniqueId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.KotNotification
+                    + " ADD COLUMN kotItemDetailUniqueId TEXT");
 
         }
 

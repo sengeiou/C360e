@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
@@ -448,18 +449,19 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 
 
     private String getAbsoluteUrl(String relativeUrl) {
-        if (App.instance.isDebug) {
+        if (BaseApplication.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
-        } else if (App.instance.isOpenLog) {
+//            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
+            return "http://18.138.252.241/alfred-api/" + relativeUrl;
+        } else if (BaseApplication.isOpenLog) {
 
             return "http://139.224.17.126/" + relativeUrl;
         } else {
-
-            if (App.instance.isCartenzLog) {
+            if (BaseApplication.isZeeposDev) {
                 return "http://18.138.252.241:180/" + relativeUrl;
             } else {
+//			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
                 return "http://www.servedbyalfred.biz/" + relativeUrl;
             }
         }

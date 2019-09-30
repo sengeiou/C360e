@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.store.SQLExe;
@@ -31,8 +32,9 @@ public class KotSummarySQL {
             String sql = "replace into "
                     + TableNames.KotSummary
                     + "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
-                    + " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, numTag,eatType,address,contact,mobile,deliveryTime,appOrderId)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, " +
+                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId,isNext,completeTime,uniqueId,originalUniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{kotSummary.getId(),
@@ -56,10 +58,103 @@ public class KotSummarySQL {
                             kotSummary.getContact(),
                             kotSummary.getMobile(),
                             kotSummary.getDeliveryTime(),
-                            kotSummary.getAppOrderId()
+                            kotSummary.getAppOrderId(),
+                            kotSummary.getKotSummaryLog(),
+                            kotSummary.getKdsType(),
+                            kotSummary.getOrderDetailCount(),
+                            kotSummary.getOriginalId(),
+                            kotSummary.isNext(),
+                            kotSummary.getCompleteTime(),
+                            kotSummary.getUniqueId(),
+                            kotSummary.getOriginalUniqueId()
                     });
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void addKotSummary(KotSummary kotSummary) {
+        if (kotSummary == null) {
+            return;
+        }
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            db.beginTransaction();
+            String sql = "replace into "
+                    + TableNames.KotSummary
+                    + "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
+                    + " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, " +
+                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId,isNext,completeTime,uniqueId,originalUniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            SQLiteStatement sqLiteStatement = db.compileStatement(
+                    sql);
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 1,
+                    kotSummary.getId());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 2,
+                    kotSummary.getOrderId());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 3,
+                    kotSummary.getRevenueCenterId());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 4,
+                    kotSummary.getTableId());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 5,
+                    kotSummary.getTableName());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 6,
+                    kotSummary.getRevenueCenterName());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
+                    kotSummary.getStatus());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 8,
+                    kotSummary.getCreateTime());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 9,
+                    kotSummary.getUpdateTime());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 10,
+                    kotSummary.getBusinessDate());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 11,
+                    kotSummary.getIsTakeAway());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 12,
+                    kotSummary.getOrderNo());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 13,
+                    kotSummary.getRevenueCenterIndex());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 14,
+                    kotSummary.getOrderRemark());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 15,
+                    kotSummary.getEmpName());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 16,
+                    kotSummary.getNumTag());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 17,
+                    kotSummary.getEatType());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 18,
+                    kotSummary.getAddress());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 19,
+                    kotSummary.getContact());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 20,
+                    kotSummary.getMobile());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 21,
+                    kotSummary.getDeliveryTime());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 22,
+                    kotSummary.getAppOrderId());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 23,
+                    kotSummary.getKotSummaryLog());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 24,
+                    kotSummary.getKdsType());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 25,
+                    kotSummary.getOrderDetailCount());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
+                    kotSummary.getOriginalId());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 27,
+                    kotSummary.isNext());
+            SQLiteStatementHelper.bindLong(sqLiteStatement, 28,
+                    kotSummary.getCompleteTime());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 29,
+                    kotSummary.getUniqueId());
+            SQLiteStatementHelper.bindString(sqLiteStatement, 30,
+                    kotSummary.getOriginalUniqueId());
+
+            sqLiteStatement.executeInsert();
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
         }
     }
 
@@ -73,8 +168,9 @@ public class KotSummarySQL {
             String sql = "replace into "
                     + TableNames.KotSummary
                     + "(id, orderId, revenueCenterId, tableId, tableName, revenueCenterName,status, createTime, updateTime,"
-                    + " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, numTag,eatType,address,contact,mobile,deliveryTime,appOrderId)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " businessDate,isTakeAway,orderNo, revenueCenterIndex, orderRemark, empName, " +
+                    "numTag,eatType,address,contact,mobile,deliveryTime,appOrderId,kotSummaryLog,kdsType,orderDetailCount,originalId,isNext,completeTime,uniqueId,originalUniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (KotSummary kotSummary : kotSummarys) {
@@ -122,6 +218,22 @@ public class KotSummarySQL {
                         kotSummary.getDeliveryTime());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 22,
                         kotSummary.getAppOrderId());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 23,
+                        kotSummary.getKotSummaryLog());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 24,
+                        kotSummary.getKdsType());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 25,
+                        kotSummary.getOrderDetailCount());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 26,
+                        kotSummary.getOriginalId());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 27,
+                        kotSummary.isNext());
+                SQLiteStatementHelper.bindLong(sqLiteStatement, 28,
+                        kotSummary.getCompleteTime());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 29,
+                        kotSummary.getUniqueId());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 30,
+                        kotSummary.getOriginalUniqueId());
 
                 sqLiteStatement.executeInsert();
             }
@@ -149,27 +261,35 @@ public class KotSummarySQL {
                     .moveToNext()) {
                 kotSummary = new KotSummary();
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -199,27 +319,35 @@ public class KotSummarySQL {
                     .moveToNext()) {
                 kotSummary = new KotSummary();
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -249,27 +377,94 @@ public class KotSummarySQL {
                     .moveToNext()) {
                 kotSummary = new KotSummary();
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
+                result.add(kotSummary);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static ArrayList<KotSummary> getUndoneKotSummary(int rvcId, long businessDate) {
+        ArrayList<KotSummary> result = new ArrayList<KotSummary>();
+        String sql = "select * from " + TableNames.KotSummary + " where status = " +
+                ParamConst.KOTS_STATUS_UNDONE + " and revenueCenterId = " + rvcId + " and businessDate = ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{businessDate + ""});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            KotSummary kotSummary = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                kotSummary = new KotSummary();
+                kotSummary.setId(cursor.getInt(0));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -299,27 +494,35 @@ public class KotSummarySQL {
                     .moveToNext()) {
                 kotSummary = new KotSummary();
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -349,27 +552,35 @@ public class KotSummarySQL {
                     .moveToNext()) {
                 kotSummary = new KotSummary();
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -392,27 +603,35 @@ public class KotSummarySQL {
             if (cursor.moveToFirst()) {
                 kotSummary = new KotSummary();
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -440,28 +659,65 @@ public class KotSummarySQL {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
                 kotSummary = new KotSummary();
+//                kotSummary.setId(cursor.getInt(0));
+//                kotSummary.setOrderId(cursor.getInt(1));
+//                kotSummary.setRevenueCenterId(cursor.getInt(2));
+//                kotSummary.setTableId(cursor.getInt(3));
+//                kotSummary.setTableName(cursor.getString(4));
+//                kotSummary.setRevenueCenterName(cursor.getString(5));
+//                kotSummary.setStatus(cursor.getInt(6));
+//                kotSummary.setCreateTime(cursor.getLong(7));
+//                kotSummary.setUpdateTime(cursor.getLong(8));
+//                kotSummary.setBusinessDate(cursor.getLong(9));
+//                kotSummary.setIsTakeAway(cursor.getInt(10));
+//                kotSummary.setOrderNo(cursor.getInt(11));
+//                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
+//                kotSummary.setOrderRemark(cursor.getString(13));
+//                kotSummary.setEmpName(cursor.getString(14));
+//                kotSummary.setNumTag(cursor.getString(15));
+//                kotSummary.setEatType(cursor.getInt(16));
+//                kotSummary.setAddress(cursor.getString(17));
+//                kotSummary.setContact(cursor.getString(18));
+//                kotSummary.setMobile(cursor.getString(19));
+//                kotSummary.setDeliveryTime(cursor.getLong(20));
+//                kotSummary.setAppOrderId(cursor.getInt(21));
+//                kotSummary.setKotSummaryLog(cursor.getString(22));
+//                kotSummary.setKdsType(cursor.getInt(23));
+//                kotSummary.setOrderDetailCount(cursor.getInt(24));
+//                kotSummary.setOriginalId(cursor.getInt(25));
+//                kotSummary.setNext(cursor.getInt(26));
+//                kotSummary.setCompleteTime(cursor.getLong(27));
+//                kotSummary.setUniqueId(cursor.getString(28));
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
                 result.add(kotSummary);
             }
         } catch (Exception e) {
@@ -483,28 +739,65 @@ public class KotSummarySQL {
             cursor = SQLExe.getDB().rawQuery(sql, new String[]{tableId + ""});
             if (cursor.moveToFirst()) {
                 kotSummary = new KotSummary();
+//                kotSummary.setId(cursor.getInt(0));
+//                kotSummary.setOrderId(cursor.getInt(1));
+//                kotSummary.setRevenueCenterId(cursor.getInt(2));
+//                kotSummary.setTableId(cursor.getInt(3));
+//                kotSummary.setTableName(cursor.getString(4));
+//                kotSummary.setRevenueCenterName(cursor.getString(5));
+//                kotSummary.setStatus(cursor.getInt(6));
+//                kotSummary.setCreateTime(cursor.getLong(7));
+//                kotSummary.setUpdateTime(cursor.getLong(8));
+//                kotSummary.setBusinessDate(cursor.getLong(9));
+//                kotSummary.setIsTakeAway(cursor.getInt(10));
+//                kotSummary.setOrderNo(cursor.getInt(11));
+//                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
+//                kotSummary.setOrderRemark(cursor.getString(13));
+//                kotSummary.setEmpName(cursor.getString(14));
+//                kotSummary.setNumTag(cursor.getString(15));
+//                kotSummary.setEatType(cursor.getInt(16));
+//                kotSummary.setAddress(cursor.getString(17));
+//                kotSummary.setContact(cursor.getString(18));
+//                kotSummary.setMobile(cursor.getString(19));
+//                kotSummary.setDeliveryTime(cursor.getLong(20));
+//                kotSummary.setAppOrderId(cursor.getInt(21));
+//                kotSummary.setKotSummaryLog(cursor.getString(22));
+//                kotSummary.setKdsType(cursor.getInt(23));
+//                kotSummary.setOrderDetailCount(cursor.getInt(24));
+//                kotSummary.setOriginalId(cursor.getInt(25));
+//                kotSummary.setNext(cursor.getInt(26));
+//                kotSummary.setCompleteTime(cursor.getLong(27));
+//                kotSummary.setUniqueId(cursor.getString(28));
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -518,35 +811,88 @@ public class KotSummarySQL {
     }
 
     public static KotSummary getKotSummaryById(int id) {
+        return getKotSummaryById(id, 0);
+    }
+
+    public static KotSummary getKotSummaryById(int id, int rvcId) {
         KotSummary kotSummary = null;
-        String sql = "select * from " + TableNames.KotSummary + " where id = ?";
+        String sql;
+
+        if (rvcId > 0) {
+            sql = "select * from " + TableNames.KotSummary + " where id = ? AND revenueCenterId = ?";
+        } else {
+            sql = "select * from " + TableNames.KotSummary + " where id = ?";
+        }
+
         Cursor cursor = null;
         try {
-            cursor = SQLExe.getDB().rawQuery(sql, new String[]{id + ""});
+            if (rvcId > 0) {
+                cursor = SQLExe.getDB().rawQuery(sql, new String[]{id + "", rvcId + ""});
+            } else {
+                cursor = SQLExe.getDB().rawQuery(sql, new String[]{id + ""});
+            }
+
             if (cursor.moveToFirst()) {
                 kotSummary = new KotSummary();
+//                kotSummary.setId(cursor.getInt(0));
+//                kotSummary.setOrderId(cursor.getInt(1));
+//                kotSummary.setRevenueCenterId(cursor.getInt(2));
+//                kotSummary.setTableId(cursor.getInt(3));
+//                kotSummary.setTableName(cursor.getString(4));
+//                kotSummary.setRevenueCenterName(cursor.getString(5));
+//                kotSummary.setStatus(cursor.getInt(6));
+//                kotSummary.setCreateTime(cursor.getLong(7));
+//                kotSummary.setUpdateTime(cursor.getLong(8));
+//                kotSummary.setBusinessDate(cursor.getLong(9));
+//                kotSummary.setIsTakeAway(cursor.getInt(10));
+//                kotSummary.setOrderNo(cursor.getInt(11));
+//                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
+//                kotSummary.setOrderRemark(cursor.getString(13));
+//                kotSummary.setEmpName(cursor.getString(14));
+//                kotSummary.setNumTag(cursor.getString(15));
+//                kotSummary.setEatType(cursor.getInt(16));
+//                kotSummary.setAddress(cursor.getString(17));
+//                kotSummary.setContact(cursor.getString(18));
+//                kotSummary.setMobile(cursor.getString(19));
+//                kotSummary.setDeliveryTime(cursor.getLong(20));
+//                kotSummary.setAppOrderId(cursor.getInt(21));
+//                kotSummary.setKotSummaryLog(cursor.getString(22));
+//                kotSummary.setKdsType(cursor.getInt(23));
+//                kotSummary.setOrderDetailCount(cursor.getInt(24));
+//                kotSummary.setOriginalId(cursor.getInt(25));
+//                kotSummary.setNext(cursor.getInt(26));
+//                kotSummary.setCompleteTime(cursor.getLong(27));
+//                kotSummary.setUniqueId(cursor.getString(28));
                 kotSummary.setId(cursor.getInt(0));
-                kotSummary.setOrderId(cursor.getInt(1));
-                kotSummary.setRevenueCenterId(cursor.getInt(2));
-                kotSummary.setTableId(cursor.getInt(3));
-                kotSummary.setTableName(cursor.getString(4));
-                kotSummary.setRevenueCenterName(cursor.getString(5));
-                kotSummary.setStatus(cursor.getInt(6));
-                kotSummary.setCreateTime(cursor.getLong(7));
-                kotSummary.setUpdateTime(cursor.getLong(8));
-                kotSummary.setBusinessDate(cursor.getLong(9));
-                kotSummary.setIsTakeAway(cursor.getInt(10));
-                kotSummary.setOrderNo(cursor.getInt(11));
-                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
-                kotSummary.setOrderRemark(cursor.getString(13));
-                kotSummary.setEmpName(cursor.getString(14));
-                kotSummary.setNumTag(cursor.getString(15));
-                kotSummary.setEatType(cursor.getInt(16));
-                kotSummary.setAddress(cursor.getString(17));
-                kotSummary.setContact(cursor.getString(18));
-                kotSummary.setMobile(cursor.getString(19));
-                kotSummary.setDeliveryTime(cursor.getLong(20));
-                kotSummary.setAppOrderId(cursor.getInt(21));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -559,11 +905,124 @@ public class KotSummarySQL {
         return kotSummary;
     }
 
+    public static ArrayList<KotSummary> getKotSummaryByOriginalId(int originalId, int rvcId) {
+        ArrayList<KotSummary> result = new ArrayList<>();
+        String sql = "select * from " + TableNames.KotSummary + " where originalId = ? and revenueCenterId = ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{String.valueOf(originalId), String.valueOf(rvcId)});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            KotSummary kotSummary;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                kotSummary = new KotSummary();
+//                kotSummary.setId(cursor.getInt(0));
+//                kotSummary.setOrderId(cursor.getInt(1));
+//                kotSummary.setRevenueCenterId(cursor.getInt(2));
+//                kotSummary.setTableId(cursor.getInt(3));
+//                kotSummary.setTableName(cursor.getString(4));
+//                kotSummary.setRevenueCenterName(cursor.getString(5));
+//                kotSummary.setStatus(cursor.getInt(6));
+//                kotSummary.setCreateTime(cursor.getLong(7));
+//                kotSummary.setUpdateTime(cursor.getLong(8));
+//                kotSummary.setBusinessDate(cursor.getLong(9));
+//                kotSummary.setIsTakeAway(cursor.getInt(10));
+//                kotSummary.setOrderNo(cursor.getInt(11));
+//                kotSummary.setRevenueCenterIndex(cursor.getInt(12));
+//                kotSummary.setOrderRemark(cursor.getString(13));
+//                kotSummary.setEmpName(cursor.getString(14));
+//                kotSummary.setNumTag(cursor.getString(15));
+//                kotSummary.setEatType(cursor.getInt(16));
+//                kotSummary.setAddress(cursor.getString(17));
+//                kotSummary.setContact(cursor.getString(18));
+//                kotSummary.setMobile(cursor.getString(19));
+//                kotSummary.setDeliveryTime(cursor.getLong(20));
+//                kotSummary.setAppOrderId(cursor.getInt(21));
+//                kotSummary.setKotSummaryLog(cursor.getString(22));
+//                kotSummary.setKdsType(cursor.getInt(23));
+//                kotSummary.setOrderDetailCount(cursor.getInt(24));
+//                kotSummary.setOriginalId(cursor.getInt(25));
+//                kotSummary.setNext(cursor.getInt(26));
+//                kotSummary.setCompleteTime(cursor.getLong(27));
+//                kotSummary.setUniqueId(cursor.getString(28));
+                kotSummary.setId(cursor.getInt(0));
+                kotSummary.setUniqueId(cursor.getString(1));
+                kotSummary.setOrderId(cursor.getInt(2));
+                kotSummary.setRevenueCenterId(cursor.getInt(3));
+                kotSummary.setTableId(cursor.getInt(4));
+                kotSummary.setTableName(cursor.getString(5));
+                kotSummary.setRevenueCenterName(cursor.getString(6));
+                kotSummary.setStatus(cursor.getInt(7));
+                kotSummary.setCreateTime(cursor.getLong(8));
+                kotSummary.setUpdateTime(cursor.getLong(9));
+                kotSummary.setBusinessDate(cursor.getLong(10));
+                kotSummary.setIsTakeAway(cursor.getInt(11));
+                kotSummary.setOrderNo(cursor.getInt(12));
+                kotSummary.setRevenueCenterIndex(cursor.getInt(13));
+                kotSummary.setOrderRemark(cursor.getString(14));
+                kotSummary.setEmpName(cursor.getString(15));
+                kotSummary.setNumTag(cursor.getString(16));
+                kotSummary.setEatType(cursor.getInt(17));
+                kotSummary.setAddress(cursor.getString(18));
+                kotSummary.setContact(cursor.getString(19));
+                kotSummary.setMobile(cursor.getString(20));
+                kotSummary.setDeliveryTime(cursor.getLong(21));
+                kotSummary.setAppOrderId(cursor.getInt(22));
+                kotSummary.setKotSummaryLog(cursor.getString(23));
+                kotSummary.setKdsType(cursor.getInt(24));
+                kotSummary.setOrderDetailCount(cursor.getInt(25));
+                kotSummary.setOriginalId(cursor.getInt(26));
+                kotSummary.setNext(cursor.getInt(27));
+                kotSummary.setCompleteTime(cursor.getLong(28));
+                kotSummary.setOriginalUniqueId(cursor.getString(29));
+                result.add(kotSummary);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static void deleteKotSummaryTmp(KotSummary kotSummary) {
+        for (KotSummary kots : getKotSummaryByOriginalId(kotSummary.getOriginalId(), kotSummary.getRevenueCenterId())) {
+            List<KotItemDetail> kotDetailLocal = KotItemDetailSQL
+                    .getKotItemDetailBySummaryIdRvcId(kots.getId(), kotSummary.getRevenueCenterId());
+            boolean isPlaceOrder = false;
+
+            for (KotItemDetail kotItemDetail : kotDetailLocal) {
+                if (kotItemDetail.getKotStatus() > ParamConst.KOT_STATUS_TMP) {
+                    isPlaceOrder = true;
+                    break;
+                }
+            }
+
+            if (!isPlaceOrder) {
+                String sql = "delete from " + TableNames.KotSummary
+                        + " where id = ?";
+                try {
+                    SQLExe.getDB().execSQL(sql, new Object[]{kots.getId()});
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
     public static void deleteKotSummary(KotSummary kotSummary) {
         String sql = "delete from " + TableNames.KotSummary
-                + " where id = ?";
+                + " where uniqueId = ?";
         try {
-            SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getId()});
+            SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getUniqueId()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -574,6 +1033,43 @@ public class KotSummarySQL {
                 + " where orderId = ? and numTag = ?";
         try {
             SQLExe.getDB().execSQL(sql, new Object[]{order.getId(), order.getNumTag()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteAllKotSummaryByRvcId(int rvcId) {
+        String sql = "delete from " + TableNames.KotSummary
+                + " where revenueCenterId = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{rvcId + ""});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKotSummaryOrderCountByUniqueId(int count, String uniqueId) {
+        String sql = "update " + TableNames.KotSummary + " set orderDetailCount = ? where uniqueId = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{count, uniqueId});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKotSummaryOrderCountById(int count, int kotSummaryId) {
+        String sql = "update " + TableNames.KotSummary + " set orderDetailCount = ? where id = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{count, kotSummaryId});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKotSummaryStatusByUniqueId(int status, String uniqueId) {
+        String sql = "update " + TableNames.KotSummary + " set status = ? where uniqueId = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{status, uniqueId});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -607,8 +1103,18 @@ public class KotSummarySQL {
     }
 
     public static void deleteAllKotSummary() {
-        deleteAllKotSummary(null);
+        String sql = "delete from " + TableNames.KotSummary;
+        String sssql = "select * from sqlite_sequence";
+        String up = "update sqlite_sequence set seq=0 where name='" + TableNames.KotSummary + "'";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{});
+            SQLExe.getDB().rawQuery(sssql, new String[]{});
+            SQLExe.getDB().execSQL(up, new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
     public static void deleteAllKotSummary(Integer revenueCenterId) {
         String deleteByRevenue = "";
         if (revenueCenterId != null) {
@@ -621,6 +1127,24 @@ public class KotSummarySQL {
             SQLExe.getDB().execSQL(sql, new Object[]{});
             SQLExe.getDB().rawQuery(sssql, new String[]{});
             SQLExe.getDB().execSQL(up, new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKotSummaryLog(KotSummary kotSummary) {
+        String sql = "update " + TableNames.KotSummary + " set kotSummaryLog = ? where uniqueId = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getKotSummaryLog(), kotSummary.getUniqueId()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKotCompleteTime(KotSummary kotSummary) {
+        String sql = "update " + TableNames.KotSummary + " set completeTime = ? where id = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getCompleteTime(), kotSummary.getId()});
         } catch (Exception e) {
             e.printStackTrace();
         }

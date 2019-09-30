@@ -48,4 +48,8 @@ public abstract class RvAdapter<T> extends RecyclerView.Adapter<RvHolder> {
 
     protected abstract RvHolder getHolder(View view, int viewType);
 
+    public List<T> getList() {
+        return list;
+    }
+
 }

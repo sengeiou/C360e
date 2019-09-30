@@ -102,6 +102,10 @@ public class APIName {
     public static final String SUMMARY_COMPLETE = "summary_complete";
     public static final String CALL_SPECIFY_THE_NUMBER = "call_specify_the_number";
     public static final String KOT_OUT_OF_STOCK = "kot_out_of_stock";
+    public static final String KOT_NEXT_KDS = "kot_next_kds";
+    public static final String CONNECTED_KDS = "connected_kds";
+    public static final String GET_CONNECTED_KDS = "get_connected_kds";
+    public static final String UPDATE_KDS_STATUS = "update_kds_status";
 
     // 以下是桌面设备专用
 
@@ -146,6 +150,14 @@ public class APIName {
      * 以kds作为服务器
      */
     public static final String SUBMIT_NEW_KOT = "submit_new_kot";
+    public static final String SUBMIT_TMP_KOT = "submit_tmp_kot";
+    public static final String SUBMIT_NEXT_KOT = "submit_next_kot";
+    public static final String DELETE_KOT_KDS = "delete_kot_kds";
+    public static final String SUBMIT_SUMMARY_KDS = "submit_summary_kds";
+    public static final String UPDATE_ORDER_COUNT = "update_order_count";
+    public static final String UPDATE_CONNECTED_KDS = "update_connected_kds";
+    public static final String CHECK_KDS_BALANCE = "check_kds_balance";
+    public static final String DELETE_KDS_LOG_BALANCER = "delete_kds_log_balancer";
 
     /**
      * 以waiter作为服务器
@@ -160,6 +172,11 @@ public class APIName {
      */
     public static final String CALL_POS_NUM = "call_pos_num";
     public static final String POS_CLOSE_SESSION = "pos_close_session";
+
+    /**
+     * KotItemDetail sync cloud
+     */
+    public static final String SYNC_KOT_ITEM_DETAIL = "kot/kotItemDetail/create";
 
 
     public static final String SET_LANGUAGE = "set_language"; //to server

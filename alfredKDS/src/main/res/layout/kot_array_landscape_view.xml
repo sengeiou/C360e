@@ -2,20 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
 
-    
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="@color/white"
-      android:orientation="horizontal"
-
->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal">
 
 
-    <!--<TextView-->
+        <!--<TextView-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content"-->
 
@@ -23,38 +20,39 @@
         <!--android:text="111"-->
         <!--android:textSize="20sp" />-->
 
-    <!--<TextView-->
+        <!--<TextView-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content"-->
 
         <!--android:background="@android:color/holo_green_light"-->
         <!--android:text="222"-->
         <!--android:textSize="20sp" />-->
-    >
-      <RelativeLayout
-          android:id="@+id/ll_lan_progress"
-          android:layout_width="120dp"
-          android:layout_height="match_parent"
+<!--        >-->
 
-          android:background="@color/color_kotview"
-          android:gravity="center" >
+        <RelativeLayout
+            android:id="@+id/ll_lan_progress"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
 
-          <ImageView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_centerVertical="true"
-              android:layout_toLeftOf="@+id/tv_progress"
-              android:src="@drawable/icon_clock"
-              android:layout_marginRight="8dp"/>
+            android:background="@color/color_kotview"
+            android:gravity="center">
 
-          <Chronometer
-              android:id="@+id/tv_lan_progress"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:gravity="center"
-              android:textColor="@color/white"
-              android:textSize="@dimen/text_size_s"
-              android:layout_centerInParent="true"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@+id/tv_progress"
+                android:src="@drawable/icon_clock" />
+
+            <Chronometer
+                android:id="@+id/tv_lan_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_s" />
 
           <TextView
               android:id="@+id/tv_complete"
@@ -68,159 +66,146 @@
               android:visibility="gone" />
       </RelativeLayout>
 
-      <View
-          android:layout_width="1dp"
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/black" />
 
-          android:layout_height="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.4"
+            android:gravity="center_horizontal"
+            android:minHeight="60dp"
+            android:orientation="vertical">
 
-          android:background="@color/black"
-          >
-      </View>
+            <TextView
+                android:id="@+id/tv_kot_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:textColor="@color/black" />
 
-<LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1.4"
-    android:minHeight="60dp"
-    android:orientation="vertical"
-     android:gravity="center_horizontal"
-    >
-  <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:id="@+id/tv_kot_detail"
-      android:textColor="@color/black"
-      android:paddingLeft="5dp"
-      android:paddingRight="5dp"
-      android:layout_marginTop="5dp"
-      />
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:textColor="@color/black"
-    android:text=""
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
-    android:textSize="12sp"
-    android:id="@+id/tv_kot_mod"
-    />
+            <TextView
+                android:id="@+id/tv_kot_mod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="12sp" />
 
-</LinearLayout>
-      <View
-          android:layout_width="1dp"
-          android:layout_height="match_parent"
+        </LinearLayout>
 
-          android:background="@color/black"
-          >
-      </View>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/black" />
 
 
-      <TextView
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:id="@+id/tv_kot_item_qty"
-          android:layout_gravity="center"
-          android:gravity="center"
-          android:layout_weight="0.4"
-          android:textColor="@color/black"
-          android:text="1"
-          />
+        <TextView
+            android:id="@+id/tv_kot_item_qty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.4"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/black" />
 
-      <View
-          android:layout_width="1dp"
-          android:layout_height="match_parent"
-          android:background="@color/black"
-          >
-      </View>
-      <TextView
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:id="@+id/tv_kot_item_status"
-          android:layout_gravity="center"
-          android:gravity="center"
-          android:layout_weight="0.6"
-          android:textColor="@color/black"
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/black"/>
 
-          />
+        <TextView
+            android:id="@+id/tv_kot_item_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.6"
+            android:gravity="center"
+            android:text="正在做"
+            android:textColor="@color/black" />
 
-      <View
-          android:layout_width="1dp"
-          android:layout_height="match_parent"
-          android:background="@color/black"
-          >
-      </View>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/black" />
 
 
-      <TextView
-          android:id="@+id/tv_kot_item_table"
-          android:layout_width="0dp"
-          android:layout_height="16dp"
-          android:layout_gravity="center"
-          android:layout_weight="0.7"
-          android:gravity="center"
-          android:textColor="@color/black" />
+        <TextView
+            android:id="@+id/tv_kot_item_table"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center"
+            android:layout_weight="0.7"
+            android:gravity="center"
+            android:text="桌号"
+            android:textColor="@color/black" />
 
-      <View
-          android:layout_width="1dp"
-          android:layout_height="match_parent"
-          android:background="@color/black"
-          >
-      </View>
-
-
-      <LinearLayout
-          android:layout_width="0dp"
-          android:layout_height="match_parent"
-          android:layout_weight="1.5"
-          >
-          <TextView
-              android:layout_width="65dp"
-              android:layout_height="wrap_content"
-              android:id="@+id/tv_kot_item_orderno"
-              android:layout_gravity="center_vertical"
-              android:gravity="center"
-              android:text="111"
-              android:textColor="@color/black"
-              android:layout_margin="5dp"
-
-              />
-          <LinearLayout
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              android:layout_gravity="center"
-              android:layout_marginRight="5dp"
-              >
-
-              <Button
-                  android:id="@+id/btn_kot_complete"
-                  android:layout_width="0dp"
-                  android:layout_height="50dp"
-                  android:layout_gravity="center_vertical"
-                  android:layout_weight="1"
-                  android:textColor="@color/white"
-                  android:background="@color/color_kotview"
-                  android:text="@string/completed" />
-      <Button
-    android:id="@+id/btn_kot_call"
-    android:layout_width="0dp"
-    android:layout_height="50dp"
-          android:layout_weight="1"
-    android:layout_marginLeft="10dp"
-    android:layout_gravity="center_vertical"
-    android:text="@string/call"
-          android:textColor="@color/white"
-    android:background="@color/color_kotview"
-    />
-          </LinearLayout>
-      </LinearLayout>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/black" />
 
 
-  </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5">
+
+            <TextView
+                android:id="@+id/tv_kot_item_orderno"
+                android:layout_width="65dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:gravity="center"
+                android:text="111"
+                android:textColor="@color/black"
+
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginRight="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_kot_complete"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@color/color_kotview"
+                    android:text="@string/completed"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/btn_kot_call"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/color_kotview"
+                    android:text="@string/call"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/black"
-        ></View>
+        android:background="@color/black" />
 </LinearLayout>

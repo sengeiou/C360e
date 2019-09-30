@@ -33,6 +33,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
     private boolean addFirstItem = false;
     private Handler handler;
     private LayoutInflater inflater;
+    private MainPosInfo mainPosInfo;
 
 //	private Map<Integer, Long> times = new HashMap<Integer, Long>();
 
@@ -66,23 +67,23 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 //            viewHolder = new ViewHolder(convertView);
 //
 //        } else {
-            convertView = inflater.inflate(R.layout.kot_array_landscape_view, parent, false);
+        convertView = inflater.inflate(R.layout.kot_array_landscape_view, parent, false);
 
-            viewHolder = new ViewHolder(convertView);
+        viewHolder = new ViewHolder(convertView);
 
-            viewHolder.table = (TextView) convertView.findViewById(R.id.tv_kot_item_table);
+        viewHolder.table = (TextView) convertView.findViewById(R.id.tv_kot_item_table);
 
-            viewHolder.detail = (TextView) convertView.findViewById(R.id.tv_kot_detail);
-            viewHolder.mod = (TextView) convertView.findViewById(R.id.tv_kot_mod);
+        viewHolder.detail = (TextView) convertView.findViewById(R.id.tv_kot_detail);
+        viewHolder.mod = (TextView) convertView.findViewById(R.id.tv_kot_mod);
 
-            viewHolder.status = (TextView) convertView.findViewById(R.id.tv_kot_item_status);
-            viewHolder.orderNo = (TextView) convertView.findViewById(R.id.tv_kot_item_orderno);
-            viewHolder.tv_lan_progress = (Chronometer) convertView.findViewById(R.id.tv_lan_progress);
-            viewHolder.btn_complete = (Button) convertView.findViewById(R.id.btn_kot_complete);
-            viewHolder.btn_call = (Button) convertView.findViewById(R.id.btn_kot_call);
-            viewHolder.qty = (TextView) convertView.findViewById(R.id.tv_kot_item_qty);
+        viewHolder.status = (TextView) convertView.findViewById(R.id.tv_kot_item_status);
+        viewHolder.orderNo = (TextView) convertView.findViewById(R.id.tv_kot_item_orderno);
+        viewHolder.tv_lan_progress = (Chronometer) convertView.findViewById(R.id.tv_lan_progress);
+        viewHolder.btn_complete = (Button) convertView.findViewById(R.id.btn_kot_complete);
+        viewHolder.btn_call = (Button) convertView.findViewById(R.id.btn_kot_call);
+        viewHolder.qty = (TextView) convertView.findViewById(R.id.tv_kot_item_qty);
 
-    //    }
+        //    }
 
 
         return viewHolder;
@@ -131,44 +132,45 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
             }
 
 
-            holder.btn_call.setBackgroundColor(mContext.getResources().getColor(R.color.color_kotview));
-            holder.btn_call.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!ButtonClickTimer.canClick()) {
-                        return;
-                    }
-                    Message message = new Message();
-                    message.obj = kotItem;
-                    message.arg2 = kotItem.getItemDetailId();
-                    message.what = App.HANDLER_KOT_CALL_NUM;
-                    handler.sendMessage(message);
+        holder.btn_call.setBackgroundColor(mContext.getResources().getColor(R.color.color_kotview));
+        holder.btn_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!ButtonClickTimer.canClick()) {
+                    return;
                 }
-            });
+                mainPosInfo = App.instance.getCurrentConnectedMainPos();
+                Message message = new Message();
+                message.obj = kotItem;
+                message.arg2 = kotItem.getItemDetailId();
+                message.what = App.HANDLER_KOT_CALL_NUM;
+                handler.sendMessage(message);
+            }
+        });
 
-            holder.btn_complete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        holder.btn_complete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
 
-                    if (!ButtonClickTimer.canClick()) {
-                        return;
-                    }
-
-                    Gson gson = new Gson();
-                    KotItemDetail kotItemDetail = gson.fromJson(kotItem.getItemDetail(), KotItemDetail.class);
-                    Message message = new Message();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("kotSummary", KotSummarySQL.getKotSummaryById(kotItem.getSummaryId()));
-
-                    bundle.putInt("kotItemDetailId", kotItem.getItemDetailId());
-                    bundle.putInt("id", 1);
-                    message.setData(bundle);
-                    message.what = App.HANDLER_KOT_COMPLETE;
-                    handler.sendMessage(message);
+                if (!ButtonClickTimer.canClick()) {
+                    return;
                 }
-            });
-      //  }
+
+                Gson gson = new Gson();
+                KotItemDetail kotItemDetail = gson.fromJson(kotItem.getItemDetail(), KotItemDetail.class);
+                Message message = new Message();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("kotSummary", KotSummarySQL.getKotSummaryById(kotItem.getSummaryId()));
+
+                bundle.putInt("kotItemDetailId", kotItem.getItemDetailId());
+                bundle.putInt("id", 1);
+                message.setData(bundle);
+                message.what = App.HANDLER_KOT_COMPLETE;
+                handler.sendMessage(message);
+            }
+        });
+        //  }
 
     }
 
@@ -185,11 +187,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
 
     @Override
     public int getItemViewType(int position) {
-     //   if (position == 0) {
-            return 0;
-//        } else {
-//            return 1;
-//        }
+        return 0;
     }
 
 
@@ -217,11 +215,7 @@ public class KOTArrayLanAdapter extends RecyclerView.Adapter<KOTArrayLanAdapter.
      */
     public void setKots(List<KotItem> kotlist) {
         kots.clear();
-//        if (kotlist.size() > 0) {
-//            this.kots.add(null);
-//        }
         this.kots.addAll(kotlist);
-        //	this.kots = kots;
     }
 
 }
