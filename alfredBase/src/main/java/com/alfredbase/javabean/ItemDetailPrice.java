@@ -8,15 +8,20 @@ import com.google.gson.annotations.SerializedName;
  */
 public class ItemDetailPrice {
     private int id;
+    @SerializedName("item_id")
     private int itemId;
-    @SerializedName("paraValue1")
+    @SerializedName("para_value1")
     private int salesTypeId;
+    @SerializedName("tax_id")
     private int taxId;
+    @SerializedName("para_type")
     private int paraType;
+    @SerializedName("item_price")
     private double itemPrice;
+    @SerializedName("create_time")
     private long createTime;
+    @SerializedName("update_time")
     private long updateTime;
-
     public int getId() {
         return id;
     }

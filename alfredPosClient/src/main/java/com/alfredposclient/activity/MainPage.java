@@ -2570,9 +2570,9 @@ public class MainPage extends BaseActivity {
                 currentOrder.setIsTakeAway(salesType);
                 OrderSQL.updateOrder(currentOrder);
                 handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-                if (item.getParaValue1().equals(String.valueOf(ParamConst.EMPLOYEE))){
-                    showListEmployee();
-                }
+//                if (item.getParaValue1().equals(String.valueOf(ParamConst.EMPLOYEE))){
+//                    showListEmployee();
+//                }
             }
         });
 

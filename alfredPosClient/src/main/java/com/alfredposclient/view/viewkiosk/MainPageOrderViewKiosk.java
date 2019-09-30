@@ -432,6 +432,10 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
         if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.takeaway) + ")";
+        } else if (order.getIsTakeAway() == ParamConst.APP_DELIVERY) {
+            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.delivery) + ")";
+        } else if (order.getIsTakeAway() == ParamConst.EMPLOYEE) {
+            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.employee) + ")";
         }
         tv_table_name_ontop.setText(orderNoStr);
         if (!IntegerUtils.isEmptyOrZero(order.getPersons())) {
