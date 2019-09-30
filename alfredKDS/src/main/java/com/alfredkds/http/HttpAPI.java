@@ -3,6 +3,7 @@ package com.alfredkds.http;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.alfredbase.ParamConst;
@@ -406,7 +407,7 @@ public class HttpAPI {
                                 for (int i = 0; i < kotItemDetails.size(); i++) {
                                     //将数据库的数据变为原来的数据
                                     KotItemDetail kotItemDetail = kotItemDetails.get(i);
-                                    KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                                    KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
                                     sqlKotItemDetail.setUnFinishQty(sqlKotItemDetail.getUnFinishQty() + kotItemDetail.getFinishQty());
                                     sqlKotItemDetail.setFinishQty(sqlKotItemDetail.getFinishQty() - kotItemDetail.getFinishQty());
                                     sqlKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
@@ -434,7 +435,7 @@ public class HttpAPI {
                             List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
                             for (int i = 0; i < kotItemDetails.size(); i++) {
                                 KotItemDetail kotItemDetail = kotItemDetails.get(i);
-                                KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                                KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
                                 sqlKotItemDetail.setUnFinishQty(sqlKotItemDetail.getUnFinishQty() + kotItemDetail.getFinishQty());
                                 sqlKotItemDetail.setFinishQty(sqlKotItemDetail.getFinishQty() - kotItemDetail.getFinishQty());
                                 sqlKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
@@ -508,7 +509,7 @@ public class HttpAPI {
 
     public static void callSpecifyNum(Context context,
                                       final Map<String, Object> parameters, String url,
-                                      AsyncHttpClient httpClient, final Handler handler, final int id) {
+                                      AsyncHttpClient httpClient, final Handler handler, final String id) {
         if (parameters != null) {
 //            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
@@ -522,7 +523,7 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
-                                if (id >= 0) {
+                                if (!TextUtils.isEmpty(id)) {
                                     KotItemDetailSQL.updateCallById(id);
                                     handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL, null));
                                 }

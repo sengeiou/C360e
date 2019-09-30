@@ -30,6 +30,7 @@ import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.TimeUtil;
 import com.alfredbase.utils.LanguageManager;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredkds.R;
 import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
@@ -255,6 +256,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
             case R.id.btSave:
                 int stackCount = !TextUtils.isEmpty(etStackCount.getText()) ? Integer.parseInt(etStackCount.getText().toString()) : 0;
                 settings.setStackCount(stackCount);
+                ToastUtils.showToast(context, "Stack count updated to " + stackCount);
                 break;
             case R.id.tvTimeStart:
                 showTimePicker("Select Start Time", tvTimeStart, 0);

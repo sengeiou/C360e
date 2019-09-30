@@ -120,7 +120,7 @@ public class SyncCentre {
     }
 
     public void callSpecifyNum(Context context, MainPosInfo mainPosInfo, Map<String, Object> parameters,
-                               Handler handler, int id) {
+                               Handler handler, String id) {
         if (parameters != null)
             parameters.put("userKey", CoreData.getInstance().getUserKey(mainPosInfo.getRevenueId()));
         HttpAPI.callSpecifyNum(context, parameters,

@@ -22,8 +22,8 @@ public class KotItemModifierSQL {
         try {
             String sql = "replace into "
                     + TableNames.KotItemModifier
-                    + "(id, kotItemDetailId, modifierId, modifierName, modifierNum, status, printerId)"
-                    + " values (?,?,?,?,?,?,?)";
+                    + "(id, kotItemDetailId, modifierId, modifierName, modifierNum, status, printerId, uniqueId, kotItemDetailUniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{kotItemModifier.getId(),
@@ -32,7 +32,10 @@ public class KotItemModifierSQL {
                             kotItemModifier.getModifierName(),
                             kotItemModifier.getModifierNum(),
                             kotItemModifier.getStatus(),
-                            kotItemModifier.getPrinterId()});
+                            kotItemModifier.getPrinterId(),
+                            kotItemModifier.getUniqueId(),
+                            kotItemModifier.getKotItemDetailUniqueId()
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,8 +50,8 @@ public class KotItemModifierSQL {
             db.beginTransaction();
             String sql = "replace into "
                     + TableNames.KotItemModifier
-                    + "(id, kotItemDetailId, modifierId, modifierName, modifierNum, status, printerId)"
-                    + " values (?,?,?,?,?,?,?)";
+                    + "(id, kotItemDetailId, modifierId, modifierName, modifierNum, status, printerId, uniqueId, kotItemDetailUniqueId)"
+                    + " values (?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(
                     sql);
             for (KotItemModifier kotItemModifier : kotItemModifiers) {
@@ -66,6 +69,10 @@ public class KotItemModifierSQL {
                         kotItemModifier.getStatus());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 7,
                         kotItemModifier.getPrinterId());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 8,
+                        kotItemModifier.getUniqueId());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 9,
+                        kotItemModifier.getKotItemDetailUniqueId());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -92,12 +99,14 @@ public class KotItemModifierSQL {
                     .moveToNext()) {
                 kotItemModifier = new KotItemModifier();
                 kotItemModifier.setId(cursor.getInt(0));
-                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
-                kotItemModifier.setModifierId(cursor.getInt(2));
-                kotItemModifier.setModifierName(cursor.getString(3));
-                kotItemModifier.setModifierNum(cursor.getInt(4));
-                kotItemModifier.setStatus(cursor.getInt(5));
-                kotItemModifier.setPrinterId(cursor.getInt(6));
+                kotItemModifier.setUniqueId(cursor.getString(1));
+                kotItemModifier.setKotItemDetailId(cursor.getInt(2));
+                kotItemModifier.setModifierId(cursor.getInt(3));
+                kotItemModifier.setModifierName(cursor.getString(4));
+                kotItemModifier.setModifierNum(cursor.getInt(5));
+                kotItemModifier.setStatus(cursor.getInt(6));
+                kotItemModifier.setPrinterId(cursor.getInt(7));
+                kotItemModifier.setKotItemDetailUniqueId(cursor.getString(8));
                 result.add(kotItemModifier);
             }
         } catch (Exception e) {
@@ -119,13 +128,23 @@ public class KotItemModifierSQL {
             cursor = SQLExe.getDB().rawQuery(sql, new String[]{kotItemDetailId + "", modifierId + ""});
             if (cursor.moveToFirst()) {
                 kotItemModifier = new KotItemModifier();
+//                kotItemModifier.setId(cursor.getInt(0));
+//                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
+//                kotItemModifier.setModifierId(cursor.getInt(2));
+//                kotItemModifier.setModifierName(cursor.getString(3));
+//                kotItemModifier.setModifierNum(cursor.getInt(4));
+//                kotItemModifier.setStatus(cursor.getInt(5));
+//                kotItemModifier.setPrinterId(cursor.getInt(6));
+//                kotItemModifier.setUniqueId(cursor.getString(7));
                 kotItemModifier.setId(cursor.getInt(0));
-                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
-                kotItemModifier.setModifierId(cursor.getInt(2));
-                kotItemModifier.setModifierName(cursor.getString(3));
-                kotItemModifier.setModifierNum(cursor.getInt(4));
-                kotItemModifier.setStatus(cursor.getInt(5));
-                kotItemModifier.setPrinterId(cursor.getInt(6));
+                kotItemModifier.setUniqueId(cursor.getString(1));
+                kotItemModifier.setKotItemDetailId(cursor.getInt(2));
+                kotItemModifier.setModifierId(cursor.getInt(3));
+                kotItemModifier.setModifierName(cursor.getString(4));
+                kotItemModifier.setModifierNum(cursor.getInt(5));
+                kotItemModifier.setStatus(cursor.getInt(6));
+                kotItemModifier.setPrinterId(cursor.getInt(7));
+                kotItemModifier.setKotItemDetailUniqueId(cursor.getString(8));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,13 +172,69 @@ public class KotItemModifierSQL {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
                 kotItemModifier = new KotItemModifier();
+//                kotItemModifier.setId(cursor.getInt(0));
+//                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
+//                kotItemModifier.setModifierId(cursor.getInt(2));
+//                kotItemModifier.setModifierName(cursor.getString(3));
+//                kotItemModifier.setModifierNum(cursor.getInt(4));
+//                kotItemModifier.setStatus(cursor.getInt(5));
+//                kotItemModifier.setPrinterId(cursor.getInt(6));
+//                kotItemModifier.setUniqueId(cursor.getString(7));
                 kotItemModifier.setId(cursor.getInt(0));
-                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
-                kotItemModifier.setModifierId(cursor.getInt(2));
-                kotItemModifier.setModifierName(cursor.getString(3));
-                kotItemModifier.setModifierNum(cursor.getInt(4));
-                kotItemModifier.setStatus(cursor.getInt(5));
-                kotItemModifier.setPrinterId(cursor.getInt(6));
+                kotItemModifier.setUniqueId(cursor.getString(1));
+                kotItemModifier.setKotItemDetailId(cursor.getInt(2));
+                kotItemModifier.setModifierId(cursor.getInt(3));
+                kotItemModifier.setModifierName(cursor.getString(4));
+                kotItemModifier.setModifierNum(cursor.getInt(5));
+                kotItemModifier.setStatus(cursor.getInt(6));
+                kotItemModifier.setPrinterId(cursor.getInt(7));
+                kotItemModifier.setKotItemDetailUniqueId(cursor.getString(8));
+                result.add(kotItemModifier);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
+    public static ArrayList<KotItemModifier> getKotItemModifiersByKotItemDetail(KotItemDetail kotItemDetail) {
+        ArrayList<KotItemModifier> result = new ArrayList<KotItemModifier>();
+        String sql = "select * from " + TableNames.KotItemModifier + " where kotItemDetailUniqueId = ?";
+
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{String.valueOf(kotItemDetail.getUniqueId())});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            KotItemModifier kotItemModifier = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                kotItemModifier = new KotItemModifier();
+//                kotItemModifier.setId(cursor.getInt(0));
+//                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
+//                kotItemModifier.setModifierId(cursor.getInt(2));
+//                kotItemModifier.setModifierName(cursor.getString(3));
+//                kotItemModifier.setModifierNum(cursor.getInt(4));
+//                kotItemModifier.setStatus(cursor.getInt(5));
+//                kotItemModifier.setPrinterId(cursor.getInt(6));
+//                kotItemModifier.setUniqueId(cursor.getString(7));
+                kotItemModifier.setId(cursor.getInt(0));
+                kotItemModifier.setUniqueId(cursor.getString(1));
+                kotItemModifier.setKotItemDetailId(cursor.getInt(2));
+                kotItemModifier.setModifierId(cursor.getInt(3));
+                kotItemModifier.setModifierName(cursor.getString(4));
+                kotItemModifier.setModifierNum(cursor.getInt(5));
+                kotItemModifier.setStatus(cursor.getInt(6));
+                kotItemModifier.setPrinterId(cursor.getInt(7));
+                kotItemModifier.setKotItemDetailUniqueId(cursor.getString(8));
                 result.add(kotItemModifier);
             }
         } catch (Exception e) {
@@ -181,10 +256,10 @@ public class KotItemModifierSQL {
 
     public static void deleteKotItemModifier(KotItemModifier kotItemModifier) {
         String sql = "delete from " + TableNames.KotItemModifier
-                + " where id = ?";
+                + " where uniqueId = ?";
         try {
             SQLExe.getDB().execSQL(sql,
-                    new Object[]{kotItemModifier.getId()});
+                    new Object[]{kotItemModifier.getUniqueId()});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -192,9 +267,13 @@ public class KotItemModifierSQL {
 
     public static void deleteAllKotItemModifier() {
         String sql = "delete from " + TableNames.KotItemModifier;
+        String sssql = "select * from sqlite_sequence";
+        String up = "update sqlite_sequence set seq=0 where name='" + TableNames.KotItemModifier + "'";
         try {
             SQLExe.getDB().execSQL(sql,
                     new Object[]{});
+            SQLExe.getDB().rawQuery(sssql, new String[]{});
+            SQLExe.getDB().execSQL(up, new Object[]{});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -204,7 +283,9 @@ public class KotItemModifierSQL {
 
         String sql = "delete from " + TableNames.KotItemModifier;
         if (revenueId != null) {
-            sql = "delete from " + TableNames.KotItemModifier + " where kotItemDetailId in (select kotItemDetailId from " + TableNames.KotItemDetail + " where revenueId = " + revenueId + ")";
+            sql = "delete from " + TableNames.KotItemModifier +
+                    " where kotItemDetailId in (select kotItemDetailId from "
+                    + TableNames.KotItemDetail + " where revenueId = " + revenueId + ")";
         }
 
         try {
@@ -215,7 +296,4 @@ public class KotItemModifierSQL {
         }
     }
 
-    public static void deleteKotItemModifierByOrderModifierId(int orderModifierId) {
-
-    }
 }

@@ -69,6 +69,10 @@ public class KotItemDetail implements Serializable {
 
     private Integer itemId;
 
+    private String uniqueId;
+
+    private String kotSummaryUniqueId;
+
     public boolean isChecklist;
 
     public KotItemDetail() {
@@ -284,6 +288,22 @@ public class KotItemDetail implements Serializable {
         this.itemId = itemId;
     }
 
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public String getKotSummaryUniqueId() {
+        return kotSummaryUniqueId;
+    }
+
+    public void setKotSummaryUniqueId(String kotSummaryUniqueId) {
+        this.kotSummaryUniqueId = kotSummaryUniqueId;
+    }
+
     @Override
     public String toString() {
         return "KotItemDetail{" +
@@ -314,6 +334,8 @@ public class KotItemDetail implements Serializable {
                 ", itemType=" + itemType +
                 ", itemId=" + itemId +
                 ", isChecklist=" + isChecklist +
+                ", uniqueId='" + uniqueId + '\'' +
+                ", kotSummaryUniqueId='" + kotSummaryUniqueId + '\'' +
                 '}';
     }
 }

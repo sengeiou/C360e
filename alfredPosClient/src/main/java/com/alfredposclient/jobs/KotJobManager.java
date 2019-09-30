@@ -790,6 +790,7 @@ public class KotJobManager {
             KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryById(kotSummary.getId());
 
             kotSummary.setOriginalId(kotSummary.getId());
+            kotSummary.setOriginalUniqueId(kotSummary.getUniqueId());
             KotSummarySQL.update(kotSummary);
 
             kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
