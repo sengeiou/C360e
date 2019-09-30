@@ -35,7 +35,7 @@ public class App extends BaseApplication {
     SharedPreferences sp;
 
     private List<CallBean> save;
-    private List<CallBean> callList ;
+    private List<CallBean> callList;
 
     @Override
     public void onCreate() {
@@ -48,7 +48,7 @@ public class App extends BaseApplication {
         mbPlayIMG = TvPref.readPlayIMGEn();
         VERSION = getAppVersionName();
         CallNumHttpServer callNumHttpServer = new CallNumHttpServer();
-         sp = getSharedPreferences("call", Activity.MODE_PRIVATE);
+        sp = getSharedPreferences("call", Activity.MODE_PRIVATE);
         callList = new ArrayList<CallBean>();
         try {
             if (!callNumHttpServer.isAlive()) {
@@ -68,7 +68,7 @@ public class App extends BaseApplication {
 
     public void setCall(CallBean call) {
 
-        if(callList!=null){
+        if (callList != null) {
             callList.add(call);
             if (callList.size() > 30) {
                 callList.remove(0);

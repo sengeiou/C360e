@@ -15,249 +15,260 @@ import java.util.List;
 
 public class OrderBillSQL {
 
-	public static void add(OrderBill orderBill) {
-		if (orderBill == null) {
-			return;
-		}
-		try {
-			String sql = "replace into "
-					+ TableNames.OrderBill
-					+ "(id, billNo, orderId, orderSplitId, type, restaurantId, revenueId, userId, createTime, updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?,?)";
-			SQLExe.getDB().execSQL(
-					sql,
-					new Object[] { orderBill.getId(), orderBill.getBillNo(),
-							orderBill.getOrderId(),
-							orderBill.getOrderSplitId(), orderBill.getType(),
-							orderBill.getRestaurantId(),
-							orderBill.getRevenueId(), orderBill.getUserId(),
-							orderBill.getCreateTime(),
-							orderBill.getUpdateTime() });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public static void add(SQLiteDatabase db, OrderBill orderBill) {
-		if (orderBill == null) {
-			return;
-		}
-		try {
-			String sql = "replace into "
-					+ TableNames.OrderBill
-					+ "(id, billNo, orderId, orderSplitId, type, restaurantId, revenueId, userId, createTime, updateTime)"
-					+ " values (?,?,?,?,?,?,?,?,?,?)";
-			db.execSQL(
-					sql,
-					new Object[] { orderBill.getId(), orderBill.getBillNo(),
-							orderBill.getOrderId(),
-							orderBill.getOrderSplitId(), orderBill.getType(),
-							orderBill.getRestaurantId(),
-							orderBill.getRevenueId(), orderBill.getUserId(),
-							orderBill.getCreateTime(),
-							orderBill.getUpdateTime() });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public static void add(OrderBill orderBill) {
+        if (orderBill == null) {
+            return;
+        }
+        try {
+            String sql = "replace into "
+                    + TableNames.OrderBill
+                    + "(id, billNo, orderId, orderSplitId, type, restaurantId, revenueId, userId, createTime, updateTime, printTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?)";
+            SQLExe.getDB().execSQL(
+                    sql,
+                    new Object[]{orderBill.getId(), orderBill.getBillNo(),
+                            orderBill.getOrderId(),
+                            orderBill.getOrderSplitId(), orderBill.getType(),
+                            orderBill.getRestaurantId(),
+                            orderBill.getRevenueId(), orderBill.getUserId(),
+                            orderBill.getCreateTime(),
+                            orderBill.getUpdateTime(),
+                            orderBill.getPrintTime()
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static OrderBill getOrderBill(Integer orderBillID) {
-		OrderBill orderBill = null;
-		String sql = "select * from " + TableNames.OrderBill + " where id = ?";
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(sql,
-					new String[] { orderBillID + "" });
-			if (cursor.moveToFirst()) {
-				orderBill = new OrderBill();
-				orderBill.setId(cursor.getInt(0));
-				orderBill.setBillNo(cursor.getInt(1));
-				orderBill.setOrderId(cursor.getInt(2));
-				orderBill.setOrderSplitId(cursor.getInt(3));
-				orderBill.setType(cursor.getInt(4));
-				orderBill.setRestaurantId(cursor.getInt(5));
-				orderBill.setRevenueId(cursor.getInt(6));
-				orderBill.setUserId(cursor.getInt(7));
-				orderBill.setCreateTime(cursor.getLong(8));
-				orderBill.setUpdateTime(cursor.getLong(9));
-				return orderBill;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+    public static void add(SQLiteDatabase db, OrderBill orderBill) {
+        if (orderBill == null) {
+            return;
+        }
+        try {
+            String sql = "replace into "
+                    + TableNames.OrderBill
+                    + "(id, billNo, orderId, orderSplitId, type, restaurantId, revenueId, userId, createTime, updateTime, printTime)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?)";
+            db.execSQL(
+                    sql,
+                    new Object[]{orderBill.getId(), orderBill.getBillNo(),
+                            orderBill.getOrderId(),
+                            orderBill.getOrderSplitId(), orderBill.getType(),
+                            orderBill.getRestaurantId(),
+                            orderBill.getRevenueId(), orderBill.getUserId(),
+                            orderBill.getCreateTime(),
+                            orderBill.getUpdateTime(),
+                            orderBill.getPrintTime()
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
-		}
-		return orderBill;
-	}
+    public static OrderBill getOrderBill(Integer orderBillID) {
+        OrderBill orderBill = null;
+        String sql = "select * from " + TableNames.OrderBill + " where id = ?";
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql,
+                    new String[]{orderBillID + ""});
+            if (cursor.moveToFirst()) {
+                orderBill = new OrderBill();
+                orderBill.setId(cursor.getInt(0));
+                orderBill.setBillNo(cursor.getInt(1));
+                orderBill.setOrderId(cursor.getInt(2));
+                orderBill.setOrderSplitId(cursor.getInt(3));
+                orderBill.setType(cursor.getInt(4));
+                orderBill.setRestaurantId(cursor.getInt(5));
+                orderBill.setRevenueId(cursor.getInt(6));
+                orderBill.setUserId(cursor.getInt(7));
+                orderBill.setCreateTime(cursor.getLong(8));
+                orderBill.setUpdateTime(cursor.getLong(9));
+                orderBill.setPrintTime(cursor.getLong(10));
+                return orderBill;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
 
-	public static OrderBill getOrderBillByOrder(Order order) {
-		OrderBill orderBill = null;
-		String sql = "select * from " + TableNames.OrderBill
-				+ " where orderId = ?";
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(sql,
-					new String[] { order.getId() + "" });
-			if (cursor.moveToFirst()) {
-				orderBill = new OrderBill();
-				orderBill.setId(cursor.getInt(0));
-				orderBill.setBillNo(cursor.getInt(1));
-				orderBill.setOrderId(cursor.getInt(2));
-				orderBill.setOrderSplitId(cursor.getInt(3));
-				orderBill.setType(cursor.getInt(4));
-				orderBill.setRestaurantId(cursor.getInt(5));
-				orderBill.setRevenueId(cursor.getInt(6));
-				orderBill.setUserId(cursor.getInt(7));
-				orderBill.setCreateTime(cursor.getLong(8));
-				orderBill.setUpdateTime(cursor.getLong(9));
-				return orderBill;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return orderBill;
+    }
 
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
-		}
-		return orderBill;
-	}
+    public static OrderBill getOrderBillByOrder(Order order) {
+        OrderBill orderBill = null;
+        String sql = "select * from " + TableNames.OrderBill
+                + " where orderId = ?";
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql,
+                    new String[]{order.getId() + ""});
+            if (cursor.moveToFirst()) {
+                orderBill = new OrderBill();
+                orderBill.setId(cursor.getInt(0));
+                orderBill.setBillNo(cursor.getInt(1));
+                orderBill.setOrderId(cursor.getInt(2));
+                orderBill.setOrderSplitId(cursor.getInt(3));
+                orderBill.setType(cursor.getInt(4));
+                orderBill.setRestaurantId(cursor.getInt(5));
+                orderBill.setRevenueId(cursor.getInt(6));
+                orderBill.setUserId(cursor.getInt(7));
+                orderBill.setCreateTime(cursor.getLong(8));
+                orderBill.setUpdateTime(cursor.getLong(9));
+                orderBill.setPrintTime(cursor.getLong(10));
+                return orderBill;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
 
-	public static OrderBill getOrderBillByOnlyOrder(int orderId) {
-		OrderBill orderBill = null;
-		String sql = "select * from " + TableNames.OrderBill
-				+ " where orderId = ? and type = " + ParamConst.BILL_TYPE_UN_SPLIT;
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(sql,
-					new String[] { orderId + "" });
-			if (cursor.moveToFirst()) {
-				orderBill = new OrderBill();
-				orderBill.setId(cursor.getInt(0));
-				orderBill.setBillNo(cursor.getInt(1));
-				orderBill.setOrderId(cursor.getInt(2));
-				orderBill.setOrderSplitId(cursor.getInt(3));
-				orderBill.setType(cursor.getInt(4));
-				orderBill.setRestaurantId(cursor.getInt(5));
-				orderBill.setRevenueId(cursor.getInt(6));
-				orderBill.setUserId(cursor.getInt(7));
-				orderBill.setCreateTime(cursor.getLong(8));
-				orderBill.setUpdateTime(cursor.getLong(9));
-				return orderBill;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return orderBill;
+    }
 
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
-		}
-		return orderBill;
-	}
+    public static OrderBill getOrderBillByOnlyOrder(int orderId) {
+        OrderBill orderBill = null;
+        String sql = "select * from " + TableNames.OrderBill
+                + " where orderId = ? and type = " + ParamConst.BILL_TYPE_UN_SPLIT;
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql,
+                    new String[]{orderId + ""});
+            if (cursor.moveToFirst()) {
+                orderBill = new OrderBill();
+                orderBill.setId(cursor.getInt(0));
+                orderBill.setBillNo(cursor.getInt(1));
+                orderBill.setOrderId(cursor.getInt(2));
+                orderBill.setOrderSplitId(cursor.getInt(3));
+                orderBill.setType(cursor.getInt(4));
+                orderBill.setRestaurantId(cursor.getInt(5));
+                orderBill.setRevenueId(cursor.getInt(6));
+                orderBill.setUserId(cursor.getInt(7));
+                orderBill.setCreateTime(cursor.getLong(8));
+                orderBill.setUpdateTime(cursor.getLong(9));
+                orderBill.setPrintTime(cursor.getLong(10));
+                return orderBill;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
 
-	public static List<OrderBill> getAllOrderBillByOrder(Order order) {
-		List<OrderBill> orderBills = new ArrayList<OrderBill>();
-		OrderBill orderBill = null;
-		String sql = "select * from " + TableNames.OrderBill
-				+ " where orderId = ?";
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(sql,
-					new String[] { order.getId() + "" });
-			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-				orderBill = new OrderBill();
-				orderBill.setId(cursor.getInt(0));
-				orderBill.setBillNo(cursor.getInt(1));
-				orderBill.setOrderId(cursor.getInt(2));
-				orderBill.setOrderSplitId(cursor.getInt(3));
-				orderBill.setType(cursor.getInt(4));
-				orderBill.setRestaurantId(cursor.getInt(5));
-				orderBill.setRevenueId(cursor.getInt(6));
-				orderBill.setUserId(cursor.getInt(7));
-				orderBill.setCreateTime(cursor.getLong(8));
-				orderBill.setUpdateTime(cursor.getLong(9));
-				orderBills.add(orderBill);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return orderBill;
+    }
 
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
-		}
-		return orderBills;
-	}
-	
-	public static OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit) {
-		OrderBill orderBill = null;
-		String sql = "select * from " + TableNames.OrderBill
-				+ " where orderSplitId = ?";
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(sql,
-					new String[] { orderSplit.getId() + "" });
-			if (cursor.moveToFirst()) {
-				orderBill = new OrderBill();
-				orderBill.setId(cursor.getInt(0));
-				orderBill.setBillNo(cursor.getInt(1));
-				orderBill.setOrderId(cursor.getInt(2));
-				orderBill.setOrderSplitId(cursor.getInt(3));
-				orderBill.setType(cursor.getInt(4));
-				orderBill.setRestaurantId(cursor.getInt(5));
-				orderBill.setRevenueId(cursor.getInt(6));
-				orderBill.setUserId(cursor.getInt(7));
-				orderBill.setCreateTime(cursor.getLong(8));
-				orderBill.setUpdateTime(cursor.getLong(9));
-				return orderBill;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+    public static List<OrderBill> getAllOrderBillByOrder(Order order) {
+        List<OrderBill> orderBills = new ArrayList<OrderBill>();
+        OrderBill orderBill = null;
+        String sql = "select * from " + TableNames.OrderBill
+                + " where orderId = ?";
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql,
+                    new String[]{order.getId() + ""});
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                orderBill = new OrderBill();
+                orderBill.setId(cursor.getInt(0));
+                orderBill.setBillNo(cursor.getInt(1));
+                orderBill.setOrderId(cursor.getInt(2));
+                orderBill.setOrderSplitId(cursor.getInt(3));
+                orderBill.setType(cursor.getInt(4));
+                orderBill.setRestaurantId(cursor.getInt(5));
+                orderBill.setRevenueId(cursor.getInt(6));
+                orderBill.setUserId(cursor.getInt(7));
+                orderBill.setCreateTime(cursor.getLong(8));
+                orderBill.setUpdateTime(cursor.getLong(9));
+                orderBill.setPrintTime(cursor.getLong(10));
+                orderBills.add(orderBill);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
 
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
-		}
-		return orderBill;
-	}
-	
-	public static OrderBill getOrderBillByBillNo(int billNo) {
-		OrderBill orderBill = null;
-		String sql = "select * from " + TableNames.OrderBill
-				+ " where billNo = ?";
-		Cursor cursor = null;
-		try {
-			cursor = SQLExe.getDB().rawQuery(sql,
-					new String[] { billNo + "" });
-			if (cursor.moveToFirst()) {
-				orderBill = new OrderBill();
-				orderBill.setId(cursor.getInt(0));
-				orderBill.setBillNo(cursor.getInt(1));
-				orderBill.setOrderId(cursor.getInt(2));
-				orderBill.setOrderSplitId(cursor.getInt(3));
-				orderBill.setType(cursor.getInt(4));
-				orderBill.setRestaurantId(cursor.getInt(5));
-				orderBill.setRevenueId(cursor.getInt(6));
-				orderBill.setUserId(cursor.getInt(7));
-				orderBill.setCreateTime(cursor.getLong(8));
-				orderBill.setUpdateTime(cursor.getLong(9));
-				return orderBill;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return orderBills;
+    }
 
-		} finally {
-			if (cursor != null && !cursor.isClosed()) {
-				cursor.close();
-			}
-		}
-		return orderBill;
-	}
-	
+    public static OrderBill getOrderBillByOrderSplit(OrderSplit orderSplit) {
+        OrderBill orderBill = null;
+        String sql = "select * from " + TableNames.OrderBill
+                + " where orderSplitId = ?";
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql,
+                    new String[]{orderSplit.getId() + ""});
+            if (cursor.moveToFirst()) {
+                orderBill = new OrderBill();
+                orderBill.setId(cursor.getInt(0));
+                orderBill.setBillNo(cursor.getInt(1));
+                orderBill.setOrderId(cursor.getInt(2));
+                orderBill.setOrderSplitId(cursor.getInt(3));
+                orderBill.setType(cursor.getInt(4));
+                orderBill.setRestaurantId(cursor.getInt(5));
+                orderBill.setRevenueId(cursor.getInt(6));
+                orderBill.setUserId(cursor.getInt(7));
+                orderBill.setCreateTime(cursor.getLong(8));
+                orderBill.setUpdateTime(cursor.getLong(9));
+                orderBill.setPrintTime(cursor.getLong(10));
+                return orderBill;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return orderBill;
+    }
+
+    public static OrderBill getOrderBillByBillNo(int billNo) {
+        OrderBill orderBill = null;
+        String sql = "select * from " + TableNames.OrderBill
+                + " where billNo = ?";
+        Cursor cursor = null;
+        try {
+            cursor = SQLExe.getDB().rawQuery(sql,
+                    new String[]{billNo + ""});
+            if (cursor.moveToFirst()) {
+                orderBill = new OrderBill();
+                orderBill.setId(cursor.getInt(0));
+                orderBill.setBillNo(cursor.getInt(1));
+                orderBill.setOrderId(cursor.getInt(2));
+                orderBill.setOrderSplitId(cursor.getInt(3));
+                orderBill.setType(cursor.getInt(4));
+                orderBill.setRestaurantId(cursor.getInt(5));
+                orderBill.setRevenueId(cursor.getInt(6));
+                orderBill.setUserId(cursor.getInt(7));
+                orderBill.setCreateTime(cursor.getLong(8));
+                orderBill.setUpdateTime(cursor.getLong(9));
+                orderBill.setPrintTime(cursor.getLong(10));
+                return orderBill;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return orderBill;
+    }
+
 //	public static int getOrderBillCountByTime(long businessDate) {
 //		int count = 0 ;
 //		String sql = "select count(*) from " + TableNames.OrderBill
@@ -279,7 +290,7 @@ public class OrderBillSQL {
 //		}
 //		return count;
 //	}
-	
+
 //	public static int getOrderBillCountByTime(long businessDate, SessionStatus sessionStatus) {
 //		int count = 0 ;
 //		String sql = "select count(*) from " + TableNames.OrderBill
@@ -302,30 +313,40 @@ public class OrderBillSQL {
 //		return count;
 //	}
 
-	public static void deleteOrderBill(OrderBill orderBill) {
-		String sql = "delete from " + TableNames.OrderBill + " where id = ?";
-		try {
-			SQLExe.getDB().execSQL(sql, new Object[] { orderBill.getId() });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static void deleteOrderBillByOrder(Order order) {
-		String sql = "delete from " + TableNames.OrderBill + " where orderId = ?";
-		try {
-			SQLExe.getDB().execSQL(sql, new Object[] { order.getId() });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public static void deleteAllOrderBill() {
-		String sql = "delete from " + TableNames.OrderBill;
-		try {
-			SQLExe.getDB().execSQL(sql, new Object[] { });
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    public static void deleteOrderBill(OrderBill orderBill) {
+        String sql = "delete from " + TableNames.OrderBill + " where id = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{orderBill.getId()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteOrderBillByOrder(Order order) {
+        String sql = "delete from " + TableNames.OrderBill + " where orderId = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{order.getId()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteAllOrderBill() {
+        String sql = "delete from " + TableNames.OrderBill;
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updatePrintTime(OrderBill orderBill) {
+        String sql = "update " + TableNames.OrderBill + " set printTime = ? where id = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{orderBill.getPrintTime(), orderBill.getId()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -5,6 +5,7 @@
     android:background="@color/white">
 
     <RelativeLayout
+        android:id="@+id/contTop"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentTop="true">
@@ -35,7 +36,11 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/contVersion"
+        android:layout_below="@+id/contTop"
         android:layout_centerInParent="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -69,12 +74,12 @@
             android:dividerHeight="15dp"
             android:listSelector="@android:color/transparent"
             android:overScrollMode="never"
-            android:scrollbars="none"></ListView>
-
+            android:scrollbars="none" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/contVersion"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -82,17 +87,14 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_select_pos"
+            android:id="@+id/tvConnect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="16dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="45dp"
             android:background="@drawable/sync_box"
             android:gravity="center"
-            android:text="@string/choose"
-            android:textColor="@color/black"
-            android:textSize="@dimen/text_size_m"
-            android:visibility="gone" />
+            android:text="Connect" />
 
         <TextView
             android:id="@+id/tv_app_version"

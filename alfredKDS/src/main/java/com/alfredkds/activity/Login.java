@@ -25,6 +25,7 @@ import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.global.UIHelp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,22 +91,35 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
         textTypeFace.setTrajanProRegular(tv_id_5);
     }
 
+    int loginCount = 0;
+    int loginSize = App.instance.getCurrentConnectedMainPosList().size();
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case HANDLER_LOGIN: {
-                    loadingDialog.dismiss();
-                    User user = CoreData.getInstance().getUser(old_employee_ID,
-                            password);
-                    App.instance.setUser(user);
-                    Store.putString(context, Store.EMPLOYEE_ID, old_employee_ID);
-                    Store.putString(context, Store.PASSWORD, password);
-                    initBugseeModifier();
-                    UIHelp.startKitchenOrder(context);
-                    finish();
+                    loginCount++;
+
+                    if (loginCount >= loginSize) {
+                        loginCount = 0;
+                        loadingDialog.dismiss();
+                        User user = CoreData.getInstance().getUser(old_employee_ID,
+                                password);
+                        App.instance.setUser(user);
+                        Store.putString(context, Store.EMPLOYEE_ID, old_employee_ID);
+                        Store.putString(context, Store.PASSWORD, password);
+
+                        initBugseeModifier();
+                        if (App.instance.isBalancer()) {
+                            UIHelp.startLogScreen(context);
+                        } else {
+                            UIHelp.startKitchenOrder(context);
+                        }
+                        finish();
+                    }
                     break;
                 }
                 case ResultCode.CONNECTION_FAILED: {
+                    loginCount = 0;
                     loadingDialog.dismiss();
                     UIHelp.showToast(context, ResultCode.getErrorResultStr(context, (Throwable) msg.obj,
                             context.getResources().getString(R.string.revenue_center)));
@@ -173,20 +187,15 @@ public class Login extends BaseActivity implements KeyBoardClickListener {
         parameters.put("password", password);
         parameters.put("type", ParamConst.USER_TYPE_KOT);
         parameters.put("device", App.instance.getKdsDevice());
-
 //        MainPosInfo currentOne = App.instance.getCurrentConnectedMainPos();
+        List<MainPosInfo> connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+//        if (isBalancer()) {
         loadingDialog.setTitle(context.getResources().getString(R.string.logining));
         loadingDialog.show();
-        List<MainPosInfo> listMainPos = App.instance.getCurrentConnectedMainPos();
-        if (listMainPos != null && listMainPos.size() > 0) {
-            for (MainPosInfo mainPos : listMainPos) {
-                SyncCentre.getInstance().login(context, mainPos.getIP(), parameters, handler);
+        if (connectedMainPos.size() > 0) {
+            for (MainPosInfo mainPosInfo : connectedMainPos) {
+                SyncCentre.getInstance().login(context, mainPosInfo.getIP(), parameters, handler);
             }
-//			Map<String,Object> map = new HashMap<String, Object>();
-//			map.put("printerType", ParamConst.PRINTER_TYPE_UNGROUP);
-//			map.put("employeeId", old_employee_ID);
-//			//Verify employee and load all printers/KDS from POS
-//			SyncCentre.getInstance().getPrinters(context, App.instance.getPairingIp(),map, handler);
         } else {
             loadingDialog.dismiss();
             UIHelp.showToast(context, context.getResources().getString(R.string.paired_failed));

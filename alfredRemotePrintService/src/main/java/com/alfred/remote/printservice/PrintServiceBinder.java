@@ -21,7 +21,6 @@ import com.alfred.printer.KickDrawerPrint;
 import com.alfred.printer.ModifierDetailAnalysisReportPrint;
 import com.alfred.printer.MonthlySalesReportPrint;
 import com.alfred.printer.PromotionSalesReportPrint;
-import com.alfred.printer.ReportBasePrint;
 import com.alfred.printer.StoredCardPrint;
 import com.alfred.printer.SummaryAnalysisReportPrint;
 import com.alfred.printer.TableQRCodePrint;

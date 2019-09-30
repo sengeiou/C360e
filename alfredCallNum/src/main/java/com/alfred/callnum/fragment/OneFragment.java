@@ -74,7 +74,11 @@ public class OneFragment extends Fragment {
 
     private Boolean type = true;
 
-    private TextView line1,line2,line3;
+    private TextView line1, line2, line3;
+    private TextView tvTitle1;
+    private TextView tvTitle2;
+    private TextView tvTitle3;
+    private TextView tvTitle4;
 
 
     @SuppressLint("ValidFragment")
@@ -134,10 +138,10 @@ public class OneFragment extends Fragment {
         re_two = (RecyclerView) getActivity().findViewById(R.id.review_two);
         re_three = (RecyclerView) getActivity().findViewById(R.id.review_three);
         re_four = (RecyclerView) getActivity().findViewById(R.id.review_four);
-        line1=(TextView)getActivity().findViewById(R.id.tv_line1) ;
-        line2=(TextView)getActivity().findViewById(R.id.tv_line2) ;
-        line3=(TextView)getActivity().findViewById(R.id.tv_line3) ;
-     //   bg = (ImageView) getActivity().findViewById(R.id.img_call_bgs);
+        line1 = (TextView) getActivity().findViewById(R.id.tv_line1);
+        line2 = (TextView) getActivity().findViewById(R.id.tv_line2);
+        line3 = (TextView) getActivity().findViewById(R.id.tv_line3);
+        //   bg = (ImageView) getActivity().findViewById(R.id.img_call_bgs);
 
 
 //            re_three.setVisibility(View.VISIBLE);
@@ -151,6 +155,11 @@ public class OneFragment extends Fragment {
         re_two.setLayoutManager(layoutManager2);
         re_three.setLayoutManager(layoutManager3);
         re_four.setLayoutManager(layoutManager4);
+
+        tvTitle1 = (TextView) getActivity().findViewById(R.id.tvTitle1);
+        tvTitle2 = (TextView) getActivity().findViewById(R.id.tvTitle2);
+        tvTitle3 = (TextView) getActivity().findViewById(R.id.tvTitle3);
+        tvTitle4 = (TextView) getActivity().findViewById(R.id.tvTitle4);
 
 
         mAdapter1 = new MycallAdapter(getActivity(), mDatas1, new RvListener() {
@@ -189,7 +198,7 @@ public class OneFragment extends Fragment {
         re_two.setAdapter(mAdapter2);
         re_three.setAdapter(mAdapter3);
         re_four.setAdapter(mAdapter4);
-      //  initData();
+        //  initData();
 //        //
 
     }
@@ -210,7 +219,7 @@ public class OneFragment extends Fragment {
         line1.setVisibility(View.VISIBLE);
         line2.setVisibility(View.VISIBLE);
         line3.setVisibility(View.VISIBLE);
-       // bg.setVisibility(View.GONE);
+        // bg.setVisibility(View.GONE);
 //        if(callMap!=null) {
 //
 //            Set<Map.Entry<String, Object>> set = callMap.entrySet();
@@ -231,73 +240,93 @@ public class OneFragment extends Fragment {
 //
 //        callMap.put(call.getName(),call);
 
-        Iterator<CallBean> it;
-        int v = call.getCallTag() % 4;
-        switch (v) {
-            case 0:
-                it = mDatas1.iterator();
-                while (it.hasNext()) {
-                    CallBean calls = it.next();
-                    if (calls.getCallNumber().equals(call.getCallNumber())) {
-                        it.remove();
+        if (call.getCallType() == 5) {//setting value from pos
+            if (mAdapter1.getPrinterGroupId() <= 0 || mAdapter1.getPrinterGroupId() == call.getPrinterGroupId()) {
+                tvTitle1.setText(call.getPrinterGroupName());
+                addData(re_one, mAdapter1, mDatas1, call, position);
+            } else if (mAdapter2.getPrinterGroupId() <= 0 || mAdapter2.getPrinterGroupId() == call.getPrinterGroupId()) {
+                tvTitle2.setText(call.getPrinterGroupName());
+                addData(re_two, mAdapter2, mDatas2, call, position);
+            } else if (mAdapter3.getPrinterGroupId() <= 0 || mAdapter3.getPrinterGroupId() == call.getPrinterGroupId()) {
+                tvTitle3.setText(call.getPrinterGroupName());
+                addData(re_three, mAdapter3, mDatas3, call, position);
+            } else if (mAdapter4.getPrinterGroupId() <= 0 || mAdapter4.getPrinterGroupId() == call.getPrinterGroupId()) {
+                tvTitle4.setText(call.getPrinterGroupName());
+                addData(re_four, mAdapter4, mDatas4, call, position);
+            }
+        } else {
 
-                        mAdapter1.notifyDataSetChanged();
-                    } else {
-                        App.instance.setCall(call);
-                    }
-                }
-                mDatas1.add(position, call);
-                mAdapter1.notifyItemInserted(position);
-                re_one.scrollToPosition(position);
-                break;
-            case 1:
-                it = mDatas2.iterator();
-                while (it.hasNext()) {
-                    CallBean calls = it.next();
-                    if (calls.getCallNumber().equals(call.getCallNumber())) {
-                        it.remove();
-                        mAdapter2.notifyDataSetChanged();
-                    } else {
-                        App.instance.setCall(call);
-                    }
-                }
-                mDatas2.add(position, call);
-                mAdapter2.notifyItemInserted(position);
-                re_two.scrollToPosition(position);
+            //region old method
+            Iterator<CallBean> it;
+            int v = call.getCallTag() % 4;
 
-                break;
+            switch (v) {
+                case 0:
+                    it = mDatas1.iterator();
+                    while (it.hasNext()) {
+                        CallBean calls = it.next();
+                        if (calls.getCallNumber().equals(call.getCallNumber())) {
+                            it.remove();
 
-            case 2:
-                it = mDatas3.iterator();
-                while (it.hasNext()) {
-                    CallBean calls = it.next();
-                    if (calls.getCallNumber().equals(call.getCallNumber())) {
-                        it.remove();
-                        mAdapter3.notifyDataSetChanged();
-                    } else {
-                        App.instance.setCall(call);
+                            mAdapter1.notifyDataSetChanged();
+                        } else {
+                            App.instance.setCall(call);
+                        }
                     }
-                }
-                mDatas3.add(position, call);
-                mAdapter3.notifyItemInserted(position);
-                re_three.scrollToPosition(position);
-                break;
-            case 3:
-                it = mDatas4.iterator();
-                while (it.hasNext()) {
-                    CallBean calls = it.next();
-                    if (calls.getCallNumber().equals(call.getCallNumber())) {
-                        it.remove();
-                        mAdapter4.notifyDataSetChanged();
-                    } else {
-                        App.instance.setCall(call);
+                    mDatas1.add(position, call);
+                    mAdapter1.notifyItemInserted(position);
+                    re_one.scrollToPosition(position);
+                    break;
+                case 1:
+                    it = mDatas2.iterator();
+                    while (it.hasNext()) {
+                        CallBean calls = it.next();
+                        if (calls.getCallNumber().equals(call.getCallNumber())) {
+                            it.remove();
+                            mAdapter2.notifyDataSetChanged();
+                        } else {
+                            App.instance.setCall(call);
+                        }
                     }
-                }
-                mDatas4.add(position, call);
-                mAdapter4.notifyItemInserted(position);
-                re_four.scrollToPosition(position);
-                break;
+                    mDatas2.add(position, call);
+                    mAdapter2.notifyItemInserted(position);
+                    re_two.scrollToPosition(position);
 
+                    break;
+
+                case 2:
+                    it = mDatas3.iterator();
+                    while (it.hasNext()) {
+                        CallBean calls = it.next();
+                        if (calls.getCallNumber().equals(call.getCallNumber())) {
+                            it.remove();
+                            mAdapter3.notifyDataSetChanged();
+                        } else {
+                            App.instance.setCall(call);
+                        }
+                    }
+                    mDatas3.add(position, call);
+                    mAdapter3.notifyItemInserted(position);
+                    re_three.scrollToPosition(position);
+                    break;
+                case 3:
+                    it = mDatas4.iterator();
+                    while (it.hasNext()) {
+                        CallBean calls = it.next();
+                        if (calls.getCallNumber().equals(call.getCallNumber())) {
+                            it.remove();
+                            mAdapter4.notifyDataSetChanged();
+                        } else {
+                            App.instance.setCall(call);
+                        }
+                    }
+                    mDatas4.add(position, call);
+                    mAdapter4.notifyItemInserted(position);
+                    re_four.scrollToPosition(position);
+                    break;
+
+            }
+            //endregion
         }
 
 
@@ -329,6 +358,30 @@ public class OneFragment extends Fragment {
 //        }
 
 
+    }
+
+    private void addData(RecyclerView rcv, MycallAdapter adapter, List<CallBean> data,
+                         CallBean call, int position) {
+
+        Iterator<CallBean> it = data.iterator();
+        while (it.hasNext()) {
+            CallBean calls = it.next();
+            if (calls.getCallNumber().equals(call.getCallNumber())) {
+                it.remove();
+
+                adapter.notifyDataSetChanged();
+            } else {
+                App.instance.setCall(call);
+            }
+        }
+
+        if (adapter.getPrinterGroupId() <= 0) {
+            adapter.setPrinterGroupId(call.getPrinterGroupId());
+        }
+
+        data.add(position, call);
+        adapter.notifyItemInserted(position);
+        rcv.scrollToPosition(position);
     }
 
 

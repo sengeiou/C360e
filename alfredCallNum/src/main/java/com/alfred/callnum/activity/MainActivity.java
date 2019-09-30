@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,7 +23,6 @@ import com.alfred.callnum.utils.MyQueue;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.AnimatorListenerImpl;
-import com.alfredbase.utils.LanguageManager;
 import com.alfredbase.utils.LogUtil;
 
 import java.util.Timer;
@@ -127,15 +125,14 @@ public class MainActivity extends BaseActivity {
                             if (queue.QueueLength() > 0) {
 
                                 CallBean callBean = (CallBean) queue.deQueue(MainActivity.this);
-                                String name = callBean.getCallNumber().toString();
+                                if (callBean == null) return;
+                                String name = callBean.getCallNumber();
                                 if (oneFragment != null) {
                                     oneFragment.addData(0, callBean);
                                 }
 
-                                //      for (int j = 0; j < 2; j++) {
 
                                 LogUtil.e("time----", "tttttttt");
-//
                                 CallNumQueueUtil num1 = new CallNumQueueUtil(name, 1, 0, 1);
 
                                 CallNumUtil.call(num1);
@@ -171,8 +168,6 @@ public class MainActivity extends BaseActivity {
 
     }
 
-
-//
 
     protected void initView() {
         super.initView();
@@ -281,7 +276,7 @@ public class MainActivity extends BaseActivity {
 
     public void createFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        if (viewId == 4) {
+        if (viewId == 4 || viewId == 5) {
             oneFragment = new OneFragment();
             oneFragment.setViewId(viewId, handler);
             fragmentTransaction.add(R.id.one_fragment, oneFragment);

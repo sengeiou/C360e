@@ -20,6 +20,7 @@ import com.alfredbase.BaseApplication;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.model.AppVersion;
@@ -35,6 +36,7 @@ import com.alfredkds.global.UIHelp;
 import com.google.gson.Gson;
 import com.umeng.analytics.MobclickAgent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Welcome extends BaseActivity {
@@ -126,26 +128,37 @@ public class Welcome extends BaseActivity {
     }
 
     private void startNextActivity() {
-        List<MainPosInfo> mainPosInfos = App.instance.getCurrentConnectedMainPos();
+
+        List<MainPosInfo> connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+
+//        if (App.instance.isBalancer()) {
+        CoreData.getInstance().init(context);
+//        } else {
+//            MainPosInfo mainPosInfo = App.instance.getCurrentConnectedMainPos();
+//            if (mainPosInfo != null)
+//                connectedMainPos.add(mainPosInfo);
+//        }
+
         User user = Store.getObject(context, Store.KDS_USER, User.class);
+        List<String> ipList = new ArrayList<>();
         App.instance.setRing();
-        if (mainPosInfos == null) {
+
+        for (MainPosInfo mainPosInfo : connectedMainPos) {
+            ipList.add(mainPosInfo.getIP());
+        }
+
+        if (connectedMainPos.size() <= 0) {
             UIHelp.startSelectRevenue(context);
             finish();
         } else if (user == null) {
-            for (MainPosInfo mainPosInfo : mainPosInfos) {
-                App.instance.setPairingIp(mainPosInfo.getIP());
-            }
+            App.instance.setAllPairingIp(ipList);
             UIHelp.startEmployeeID(context);
             finish();
         } else {
-            for (MainPosInfo mainPosInfo : mainPosInfos) {
-                App.instance.setPairingIp(mainPosInfo.getIP());
-            }
+            App.instance.setAllPairingIp(ipList);
             UIHelp.startLogin(context);
             finish();
         }
-
     }
 
     private boolean checkVersion() {

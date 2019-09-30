@@ -47,8 +47,11 @@ public class CallNumHttpServer extends AlfredHttpServer {
                     String callNumber = jsonObject.optString("callNumber");
                     int callType = jsonObject.optInt("callType");
                     int callTag = jsonObject.optInt("callTag");
+                    String printerName = jsonObject.getString("printerName");
+                    int printerGroupId = jsonObject.getInt("printerGroupId");
 
-                    CallBean callBean = new CallBean(callNumber, callType, callTag);
+                    CallBean callBean = new CallBean(callNumber, callType, callTag, printerName, printerGroupId);
+
                     if (jsonObject.has("header")) {
                         Store.putString(App.instance, Store.CALL_NUM_HEADER, jsonObject.optString("header"));
                         callBean.setUpdate(true);
@@ -57,8 +60,8 @@ public class CallNumHttpServer extends AlfredHttpServer {
                         Store.putString(App.instance, Store.CALL_NUM_FOOTER, jsonObject.optString("footer"));
                         callBean.setUpdate(true);
                     }
-                    App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_CALL, callBean);
 
+                    App.getTopActivity().httpRequestAction(App.HANDLER_REFRESH_CALL, callBean);
                     /**
                      * 返回成功
                      */

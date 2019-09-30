@@ -3,11 +3,10 @@ package com.alfredkds.http;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.alfredbase.ParamConst;
-import com.alfredbase.global.CoreData;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
 import com.alfredbase.http.DownloadFactory;
 import com.alfredbase.http.ResultCode;
@@ -34,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +81,32 @@ public class HttpAPI {
         }
     }
 
+    public static void syncSubmitKot(Context context, Map<String, Object> parameters, String url,
+                                     AsyncHttpClient syncHttpClient, final Handler handler) throws Exception {
+
+        syncHttpClient.post(context, url,
+                new StringEntity(new Gson().toJson(parameters) + HttpAPI.EOF,
+                        "UTF-8"), CONTENT_TYPE,
+                new AsyncHttpResponseHandlerEx() {
+                    @Override
+                    public void onSuccess(final int statusCode, final Header[] headers,
+                                          final byte[] responseBody) {
+                        super.onSuccess(statusCode, headers, responseBody);
+                        if (resultCode == ResultCode.SUCCESS) {
+                        } else if (resultCode == ResultCode.INVALID_DEVICE) {
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        if (error.getCause() instanceof ConnectException) {
+                            throw new RuntimeException(error);
+                        }
+                    }
+                });
+    }
+
     public static void getPrinters(final Context context,
                                    Map<String, Object> parameters, String url,
                                    AsyncHttpClient httpClient, final Handler handler) {
@@ -121,6 +147,74 @@ public class HttpAPI {
         }
     }
 
+    public static void getConnectedKDS(final Context context,
+                                       Map<String, Object> parameters, String url,
+                                       AsyncHttpClient httpClient, final Handler handler) {
+        if (parameters != null) {
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters) + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+//                                handler.sendEmptyMessage(ResultCode.SUCCESS);
+                                HttpAnalysis.saveConnectedKDS(statusCode, headers, responseBody);
+                            } else if (resultCode == ResultCode.USER_NO_PERMIT) {
+                                handler.sendEmptyMessage(ResultCode.USER_NO_PERMIT);
+                            } else {
+                                elseResultCodeAction(resultCode, statusCode, headers, responseBody);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            handler.sendMessage(handler.obtainMessage(ResultCode.CONNECTION_FAILED, error));
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateKdsStatus(final Context context,
+                                       Map<String, Object> parameters, String url,
+                                       AsyncHttpClient httpClient, final Handler handler) {
+        if (parameters != null) {
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters) + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            super.onFailure(statusCode, headers, responseBody, error);
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /* Send KDS device details to POS when pairing completes */
     public static void pairingComplete(final Context context,
@@ -158,11 +252,11 @@ public class HttpAPI {
     }
 
     /*Report KDS Dynamic IP change*/
-    public static void kdsIpChange(final Context context, Integer revId,
+    public static void kdsIpChange(final Context context,
                                    Map<String, Object> parameters, String url,
                                    AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(revId));
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -195,11 +289,11 @@ public class HttpAPI {
     }
 
 
-    public static void updateRemainingStock(final Context context, Integer revId,
+    public static void updateRemainingStock(final Context context,
                                             final Map<String, Object> parameters, String url,
                                             AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(revId));
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -234,12 +328,55 @@ public class HttpAPI {
         }
     }
 
+    public static void kotNextKds(final Context context,
+                                  final Map<String, Object> parameters, String url,
+                                  AsyncHttpClient httpClient, final Handler handler, final int id) {
+        if (parameters != null) {
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
+            parameters.put("appVersion", App.instance.VERSION);
+        }
+        try {
+            httpClient.post(context, url,
+                    new StringEntity(new Gson().toJson(parameters) + EOF,
+                            "UTF-8"), CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                                HttpAnalysis.deleteKotItemDetails(statusCode, headers, responseBody, handler);
+                                handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_SUCCESS, null));
+                            } else if (resultCode == ResultCode.KOTSUMMARY_IS_UNREAL) {
+                                HttpAnalysis.deleteKot(statusCode, headers, responseBody, handler);
+                            } else if (resultCode == ResultCode.USER_NO_PERMIT) {
+                                handler.sendMessage(handler.obtainMessage(ResultCode.USER_NO_PERMIT, null));
+                            } else {
+                                handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_FAILED, null));
+                            }
+                        }
+
+                        @SuppressWarnings("unchecked")
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                            super.onFailure(statusCode, headers, responseBody, error);
+                            handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_NEXT_FAILED, null));
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            handler.sendMessage(handler.obtainMessage(App.HANDLER_REFRESH_KOT, null));
+        }
+    }
+
     /*Complete items in KOT*/
-    public static void KotComplete(final Context context, Integer revId,
+    public static void KotComplete(final Context context,
                                    final Map<String, Object> parameters, String url,
                                    AsyncHttpClient httpClient, final Handler handler, final int id) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(revId));
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -270,7 +407,7 @@ public class HttpAPI {
                                 for (int i = 0; i < kotItemDetails.size(); i++) {
                                     //将数据库的数据变为原来的数据
                                     KotItemDetail kotItemDetail = kotItemDetails.get(i);
-                                    KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                                    KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
                                     sqlKotItemDetail.setUnFinishQty(sqlKotItemDetail.getUnFinishQty() + kotItemDetail.getFinishQty());
                                     sqlKotItemDetail.setFinishQty(sqlKotItemDetail.getFinishQty() - kotItemDetail.getFinishQty());
                                     sqlKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
@@ -280,8 +417,10 @@ public class HttpAPI {
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_RETURN_ERROR_SHOW, kotItemDetails));
                             } else if (resultCode == ResultCode.KOTSUMMARY_IS_UNREAL) {
                                 KotSummary kotSummary = (KotSummary) parameters.get("kotSummary");
-                                KotSummarySQL.deleteKotSummary(kotSummary);
-                                KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
+                                if (kotSummary != null) {
+                                    KotSummarySQL.deleteKotSummary(kotSummary);
+                                    KotItemDetailSQL.deleteAllKotItemDetailByKotSummary(kotSummary);
+                                }
                                 handler.sendMessage(handler.obtainMessage(App.HANDLER_KOTSUMMARY_IS_UNREAL));
                             } else {
                                 elseResultCodeAction(resultCode, statusCode, headers, responseBody);
@@ -294,10 +433,9 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             error.printStackTrace();
                             List<KotItemDetail> kotItemDetails = (List<KotItemDetail>) parameters.get("kotItemDetails");
-                            ;
                             for (int i = 0; i < kotItemDetails.size(); i++) {
                                 KotItemDetail kotItemDetail = kotItemDetails.get(i);
-                                KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                                KotItemDetail sqlKotItemDetail = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
                                 sqlKotItemDetail.setUnFinishQty(sqlKotItemDetail.getUnFinishQty() + kotItemDetail.getFinishQty());
                                 sqlKotItemDetail.setFinishQty(sqlKotItemDetail.getFinishQty() - kotItemDetail.getFinishQty());
                                 sqlKotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
@@ -314,11 +452,11 @@ public class HttpAPI {
     }
 
     /*cancel complete items in KOT*/
-    public static void CancelComplete(Context context, Integer revId,
+    public static void CancelComplete(Context context,
                                       final Map<String, Object> parameters, String url,
                                       AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(revId));
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -369,11 +507,11 @@ public class HttpAPI {
         }
     }
 
-    public static void callSpecifyNum(Context context, Integer revId,
+    public static void callSpecifyNum(Context context,
                                       final Map<String, Object> parameters, String url,
-                                      AsyncHttpClient httpClient, final Handler handler, final int id) {
+                                      AsyncHttpClient httpClient, final Handler handler, final String id) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(revId));
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -385,7 +523,7 @@ public class HttpAPI {
                                               byte[] responseBody) {
                             super.onSuccess(statusCode, headers, responseBody);
                             if (resultCode == ResultCode.SUCCESS) {
-                                if (id >= 0) {
+                                if (!TextUtils.isEmpty(id)) {
                                     KotItemDetailSQL.updateCallById(id);
                                     handler.sendMessage(handler.obtainMessage(App.HANDLER_KOT_ITEM_CALL, null));
                                 }
@@ -413,11 +551,11 @@ public class HttpAPI {
         }
     }
 
-    public static void Logout(Context context, Integer revId,
+    public static void Logout(Context context,
                               final Map<String, Object> parameters, String url,
                               AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(revId));
+//            parameters.put("userKey", CoreData.getInstance().getUserKey());
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {

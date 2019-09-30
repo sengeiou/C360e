@@ -1,6 +1,7 @@
 package com.alfredkds.javabean;
 
 import java.io.Serializable;
+
 public class KotItem implements Serializable {
 
     private int id;
@@ -12,12 +13,23 @@ public class KotItem implements Serializable {
     private Integer kotStatus;
     private Long createTime;
     private Long updateTime;
-    private  Integer orderNo;
+    private Integer orderNo;
     private Integer summaryId;
     private Integer qty;
     private Integer itemDetailId;
     private String numTag;
     private Integer revenueCenterIndex;
+    private boolean isPlaceOrder;
+    private int itemId;
+    private String kotItemDetailUniqueId;
+
+    public boolean isPlaceOrder() {
+        return isPlaceOrder;
+    }
+
+    public void setPlaceOrder(boolean placeOrder) {
+        isPlaceOrder = placeOrder;
+    }
 
     public Integer getRevenueCenterIndex() {
         return revenueCenterIndex;
@@ -140,6 +152,22 @@ public class KotItem implements Serializable {
         this.numTag = numTag;
     }
 
+    public int getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getKotItemDetailUniqueId() {
+        return kotItemDetailUniqueId;
+    }
+
+    public void setKotItemDetailUniqueId(String kotItemDetailUniqueId) {
+        this.kotItemDetailUniqueId = kotItemDetailUniqueId;
+    }
+
     @Override
     public String toString() {
         return "KotItem{" +
@@ -157,6 +185,10 @@ public class KotItem implements Serializable {
                 ", qty=" + qty +
                 ", itemDetailId=" + itemDetailId +
                 ", numTag='" + numTag + '\'' +
+                ", revenueCenterIndex=" + revenueCenterIndex +
+                ", isPlaceOrder=" + isPlaceOrder +
+                ", itemId=" + itemId +
+                ", kotItemDetailUniqueId=" + kotItemDetailUniqueId +
                 '}';
     }
 }

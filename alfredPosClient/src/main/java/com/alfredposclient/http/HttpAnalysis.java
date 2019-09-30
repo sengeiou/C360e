@@ -195,6 +195,33 @@ public class HttpAnalysis {
                     new TypeToken<ArrayList<Printer>>() {
                     }.getType());
 
+            //region set dummy data
+//            for (Printer printer : printers) {
+//                if ("Kitchen 1".equalsIgnoreCase(printer.getPrinterName()) ||
+//                        "Kitchen 2".equalsIgnoreCase(printer.getPrinterName()) ||
+//                        "Bar".equalsIgnoreCase(printer.getPrinterName())) {
+//                    printer.setPrinterUsageType(Printer.KDS_SUB);
+//                } else if ("EX Kitchen".equalsIgnoreCase(printer.getPrinterName())) {
+//                    printer.setPrinterUsageType(Printer.KDS_EXPEDITER);
+//                } else if ("Summary Printer".equalsIgnoreCase(printer.getPrinterName())) {
+//                    printer.setPrinterUsageType(Printer.KDS_SUMMARY);
+//                } else {
+//                    printer.setPrinterUsageType(Printer.KDS_NORMAL);
+//                }
+//            }
+
+//            Printer printer = new Printer();
+//            printer.setId(123);
+//            printer.setPrinterUsageType(Printer.KDS_BALANCER);
+//            printer.setPrinterName("Balancer");
+//            printer.setType(0);
+//            printer.setCompanyId(0);
+//            printer.setIsCashdrawer(0);
+//            printer.setIsLablePrinter(0);
+//            printer.setRestaurantId(0);
+//            printers.add(printer);
+            //endregion
+
             CoreData.getInstance().setPrinters(printers);
             PrinterSQL.deleteAllPrinter();
             PrinterSQL.addPrinters(printers);
@@ -203,6 +230,7 @@ public class HttpAnalysis {
                     object.getString("printerGroupList"),
                     new TypeToken<ArrayList<PrinterGroup>>() {
                     }.getType());
+
             CoreData.getInstance().setPrinterGroups(printerGroups);
             PrinterGroupSQL.deletePrinter();
             PrinterGroupSQL.addPrinterGroups(printerGroups);
