@@ -1206,24 +1206,30 @@ public class HttpAPI {
                                             SyncData.SYNC_FAILURE));
                                 }
                             }
-
-
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
-                            if (mode == SyncCentre.MODE_PUSH_SYNC) {
-                                handler.sendMessage(handler.obtainMessage(
-                                        ResultCode.CONNECTION_FAILED, error));
-                            } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
-                                handler.sendMessage(handler.obtainMessage(
-                                        SyncData.SYNC_DATA_TAG,
-                                        SyncData.SYNC_FAILURE));
+                            try
+                            {
+                                if (mode == SyncCentre.MODE_PUSH_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            ResultCode.CONNECTION_FAILED, error));
+                                } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                                super.onFailure(statusCode, headers, responseBody,
+                                        error);
+                                throw new RuntimeException(error);
+
                             }
-                            super.onFailure(statusCode, headers, responseBody,
-                                    error);
-                            throw new RuntimeException(error);
+                            catch(Exception e)
+                            {
+                                Log.e("Server Refuse", String.valueOf(e));
+                            }
                         }
                     });
         }
