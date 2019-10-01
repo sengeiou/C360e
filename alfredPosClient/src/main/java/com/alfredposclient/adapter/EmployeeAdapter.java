@@ -49,8 +49,10 @@ public class EmployeeAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.tvTitle = (TextView) view.findViewById(R.id.title);
             holder.tvSubTitle = (TextView) view.findViewById(R.id.subtitle);
+            holder.tvBudget = (TextView) view.findViewById(R.id.tv_budget);
             textTypeFace.setTrajanProBlod(holder.tvTitle);
             textTypeFace.setTrajanProBlod(holder.tvSubTitle);
+            textTypeFace.setTrajanProBlod(holder.tvBudget);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -59,6 +61,7 @@ public class EmployeeAdapter extends BaseAdapter {
         User item = data.get(i);
         holder.tvTitle.setText(item.getFirstName());
         holder.tvSubTitle.setText(item.getType().toString());
+        holder.tvBudget.setText(item.getBudget());
 
         return view;
     }
@@ -66,5 +69,6 @@ public class EmployeeAdapter extends BaseAdapter {
     public class ViewHolder {
         public TextView tvTitle;
         public TextView tvSubTitle;
+        public TextView tvBudget;
     }
 }

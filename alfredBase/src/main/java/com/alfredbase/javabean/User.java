@@ -40,7 +40,7 @@ public class User implements Serializable{
 
 	private Long updateTime;
 
-	private double budget;
+	private String budget;
 
 	public User() {
 	}
@@ -48,7 +48,7 @@ public class User implements Serializable{
 	public User(Integer id, Integer empId, Integer type, Integer status,
 			String accountName, String userName, String password,
 			String firstName, String lastName, String nickName,
-			Integer companyId, Long createTime, Long updateTime) {
+			Integer companyId, Long createTime, Long updateTime, double budget) {
 		super();
 		this.id = id;
 		this.empId = empId;
@@ -207,13 +207,13 @@ public class User implements Serializable{
 				+ "]";
 	}
 
-	public double getBudget() {
-		if (CommonUtil.isNull(budget))
-			return 0;
-		return budget;
+	public void setBudget(String budget) {
+		this.budget = budget;
 	}
 
-	public void setBudget(double budget) {
-		this.budget = budget;
+	public String getBudget() {
+		if (CommonUtil.isNull(budget))
+			return "";
+		return budget;
 	}
 }

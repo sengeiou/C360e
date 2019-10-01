@@ -45,6 +45,7 @@ import com.alfredbase.javabean.NonChargableSettlement;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderUser;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
@@ -64,10 +65,12 @@ import com.alfredbase.store.sql.NonChargableSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.OrderUserSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BH;
@@ -2619,6 +2622,22 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 printBill(true, null);
             }
         }
+        OrderUser ordrUser = OrderUserSQL.getOrderUserByOrderId(order.getId());
+        if (ordrUser != null) updateOrderUser(ordrUser);
+
+    }
+
+    private void updateOrderUser(OrderUser ordrUser) {
+        ordrUser.setTransactionAmount(order.getGrandTotal());
+        long time = System.currentTimeMillis();
+        ordrUser.setUpdateTime(time);
+        OrderUserSQL.update(ordrUser);
+        BigDecimal budget = BH.getBD(user.getBudget());
+        BigDecimal grdTotal = BH.getBD(order.getGrandTotal());
+        BigDecimal result = BH.sub(budget,grdTotal, true);
+        user.setBudget(result.toString());
+        user.setUpdateTime(time);
+        UserSQL.addUser(user);
     }
 
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {

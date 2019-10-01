@@ -1751,6 +1751,14 @@ public class DataHelper {
                     + " ADD COLUMN salesTypeId TEXT");
             db.execSQL("ALTER TABLE " + TableNames.ReportPluDayComboModifier
                     + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.User
+                    + " ADD COLUMN budget TEXT");
+
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.OrderUser
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderUserId INTEGER, userId INTEGER, orderId INTEGER, businessDate LONG,"
+                    + " transactionAmount TEXT, createTime LONG, updateTime LONG)");
 
         }
 

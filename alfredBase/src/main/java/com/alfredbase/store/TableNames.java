@@ -106,4 +106,5 @@ public class TableNames {
 
 
 	public static final String EventLog= "EventLog_";
+	public static final String OrderUser= "OrderUser_";
 }
