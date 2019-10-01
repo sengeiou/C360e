@@ -67,5 +67,6 @@ interface IAlfredRemotePrintService {
 
     void printPromotionAnalysisReport(String xzType, String printer, String title, String reportDayPromotion);
     void printIpay88Qrcode(String printer, String id, String printerTitle,  String paymentMethod, String amount, inout byte[] qrCodeBitmap);
+    void printTransferOrder(String printer, String fromRvcName, String toRvcName, String fromTable, String toTable, String fromOrder, String toOrder, String orderDetail, String modifier);
 
 }

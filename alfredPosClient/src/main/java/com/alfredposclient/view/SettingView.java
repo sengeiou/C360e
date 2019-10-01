@@ -24,9 +24,7 @@ import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.APIName;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.model.PrinterDevice;
-import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.LogUtil;
@@ -34,24 +32,18 @@ import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.TextTypeFace;
-import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.Welcome;
 import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.utils.AlertToDeviceSetting;
-import com.alfredposclient.utils.AlfredRootCmdUtil;
-import com.floatwindow.float_lib.FloatActionController;
 
-import java.io.File;
+public class SettingView extends LinearLayout implements OnClickListener, View.OnLongClickListener, View.OnTouchListener {
 
-public class SettingView extends LinearLayout implements OnClickListener,View.OnLongClickListener,View.OnTouchListener {
-
+    final static String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
     private BaseActivity context;
     private DrawerLayout mDrawerLayout;
-    final static String[] letters= {"a","b", "c","d","e","f","g","h","i","j"};
-
     private long startTime;
     private float mTouchStartX;
     private float mTouchStartY;
@@ -64,7 +56,8 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
     // 长按的runnable
     private Runnable mLongPressRunnable;
     private long endTime;
-    private boolean isclick=false;
+    private boolean isclick = false;
+
     public SettingView(Context context) {
         super(context);
         init(context);
@@ -80,7 +73,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
         init(context);
     }
 
-    public void setParams(BaseActivity parent,DrawerLayout drawerLayout) {
+    public void setParams(BaseActivity parent, DrawerLayout drawerLayout) {
         this.context = parent;
         this.mDrawerLayout = drawerLayout;
     }
@@ -120,7 +113,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
         SUNMIVisible();
 
 
-        if (App.instance.countryCode != ParamConst.CHINA) {
+        if (BaseApplication.countryCode != ParamConst.CHINA) {
             findViewById(R.id.monthly_sale_report_container).setVisibility(View.GONE);
         }
         if (App.instance.isRevenueKiosk()) {
@@ -129,16 +122,16 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
                 findViewById(R.id.ll_sub_pos).setVisibility(View.VISIBLE);
                 findViewById(R.id.ll_close_subpos).setVisibility(View.GONE);
 
-            }else{
+            } else {
                 findViewById(R.id.ll_sub_pos).setVisibility(View.GONE);
                 findViewById(R.id.ll_close_subpos).setVisibility(View.VISIBLE);
             }
-        }else{
+        } else {
             findViewById(R.id.ll_printer_qr_code).setVisibility(View.GONE);
             findViewById(R.id.ll_sub_pos).setVisibility(View.GONE);
             findViewById(R.id.ll_close_subpos).setVisibility(View.GONE);
         }
-        ((TextView)findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
+        ((TextView) findViewById(R.id.tv_app_version)).setText(context.getResources().getString(R.string.version) + App.instance.VERSION);
         initTextTypeFace();
 
         mLongPressRunnable = new Runnable() {
@@ -151,15 +144,15 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 //                System.out.println("isMoved--->>>"+isMoved);
                 mCounter--;
                 // 计数器大于0，说明当前执行的Runnable不是最后一次down产生的。
-                if ( mCounter>0|| isReleased || isMoved)
+                if (mCounter > 0 || isReleased || isMoved)
                     return;
 
 
-                final int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+                final int train = SharedPreferencesHelper.getInt(context, SharedPreferencesHelper.TRAINING_MODE);
 
-                int	display= Store.getInt(context,SharedPreferencesHelper.TRAIN_DISPLAY);
+                int display = Store.getInt(context, SharedPreferencesHelper.TRAIN_DISPLAY);
 // 0  隐藏， 1 显示
-                if(display==ParamConst.ENABLE_POS_TRAINING){
+                if (display == ParamConst.ENABLE_POS_TRAINING) {
 
                     DialogFactory.commonTwoBtnDialog((BaseActivity) context, "",
                             "Enable Training Mode Option？",
@@ -168,7 +161,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
                             new OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,1);
+                                    Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 1);
                                 }
                             },
                             new OnClickListener() {
@@ -176,12 +169,12 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
                                 @Override
                                 public void onClick(View arg0) {
 
-                                    Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
+                                    Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 0);
                                 }
 
 
                             });
-                }else {
+                } else {
 
                     DialogFactory.commonTwoBtnDialog((BaseActivity) context, "",
                             "Disable Training Mode Option？",
@@ -190,7 +183,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
                             new OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Store.putInt(context,SharedPreferencesHelper.TRAIN_DISPLAY,0);
+                                    Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 0);
 
                                 }
                             },
@@ -201,7 +194,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 
                                     Store.putInt(context, SharedPreferencesHelper.TRAIN_DISPLAY, 1);
 
-                                    if (train==1) {
+                                    if (train == 1) {
                                         SharedPreferencesHelper.putInt(context, SharedPreferencesHelper.TRAINING_MODE, 0);
 
 //										context.runOnUiThread(new Runnable() {
@@ -254,10 +247,10 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
         findViewById(R.id.ll_edit_settlement).setVisibility(
                 View.GONE);
         findViewById(R.id.ll_close).setVisibility(View.GONE);
-        if (App.instance.isSUNMIShow()){
+        if (App.instance.isSUNMIShow()) {
             findViewById(R.id.linear_sunmi).setVisibility(VISIBLE);
             SUNMIGone();
-        }else {
+        } else {
             findViewById(R.id.linear_sunmi).setVisibility(GONE);
             SUNMIGone();
         }
@@ -455,7 +448,6 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
 //            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
             return "http://18.138.252.241/alfred-api/" + relativeUrl;
         } else if (BaseApplication.isOpenLog) {
-
             return "http://139.224.17.126/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {
@@ -499,17 +491,16 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
         findViewById(R.id.ll_sunmi).setVisibility(VISIBLE);
     }
 
-    public void SUNMIGone(){
+    public void SUNMIGone() {
         findViewById(R.id.ll_sunmi).setVisibility(GONE);
     }
 
     @Override
     public boolean onLongClick(View v) {
         // 0  正常模式， 1 培训模式
-        final int train= SharedPreferencesHelper.getInt(context,SharedPreferencesHelper.TRAINING_MODE);
+        final int train = SharedPreferencesHelper.getInt(context, SharedPreferencesHelper.TRAINING_MODE);
 
-        int	display= Store.getInt(context,SharedPreferencesHelper.TRAIN_DISPLAY);
-
+        int display = Store.getInt(context, SharedPreferencesHelper.TRAIN_DISPLAY);
 
 
         //ToastUtils.showToast(context,"changanl");
@@ -538,7 +529,7 @@ public class SettingView extends LinearLayout implements OnClickListener,View.On
                 // 如果移动量大于3才移动
                 if (Math.abs(mTouchStartX - mMoveStartX) > 3
                         && Math.abs(mTouchStartY - mMoveStartY) > 3) {
-                    isMoved=true;
+                    isMoved = true;
                     // 更新浮动窗口位置参数
 
                     return false;

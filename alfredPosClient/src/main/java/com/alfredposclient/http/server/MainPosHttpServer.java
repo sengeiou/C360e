@@ -106,6 +106,7 @@ import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
 import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RestaurantSQL;
+import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.store.sql.SettlementRestaurantSQL;
 import com.alfredbase.store.sql.SubPosBeanSQL;
 import com.alfredbase.store.sql.SubPosCommitSQL;
@@ -155,15 +156,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MainPosHttpServer extends AlfredHttpServer {
-    private String TAG = MainPosHttpServer.class.getSimpleName();
-
-    public MainPosHttpServer() {
-        super(APPConfig.HTTP_SERVER_PORT);
-        KpmgResponseUtil.getInstance().init(this);
-    }
-
-    private Object lockObject = new Object();
-
     public static final String MIME_JAVASCRIPT = "text/javascript";
     public static final String MIME_CSS = "text/css";
     public static final String MIME_JPEG = "image/jpeg";
@@ -172,6 +164,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
     public static final String MIME_JSON = "application/json";
     public static final String RESULT_CODE = "resultCode";
     public static final Gson gson = new Gson();
+    private String TAG = MainPosHttpServer.class.getSimpleName();
+    private Object lockObject = new Object();
+
+    public MainPosHttpServer() {
+        super(APPConfig.HTTP_SERVER_PORT);
+        KpmgResponseUtil.getInstance().init(this);
+    }
 
     @Override
     public Response doGet(String uri, Method mothod, final Map<String, String> params, String body) {
@@ -1284,7 +1283,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
     public Response doPost(String apiName, Method mothod,
                            Map<String, String> params, String body) {
         LogUtil.d(TAG, "apiName : " + apiName + " body : " + body);
-        JSONObject jsonObject;
+        final JSONObject jsonObject;
         try {
             jsonObject = new JSONObject(body);
         } catch (JSONException e) {
@@ -1373,11 +1372,28 @@ public class MainPosHttpServer extends AlfredHttpServer {
             result.put("resultCode", ResultCode.SUCCESS);
             String orderData = jsonObject.optString("order");
             int tableId = jsonObject.optInt("tableId");
+            TableInfo tableInfo = TableInfoSQL.getTableById(tableId);
+            result.put("tableInfo", new Gson().toJson(tableInfo));
+            String orderDetail = jsonObject.optString("orderDetail");
+            String orderModifier = jsonObject.optString("orderModifier");
+            result.put("orderDetail", orderDetail);
+            result.put("orderModifier", orderModifier);
 
             try {
                 Order order = new Gson().fromJson(orderData, Order.class);
                 if (order != null && TableInfoSQL.getTableById(tableId) != null) {
-                    handlerTransferFromOtherRvc(jsonObject);
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            handlerTransferFromOtherRvc(jsonObject);
+                        }
+                    }).start();
+
+
+                    Order currentOrder = OrderSQL.getLastOrderatTabel(tableId);
+                    result.put("toOrder", new Gson().toJson(currentOrder));
+                    result.put("toRevenue", new Gson().toJson(App.instance.getRevenueCenter()));
                 } else {
                     result.put("resultCode", ResultCode.UNKNOW_ERROR);
                 }
@@ -1387,9 +1403,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
             }
             Log.wtf("Test_sendOrderToOtherRVC", "result_getto_" + new Gson().toJson(jsonObject));
 
-
-            App.getTopActivity().httpRequestAction(
-                    MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
             return getJsonResponse(new Gson().toJson(result));
         } else if (apiName.equals(APIName.TRANSFER_ITEM_TO_OTHER_RVC)) {
             return handlerTransferItemFromOtherRvc(jsonObject);
@@ -3156,11 +3169,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (CommonUtil.isNull(userKey)
-                || App.instance.getUserByKey(userKey) == null) {
-            return false;
-        }
-        return true;
+        return !CommonUtil.isNull(userKey)
+                && App.instance.getUserByKey(userKey) != null;
     }
 
     private Response handlerGetKotNotifications() {
@@ -3852,16 +3862,41 @@ public class MainPosHttpServer extends AlfredHttpServer {
         if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
             Order order = new Gson().fromJson(orderData, Order.class);
             order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-            order.setTableId(targetTableId);
+//            order.setTableId(targetTableId);
             order.setBusinessDate(App.instance.getBusinessDate());
+            order.setRestId(CoreData.getInstance().getRestaurant().getId());
+
+            TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
+            tableInfo.setIsLocked(1);
+            order.setPlaceId(tableInfo.getPlacesId());
+            order.setTableName(tableInfo.getName());
+            order.setTableId(tableInfo.getPosId());
+            long time = System.currentTimeMillis();
+            order.setCreateTime(time);
+            order.setUpdateTime(time);
+            order.setOrderNo(OrderHelper.calculateOrderNo(App.instance.getBusinessDate()));//流水号
+            order.setUserId(App.instance.getUser().getId());
             OrderSQL.addOrder(order);
             Order last = OrderSQL.getLastOrderatTabel(targetTableId);
 
+            TableInfoSQL.updateTables(tableInfo);
+
+            MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
+
+            if (App.getTopActivity() != null)
+                App.getTopActivity().httpRequestAction(
+                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
 
             addOrderDetailFromOtherRVC(last, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
 
-            TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
-            MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
+            tableInfo.setIsLocked(0);
+            TableInfoSQL.updateTables(tableInfo);
+            if (App.getTopActivity() != null){
+
+                App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
+
+            }
+
 
             //todo transfer add KOT on KDS
         } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
@@ -3934,13 +3969,27 @@ public class MainPosHttpServer extends AlfredHttpServer {
         result.put("resultCode", ResultCode.SUCCESS);
 
 //        String oldOrderData = jsonObject.optString("order");
+        String kotSummary = jsonObject.optString("kotSummary");
+        String kotItemDetail = jsonObject.optString("kotItemDetail");
+        String kotItemModifier = jsonObject.optString("kotModifier");
+        String orderbill = jsonObject.optString("orderBill");
         String oldOrderDetailData = jsonObject.optString("orderDetail");
+        String orderModifier = jsonObject.optString("orderModifier");
+
         int packs = jsonObject.optInt("pack");
         int targetTableId = jsonObject.optInt("tableId");
 
         OrderDetail transfItemOrderDetail = new Gson().fromJson(oldOrderDetailData, OrderDetail.class);
-        transfItemOrderDetail.setGroupId(0);
-        transfItemOrderDetail.setOrderSplitId(0);
+        OrderBill orderBill = new Gson().fromJson(orderbill, OrderBill.class);
+
+        KotSummary kotSummarys = new Gson().fromJson(kotSummary, KotSummary.class);
+        KotItemDetail kotItemDetails = new Gson().fromJson(kotItemDetail, KotItemDetail.class);
+
+        List<KotItemModifier> kotModfiers = gson.fromJson(kotItemModifier, new TypeToken<List<KotItemModifier>>() {
+        }.getType());
+        List<OrderModifier> orderModifiers = gson.fromJson(orderModifier, new TypeToken<List<OrderModifier>>() {
+        }.getType());
+
 
         Order orderTarget = OrderSQL.getOrderByTableId(targetTableId);
 
@@ -3949,11 +3998,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
         tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
         TableInfoSQL.updateTables(tableInfo);
 
+        RevenueCenter rvc = App.instance.getRevenueCenter();
+        Restaurant resto = CoreData.getInstance().getRestaurant();
+        long time = System.currentTimeMillis();
+
         try {
-            if (orderTarget != null) {
-                transfItemOrderDetail.setOrderId(orderTarget.getId().intValue());
-                OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
-            } else {
+            if (orderTarget == null) {
                 orderTarget = ObjectFactory.getInstance().getOrder(
                         ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tableInfo,
                         App.instance.getRevenueCenter(), App.instance.getUser(),
@@ -3963,10 +4013,106 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         ParamConst.ORDER_STATUS_OPEN_IN_POS,
                         App.instance.getLocalRestaurantConfig()
                                 .getIncludedTax().getTax(), "");
-                if (orderTarget != null) {
-                    transfItemOrderDetail.setOrderId(orderTarget.getId().intValue());
-                    OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
+            }
+
+            int newIdOrderDetail = CommonSQL.getNextSeq(TableNames.OrderDetail);
+
+            transfItemOrderDetail.setGroupId(0);
+            transfItemOrderDetail.setOrderSplitId(0);
+
+            ItemDetail currentRevItemDetail = ItemDetailSQL.getItemDetailByName(rvc.getId(), transfItemOrderDetail.getItemName());
+
+            transfItemOrderDetail.setId(newIdOrderDetail);
+            transfItemOrderDetail.setOrderId(orderTarget.getId().intValue());
+
+            if (currentRevItemDetail != null) {
+                transfItemOrderDetail.setItemId(currentRevItemDetail.getId());
+            }
+            transfItemOrderDetail.setTransferFromDetailId(newIdOrderDetail);
+            transfItemOrderDetail.setOrderId(orderTarget.getId());
+            transfItemOrderDetail.setOrderOriginId(orderTarget.getId());
+            transfItemOrderDetail.setCreateTime(time);
+            transfItemOrderDetail.setUpdateTime(time);
+            transfItemOrderDetail.setUserId(orderTarget.getUserId());
+
+
+            if (orderModifiers != null) {
+                for (OrderModifier data : orderModifiers) {
+                    data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+                    data.setOrderDetailId(newIdOrderDetail);
+                    data.setOrderId(orderTarget.getId());
+                    data.setCreateTime(time);
+                    data.setUpdateTime(time);
+                    data.setUserId(orderTarget.getUserId());
+                    data.setItemId(transfItemOrderDetail.getItemId());
+
+                    ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
+                    if (item != null) {
+                        data.setPrinterId(item.getPrinterId());
+                        data.setItemId(item.getId());
+                    }
+                    OrderModifierSQL.addOrderModifier(data);
                 }
+            }
+
+            OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
+
+            if (kotSummarys != null) {
+                int newId = CommonSQL.getNextSeq(TableNames.KotSummary);
+//                mapKotSummary.put(kot.getId(), newId);
+                kotSummarys.setId(newId);
+                kotSummarys.setRevenueCenterId(rvc.getId());
+                kotSummarys.setRevenueCenterIndex(rvc.getIndexId());
+                kotSummarys.setRevenueCenterName(rvc.getRevName());
+                kotSummarys.setTableId(orderTarget.getTableId());
+                kotSummarys.setTableName(orderTarget.getTableName());
+                kotSummarys.setOrderId(orderTarget.getId());
+                kotSummarys.setOrderNo(orderTarget.getOrderNo());
+                kotSummarys.setBusinessDate(App.instance.getBusinessDate());
+                kotSummarys.setNumTag(orderTarget.getNumTag());
+                kotSummarys.setCreateTime(time);
+                kotSummarys.setUpdateTime(time);
+                List<KotSummary> kots = new ArrayList<>();
+                kots.add(kotSummarys);
+                KotSummarySQL.addKotSummaryList(kots);
+            }
+
+            if (kotItemDetails != null) {
+                kotItemDetails.setId(CommonSQL.getNextSeq(TableNames.KotItemDetail));
+                kotItemDetails.setOrderId(orderTarget.getId());
+                kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                kotItemDetails.setKotSummaryId(kotSummarys.getId());
+                kotItemDetails.setCreateTime(time);
+                kotItemDetails.setUpdateTime(time);
+                kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
+
+                KotItemDetailSQL.update(kotItemDetails);
+            }
+
+            if (kotItemModifier != null) {
+                for (KotItemModifier data : kotModfiers) {
+                    data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
+                    data.setKotItemDetailId(kotItemDetails.getId());
+                    KotItemModifierSQL.update(data);
+                }
+            }
+//            KotItemModifierSQL.addKotItemModifierList(kotModfiers);
+
+            //TODO: modifier, all kot, orderbill
+
+            KotItemDetail details = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummarys.getId(), transfItemOrderDetail.getId());
+            String orderDetail = jsonObject.optString("orderDetail");
+
+            result.put("toRevenue", new Gson().toJson(App.instance.getRevenueCenter()));
+            result.put("toOrder", new Gson().toJson(orderTarget));
+            result.put("tableInfo", new Gson().toJson(tableInfo));
+            result.put("orderDetail", orderDetail);
+            result.put("orderModifier", orderModifier);
+            result.put("orderTarget", new Gson().toJson(orderTarget));
+            result.put("tableTarget", new Gson().toJson(tableInfo));
+            if (orderBill != null) {
+
+                OrderBillSQL.add(orderBill);
             }
         } catch (Exception e) {
             result.put("resultCode", ResultCode.UNKNOW_ERROR);
@@ -3974,6 +4120,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
         //todo transfer add KOT on KDS
+
 
         App.getTopActivity().httpRequestAction(
                 MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
@@ -3983,12 +4130,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
     }
 
-
     private void addOrderDetailFromOtherRVC(Order last, String orderDetail, String kotSummary, String orderbill, String orderModifier, String orderSplit, String kotItemDetail, String kotItemModifier) {
 
         RevenueCenter rvc = App.instance.getRevenueCenter();
         Restaurant resto = CoreData.getInstance().getRestaurant();
         Map<Integer, Integer> mapSplit = new HashMap<>();
+        long time = System.currentTimeMillis();
 
         try {
             List<OrderSplit> orderSplits = gson.fromJson(orderSplit,
@@ -4011,11 +4158,17 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 
         Map<Integer, Integer> mapOrderDetail = new HashMap<>();
+        Map<Integer, Integer> mapItemId = new HashMap<>();
         try {
             List<OrderDetail> orderDetails = gson.fromJson(orderDetail,
                     new TypeToken<List<OrderDetail>>() {
                     }.getType());
+            List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
+                    new TypeToken<List<OrderModifier>>() {
+                    }.getType());
+
             for (OrderDetail orderDetail1 : orderDetails) {
+                int oldId = orderDetail1.getId();
                 int newId = CommonSQL.getNextSeq(TableNames.OrderDetail);
                 mapOrderDetail.put(orderDetail1.getId(), newId);
                 orderDetail1.setId(newId);
@@ -4025,9 +4178,41 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         orderDetail1.setOrderSplitId(value);
                     }
                 }
+
+                ItemDetail currentRevItemDetail = ItemDetailSQL.getItemDetailByName(rvc.getId(), orderDetail1.getItemName());
+
+                if (currentRevItemDetail != null) {
+                    mapItemId.put(orderDetail1.getItemId(), currentRevItemDetail.getId());
+                    orderDetail1.setItemId(currentRevItemDetail.getId());
+                }
+
                 orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
                 orderDetail1.setOrderId(last.getId());
+                orderDetail1.setCreateTime(time);
+                orderDetail1.setUpdateTime(time);
+                orderDetail1.setUserId(last.getUserId());
                 OrderDetailSQL.addOrderDetailETC(orderDetail1);
+
+                if (orderModifiers != null) {
+                    for (OrderModifier data : orderModifiers) {
+                        if (data.getOrderDetailId() == oldId) {
+                            data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+                            data.setOrderId(last.getId());
+                            data.setOrderDetailId(newId);
+                            data.setCreateTime(time);
+                            data.setUpdateTime(time);
+                            data.setUserId(last.getUserId());
+                            data.setItemId(orderDetail1.getItemId());
+
+                            ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
+                            if (item != null) {
+                                data.setPrinterId(item.getPrinterId());
+                                data.setItemId(item.getId());
+                            }
+                            OrderModifierSQL.addOrderModifier(data);
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -4048,22 +4233,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 orderbill1.setRestaurantId(resto.getId());
                 orderbill1.setOrderId(last.getId());
                 orderbill1.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                orderbill1.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(rvc.getId()));
+                orderbill1.setOrderId(last.getId());
+                orderbill1.setRestaurantId(CoreData.getInstance().getRestaurant()
+                        .getId());
+                orderbill1.setRevenueId(rvc.getId());
+                orderbill1.setUserId(last.getUserId());
+                orderbill1.setCreateTime(time);
+                orderbill1.setUpdateTime(time);
                 OrderBillSQL.add(orderbill1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
-                    new TypeToken<List<OrderModifier>>() {
-                    }.getType());
-            for (OrderModifier data : orderModifiers) {
-                data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
-                data.setOrderId(last.getId());
-                ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
-                data.setPrinterId(item.getPrinterId());
-                OrderModifierSQL.addOrderModifier(data);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -4082,13 +4260,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 kot.setTableId(last.getTableId());
                 kot.setTableName(last.getTableName());
                 kot.setOrderId(last.getId());
+                kot.setOrderNo(last.getOrderNo());
+                kot.setBusinessDate(App.instance.getBusinessDate());
                 kot.setNumTag(last.getNumTag());
+                kot.setCreateTime(time);
+                kot.setUpdateTime(time);
                 List<KotSummary> kots = new ArrayList<>();
                 kots.add(kot);
                 KotSummarySQL.addKotSummaryList(kots);
             }
         }
-
 
         //String kotItemDetail
         Map<Integer, Integer> mapKotItemDetail = new HashMap<>();
@@ -4104,6 +4285,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
                 data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
                 data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
+                data.setRestaurantId(last.getRestId());
+                data.setCreateTime(time);
+                data.setUpdateTime(time);
+
                 KotItemDetailSQL.update(data);
             }
         } catch (Exception e) {
@@ -4111,15 +4296,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
         try {
-            List<List<KotItemModifier>> kotItemDetails = gson.fromJson(kotItemModifier,
-                    new TypeToken<List<List<KotItemDetail>>>() {
+            List<KotItemModifier> kotItemModifiers = gson.fromJson(kotItemModifier,
+                    new TypeToken<List<KotItemModifier>>() {
                     }.getType());
-            for (List<KotItemModifier> datas : kotItemDetails) {
-                for (KotItemModifier data : datas) {
-                    data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
-                    data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
-                    KotItemModifierSQL.update(data);
-                }
+            for (KotItemModifier data : kotItemModifiers) {
+                data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
+                data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
+                KotItemModifierSQL.update(data);
             }
         } catch (Exception e) {
             e.printStackTrace();

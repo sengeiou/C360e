@@ -24,6 +24,7 @@ import com.alfred.printer.PromotionSalesReportPrint;
 import com.alfred.printer.StoredCardPrint;
 import com.alfred.printer.SummaryAnalysisReportPrint;
 import com.alfred.printer.TableQRCodePrint;
+import com.alfred.printer.TransferOrder;
 import com.alfred.printer.VoidItemReportPrint;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.CashInOut;
@@ -37,6 +38,7 @@ import com.alfredbase.javabean.MonthlyPLUReport;
 import com.alfredbase.javabean.MonthlySalesReport;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.PrintBean;
 import com.alfredbase.javabean.PrinterTitle;
@@ -79,7 +81,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -219,7 +220,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
             PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
             ReportDaySales reportData = gson.fromJson(report, ReportDaySales.class);
-        ObjectFactory.getInstance().getPrintReportDaySales(reportData);
+            ObjectFactory.getInstance().getPrintReportDaySales(reportData);
             ArrayList<ReportDayTax> taxData = gson.fromJson(tax, new TypeToken<ArrayList<ReportDayTax>>() {
             }.getType());
             List<ReportDayPayment> reportDayPayments = gson.fromJson(customPayment, new TypeToken<List<ReportDayPayment>>() {
@@ -3700,5 +3701,76 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         }
     }
 
+    @Override
+    public void printTransferOrder(String printer, String fromRvcName, String toRvcName, String fromTable, String toTable, String fromOrder, String toOrder, String orderDetail, String modifier) {
+        Gson gson = new Gson();
+        PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
+        Order mFromOrder = gson.fromJson(fromOrder, Order.class);
+        Order mToOrder = gson.fromJson(toOrder, Order.class);
+
+        String name = prtDevice.getName();
+
+        ArrayList<OrderDetail> orderDetails = gson.fromJson(orderDetail,
+                new TypeToken<ArrayList<OrderDetail>>() {
+                }.getType());
+
+        String modifierStr = !TextUtils.isEmpty(modifier) ? modifier : "";
+
+        ArrayList<OrderModifier> orderModifiers = gson.fromJson(modifierStr,
+                new TypeToken<ArrayList<OrderModifier>>() {
+                }.getType());
+
+
+        PrintManager printMgr = this.service.getPrintMgr();
+        JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
+        PrinterQueueManager pqMgr = this.service.getPqMgr();
+
+        if (printJobMgr != null) {
+            String uuid = pqMgr.getDataUUID(String.valueOf(mFromOrder.getId()));
+
+            TransferOrder transferOrder = new TransferOrder(uuid, mFromOrder.getBusinessDate());
+            //set page size
+            if (this.service.isTMU220(name)) {
+                transferOrder.setCharSize(33);
+            } else if (this.service.isTM88(name)) {
+                transferOrder.setCharSize(42);
+            } else if (this.service.isV1sG(name)) {
+                transferOrder.setCharSize(32);
+            } else {
+                transferOrder.setCharSize(48);
+            }
+
+            transferOrder.setPrinterIp(prtDevice.getIP());
+
+            transferOrder.AddTitle("From", fromRvcName, fromTable, mFromOrder.getOrderNo());
+            transferOrder.AddTitle("To", toRvcName, toTable, mToOrder.getOrderNo());
+            transferOrder.addLineSpace(2);
+
+            for (OrderDetail od : orderDetails) {
+                transferOrder.addItem(od.getItemName(), od.getItemNum());
+
+                if (orderModifiers != null) {
+                    for (OrderModifier orderModifier : orderModifiers) {
+                        if (IntegerUtils.isEmptyOrZero(orderModifier.getPrinterId())
+                                || orderModifier.getPrinterId().intValue() == prtDevice.getDevice_id()) {
+                            if (!IntegerUtils.isEmptyOrZero(orderModifier.getModifierNum()) && orderModifier.getModifierNum().intValue() > 1) {
+                                transferOrder.AddModifierItem("-" + orderModifier.modifierName + "x" + orderModifier.getModifierNum().intValue(), 1);
+                            } else {
+                                transferOrder.AddModifierItem("-" + orderModifier.modifierName, 1);
+                            }
+
+
+                        }
+                    }
+                }
+            }
+
+            transferOrder.AddFooter("", TimeUtil.getPrintDate(System.currentTimeMillis()));
+
+            pqMgr.queuePrint(transferOrder.getJobForQueue());
+            printMgr.addJob(prtDevice.getIP(), transferOrder);
+
+        }
+    }
 
 }

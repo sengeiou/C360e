@@ -48,6 +48,7 @@ import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
@@ -95,6 +96,7 @@ import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.StockCallBack;
 import com.alfredbase.utils.TimeUtil;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
@@ -134,7 +136,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -148,12 +149,8 @@ import rx.functions.Action1;
 
 public class MainPage extends BaseActivity {
 
-    private String TAG = MainPage.class.getSimpleName();
     public static final int VIEW_EVENT_CLOSE_PAY_WINDOW = 99;
-    private static final int GET_TABLESTATUSINFO_DATA = 100;
-
     public static final int CHECK_REQUEST_CODE = 98;
-
     public static final int REFRESH_UNSEAT_TABLE_VIEW = 97;
     public static final int REFRESH_STOCK_NUM = 101;
     public static final int REFRESH_TABLES_STATUS = 102;
@@ -185,8 +182,6 @@ public class MainPage extends BaseActivity {
     public static final int VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER = 127;
     public static final int VIEW_EVENT_PLACE_ORDER = 128;
     public static final int ACTION_SWITCH_USER = 129;
-    // public static final int ACTION_SWITCH_USER_ERROR = 130;
-    private static final int VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER = 131;
     public static final int ACTION_TRANSFER_TABLE = 132;
     public static final int WAITER_SEND_KDS = 133;
     public static final int VIEW_EVENT_KICK_CASHDRAWER = 134;
@@ -210,7 +205,6 @@ public class MainPage extends BaseActivity {
     public static final int ORDER_TIME_OUT = 145;
     public static final int VIEW_EVENT_TAKE_AWAY = 146;
     public static final int VIEW_EVENT_SET_WEIGHT = 147;
-
     public static final int VIEW_EVENT_SET_APPORDER_TABLE_PACKS = 148;
     public static final int VIEW_EVENT_UNSEAT_ORDER = 149;
     public static final int VIEW_EVENT_FIRE = 150;
@@ -226,33 +220,38 @@ public class MainPage extends BaseActivity {
     public static final int ACTION_CANCEL_ORDER_DETAIL = 162;
     public static final int VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER = 163;
     public static final int ACTION_KOT_NEXT_KDS = 164;
-
     public static final int SERVER_TRANSFER_TABLE_FROM_OTHER_RVC = 400;
     public static final int ACTION_MERGE_TABLE = 401;
-
     public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
     public static final String REFRESH_COMMIT_ORDER = "REFRESH_COMMIT_ORDER";
-    private static final String SHOW_TABLES = "SHOW_TABLES";
     public static final String TRANSFER_TABLE = "TRANSFER_TABLE";
     public static final String TRANSFER_ITEM = "TRANSFER_ITEM";
-    private static final String HANDLER_MSG_OBJECT_DISCOUNT = "DISCOUNT";
     public static final String HANDLER_MSG_OBJECT_BILL_ON_HOLD = "BILL_ON_HOLD";
     public static final String HANDLER_MSG_OBJECT_VOID = "VOID";
     public static final String HANDLER_MSG_OBJECT_ENTERTAINMENT = "ENTERTAINMENT";
+    public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
+    public static final String HANDLER_MSG_OBJECT_CANCEL_ITEM = "CANCEL_ITEM";
+    private static final int GET_TABLESTATUSINFO_DATA = 100;
+    // public static final int ACTION_SWITCH_USER_ERROR = 130;
+    private static final int VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER = 131;
+    private static final String SHOW_TABLES = "SHOW_TABLES";
+    private static final String HANDLER_MSG_OBJECT_DISCOUNT = "DISCOUNT";
     private static final String HANDLER_MSG_OBJECT_TRANSFER_TABLE = "TRANSFERTABLE";
     private static final String HANDLER_MSG_OBJECT_TRANSFER_ITEM = "TRANSFERITEM";
     private static final String HANDLER_MSG_OBJECT_ITEM_QTY = "ITEM_QTY";
     private static final String HANDLER_MSG_OBJECT_VOID_OR_FREE = "VOID_OR_FREE";
-    public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
-    public static final String HANDLER_MSG_OBJECT_CANCEL_ITEM = "CANCEL_ITEM";
     private static final String PAMENT_METHOD = "PAMENTMETHOD";
-
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REPLACEMENT = "STORED_CARD_REPLACEMENT";
+    public MainPageOrderView orderView;
+    public String tableShowAction = SHOW_TABLES;
+    public Order currentOrder;
+    public PrinterLoadingDialog printerLoadingDialog;
+    public SelectOrderSplitDialog selectOrderSplitDialog;
+    private String TAG = MainPage.class.getSimpleName();
     private TopMenuView topMenuView;
     private MainPageSearchView mainPageSearchView;
-    public MainPageOrderView orderView;
     private MainPageOperatePanel operatePanel;
     private MainPageMenuView mainPageMenuView;
     private CloseOrderWindow closeOrderWindow; // settlement window
@@ -269,24 +268,17 @@ public class MainPage extends BaseActivity {
     private Gson gson = new Gson();
     private boolean isShowTables = false;
     private boolean isTableFirstShow = true;
-    public String tableShowAction = SHOW_TABLES;
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
     private List<TableInfo> tables = new ArrayList<TableInfo>();
     private List<TablesStatusInfo> tableStatusInfo = new ArrayList<TablesStatusInfo>();
     private TableInfo currentTable;
     private TableInfo oldTable;
-    public Order currentOrder;
     private Order oldOrder;
+
+
+    //	public LoadingDialog loadingDialog;
     private List<OrderDetail> orderDetails;
     private VerifyDialog verifyDialog;
-
-
-//	public LoadingDialog loadingDialog;
-
-    public PrinterLoadingDialog printerLoadingDialog;
-
-    public SelectOrderSplitDialog selectOrderSplitDialog;
-
     private OrderSplitPrintWindow orderSplitPrintWindow;
 
     private DrawerLayout mDrawerLayout; // activity滑动布局
@@ -307,407 +299,6 @@ public class MainPage extends BaseActivity {
     //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
     private TableLayoutFragment f_tables;
-    private Observable<Integer> observable;
-    private Observable<Object> observable1;
-    private String kotCommitStatus;
-
-    private void initDrawerLayout() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerLayout.setScrimColor(Color.TRANSPARENT);//关闭阴影
-        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    //关闭手势滑动
-        settingView = (SettingView) findViewById(R.id.settingView);
-        settingView.setParams(this, mDrawerLayout);
-        if (MachineUtil.isHisense()) {
-            if (MachineUtil.isSunmiModel()) {
-                settingView.SUNMIVisible();
-            } else {
-                settingView.SUNMIGone();
-            }
-
-        } else if (MachineUtil.isHisense()) {
-            settingView.SUNMIVisible();
-        } else {
-            settingView.SUNMIGone();
-        }
-    }
-
-    @Override
-    protected void initView(Bundle savedInstanceState) {
-        System.out.println("========MMMMMM");
-        setContentView(R.layout.activity_main_page);
-        super.initView();
-//		findViewById(R.id.rl_stored_card_fragment_father).setOnClickListener(null);
-        initDrawerLayout();
-        ScreenSizeUtil.initScreenScale(context);
-        verifyDialog = new VerifyDialog(context, handler);
-
-//        mediaDialog = new MediaDialog(context, handler);
-        loadingDialog = new LoadingDialog(context);
-        loadingDialog.setTitle(context.getResources().getString(R.string.loading));
-        printerLoadingDialog = new PrinterLoadingDialog(context);
-        printerLoadingDialog.setTitle(context.getResources().getString(R.string.sending_to_kitchen));
-        view_top_line = findViewById(R.id.view_top_line);
-        selectOrderSplitDialog = new SelectOrderSplitDialog(context, handler);
-        FragmentManager fragmentManager = this.getSupportFragmentManager();
-        f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
-
-        topMenuView = (TopMenuView) findViewById(R.id.topMenuView);
-        topMenuView.setParams(this, handler, mDrawerLayout, settingView);
-        topMenuView.setGetBillNum(App.instance.getGetTingBillNotifications()
-                .size());
-        mainPageSearchView = (MainPageSearchView) findViewById(R.id.search);
-        orderView = (MainPageOrderView) findViewById(R.id.orderView);
-        LinearLayout.LayoutParams ps1 = new LinearLayout.LayoutParams(
-                (int) (700 * ScreenSizeUtil.width / ScreenSizeUtil.WIDTH_POS),
-                LayoutParams.MATCH_PARENT);
-        orderView.setLayoutParams(ps1);
-        mainPageMenuView = (MainPageMenuView) findViewById(R.id.mainPageMenuView);
-        mainPageMenuView.setParent(context);
-        operatePanel = (MainPageOperatePanel) findViewById(R.id.operatePanel);
-        LinearLayout.LayoutParams ps = new LinearLayout.LayoutParams(
-                (int) (300 * ScreenSizeUtil.width / ScreenSizeUtil.WIDTH_POS),
-                LayoutParams.MATCH_PARENT);
-        operatePanel.setLayoutParams(ps);
-        closeOrderWindow = new CloseOrderWindow(this,
-                findViewById(R.id.rl_root), handler);
-        closeOrderSplitWindow = new CloseOrderSplitWindow(this,
-                findViewById(R.id.rl_root), handler);
-        System.out.println("--window start");
-        setPAXWindow = new SetPAXWindow(context, findViewById(R.id.rl_root),
-                handler);
-        discountWindow = new DiscountWindow(this, findViewById(R.id.rl_root));
-        openItemWindow = new OpenItemWindow();
-        modifyQuantityWindow = new ModifyQuantityWindow(this,
-                findViewById(R.id.rl_root));
-        specialInstractionsWindow = new SpecialInstractionsWindow(context,
-                findViewById(R.id.lv_order), handler);
-
-        orderSplitPrintWindow = new OrderSplitPrintWindow(context,
-                findViewById(R.id.lv_order), handler);
-        setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
-                handler);
-        System.out.println("--window end");
-        filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_TIME_TICK);
-        registerReceiver(receiver, filter);
-        observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
-        observable1 = RxBus.getInstance().register("open_drawer");
-
-        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer object) {
-//                showStoredCard();
-                if (object != null) {
-                    if (object.intValue() == 1)
-                        topMenuView.refreshUserName();
-                    else if (object.intValue() == 2) {
-                        topMenuView.showAppOrderReciving();
-                    } else if (object.intValue() == 3) {
-                        topMenuView.showAppOrderReciving();
-                    }
-                } else {
-                    UIHelp.startSoredCardActivity(context);
-                }
-            }
-        });
-        observable1.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
-            @Override
-            public void call(Object object) {
-                verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER, null);
-            }
-        });
-//		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
-        XMPP.getInstance().setCanCheckAppOrder(true);
-        if (savedInstanceState != null) {
-            currentOrder = (Order) savedInstanceState.getSerializable("currentOrder");
-            currentTable = (TableInfo) savedInstanceState.getSerializable("currentTable");
-            setData();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("currentOrder", currentOrder);
-        outState.putSerializable("currentTable", currentTable);
-    }
-
-    public void tableAction(TableInfo tableInfo) {
-        if (tableInfo != null) {
-            try {
-                if (currentTable != null) {
-                    if (currentTable.getPosId() < 0 && tableInfo.getStatus() > ParamConst.TABLE_STATUS_IDLE && tableShowAction.equals(TRANSFER_TABLE)) {
-                        UIHelp.showShortToast(context, "Can not assign because table is not empty");
-                        return;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (TRANSFER_ITEM.equals(tableShowAction)) {
-                oldTable = currentTable;
-                handler.sendMessage(handler
-                        .obtainMessage(
-                                JavaConnectJS.ACTION_CLICK_TABLE_ITEM,
-                                tableInfo));
-            } else if (TRANSFER_TABLE.equals(tableShowAction)) {
-                oldTable = currentTable;
-                handler.sendMessage(handler
-                        .obtainMessage(
-                                JavaConnectJS.ACTION_CLICK_TABLE_TRANSFER,
-                                tableInfo));
-            } else {
-                oldTable = null;
-                handler.sendMessage(handler
-                        .obtainMessage(
-                                JavaConnectJS.ACTION_CLICK_TABLE,
-                                tableInfo));
-            }
-        }
-//		} else if (JavaConnectJS.CLICK_REFRESH.equals(action)) {
-//			isShowTables = true;
-//			handler.sendEmptyMessage(JavaConnectJS.ACTION_CLICK_REFRESH);
-//		}
-    }
-
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (count == 30) {
-                List<TableInfo> tablesList = OrderSQL.getAllTimeOutOrderByTime(App.instance.getBusinessDate(),
-                        App.instance.getSessionStatus(), TimeUtil.getTimeBeforeTwoHour());
-                mNotificationManager.cancelAll();
-                if (!tablesList.isEmpty()) {
-                    for (TableInfo tables : tablesList) {
-                        handler.sendMessage(handler.obtainMessage(ORDER_TIME_OUT, tables));
-                    }
-                }
-                count = 0;
-            } else {
-                count++;
-            }
-
-
-        }
-    };
-
-    public void setTablePacks(String tablePacks) {
-        setTablePacks(currentTable, tablePacks);
-    }
-
-    public static void setTablePacks(TableInfo tableInfo, String tablePacks) {
-        if (tableInfo != null) {
-            tableInfo.setPacks(Integer.parseInt(tablePacks));
-            tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("tableId", tableInfo.getPosId().intValue());
-                jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
-                jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
-                TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
-                TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (tableInfo.getRevenueId().equals(App.instance.getMainPosInfo().getRevenueId())) {
-                TableInfoSQL.updateTables(tableInfo);
-            }
-//			TablesSQL.updateTables(tableInfo);
-        }
-    }
-
-//	private void getPlaces() {
-////		places = PlacesSQL.getAllPlaces();
-//		places = PlaceInfoSQL.getAllPlaceInfo();
-//		getTables();
-//	}
-//
-//	private void getTables() {
-//		tables = TableInfoSQL.getAllTables();
-//		handler.sendEmptyMessage(GET_TABLESTATUSINFO_DATA);
-//	}
-
-    private void openModifiers(OrderDetail orderDetail,
-                               List<ItemModifier> itemModifiers, View view) {
-        if (mainPageMenuView.isModifierOpen()) {
-            if (animatorView == view) {
-                return;
-            } else {
-                animatorView = view;
-            }
-        }
-        mainPageMenuView
-                .openModifiers(currentOrder, orderDetail, itemModifiers);
-    }
-
-    private void initOrder(TableInfo tables) {
-        currentOrder = ObjectFactory.getInstance().getOrder(
-                ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
-                App.instance.getRevenueCenter(), App.instance.getUser(),
-                App.instance.getSessionStatus(),
-                App.instance.getBusinessDate(),
-                App.instance.getIndexOfRevenueCenter(),
-                ParamConst.ORDER_STATUS_OPEN_IN_POS,
-                App.instance.getLocalRestaurantConfig()
-                        .getIncludedTax().getTax(), "");
-    }
-
-    private void initOrderWaitingList(TableInfo tables) {
-        currentOrder = ObjectFactory.getInstance().getOrderWaitingList(
-                ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
-                App.instance.getRevenueCenter(), App.instance.getUser(),
-                App.instance.getSessionStatus(),
-                App.instance.getBusinessDate(),
-                App.instance.getIndexOfRevenueCenter(),
-                ParamConst.ORDER_STATUS_OPEN_IN_POS,
-                App.instance.getLocalRestaurantConfig()
-                        .getIncludedTax().getTax());
-    }
-
-
-    private void getTableStatusInfo() {
-        for (int i = 0; i < places.size(); i++) {
-            int id = places.get(i).getId();
-            int idleNum = 0;
-            int diningNum = 0;
-            int inCheckoutNum = 0;
-            for (int j = 0; j < tables.size(); j++) {
-                if (tables.get(j).getPlacesId() != id) {
-                    continue;
-                }
-                int table_status = tables.get(j).getStatus();
-                switch (table_status) {
-                    case ParamConst.TABLE_STATUS_IDLE:
-                        idleNum++;
-                        break;
-                    case ParamConst.TABLE_STATUS_DINING:
-                        diningNum++;
-                        break;
-                    case ParamConst.TABLE_STATUS_INCHECKOUT:
-                        inCheckoutNum++;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            tableStatusInfo.add(new TablesStatusInfo(id, idleNum, diningNum,
-                    inCheckoutNum));
-        }
-    }
-
-    private void transferOrder(TableInfo table) {
-        transferOrder(table, -1);
-    }
-
-
-    private void transferOrder(TableInfo table, int transferType) {
-        //msg.what
-        boolean fromThisRVC = checkIfTableFromThisRVC(table);
-        if (fromThisRVC) {
-            transferOrder(currentOrder, table.getPosId());
-        } else {
-            for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
-                if (table.getRevenueId().equals(otherPlace.getRevenueId())) {
-                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), transferType, currentOrder, table.getPosId(), handler);
-                    break;
-                }
-            }
-        }
-
-    }
-
-
-    private void transferOrder(Order order, int tableId) {
-        order.setTableId(tableId);
-        OrderSQL.update(order);
-        setTablePacks(String.valueOf(order.getPersons()));
-    }
-
-    private void mergerOrder() {
-        if (oldOrder == null) {
-            return;
-        }
-
-        boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
-        if (fromThisRVC) {
-            List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(oldOrder.getId().intValue());
-            StringBuffer orderSplitIds = new StringBuffer();
-            if (orderSplits != null && orderSplits.size() > 0) {
-                for (int i = 0; i < orderSplits.size(); i++) {
-                    orderSplitIds.append(orderSplits.get(i).getId());
-                    if (i < orderSplits.size() - 1) {
-                        orderSplitIds.append(',');
-                    }
-                }
-            }
-            Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
-            List<OrderDetail> orderDetails = new ArrayList<>();
-            if (orderSplitIds.length() > 0) {
-                orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(oldOrder, orderSplitIds.toString()));
-            } else {
-                orderDetails.addAll(OrderDetailSQL
-                        .getUnFreeOrderDetails(oldOrder));
-            }
-
-
-            KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
-            if (!orderDetails.isEmpty()) {
-                for (OrderDetail orderDetail : orderDetails) {
-                    OrderDetail newOrderDetail = ObjectFactory.getInstance()
-                            .getOrderDetailForTransferTable(newOrder, orderDetail);
-                    OrderDetailSQL.addOrderDetailETC(newOrderDetail);
-                    List<OrderModifier> orderModifiers = OrderModifierSQL
-                            .getOrderModifiers(orderDetail);
-                    if (kotSummary != null) {
-                        KotItemDetailSQL.updateKotItemDetailId(newOrderDetail.getId().intValue(), orderDetail.getId().intValue(), kotSummary.getId().intValue());
-                    }
-                    if (orderModifiers.isEmpty()) {
-                        continue;
-                    }
-                    for (OrderModifier orderModifier : orderModifiers) {
-                        OrderModifier newOrderModifier = ObjectFactory
-                                .getInstance().getOrderModifier(
-                                        newOrder,
-                                        newOrderDetail,
-                                        CoreData.getInstance().getModifier(
-                                                orderModifier.getModifierId()),
-                                        orderModifier.getPrinterId().intValue());
-                        OrderModifierSQL.addOrderModifier(newOrderModifier);
-                    }
-                }
-            }
-
-            if (orderSplitIds.length() > 0) {
-                OrderDetailSQL.deleteOrderDetailByOrderOutsideOrderSplit(oldOrder.getId(), orderSplitIds.toString());
-                OrderModifierSQL.deleteOrderModifierByOrderOutsideOrderDetail(oldOrder);
-                OrderSplitSQL.deleteBySpliteIdList(oldOrder.getId(), orderSplitIds.toString());
-                OrderSQL.updateOrder(oldOrder);
-                OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, oldOrder.getId());
-            } else {
-                OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-                OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-                OrderSQL.deleteOrder(oldOrder);
-            }
-
-            TableInfo oldTable = TableInfoSQL.getTableById(oldOrder.getTableId().intValue());
-            currentTable.setPacks(currentTable.getPacks() + oldTable.getPacks());
-
-            initOrder(currentTable);
-        } else {
-            for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
-                if (currentTable.getRevenueId().equals(otherPlace.getRevenueId())) {
-                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), ACTION_MERGE_TABLE, oldOrder, currentTable.getPosId(), handler);
-                    break;
-                }
-            }
-        }
-
-    }
-
-
     public Handler handler = new Handler() {
         public void handleMessage(final android.os.Message msg) {
             switch (msg.what) {
@@ -1150,7 +741,7 @@ public class MainPage extends BaseActivity {
                 break;
                 case VIEW_EVENT_SHOW_DISCOUNT_WINDOW: {
                     verifyDialog.show(HANDLER_MSG_OBJECT_DISCOUNT,
-                            (Map<String, Object>) msg.obj);
+                            msg.obj);
                     break;
                 }
                 case VIEW_EVENT_SHOW_MODIFY_QUANTITY_WINDOW: {
@@ -1200,6 +791,12 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (!fromThisRVC) {
+                        return;
+                    }
+                    TableInfo tableInfo = TableInfoSQL.getTableById(currentTable.getPosId());
+
+                    if (tableInfo.getIsLocked() == 1) {
+                        ToastUtils.showToast(MainPage.this, "Transfer table on Going");
                         return;
                     }
                     if (currentTable != null) {
@@ -1375,6 +972,14 @@ public class MainPage extends BaseActivity {
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
 
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (loadingDialog != null)
+                                    loadingDialog.show();
+                            }
+                        });
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -1495,6 +1100,7 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -1930,7 +1536,7 @@ public class MainPage extends BaseActivity {
                     if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
                         printerLoadingDialog.dismiss();
                     }
-                    if (msg.obj instanceof String && "KDS".equals((String) msg.obj)) {
+                    if (msg.obj instanceof String && "KDS".equals(msg.obj)) {
                         UIHelp.showToast(context, "Please log in KDS");
                     } else {
 
@@ -2009,7 +1615,7 @@ public class MainPage extends BaseActivity {
                     break;
                 case VIEW_EVENT_VOID_OR_FREE:
                     verifyDialog.show(HANDLER_MSG_OBJECT_VOID_OR_FREE,
-                            (Map<String, Object>) msg.obj);
+                            msg.obj);
                     break;
 //			case StoredCardActivity.VIEW_EVENT_STORED_CARD_REFUND:
 //				verifyDialog.show(HANDLER_MSG_OBJECT_STORED_CARD_REFUND, null);
@@ -2049,7 +1655,7 @@ public class MainPage extends BaseActivity {
                     } else {
                         orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                         if (orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.takeaway), "").replace(context.getResources().getString(R.string.takeaway), ""));
+                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().replace(context.getResources().getString(R.string.takeaway), "").replace(context.getResources().getString(R.string.takeaway), ""));
                         }
                     }
                     OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
@@ -2089,39 +1695,7 @@ public class MainPage extends BaseActivity {
                 }
                 break;
                 case VIEW_EVENT_UNSEAT_ORDER:
-//<<<<<<< HEAD
-//                    KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
-//                    int kotSummaryId = kotSummary != null ? kotSummary.getId() : 0;
-//                    List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummaryId);
-//
-//                    if (kotSummary != null && kotItemDetails != null)
-//                        App.instance.getKdsJobManager().deleteKotSummary(kotSummary, kotItemDetails);
-//
-//                    OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
-//                    KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
-//                    OrderBillSQL.deleteOrderBillByOrder(currentOrder);
-//                    OrderSQL.deleteOrder(currentOrder);
-//                    TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
-//                    tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
-//                    TableInfoSQL.updateTables(tables);
-//                    try {
-//                        JSONObject jsonObject = new JSONObject();
-//                        jsonObject.put("tableId", currentTable.getPosId().intValue());
-//                        jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
-//                        jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
-//                        TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
-//                        TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                    activityRequestCode = 0;
-//                    selectOrderSplitDialog.dismiss();
-//                    tableShowAction = SHOW_TABLES;
-//                    currentOrder = null;
-//                    showTables();
-//=======
                     unseat();
-//>>>>>>> master
                     break;
                 case VIEW_EVENT_FIRE: {
                     OrderDetailFireWindow orderDetailFireWindow = new OrderDetailFireWindow(MainPage.this, findViewById(R.id.lv_order), handler);
@@ -2304,14 +1878,88 @@ public class MainPage extends BaseActivity {
                     setDataWaitingList();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC:
+                    if (loadingDialog != null)
+                        loadingDialog.dismiss();
+
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
-                    unseat();
+
+                    String data = (String) msg.obj;
+
+                    try {
+                        Gson gson = new Gson();
+                        JSONObject jsonObject = new JSONObject(data);
+
+                        String toRevenueCenterStr = jsonObject.optString("toRevenue");
+                        String toOrderStr = jsonObject.optString("toOrder");
+                        String tableInfoStr = jsonObject.optString("tableInfo");
+                        String orderDetailStr = jsonObject.optString("orderDetail");
+                        String orderModifierStr = jsonObject.optString("orderModifier");
+
+                        RevenueCenter toRevenueCenter = gson.fromJson(toRevenueCenterStr, RevenueCenter.class);
+                        Order toOrder = gson.fromJson(toOrderStr, Order.class);
+                        TableInfo tableInfo = gson.fromJson(tableInfoStr, TableInfo.class);
+
+                        List<OrderDetail> orderDetails = gson.fromJson(orderDetailStr,
+                                new TypeToken<List<OrderDetail>>() {
+                                }.getType());
+                        List<OrderModifier> orderModifiers = gson.fromJson(orderModifierStr,
+                                new TypeToken<List<OrderModifier>>() {
+                                }.getType());
+
+                        String tableName = tableInfo != null ? tableInfo.getName() : "";
+                        RevenueCenter fromRevenueCenter = App.instance.getRevenueCenter();
+
+                        App.instance.printTransferOrder(
+                                App.instance.getCahierPrinter(), fromRevenueCenter, toRevenueCenter,
+                                currentTable.getName(), tableName,
+                                toOrder, currentOrder, orderDetails, orderModifiers);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    unseat(currentOrder);
                     onBackPressed();
-                    showTables();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
+                    if (loadingDialog != null)
+                        loadingDialog.dismiss();
+
+                    String data2 = (String) msg.obj;
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(data2);
+
+                        String toRevenueCenterStr = jsonObject.optString("toRevenue");
+                        String toOrderStr = jsonObject.optString("toOrder");
+                        String tableInfoStr = jsonObject.optString("tableInfo");
+                        String orderDetailStr = jsonObject.optString("orderDetail");
+                        String orderModifierStr = jsonObject.optString("orderModifier");
+
+                        RevenueCenter toRevenueCenter = gson.fromJson(toRevenueCenterStr, RevenueCenter.class);
+                        Order toOrder = new Gson().fromJson(toOrderStr, Order.class);
+                        TableInfo tableInfo = new Gson().fromJson(tableInfoStr, TableInfo.class);
+
+                        List<OrderModifier> orderModifiers = gson.fromJson(orderModifierStr,
+                                new TypeToken<List<OrderModifier>>() {
+                                }.getType());
+
+                        List<OrderDetail> orderDetailsResult = new ArrayList<>();
+                        orderDetailsResult.add(transfItemOrderDetail);
+                        String tableName = tableInfo != null ? tableInfo.getName() : "";
+                        RevenueCenter fromRevenueCenter = App.instance.getRevenueCenter();
+
+                        App.instance.printTransferOrder(App.instance.getCahierPrinter(),
+                                fromRevenueCenter, toRevenueCenter,
+                                oldTable.getName(), tableName,
+                                toOrder, currentOrder, orderDetailsResult, orderModifiers);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                     final OrderDetail orderDetail = transfItemOrderDetail;
+
                     if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
 
                     } else if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
@@ -2343,21 +1991,106 @@ public class MainPage extends BaseActivity {
                                 unseat(oldOrder);
                             } else {
 
+                                removeItemLogic(orderDetail);
+
+                                List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(oldOrder.getId());
+                                if (orderDetails.size() <= 0) {
+                                    unseat(oldOrder);
+                                }
+                                onBackPressed();
                             }
+                            onBackPressed();
                         }
                     }
-
                     break;
                 default:
                     break;
+
+
             }
         }
-
-        ;
     };
 
+    private Observable<Integer> observable;
+    private Observable<Object> observable1;
+    private String kotCommitStatus;
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (count == 30) {
+                List<TableInfo> tablesList = OrderSQL.getAllTimeOutOrderByTime(App.instance.getBusinessDate(),
+                        App.instance.getSessionStatus(), TimeUtil.getTimeBeforeTwoHour());
+                mNotificationManager.cancelAll();
+                if (!tablesList.isEmpty()) {
+                    for (TableInfo tables : tablesList) {
+                        handler.sendMessage(handler.obtainMessage(ORDER_TIME_OUT, tables));
+                    }
+                }
+                count = 0;
+            } else {
+                count++;
+            }
+
+
+        }
+    };
+
+    public static void setTablePacks(TableInfo tableInfo, String tablePacks) {
+        if (tableInfo != null) {
+            tableInfo.setPacks(Integer.parseInt(tablePacks));
+            tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("tableId", tableInfo.getPosId().intValue());
+                jsonObject.put("status", ParamConst.TABLE_STATUS_DINING);
+                jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+                TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+                TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (tableInfo.getRevenueId().equals(App.instance.getMainPosInfo().getRevenueId())) {
+                TableInfoSQL.updateTables(tableInfo);
+            }
+//			TablesSQL.updateTables(tableInfo);
+        }
+    }
+
     private void unseat() {
-        unseat(currentOrder);
+        OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
+        KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
+        OrderModifierSQL.deleteOrderModifierByOrder(currentOrder);
+        List<OrderSplit> splits = OrderSplitSQL.getAllOrderSplits(currentOrder);
+        if (splits.size() > 0) {
+            for (OrderSplit split : splits) {
+                OrderSplitSQL.delete(split);
+            }
+        }
+        OrderBillSQL.deleteOrderBillByOrder(currentOrder);
+        OrderSQL.deleteOrder(currentOrder);
+
+        TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
+        tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
+        if (checkIfTableFromThisRVC(tables)) {
+            TableInfoSQL.updateTables(tables);
+        }
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("tableId", currentTable.getPosId().intValue());
+            jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
+            jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        activityRequestCode = 0;
+        selectOrderSplitDialog.dismiss();
+        tableShowAction = SHOW_TABLES;
+        currentOrder = null;
+        showTables();
     }
 
     private void unseat(Order order) {
@@ -2393,15 +2126,10 @@ public class MainPage extends BaseActivity {
         tableShowAction = SHOW_TABLES;
         order = null;
         currentOrder = null;
-        showTables();
     }
 
     private boolean checkIfTableFromThisRVC(TableInfo tableInfo) {
-        if (tableInfo.getRevenueId().equals(App.instance.getMainPosInfo().getRevenueId())) {
-            return true;
-        } else {
-            return false;
-        }
+        return tableInfo.getRevenueId().equals(App.instance.getMainPosInfo().getRevenueId());
     }
 
     @Override
@@ -2455,7 +2183,7 @@ public class MainPage extends BaseActivity {
     public void finish() {
         SessionStatus sessionStatus = Store.getObject(context,
                 Store.SESSION_STATUS, SessionStatus.class);
-//		List<Order> unPlayOrders = 
+//		List<Order> unPlayOrders =
 //		Order order = OrderSQL.getOrderByUnPlay(sessionStatus);
 
 //		if (order != null) {
@@ -2629,6 +2357,14 @@ public class MainPage extends BaseActivity {
         }
     }
 
+//	private void dismissTables() {
+//		ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
+//				web_tables.getY(), web_tables.getY() + web_tables.getHeight())
+//				.setDuration(300);
+//		animator.start();
+//		isShowTables = false;
+//	}
+
     private void closeTables() {
 //		ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
 //				web_tables.getY(), web_tables.getY() + web_tables.getHeight())
@@ -2644,14 +2380,6 @@ public class MainPage extends BaseActivity {
         isShowTables = false;
 
     }
-
-//	private void dismissTables() {
-//		ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
-//				web_tables.getY(), web_tables.getY() + web_tables.getHeight())
-//				.setDuration(300);
-//		animator.start();
-//		isShowTables = false;
-//	}
 
     private void setData() {
         initOrder(currentTable);
@@ -2755,7 +2483,8 @@ public class MainPage extends BaseActivity {
 //        sendKOTTmpToKDS(orderDetail, null, ParamConst.JOB_TMP_KOT);
     }
 
-    private void sendKOTTmpToKDS(final OrderDetail orderDetail, final KotItemDetail mKotItemDetail, final String method) {
+    private void sendKOTTmpToKDS(final OrderDetail orderDetail,
+                                 final KotItemDetail mKotItemDetail, final String method) {
 
         if (currentOrder.getOrderNo().equals(0)) {
             currentOrder.setOrderNo(OrderHelper.calculateOrderNo(currentOrder.getBusinessDate()));
@@ -2939,6 +2668,12 @@ public class MainPage extends BaseActivity {
         return pendingIntent;
     }
 
+//	public Handler mmHandler = new Handler() {
+//		public void handleMessage(Message msg) {
+//
+//		};
+//	};
+
     @Override
     protected void onDestroy() {
         unregisterReceiver(receiver);
@@ -2952,12 +2687,6 @@ public class MainPage extends BaseActivity {
         }
         super.onDestroy();
     }
-
-//	public Handler mmHandler = new Handler() {
-//		public void handleMessage(Message msg) {
-//
-//		};
-//	};
 
     public void httpRequestAction(int action, Object obj) {
         switch (action) {
@@ -3092,8 +2821,6 @@ public class MainPage extends BaseActivity {
         }
     }
 
-    ;
-
     private void TempOrderISPaied() {
         Payment payment = ObjectFactory.getInstance().getPayment(currentOrder, ObjectFactory.getInstance().getOrderBill(currentOrder, App.instance.getRevenueCenter()));
         ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_THIRDPARTY, currentOrder.getTotal());
@@ -3175,5 +2902,352 @@ public class MainPage extends BaseActivity {
         }
     }
 
+    private void initDrawerLayout() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.setScrimColor(Color.TRANSPARENT);//关闭阴影
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);    //关闭手势滑动
+        settingView = (SettingView) findViewById(R.id.settingView);
+        settingView.setParams(this, mDrawerLayout);
+        if (MachineUtil.isHisense()) {
+            if (MachineUtil.isSunmiModel()) {
+                settingView.SUNMIVisible();
+            } else {
+                settingView.SUNMIGone();
+            }
 
+        } else if (MachineUtil.isHisense()) {
+            settingView.SUNMIVisible();
+        } else {
+            settingView.SUNMIGone();
+        }
+    }
+
+    @Override
+    protected void initView(Bundle savedInstanceState) {
+        System.out.println("========MMMMMM");
+        setContentView(R.layout.activity_main_page);
+        super.initView();
+//		findViewById(R.id.rl_stored_card_fragment_father).setOnClickListener(null);
+        initDrawerLayout();
+        ScreenSizeUtil.initScreenScale(context);
+        verifyDialog = new VerifyDialog(context, handler);
+
+//        mediaDialog = new MediaDialog(context, handler);
+        loadingDialog = new LoadingDialog(context);
+        loadingDialog.setTitle(context.getResources().getString(R.string.loading));
+        printerLoadingDialog = new PrinterLoadingDialog(context);
+        printerLoadingDialog.setTitle(context.getResources().getString(R.string.sending_to_kitchen));
+        view_top_line = findViewById(R.id.view_top_line);
+        selectOrderSplitDialog = new SelectOrderSplitDialog(context, handler);
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        f_tables = (TableLayoutFragment) fragmentManager.findFragmentById(R.id.f_tables);
+
+        topMenuView = (TopMenuView) findViewById(R.id.topMenuView);
+        topMenuView.setParams(this, handler, mDrawerLayout, settingView);
+        topMenuView.setGetBillNum(App.instance.getGetTingBillNotifications()
+                .size());
+        mainPageSearchView = (MainPageSearchView) findViewById(R.id.search);
+        orderView = (MainPageOrderView) findViewById(R.id.orderView);
+        LinearLayout.LayoutParams ps1 = new LinearLayout.LayoutParams(
+                (int) (700 * ScreenSizeUtil.width / ScreenSizeUtil.WIDTH_POS),
+                LayoutParams.MATCH_PARENT);
+        orderView.setLayoutParams(ps1);
+        mainPageMenuView = (MainPageMenuView) findViewById(R.id.mainPageMenuView);
+        mainPageMenuView.setParent(context);
+        operatePanel = (MainPageOperatePanel) findViewById(R.id.operatePanel);
+        LinearLayout.LayoutParams ps = new LinearLayout.LayoutParams(
+                (int) (300 * ScreenSizeUtil.width / ScreenSizeUtil.WIDTH_POS),
+                LayoutParams.MATCH_PARENT);
+        operatePanel.setLayoutParams(ps);
+        closeOrderWindow = new CloseOrderWindow(this,
+                findViewById(R.id.rl_root), handler);
+        closeOrderSplitWindow = new CloseOrderSplitWindow(this,
+                findViewById(R.id.rl_root), handler);
+        System.out.println("--window start");
+        setPAXWindow = new SetPAXWindow(context, findViewById(R.id.rl_root),
+                handler);
+        discountWindow = new DiscountWindow(this, findViewById(R.id.rl_root));
+        openItemWindow = new OpenItemWindow();
+        modifyQuantityWindow = new ModifyQuantityWindow(this,
+                findViewById(R.id.rl_root));
+        specialInstractionsWindow = new SpecialInstractionsWindow(context,
+                findViewById(R.id.lv_order), handler);
+
+        orderSplitPrintWindow = new OrderSplitPrintWindow(context,
+                findViewById(R.id.lv_order), handler);
+        setWeightWindow = new SetWeightWindow(context, findViewById(R.id.rl_root),
+                handler);
+        System.out.println("--window end");
+        filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_TIME_TICK);
+        registerReceiver(receiver, filter);
+        observable = RxBus.getInstance().register(RxBus.RX_MSG_1);
+        observable1 = RxBus.getInstance().register("open_drawer");
+
+        observable.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer object) {
+//                showStoredCard();
+                if (object != null) {
+                    if (object.intValue() == 1)
+                        topMenuView.refreshUserName();
+                    else if (object.intValue() == 2) {
+                        topMenuView.showAppOrderReciving();
+                    } else if (object.intValue() == 3) {
+                        topMenuView.showAppOrderReciving();
+                    }
+                } else {
+                    UIHelp.startSoredCardActivity(context);
+                }
+            }
+        });
+        observable1.observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Object>() {
+            @Override
+            public void call(Object object) {
+                verifyDialog.show(MainPage.HANDLER_MSG_OBJECT_OPEN_DRAWER, null);
+            }
+        });
+//		App.instance.bindPushWebSocketService(App.instance.getRevenueCenter().getRestaurantId());
+        XMPP.getInstance().setCanCheckAppOrder(true);
+        if (savedInstanceState != null) {
+            currentOrder = (Order) savedInstanceState.getSerializable("currentOrder");
+            currentTable = (TableInfo) savedInstanceState.getSerializable("currentTable");
+            setData();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("currentOrder", currentOrder);
+        outState.putSerializable("currentTable", currentTable);
+    }
+
+    public void tableAction(TableInfo tableInfo) {
+        if (tableInfo != null) {
+            try {
+                if (currentTable != null) {
+                    if (currentTable.getPosId() < 0 && tableInfo.getStatus() > ParamConst.TABLE_STATUS_IDLE && tableShowAction.equals(TRANSFER_TABLE)) {
+                        UIHelp.showShortToast(context, "Can not assign because table is not empty");
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (TRANSFER_ITEM.equals(tableShowAction)) {
+                oldTable = currentTable;
+                handler.sendMessage(handler
+                        .obtainMessage(
+                                JavaConnectJS.ACTION_CLICK_TABLE_ITEM,
+                                tableInfo));
+            } else if (TRANSFER_TABLE.equals(tableShowAction)) {
+                oldTable = currentTable;
+                handler.sendMessage(handler
+                        .obtainMessage(
+                                JavaConnectJS.ACTION_CLICK_TABLE_TRANSFER,
+                                tableInfo));
+            } else {
+                oldTable = null;
+                handler.sendMessage(handler
+                        .obtainMessage(
+                                JavaConnectJS.ACTION_CLICK_TABLE,
+                                tableInfo));
+            }
+        }
+//		} else if (JavaConnectJS.CLICK_REFRESH.equals(action)) {
+//			isShowTables = true;
+//			handler.sendEmptyMessage(JavaConnectJS.ACTION_CLICK_REFRESH);
+//		}
+    }
+
+//	private void getPlaces() {
+////		places = PlacesSQL.getAllPlaces();
+//		places = PlaceInfoSQL.getAllPlaceInfo();
+//		getTables();
+//	}
+//
+//	private void getTables() {
+//		tables = TableInfoSQL.getAllTables();
+//		handler.sendEmptyMessage(GET_TABLESTATUSINFO_DATA);
+//	}
+
+    public void setTablePacks(String tablePacks) {
+        setTablePacks(currentTable, tablePacks);
+    }
+
+    private void openModifiers(OrderDetail orderDetail,
+                               List<ItemModifier> itemModifiers, View view) {
+        if (mainPageMenuView.isModifierOpen()) {
+            if (animatorView == view) {
+                return;
+            } else {
+                animatorView = view;
+            }
+        }
+        mainPageMenuView
+                .openModifiers(currentOrder, orderDetail, itemModifiers);
+    }
+
+    private void initOrder(TableInfo tables) {
+        currentOrder = ObjectFactory.getInstance().getOrder(
+                ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
+                App.instance.getRevenueCenter(), App.instance.getUser(),
+                App.instance.getSessionStatus(),
+                App.instance.getBusinessDate(),
+                App.instance.getIndexOfRevenueCenter(),
+                ParamConst.ORDER_STATUS_OPEN_IN_POS,
+                App.instance.getLocalRestaurantConfig()
+                        .getIncludedTax().getTax(), "");
+    }
+
+    private void initOrderWaitingList(TableInfo tables) {
+        currentOrder = ObjectFactory.getInstance().getOrderWaitingList(
+                ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tables,
+                App.instance.getRevenueCenter(), App.instance.getUser(),
+                App.instance.getSessionStatus(),
+                App.instance.getBusinessDate(),
+                App.instance.getIndexOfRevenueCenter(),
+                ParamConst.ORDER_STATUS_OPEN_IN_POS,
+                App.instance.getLocalRestaurantConfig()
+                        .getIncludedTax().getTax());
+    }
+
+    private void getTableStatusInfo() {
+        for (int i = 0; i < places.size(); i++) {
+            int id = places.get(i).getId();
+            int idleNum = 0;
+            int diningNum = 0;
+            int inCheckoutNum = 0;
+            for (int j = 0; j < tables.size(); j++) {
+                if (tables.get(j).getPlacesId() != id) {
+                    continue;
+                }
+                int table_status = tables.get(j).getStatus();
+                switch (table_status) {
+                    case ParamConst.TABLE_STATUS_IDLE:
+                        idleNum++;
+                        break;
+                    case ParamConst.TABLE_STATUS_DINING:
+                        diningNum++;
+                        break;
+                    case ParamConst.TABLE_STATUS_INCHECKOUT:
+                        inCheckoutNum++;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            tableStatusInfo.add(new TablesStatusInfo(id, idleNum, diningNum,
+                    inCheckoutNum));
+        }
+    }
+
+    private void transferOrder(TableInfo table) {
+        transferOrder(table, -1);
+    }
+
+    private void transferOrder(TableInfo table, int transferType) {
+        //msg.what
+        boolean fromThisRVC = checkIfTableFromThisRVC(table);
+        if (fromThisRVC) {
+            transferOrder(currentOrder, table.getPosId());
+        } else {
+            for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
+                if (table.getRevenueId().equals(otherPlace.getRevenueId())) {
+                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), transferType, currentOrder, table.getPosId(), handler);
+                    break;
+                }
+            }
+        }
+
+    }
+
+    private void transferOrder(Order order, int tableId) {
+        order.setTableId(tableId);
+        OrderSQL.update(order);
+        setTablePacks(String.valueOf(order.getPersons()));
+    }
+
+    private void mergerOrder() {
+        if (oldOrder == null) {
+            return;
+        }
+
+        boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
+        if (fromThisRVC) {
+            List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(oldOrder.getId().intValue());
+            StringBuffer orderSplitIds = new StringBuffer();
+            if (orderSplits != null && orderSplits.size() > 0) {
+                for (int i = 0; i < orderSplits.size(); i++) {
+                    orderSplitIds.append(orderSplits.get(i).getId());
+                    if (i < orderSplits.size() - 1) {
+                        orderSplitIds.append(',');
+                    }
+                }
+            }
+            Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), oldOrder.getBusinessDate(), App.instance.getSessionStatus());
+            List<OrderDetail> orderDetails = new ArrayList<>();
+            if (orderSplitIds.length() > 0) {
+                orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(oldOrder, orderSplitIds.toString()));
+            } else {
+                orderDetails.addAll(OrderDetailSQL
+                        .getUnFreeOrderDetails(oldOrder));
+            }
+
+
+            KotSummary kotSummary = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
+            if (!orderDetails.isEmpty()) {
+                for (OrderDetail orderDetail : orderDetails) {
+                    OrderDetail newOrderDetail = ObjectFactory.getInstance()
+                            .getOrderDetailForTransferTable(newOrder, orderDetail);
+                    OrderDetailSQL.addOrderDetailETC(newOrderDetail);
+                    List<OrderModifier> orderModifiers = OrderModifierSQL
+                            .getOrderModifiers(orderDetail);
+                    if (kotSummary != null) {
+                        KotItemDetailSQL.updateKotItemDetailId(newOrderDetail.getId().intValue(), orderDetail.getId().intValue(), kotSummary.getId().intValue());
+                    }
+                    if (orderModifiers.isEmpty()) {
+                        continue;
+                    }
+                    for (OrderModifier orderModifier : orderModifiers) {
+                        OrderModifier newOrderModifier = ObjectFactory
+                                .getInstance().getOrderModifier(
+                                        newOrder,
+                                        newOrderDetail,
+                                        CoreData.getInstance().getModifier(
+                                                orderModifier.getModifierId()),
+                                        orderModifier.getPrinterId().intValue());
+                        OrderModifierSQL.addOrderModifier(newOrderModifier);
+                    }
+                }
+            }
+
+            if (orderSplitIds.length() > 0) {
+                OrderDetailSQL.deleteOrderDetailByOrderOutsideOrderSplit(oldOrder.getId(), orderSplitIds.toString());
+                OrderModifierSQL.deleteOrderModifierByOrderOutsideOrderDetail(oldOrder);
+                OrderSplitSQL.deleteBySpliteIdList(oldOrder.getId(), orderSplitIds.toString());
+                OrderSQL.updateOrder(oldOrder);
+                OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, oldOrder.getId());
+            } else {
+                OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
+                OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
+                OrderSQL.deleteOrder(oldOrder);
+            }
+
+            TableInfo oldTable = TableInfoSQL.getTableById(oldOrder.getTableId().intValue());
+            currentTable.setPacks(currentTable.getPacks() + oldTable.getPacks());
+
+            initOrder(currentTable);
+        } else {
+            for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
+                if (currentTable.getRevenueId().equals(otherPlace.getRevenueId())) {
+                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), ACTION_MERGE_TABLE, oldOrder, currentTable.getPosId(), handler);
+                    break;
+                }
+            }
+        }
+
+    }
 }

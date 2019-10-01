@@ -75,7 +75,8 @@ public class SyncCentre {
             httpClient = new AsyncHttpClient();
             httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
             httpClient.addHeader("Keep-Alive", "30");
-            httpClient.setTimeout(20 * 1000);
+//            httpClient.setTimeout(20 * 1000);
+            httpClient.setTimeout(75 * 1000);
             syncHttpClient = new SyncHttpClient();
             syncHttpClient.addHeader("Keep-Alive", "30");
             syncHttpClient.setTimeout(20 * 1000);
@@ -449,7 +450,6 @@ public class SyncCentre {
 //            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
             return "http://18.138.252.241/alfred-api/" + relativeUrl;
         } else if (BaseApplication.isOpenLog) {
-
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {

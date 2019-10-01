@@ -2280,7 +2280,6 @@ public class ObjectFactory {
             long time = System.currentTimeMillis();
             if (kotSummary == null) {
                 kotSummary = new KotSummary();
-
                 int next = CommonSQL.getKotNextSeq(TableNames.KotSummary);
 //                int next = CommonSQL.getNextSeq(TableNames.KotSummary);
 //                int nextWithRevId = Integer.parseInt(revenueCenter.getId() + "0");
@@ -2332,7 +2331,6 @@ public class ObjectFactory {
             if (kotItemDetail == null) {
                 long time = System.currentTimeMillis();
                 kotItemDetail = new KotItemDetail();
-
                 int next = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
 //                int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
 //                int nextWithRevId = Integer.parseInt(order.getRevenueId() + "0");
@@ -2380,7 +2378,6 @@ public class ObjectFactory {
     public KotItemDetail cpKotItemDetail(KotItemDetail cpKotItemDetail, OrderDetail orderDetail) {
         KotItemDetail kotItemDetail = new KotItemDetail();
         synchronized (lock_getKotItemDetail) {
-
             int next = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
 //            int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
 //            int nextWithRevId = Integer.parseInt(cpKotItemDetail.getRevenueId() + "0");
@@ -2428,7 +2425,6 @@ public class ObjectFactory {
             if (kotItemDetail == null) {
                 long time = System.currentTimeMillis();
                 kotItemDetail = new KotItemDetail();
-
                 int next = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
 //                int next = CommonSQL.getNextSeq(TableNames.KotItemDetail);
 //                int nextWithRevId = Integer.parseInt(mainKotItemDetail.getRevenueId() + "0");
@@ -2482,7 +2478,6 @@ public class ObjectFactory {
                     .getKotItemModifier(kotItemDetail.getId(), modifier.getId());
             if (kotItemModifier == null) {
                 kotItemModifier = new KotItemModifier();
-
                 int next = CommonSQL.getKotNextSeq(TableNames.KotItemModifier);
 //                int next = CommonSQL.getNextSeq(TableNames.KotItemModifier);
 //                int nextWithRevId = Integer.parseInt(kotItemDetail.getRevenueId() + "0");
@@ -2522,7 +2517,6 @@ public class ObjectFactory {
                     .getKotNotification(kotItemDetail.getOrderDetailId(), kotItemDetail.getId());
             if (kotNotification == null) {
                 kotNotification = new KotNotification();
-
                 int next = CommonSQL.getKotNextSeq(TableNames.KotNotification);
 //                int next = CommonSQL.getNextSeq(TableNames.KotNotification);
 //                int nextWithRevId = Integer.parseInt(kotItemDetail.getRevenueId() + "0");

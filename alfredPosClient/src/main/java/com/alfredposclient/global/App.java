@@ -105,10 +105,12 @@ import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.CardsSettlementSQL;
+import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.LocalDeviceSQL;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
@@ -2521,6 +2523,31 @@ public class App extends BaseApplication {
         }
     }
 
+    public void printTransferOrder(PrinterDevice printer, RevenueCenter fromRevenueCenter, RevenueCenter toRevenueCenter,
+                                   String fromTable, String toTable,
+                                   Order fromOrder, Order toOrder, List<OrderDetail> orderDetail,
+                                   List<OrderModifier> modifier) {
+        try {
+            for (OrderModifier orderModifier : modifier) {
+                Modifier itemDetail = ModifierSQL.getModifierById(orderModifier.getModifierId());
+                if (itemDetail != null) {
+                    orderModifier.modifierName = itemDetail.getModifierName();
+                }
+            }
+
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            String fromOrderStr = gson.toJson(fromOrder);
+            String toOrderStr = gson.toJson(toOrder);
+            String details = gson.toJson(orderDetail);
+            String mods = gson.toJson(modifier);
+
+            mRemoteService.printTransferOrder(prtStr, fromRevenueCenter.getRevName(), toRevenueCenter.getRevName(),
+                    fromTable, toTable, fromOrderStr, toOrderStr, details, mods);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void printQrByBitmap(PrinterDevice printer, PrinterTitle printerTitle, String paymentMethod, String id, String amount, Bitmap bmp) {
         Bitmap bitmap = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), bmp.getConfig());
@@ -3273,7 +3300,7 @@ public class App extends BaseApplication {
             Payment payment = ObjectFactory.getInstance().getPayment(order, orderBill);
             PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_PAYPAL, payment.getPaymentAmount());
             for (AppOrderDetail appOrderDetail : appOrderDetailList) {
-                if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue(),appOrderDetail.getItemName()) == null)
+                if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue(), appOrderDetail.getItemName()) == null)
                     continue;
                 OrderDetail orderDetail = ObjectFactory
                         .getInstance()
