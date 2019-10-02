@@ -380,7 +380,6 @@ public class App extends BaseApplication {
         super.onCreate();
 
         instance = this;
-        BugseeHelper.init(this, "9290f896-1a2e-4b70-b1fa-46823bb4398c");
         train = SharedPreferencesHelper.getInt(this, SharedPreferencesHelper.TRAINING_MODE);
         if (train == 1) {
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
@@ -392,6 +391,8 @@ public class App extends BaseApplication {
 
         kdsJobManager = new KotJobManager(this);
         httpServer = new MainPosHttpServer();
+
+        BugseeHelper.init(this, "9290f896-1a2e-4b70-b1fa-46823bb4398c");
 
         // Init remote print service
         tryConnectRemotePrintService();
