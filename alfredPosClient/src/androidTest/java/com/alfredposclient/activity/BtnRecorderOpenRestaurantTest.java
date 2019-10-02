@@ -45,6 +45,6 @@ public class BtnRecorderOpenRestaurantTest {
     @Test
     public void btnRecorder_bugseeTest() {
         onView(withId(R.id.iv_setting)).perform(click());
-        BugseeHelper.reportBugsee();
+//        BugseeHelper.reportBugsee();
     }
 }

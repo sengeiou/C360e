@@ -108,6 +108,9 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1067,6 +1070,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
         tv_cards_expiration_date_num.setText("");
 
+        remainTotal = remainTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
         if (!App.instance.getSystemSettings().isCardRounding()) {
 
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
@@ -2174,7 +2178,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 PaymentSettlement paymentSettlement = null;
                 //四舍五入
                 if (!App.instance.getSystemSettings().isCardRounding()) {
-                    paidBD = cardAmountPaidNum;
+                    paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
                                 .getInstance().getPaymentSettlementForCard(
@@ -2192,7 +2196,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         }
                     }
                 } else {
-                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), cardAmountPaidNum);
+                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(tv_cards_amount_paid_num.getText().toString()));
                     BigDecimal remainTotalAlfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
@@ -2703,6 +2707,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
+                        selectBD = selectBD.setScale(2, BigDecimal.ROUND_HALF_UP);
                         if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
                         {
                             selectBD = BH.IsDouble()

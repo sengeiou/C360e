@@ -27,6 +27,7 @@ import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
@@ -58,6 +59,7 @@ import com.alfredbase.utils.ColorUtils;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
@@ -70,6 +72,9 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
+import com.alfredposclient.utils.NetworkUtils;
+import com.google.gson.Gson;
+import com.path.android.jobqueue.network.NetworkUtil;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
@@ -132,6 +137,8 @@ public class MainPageOrderView extends LinearLayout {
             btn_place_order.setBackgroundResource(R.drawable.box_place_order_selector_zh);
 
         tv_grand_total = (TextView) findViewById(R.id.tv_grand_total);
+
+        //region button place order
         btn_place_order.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -143,6 +150,13 @@ public class MainPageOrderView extends LinearLayout {
                 if (orderDetails.isEmpty()) {
                     UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
                     return;
+                }
+
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
+
+                    //	return;
+
                 }
                 int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
 //				if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
@@ -216,8 +230,7 @@ public class MainPageOrderView extends LinearLayout {
                             Order placedOrder = OrderSQL.getOrder(order.getId());
                             List<OrderDetail> placedOrderDetails
                                     = OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
-                            KotSummary kotSummary = ObjectFactory.getInstance()
-                                    .getKotSummaryForPlace(
+                            KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForPlace(
                                             TableInfoSQL.getTableById(
                                                     placedOrder.getTableId()).getName(), placedOrder,
                                             App.instance.getRevenueCenter(),
@@ -240,9 +253,6 @@ public class MainPageOrderView extends LinearLayout {
                                 if (orderDetail.getOrderDetailStatus() == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                                     kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
                                 } else {
-                                    ItemDetail item = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName());
-                                    Log.wtf("Test_orderdetail", orderDetail.getItemName() + " " + orderDetail.getItemId());
-                                    Log.wtf("Test_itemdetail", "" + new Gson().toJson(item));
                                     KotItemDetail kotItemDetail = ObjectFactory
                                             .getInstance()
                                             .getKotItemDetail(
@@ -250,17 +260,23 @@ public class MainPageOrderView extends LinearLayout {
                                                     orderDetail,
                                                     CoreData.getInstance()
                                                             .getItemDetailById(
-                                                                    orderDetail.getItemId(),
-                                                                    orderDetail.getItemName()),
+                                                                    orderDetail
+                                                                            .getItemId()),
                                                     kotSummary,
                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
-                                    kotItemDetail.setItemNum(orderDetail
-                                            .getItemNum());
+                                    kotItemDetail.setItemNum(orderDetail.getItemNum());
+
+                                    //region change status TMP when place order
+//                                    if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TMP) {
+//                                        kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNSEND);
+//                                    }
+                                    //endregion
+
                                     if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
                                         kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
-                                        kotItemDetail
-                                                .setKotStatus(ParamConst.KOT_STATUS_UPDATE);
+                                        kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UPDATE);
                                     }
+
                                     KotItemDetailSQL.update(kotItemDetail);
                                     kotItemDetails.add(kotItemDetail);
                                     orderDetailIds.add(orderDetail.getId());
@@ -283,6 +299,7 @@ public class MainPageOrderView extends LinearLayout {
                                     }
                                 }
                             }
+
                             if (!kotItemDetails.isEmpty()) {
                                 KotSummarySQL.update(kotSummary);
                                 if (!App.instance.isRevenueKiosk() && App.instance.getSystemSettings().isOrderSummaryPrint()) {
@@ -306,22 +323,24 @@ public class MainPageOrderView extends LinearLayout {
                                         @Override
                                         public void run() {
                                             parent.printerLoadingDialog
-                                                    .setTitle(parent.getResources().getString(R.string.sending_to_kitchen));
+                                                    .setTitle(parent.getResources().getString(R.string.send_kitchen));
                                             parent.printerLoadingDialog.showTime();
                                         }
                                     });
                                     Map<String, Object> orderMap = new HashMap<String, Object>();
                                     orderMap.put("orderId", order.getId());
                                     orderMap.put("orderDetailIds", orderDetailIds);
+                                    //auto print KOT
+//                                    if(kotSummary.getTableName() ==null){
+//                                        kotSummary.setTableName(placedOrder.getTableName());
+//                                    }
                                     App.instance.getKdsJobManager().tearDownKot(
                                             kotSummary, kotItemDetails,
                                             kotItemModifiers, kotCommitStatus,
                                             orderMap);
                                 }
                             } else {
-//							if(placedOrderDetails == null || placedOrderDetails.size() ==0) {
-//								KotSummarySQL.deleteKotSummary(kotSummary);
-//							}
+                                KotSummarySQL.deleteKotSummary(kotSummary);
                                 parent.runOnUiThread(new Runnable() {
 
                                     @Override
@@ -337,6 +356,7 @@ public class MainPageOrderView extends LinearLayout {
 
             }
         });
+        //endregiona
     }
 
     private void initTextTypeFace() {
@@ -405,6 +425,7 @@ public class MainPageOrderView extends LinearLayout {
         if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.takeaway) + ")";
         }
+
         if (order.getTableId() < 0) {
             orderNoStr = context.getResources().getString(R.string.queue)
                     + " - "
@@ -430,7 +451,6 @@ public class MainPageOrderView extends LinearLayout {
             }
             subtotal = BH.sub(BH.getBD(order.getSubTotal()), subtotal, true);
             taxAmount = BH.sub(BH.getBD(order.getTaxAmount()), taxAmount, true);
-
             discountAmount = BH.sub(BH.getBD(order.getDiscountAmount()), discountAmount, true);
             total = BH.sub(BH.getBD(order.getTotal()), total, true);
             tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(subtotal.toString()).toString());
@@ -570,7 +590,7 @@ public class MainPageOrderView extends LinearLayout {
                     List<ItemModifier> itemModifiers = CoreData.getInstance()
                             .getItemModifiers(
                                     CoreData.getInstance().getItemDetailById(
-                                            orderDetail.getItemId(),orderDetail.getItemName()));
+                                            orderDetail.getItemId()));
                     if (itemModifiers.size() > 0) {
                         Message msg = handler.obtainMessage();
                         msg.what = MainPage.VIEW_EVENT_OPEN_MODIFIERS;
@@ -637,7 +657,7 @@ public class MainPageOrderView extends LinearLayout {
 
                             if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                                 if (num < 1) {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -669,7 +689,7 @@ public class MainPageOrderView extends LinearLayout {
 //									OrderModifierSQL.updateOrderModifierNum(tag, 999);
                                     OrderHelper.setOrderModifierPirceAndNum(tag, 999);
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -749,7 +769,7 @@ public class MainPageOrderView extends LinearLayout {
                                     // kotCommitStatus, null);
 
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -1261,6 +1281,9 @@ public class MainPageOrderView extends LinearLayout {
                     break;
                     case R.id.ll_transfer: {
                         OrderDetail orderDetail = (OrderDetail) view.getTag();
+                        if (orderDetail.getIsFree() == ParamConst.FREE) {
+                            return;
+                        }
                         if (!IntegerUtils.isEmptyOrZero(order.getAppOrderId())) {
                             UIHelp.showShortToast(parent, parent.getString(R.string.order_from_dinner_app_cannot_transfrerred));
                             return;

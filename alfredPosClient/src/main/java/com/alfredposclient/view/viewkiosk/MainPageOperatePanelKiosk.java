@@ -230,11 +230,12 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                     if (paymentSettlement != null) {
                         return;
                     }
-				int placeOrderCount = OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(order);
-				if(placeOrderCount > 0) {
-					DialogFactory.showOneButtonCompelDialog(parent,"", parent.getResources().getString(R.string.cannot_delete), null);
-					return;
-				}
+                    int placeOrderCount = OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(order);
+                    if (placeOrderCount > 0) {
+                        DialogFactory.showOneButtonCompelDialog(parent, "", parent.getResources().getString(R.string.cannot_delete), null);
+                        return;
+                    }
+
                     DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning),
                             parent.getResources().getString(R.string.discard_current_order),
                             parent.getResources().getString(R.string.no),
@@ -274,7 +275,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                     if (order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
                         return;
                     }
-                    DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning), parent.getString(R.string.hold_order)+"\n"+parent.getString(R.string.sending_to_kitchen)+" ? ",
+                    DialogFactory.commonTwoBtnDialog(parent, parent.getResources().getString(R.string.warning), "Hold the Order\nSending to Kitchen ?",
                             parent.getString(R.string.no), parent.getString(R.string.yes),
                             new OnClickListener() {
                                 @Override
@@ -369,8 +370,8 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                                                     orderDetail,
                                                                     CoreData.getInstance()
                                                                             .getItemDetailById(
-                                                                                    orderDetail.getItemId(),
-                                                                                    orderDetail.getItemName()),
+                                                                                    orderDetail
+                                                                                            .getItemId()),
                                                                     kotSummary,
                                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
                                                     kotItemDetail.setItemNum(orderDetail
@@ -409,7 +410,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                                             order,
                                                             App.instance.getUser().getFirstName()
                                                                     + App.instance.getUser().getLastName(),
-														"", 1,App.instance.getSystemSettings().getTrainType());
+                                                            "", 1, App.instance.getSystemSettings().getTrainType());
 
                                             Map<String, Object> orderMap = new HashMap<String, Object>();
 

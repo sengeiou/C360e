@@ -13,9 +13,10 @@ bugsee {
 //    appToken '9290f896-1a2e-4b70-b1fa-46823bb4398c'
     appToken { BaseVariant variant ->
         switch (variant.buildType.name) {
-            case 'release': '9290f896-1a2e-4b70-b1fa-46823bb4398c'
+            case 'release': '5f8647d4-30e6-4599-8dd0-ab8c5bd39f84'
                 break
-            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+//            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+            case 'debug': '5f8647d4-30e6-4599-8dd0-ab8c5bd39f84'
                 break
         }
     }
@@ -76,9 +77,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
 //            signingConfig signingConfigs.release
         }
-//        debug {
-////            signingConfig signingConfigs.release
-//        }
+        debug {
+        }
     }
 
 //    android.applicationVariants.all { variant ->
@@ -108,16 +108,16 @@ android {
 //        exclude 'LICENSE.txt'
 //    }
     buildToolsVersion '27.0.3'
-    flavorDimensions 'default'
-    productFlavors {
-        dev {
-            dimension = 'default'
-            applicationIdSuffix = '.debug'
-        }
-        prod {
-            dimension = 'default'
-        }
-    }
+//    flavorDimensions 'default'
+//    productFlavors {
+//        dev {
+//            dimension = 'default'
+//            applicationIdSuffix = '.debug'
+//        }
+//        prod {
+//            dimension = 'default'
+//        }
+//    }
 }
 repositories {
 

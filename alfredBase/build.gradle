@@ -25,6 +25,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+        debug {
+        }
     }
     buildToolsVersion '27.0.3'
 }

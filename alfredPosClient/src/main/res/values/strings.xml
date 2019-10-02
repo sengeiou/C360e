@@ -352,5 +352,6 @@
     <string name="ask_save_edit_content">Want to save the edited content?</string>
     <string name="ask_delete_queue">Are you sure to delete this queue ?</string>
     <string name="name_used">The name has already been used, try another</string>
+    <string name="send_kitchen">Send Kitchen</string>
 
 </resources>

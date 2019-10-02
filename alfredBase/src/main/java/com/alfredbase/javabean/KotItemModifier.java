@@ -2,104 +2,130 @@ package com.alfredbase.javabean;
 
 import java.io.Serializable;
 
-public class KotItemModifier implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1092667120979695798L;
+public class KotItemModifier implements Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -1092667120979695798L;
 
-	private Integer id;
+    private Integer id;
 
-	private Integer kotItemDetailId;
+    private Integer kotItemDetailId;
 
-	private Integer modifierId;
+    private Integer modifierId;
 
-	private String modifierName;
+    private String modifierName;
 
-	private Integer modifierNum;
+    private Integer modifierNum;
 
-	private Integer status;
-	
-	private Integer printerId;
+    private Integer status;
 
-	public KotItemModifier() {
-	}
+    private Integer printerId;
 
-	public KotItemModifier(Integer id, Integer kotItemDetailId,
-			Integer modifierId, String modifierName, Integer modifierNum,
-			Integer status) {
-		super();
-		this.id = id;
-		this.kotItemDetailId = kotItemDetailId;
-		this.modifierId = modifierId;
-		this.modifierName = modifierName;
-		this.modifierNum = modifierNum;
-		this.status = status;
-	}
+    private String uniqueId;
 
-	public Integer getId() {
-		return id;
-	}
+    private String kotItemDetailUniqueId;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public KotItemModifier() {
+    }
 
-	public Integer getKotItemDetailId() {
-		return kotItemDetailId;
-	}
+    public KotItemModifier(Integer id, Integer kotItemDetailId,
+                           Integer modifierId, String modifierName, Integer modifierNum,
+                           Integer status) {
+        super();
+        this.id = id;
+        this.kotItemDetailId = kotItemDetailId;
+        this.modifierId = modifierId;
+        this.modifierName = modifierName;
+        this.modifierNum = modifierNum;
+        this.status = status;
+    }
 
-	public void setKotItemDetailId(Integer kotItemDetailId) {
-		this.kotItemDetailId = kotItemDetailId;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public Integer getModifierId() {
-		return modifierId;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setModifierId(Integer modifierId) {
-		this.modifierId = modifierId;
-	}
+    public Integer getKotItemDetailId() {
+        return kotItemDetailId;
+    }
 
-	public String getModifierName() {
-		return modifierName;
-	}
+    public void setKotItemDetailId(Integer kotItemDetailId) {
+        this.kotItemDetailId = kotItemDetailId;
+    }
 
-	public void setModifierName(String modifierName) {
-		this.modifierName = modifierName == null ? null : modifierName.trim();
-	}
+    public Integer getModifierId() {
+        return modifierId;
+    }
 
-	public Integer getModifierNum() {
-		return modifierNum;
-	}
+    public void setModifierId(Integer modifierId) {
+        this.modifierId = modifierId;
+    }
 
-	public void setModifierNum(Integer modifierNum) {
-		this.modifierNum = modifierNum;
-	}
+    public String getModifierName() {
+        return modifierName;
+    }
 
-	public Integer getStatus() {
-		return status;
-	}
+    public void setModifierName(String modifierName) {
+        this.modifierName = modifierName == null ? null : modifierName.trim();
+    }
 
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
+    public Integer getModifierNum() {
+        return modifierNum;
+    }
 
-	public Integer getPrinterId() {
-		return printerId;
-	}
+    public void setModifierNum(Integer modifierNum) {
+        this.modifierNum = modifierNum;
+    }
 
-	public void setPrinterId(Integer printerId) {
-		this.printerId = printerId;
-	}
+    public Integer getStatus() {
+        return status;
+    }
 
-	@Override
-	public String toString() {
-		return "KotItemModifier [id=" + id + ", kotItemDetailId="
-				+ kotItemDetailId + ", modifierId=" + modifierId
-				+ ", modifierName=" + modifierName + ", modifierNum="
-				+ modifierNum + ", status=" + status + ", printerId="
-				+ printerId + "]";
-	}
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getPrinterId() {
+        return printerId;
+    }
+
+    public void setPrinterId(Integer printerId) {
+        this.printerId = printerId;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public String getKotItemDetailUniqueId() {
+        return kotItemDetailUniqueId;
+    }
+
+    public void setKotItemDetailUniqueId(String kotItemDetailUniqueId) {
+        this.kotItemDetailUniqueId = kotItemDetailUniqueId;
+    }
+
+    @Override
+    public String toString() {
+        return "KotItemModifier{" +
+                "id=" + id +
+                ", kotItemDetailId=" + kotItemDetailId +
+                ", modifierId=" + modifierId +
+                ", modifierName='" + modifierName + '\'' +
+                ", modifierNum=" + modifierNum +
+                ", status=" + status +
+                ", printerId=" + printerId +
+                ", uniqueId='" + uniqueId + '\'' +
+                ", kotItemDetailUniqueId='" + kotItemDetailUniqueId + '\'' +
+                '}';
+    }
 
 }

@@ -4,6 +4,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.alfredbase.BaseApplication;
 import com.alfredbase.javabean.model.PushMessage;
 import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.NetUtil;
@@ -163,11 +164,11 @@ public class XMPP implements ConnectionListener, PingFailedListener{
     public static XMPP getInstance() {
         if (instance == null) {
             instance = new XMPP();
-            if (App.instance.isOpenLog){
+            if (BaseApplication.isOpenLog){
                 HOST = "www.servedbyalfred.cn";  // 测试环境
             }else {
-                if(App.instance.isCartenzLog){
-                    HOST = "http://18.140.71.198";  // 正式环境
+                if(BaseApplication.isZeeposDev){
+                    HOST = "http://18.138.252.241:180";  // 正式环境
                 }else {
                     HOST = "www.servedbyalfred.org";  // 正式环境
                 }
@@ -447,7 +448,7 @@ public class XMPP implements ConnectionListener, PingFailedListener{
 
     @Override
     public void connected(XMPPConnection connection) {
-
+            LogUtil.log("XMPP Connected");
     }
 
     @Override

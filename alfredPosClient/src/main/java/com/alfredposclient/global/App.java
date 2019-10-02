@@ -105,10 +105,12 @@ import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.CardsSettlementSQL;
+import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
 import com.alfredbase.store.sql.LocalDeviceSQL;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.NetsSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
@@ -117,6 +119,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.PaymentMethodSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
+import com.alfredbase.store.sql.PrinterSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.SubPosBeanSQL;
@@ -377,7 +380,6 @@ public class App extends BaseApplication {
         super.onCreate();
 
         instance = this;
-        BugseeHelper.init(this, "9290f896-1a2e-4b70-b1fa-46823bb4398c");
         train = SharedPreferencesHelper.getInt(this, SharedPreferencesHelper.TRAINING_MODE);
         if (train == 1) {
             SQLExe.init(this, DATABASE_NAME_TRAIN, DATABASE_VERSION);
@@ -389,6 +391,8 @@ public class App extends BaseApplication {
 
         kdsJobManager = new KotJobManager(this);
         httpServer = new MainPosHttpServer();
+
+        BugseeHelper.init(this, "9290f896-1a2e-4b70-b1fa-46823bb4398c");
 
         // Init remote print service
         tryConnectRemotePrintService();
@@ -1511,6 +1515,7 @@ public class App extends BaseApplication {
 
     /* Get all users currently connected to POS */
     public void addActiveUser(String userKey, User user) {
+        getActiveUser();
         activeUsers.put(userKey, user);
         Store.saveObject(this, Store.USER_AND_KEY, activeUsers);
     }
@@ -1545,6 +1550,15 @@ public class App extends BaseApplication {
         return this.kdsDevices.get(deviceid);
     }
 
+    public void setKdsDevice(KDSDevice kdsDevice) {
+        for (KDSDevice kdsDeviceLocal : getKDSDevices().values()) {
+            if (kdsDeviceLocal.getDevice_id() == kdsDevice.getDevice_id()) {
+                kdsDeviceLocal.setKdsStatus(kdsDevice.getKdsStatus());
+                break;
+            }
+        }
+    }
+
     public Map<Integer, KDSDevice> getKDSDevices() {
         return this.kdsDevices;
     }
@@ -1575,6 +1589,31 @@ public class App extends BaseApplication {
 
     public void removeRVCDevices() {
         this.rvcDevices.clear();
+    }
+
+    private KDSDevice kdsBalancer = null;
+    private Printer printerBalancer = null;
+
+    public Printer getPrinterBalancer() {
+        if (printerBalancer == null) {
+            for (Printer printer : PrinterSQL.getAllPrinter()) {
+                if (printer.getPrinterUsageType() == Printer.KDS_BALANCER) {
+                    this.printerBalancer = printer;
+                    break;
+                }
+            }
+        }
+        return printerBalancer;
+    }
+
+    public KDSDevice getBalancerKDSDevice() {
+        if (kdsBalancer == null) {
+            Printer printer = getPrinterBalancer();
+            int printerBalancerId = printer != null ? printer.getId() : 0;
+            this.kdsBalancer = this.kdsDevices.get(printerBalancerId);
+        }
+
+        return kdsBalancer;
     }
 
     public User getUser() {
@@ -2487,6 +2526,31 @@ public class App extends BaseApplication {
         }
     }
 
+    public void printTransferOrder(PrinterDevice printer, RevenueCenter fromRevenueCenter, RevenueCenter toRevenueCenter,
+                                   String fromTable, String toTable,
+                                   Order fromOrder, Order toOrder, List<OrderDetail> orderDetail,
+                                   List<OrderModifier> modifier) {
+        try {
+            for (OrderModifier orderModifier : modifier) {
+                Modifier itemDetail = ModifierSQL.getModifierById(orderModifier.getModifierId());
+                if (itemDetail != null) {
+                    orderModifier.modifierName = itemDetail.getModifierName();
+                }
+            }
+
+            Gson gson = new Gson();
+            String prtStr = gson.toJson(printer);
+            String fromOrderStr = gson.toJson(fromOrder);
+            String toOrderStr = gson.toJson(toOrder);
+            String details = gson.toJson(orderDetail);
+            String mods = gson.toJson(modifier);
+
+            mRemoteService.printTransferOrder(prtStr, fromRevenueCenter.getRevName(), toRevenueCenter.getRevName(),
+                    fromTable, toTable, fromOrderStr, toOrderStr, details, mods);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void printQrByBitmap(PrinterDevice printer, PrinterTitle printerTitle, String paymentMethod, String id, String amount, Bitmap bmp) {
         Bitmap bitmap = Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(), bmp.getConfig());
@@ -3239,7 +3303,7 @@ public class App extends BaseApplication {
             Payment payment = ObjectFactory.getInstance().getPayment(order, orderBill);
             PaymentSettlement paymentSettlement = ObjectFactory.getInstance().getPaymentSettlement(payment, ParamConst.SETTLEMENT_TYPE_PAYPAL, payment.getPaymentAmount());
             for (AppOrderDetail appOrderDetail : appOrderDetailList) {
-                if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue(),appOrderDetail.getItemName()) == null)
+                if (CoreData.getInstance().getItemDetailById(appOrderDetail.getItemId().intValue(), appOrderDetail.getItemName()) == null)
                     continue;
                 OrderDetail orderDetail = ObjectFactory
                         .getInstance()

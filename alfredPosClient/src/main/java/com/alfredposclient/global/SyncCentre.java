@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.alfredbase.APPConfig;
 import com.alfredbase.BaseActivity;
+import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.http.APIName;
@@ -74,7 +75,8 @@ public class SyncCentre {
             httpClient = new AsyncHttpClient();
             httpClient.setMaxRetriesAndTimeout(0, 5 * 1000);
             httpClient.addHeader("Keep-Alive", "30");
-            httpClient.setTimeout(20 * 1000);
+//            httpClient.setTimeout(20 * 1000);
+            httpClient.setTimeout(75 * 1000);
             syncHttpClient = new SyncHttpClient();
             syncHttpClient.addHeader("Keep-Alive", "30");
             syncHttpClient.setTimeout(20 * 1000);
@@ -229,6 +231,11 @@ public class SyncCentre {
         HttpAPI.paymentMethodSync(context,
                 getAbsoluteUrl(APIName.SETTLEMENT_GETPAYMENT_METHOD), bigSyncHttpClient, handler, MODE_FIRST_SYNC);
 
+    }
+
+    public void syncKotItemDetail(BaseActivity context, SyncMsg syncMsg, Handler handler) {
+        HttpAPI.syncKotItemDetail(context, syncMsg,
+                getAbsoluteUrl(APIName.SYNC_KOT_ITEM_DETAIL), bigSyncHttpClient);
     }
 
     public void cloudSyncUploadOrderInfo(BaseActivity context,
@@ -437,19 +444,18 @@ public class SyncCentre {
 
     // Backend Server IP
     private String getAbsoluteUrl(String relativeUrl) {
-        if (App.instance.isDebug) {
+        if (BaseApplication.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
-        } else if (App.instance.isOpenLog) {
-
+//            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
+            return "http://18.138.252.241/alfred-api/" + relativeUrl;
+        } else if (BaseApplication.isOpenLog) {
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
-//			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
-            if (App.instance.isCartenzLog) {
-//                return "http://18.140.71.198/alfred-api/" + relativeUrl;
-                return "http://18.140.71.198/alfred-api/" + relativeUrl;
+            if (BaseApplication.isZeeposDev) {
+                return "http://18.138.252.241:180/alfred-api/" + relativeUrl;
             } else {
+//			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
                 return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;
             }
         }
@@ -554,8 +560,20 @@ public class SyncCentre {
      */
 
     /* sync KOT data to KDS */
+    public void checkKdsBalance(KDSDevice kdsDevice, BaseActivity context,
+                                Map<String, Object> parameters, Handler handler) throws Throwable {
+
+        KDSDevice kdsBalancer = App.instance.getBalancerKDSDevice();
+        if (kdsBalancer == null) return;
+        String url = getAbsoluteKDSUrlForJob(kdsBalancer, APIName.CHECK_KDS_BALANCE);
+        HTTPKDSRequest.checkKdsBalance(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
     public void syncSubmitKotToKDS(KDSDevice kdsDevice, BaseActivity context,
                                    Map<String, Object> parameters, Handler handler) throws Throwable {
+
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEW_KOT);
         HTTPKDSRequest.syncSubmitKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
                 handler);
@@ -566,6 +584,70 @@ public class SyncCentre {
                                     Map<String, Object> parameters) throws Throwable {
         String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.REFRESH_KOT);
         HTTPKDSRequest.refreshSameGroupKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient);
+
+    }
+
+    public void syncSubmitTmpKotToKDS(KDSDevice kdsDevice, BaseActivity context,
+                                      Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_TMP_KOT);
+        HTTPKDSRequest.syncSubmitTmpKot(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void syncSubmitKotToNextKDS(KDSDevice kdsDevice, BaseActivity context,
+                                       Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_NEXT_KOT);
+        HTTPKDSRequest.syncSubmitKotToNextKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void syncSubmitConnectedKDS(KDSDevice kdsDevice, Context context,
+                                       Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.UPDATE_CONNECTED_KDS);
+        HTTPKDSRequest.syncSubmitConnectedKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void syncSubmitKotToSummaryKDS(KDSDevice kdsDevice, BaseActivity context,
+                                          Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.SUBMIT_SUMMARY_KDS);
+        HTTPKDSRequest.syncSubmitKotToSummaryKDS(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void updateOrderCount(KDSDevice kdsDevice, BaseActivity context,
+                                 Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.UPDATE_ORDER_COUNT);
+        HTTPKDSRequest.updateOrderCount(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void updateKdsStatus(KDSDevice kdsDevice, BaseActivity context,
+                                Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.UPDATE_KDS_STATUS);
+        HTTPKDSRequest.updateKdsStatus(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void deleteKdsLogOnBalancer(KDSDevice kdsDevice, BaseActivity context,
+                                       Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.DELETE_KDS_LOG_BALANCER);
+        HTTPKDSRequest.deleteKdsLogOnBalancer(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
+
+    }
+
+    public void deleteKotSummary(KDSDevice kdsDevice, BaseActivity context,
+                                 Map<String, Object> parameters, Handler handler) throws Throwable {
+        String url = getAbsoluteKDSUrlForJob(kdsDevice, APIName.DELETE_KOT_KDS);
+        HTTPKDSRequest.deleteKotSummary(context, parameters, url, kdsDevice.clone(), syncHttpClient,
+                handler);
 
     }
 
@@ -590,7 +672,11 @@ public class SyncCentre {
     public void callAppNo(final Context context, String tag, String num) {
         String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.CALL_POS_NUM;
         HttpAPI.callAppNo(context, url, syncHttpClient, tag, num);
+    }
 
+    public void callAppNo(final Context context, String params) {
+        String url = "http://" + App.instance.getCallAppIp() + ":" + APPConfig.CALLNUM_HTTP_SERVER_PORT + "/" + APIName.CALL_POS_NUM;
+        HttpAPI.callAppNo(context, url, syncHttpClient, params);
     }
 
     //start language
@@ -663,18 +749,18 @@ public class SyncCentre {
         String url = null;
         StringBuffer param = new StringBuffer("userKey=" + CoreData.getInstance().getLoginResult().getUserKey() + "&");
 
-        if (App.instance.isDebug) {
+        if (BaseApplication.isDebug) {
             url = "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
             param.append("amount=0.01&");
-        } else if (App.instance.isOpenLog) {
+        } else if (BaseApplication.isOpenLog) {
             url = "http://218.244.136.120:8080/alfred-api/" + APIName.REQUEST_ALIPAY;
             param.append("amount=0.01&");
         } else {
             if (App.instance.countryCode == ParamConst.CHINA) {
                 url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
-                if (App.instance.isCartenzLog) {
-                    url = "http://18.140.71.198/alfred-api/" + APIName.REQUEST_ALIPAY;
+                if (BaseApplication.isZeeposDev) {
+                    url = "http://18.138.252.241:180/alfred-api/" + APIName.REQUEST_ALIPAY;
                 } else {
                     url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
                 }
@@ -798,16 +884,16 @@ public class SyncCentre {
         }
     }
 
-    public void getOtherRVCTable(Context context, String url, int placeId,Handler handler) {
-            HttpAPI.getOtherRVCTable(context,
-                    getAbsoluteUrl(url, APIName.GET_OTHER_RVC_TABLE), placeId,httpClient, handler);
+    public void getOtherRVCTable(Context context, String url, int placeId, Handler handler) {
+        HttpAPI.getOtherRVCTable(context,
+                getAbsoluteUrl(url, APIName.GET_OTHER_RVC_TABLE), placeId, httpClient, handler);
 
     }
 
 
     public void sendOrderToOtherRVC(Context context, String url, int transferType, Order currentOrder, int tableId, Handler handler) {
         HttpAPI.sendOrderToOtherRVC(context,
-                getAbsoluteUrl(url, APIName.TRANSFER_TABLE_TO_OTHER_RVC),transferType, currentOrder, tableId, httpClient, handler);
+                getAbsoluteUrl(url, APIName.TRANSFER_TABLE_TO_OTHER_RVC), transferType, currentOrder, tableId, httpClient, handler);
 
     }
 
