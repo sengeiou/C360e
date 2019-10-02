@@ -48,6 +48,7 @@ import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
@@ -97,6 +98,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private TextView tv_table_edit;
     private TextView tv_cancel;
     private TextView tv_place;
+    private TextView tvQuickService;
     private TextView tv_summary;
     private List<TableInfo> newTables = new ArrayList<TableInfo>();
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
@@ -135,6 +137,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         rl_create_table = (RelativeLayout) view.findViewById(R.id.rl_create_table);
         ll_table_left = (LinearLayout) view.findViewById(R.id.ll_table_left);
         ll_waiting_list = (LinearLayout) view.findViewById(R.id.ll_waiting_list);
+        tvQuickService = (TextView) view.findViewById(R.id.tvQuickService);
 //        rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
 //        ViewTreeObserver vto = rl_table_area.getViewTreeObserver();
 //        width = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(mainPage, 40.0f))*3/2;
@@ -197,6 +200,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         iv_more_table.setOnClickListener(this);
         view.findViewById(R.id.ll_table_root).setOnClickListener(null);
         tv_place.setOnClickListener(this);
+        tvQuickService.setOnClickListener(this);
 
 
         tv_summary.setOnClickListener(this);
@@ -218,8 +222,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         places.clear();
         places = PlaceInfoSQL.getAllPlaceInfo();
 
-        try
-        {
+        try {
             String tableShowAction = ((MainPage) mainPage).tableShowAction;
             if (!TextUtils.isEmpty(tableShowAction)) {
                 if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
@@ -228,9 +231,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e("Error", String.valueOf(e));
         }
 
@@ -293,7 +294,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         }
 
         String placeName = "";
-        if (places.size() > selectPlaceIndex){
+        if (places.size() > selectPlaceIndex) {
 
             placeName = places.get(selectPlaceIndex).getPlaceName();
         }
@@ -807,6 +808,11 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             case R.id.btn_back: {
                 mainPage.onBackPressed();
             }
+            case R.id.tvQuickService:
+                BugseeHelper.buttonClicked("Open quick service by shortcut");
+                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
+                UIHelp.startMainPageKiosk(getContext());
+                break;
         }
     }
 
