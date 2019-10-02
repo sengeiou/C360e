@@ -199,7 +199,7 @@ public class HttpAPI {
                                          Map<String, Object> parameters,
                                          AsyncHttpClient httpClient, final Handler handler) {
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getMainPosInfo().getRevenueId()));
+            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getRevenueCenter().getId()));
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -481,7 +481,7 @@ public class HttpAPI {
                                     AsyncHttpClient httpClient, final Handler mmHandler) {
         // 除了登录接口，其他接口都要加这个
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getMainPosInfo().getRevenueId()));
+            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getRevenueCenter().getId()));
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -550,7 +550,7 @@ public class HttpAPI {
                                     AsyncHttpClient httpClient, final Handler handler) {
         // 除了登录接口，其他接口都要加这个
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getMainPosInfo().getRevenueId()));
+            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getRevenueCenter().getId()));
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -595,7 +595,7 @@ public class HttpAPI {
                                                   AsyncHttpClient httpClient, final Handler handler) {
         // 除了登录接口，其他接口都要加这个
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getMainPosInfo().getRevenueId()));
+            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getRevenueCenter().getId()));
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -704,7 +704,7 @@ public class HttpAPI {
                               final Handler handler) {
         // 除了登录接口，其他接口都要加这个
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getMainPosInfo().getRevenueId()));
+            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getRevenueCenter().getId()));
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -743,7 +743,7 @@ public class HttpAPI {
                                           AsyncHttpClient httpClient, final Handler handler) {
         // 除了登录接口，其他接口都要加这个
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getMainPosInfo().getRevenueId()));
+            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getRevenueCenter().getId()));
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -794,7 +794,7 @@ public class HttpAPI {
                                              AsyncHttpClient httpClient, final Handler handler) {
         // 除了登录接口，其他接口都要加这个
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getMainPosInfo().getRevenueId()));
+            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getRevenueCenter().getId()));
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
@@ -836,7 +836,7 @@ public class HttpAPI {
                                               AsyncHttpClient httpClient, final Handler handler) {
         // 除了登录接口，其他接口都要加这个
         if (parameters != null) {
-            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getMainPosInfo().getRevenueId()));
+            parameters.put("userKey", CoreData.getInstance().getUserKey(App.instance.getRevenueCenter().getId()));
             parameters.put("appVersion", App.instance.VERSION);
         }
         try {
