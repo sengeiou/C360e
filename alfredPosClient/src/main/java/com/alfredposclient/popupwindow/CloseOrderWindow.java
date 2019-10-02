@@ -2628,14 +2628,22 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
     private void updateOrderUser(OrderUser ordrUser) {
-        ordrUser.setTransactionAmount(order.getGrandTotal());
+
+//        remainTotal = BH.sub(BH.getBD(order.getTotal()),
+//                BH.getBD(sumPaidamount), true);
+        BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(order.getTotal()));
+
+        BigDecimal result;
+        User user = UserSQL.getUserById(ordrUser.getUserId());
+        BigDecimal budget = BH.getBD(user.getBudget());
+        result = BH.sub(budget, remainTotalAfterRound, true);
+
+        ordrUser.setTransactionAmount(BH.formatMoney(remainTotalAfterRound.toString()));
         long time = System.currentTimeMillis();
         ordrUser.setUpdateTime(time);
         OrderUserSQL.update(ordrUser);
-        BigDecimal budget = BH.getBD(user.getBudget());
-        BigDecimal grdTotal = BH.getBD(order.getGrandTotal());
-        BigDecimal result = BH.sub(budget,grdTotal, true);
-        user.setBudget(result.toString());
+
+        user.setBudget(BH.formatMoney(result.toString()));
         user.setUpdateTime(time);
         UserSQL.addUser(user);
     }

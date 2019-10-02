@@ -178,6 +178,7 @@ public class SyncCentre {
                              Handler handler) {
         HttpAPI.getItem(context, getAbsoluteUrl(APIName.ITEM_GETITEM),
                 httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.getItemPrice(context,getAbsoluteUrl(APIName.ITEM_PRICE), httpClient, handler, MODE_FIRST_SYNC);
 //		HttpAPI.getPlaceInfo(context, parameters,
 //				getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO), httpClient,
 //				handler, MODE_FIRST_SYNC);
@@ -331,6 +332,7 @@ public class SyncCentre {
                     httpClient, handler, MODE_PUSH_SYNC);
             HttpAPI.getItemCategory(context,
                     getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, null, MODE_PUSH_SYNC);
+            HttpAPI.getItemPrice(context,getAbsoluteUrl(APIName.ITEM_PRICE), httpClient, handler, MODE_PUSH_SYNC);
         } else if (type.equals(PushMessage.MODIFIER)) {
             HttpAPI.getModifier(context,
                     getAbsoluteUrl(APIName.ITEM_GETMODIFIER), httpClient, handler, MODE_PUSH_SYNC);

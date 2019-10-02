@@ -2505,7 +2505,7 @@ public class MainPageKiosk extends BaseActivity {
                 if (employee == null) return;
                 User item = employee.getItem(i);
                 OrderUser orderUser = new OrderUser();
-                orderUser.setUserId(item.getEmpId());
+                orderUser.setUserId(item.getId());
                 orderUser.setOrderId(currentOrder.getId());
                 long time = System.currentTimeMillis();
                 orderUser.setBusinessDate(time);

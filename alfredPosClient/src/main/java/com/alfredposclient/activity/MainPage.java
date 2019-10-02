@@ -51,6 +51,7 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.OrderSplit;
+import com.alfredbase.javabean.OrderUser;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
@@ -79,6 +80,7 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.OrderUserSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
 import com.alfredbase.store.sql.RemainingStockSQL;
@@ -2570,9 +2572,9 @@ public class MainPage extends BaseActivity {
                 currentOrder.setIsTakeAway(salesType);
                 OrderSQL.updateOrder(currentOrder);
                 handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-//                if (item.getParaValue1().equals(String.valueOf(ParamConst.EMPLOYEE))){
-//                    showListEmployee();
-//                }
+                if (item.getParaValue1().equals(String.valueOf(ParamConst.EMPLOYEE))){
+                    showListEmployee();
+                }
             }
         });
 
@@ -2599,27 +2601,20 @@ public class MainPage extends BaseActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-
+                EmployeeAdapter employee = (EmployeeAdapter) adapterView.getAdapter();
+                if (employee == null) return;
+                User item = employee.getItem(i);
+                OrderUser orderUser = new OrderUser();
+                orderUser.setUserId(item.getId());
+                orderUser.setOrderId(currentOrder.getId());
+                long time = System.currentTimeMillis();
+                orderUser.setBusinessDate(time);
+                orderUser.setCreateTime(time);
+                orderUser.setUpdateTime(time);
+                OrderUserSQL.addOrder(orderUser);
                 if (emplyeeDialog != null) {
-                    salesTypeDialog.dismiss();
+                    emplyeeDialog.dismiss();
                 }
-
-                EmployeeAdapter employeeAdapter = (EmployeeAdapter) adapterView.getAdapter();
-
-                if (employeeAdapter == null) return;
-
-                User item = employeeAdapter.getItem(i);
-
-//                int salesType = ParamConst.DINE_IN;
-//
-//                if (!TextUtils.isEmpty(item.getParaValue2()))
-//                    salesType = Integer.parseInt(item.getParaValue2());
-//
-//                currentOrder.setIsTakeAway(salesType);
-//                OrderSQL.updateOrder(currentOrder);
-//                handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-
             }
         });
     }

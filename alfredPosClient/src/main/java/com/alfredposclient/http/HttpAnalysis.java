@@ -262,6 +262,12 @@ public class HttpAnalysis {
             List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("glbConfigList"),
                     new TypeToken<ArrayList<RestaurantConfig>>() {
                     }.getType());
+            List<RestaurantConfig> restaurantConfigs2 = gson.fromJson(object.getString("configList"),
+                    new TypeToken<ArrayList<RestaurantConfig>>() {
+                    }.getType());
+            for (RestaurantConfig restC : restaurantConfigs2){
+                restaurantConfigs.add(restC);
+            }
 
             //region dummy data
 //            List<String> salesTypeNameList = new ArrayList<>();

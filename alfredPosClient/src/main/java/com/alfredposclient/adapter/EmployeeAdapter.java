@@ -8,8 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.alfredbase.javabean.User;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
+import com.alfredposclient.global.App;
 
 import java.util.List;
 
@@ -61,7 +63,7 @@ public class EmployeeAdapter extends BaseAdapter {
         User item = data.get(i);
         holder.tvTitle.setText(item.getFirstName());
         holder.tvSubTitle.setText(item.getType().toString());
-        holder.tvBudget.setText(item.getBudget());
+        holder.tvBudget.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(item.getBudget()));
 
         return view;
     }

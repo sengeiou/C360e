@@ -22,7 +22,7 @@ public class UserSQL {
 			String sql = "replace into "
 					+ TableNames.User
 					+ "(id,empId,  type,  status, accountName,  userName,  password,firstName,  lastName,  nickName,companyId,  createTime,  updateTime, budget)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { user.getId(), user.getEmpId(),
