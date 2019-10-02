@@ -4,7 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -58,6 +63,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
     private SlipButton sb_kot_notification;
     private SlipButton sb_zone_notification;
     private MyToggleButton sb_top_screen_lock;
+    private MyToggleButton mtCrashReporting;
     private TextView tv_version, tv_open_item;
     private WaiterReloginDialog waiterReloginDialog;
     OpenItemWindow openItemWindow;
@@ -131,12 +137,15 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         sb_top_screen_lock = (MyToggleButton) findViewById(R.id.sb_top_screen_lock);
         tv_version = (TextView) findViewById(R.id.tv_version);
         tv_open_item = (TextView) findViewById(R.id.tv_open_item);
+        mtCrashReporting = (MyToggleButton) findViewById(R.id.mtCrashReporting);
         boolean flag = Store.getBoolean(this, Store.WAITER_SET_LOCK, true);
         if (flag) {
             sb_top_screen_lock.setChecked(true);
         } else {
             sb_top_screen_lock.setChecked(false);
         }
+
+        mtCrashReporting.setChecked(Store.getBoolean(this, Store.BUGSEE_STATUS, true));
 
         findViewById(R.id.tv_order_history).setOnClickListener(this);
         findViewById(R.id.tv_bump_mob_app).setOnClickListener(this);
@@ -146,6 +155,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         findViewById(R.id.iv_back).setOnClickListener(this);
         findViewById(R.id.tv_logout).setOnClickListener(this);
         findViewById(R.id.tv_clock).setOnClickListener(this);
+        mtCrashReporting.setOnClickListener(this);
         tv_open_item.setOnClickListener(this);
 
         tv_language = (TextView) findViewById(R.id.tv_language);
@@ -305,6 +315,55 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                     Store.putBoolean(Setting.this, Store.WAITER_SET_LOCK, false);
                     App.instance.stopAD();
                 }
+                break;
+            case R.id.mtCrashReporting:
+                String message;
+
+                final boolean finalCheckedState = checkState;
+
+                if (!finalCheckedState)
+                    message = "Turn off crash reporting? \nsystem will be restart";
+                else
+                    message = "Turn on crash reporting? \nsystem will be restart";
+
+                DialogFactory.commonTwoBtnDialog(context, "", message,
+                        context.getResources().getString(R.string.cancel),
+                        context.getResources().getString(R.string.ok),
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mtCrashReporting.setChecked(!finalCheckedState);
+                            }
+                        },
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mtCrashReporting.setChecked(finalCheckedState);
+                                Store.putBoolean(Setting.this, Store.BUGSEE_STATUS, finalCheckedState);
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(App.instance, Welcome.class);
+                                        @SuppressLint("WrongConstant")
+                                        PendingIntent restartIntent = PendingIntent.getActivity(
+                                                App.instance.getApplicationContext(), 0, intent,
+                                                Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        AlarmManager mgr = (AlarmManager) App.instance
+                                                .getSystemService(Context.ALARM_SERVICE);
+                                        mgr.set(AlarmManager.RTC,
+                                                System.currentTimeMillis() + 1000,
+                                                restartIntent);
+                                        ActivityManager am = (ActivityManager) App.instance
+                                                .getSystemService(Context.ACTIVITY_SERVICE);
+                                        if (am != null)
+                                            am.killBackgroundProcesses(getPackageName());
+                                        App.instance.finishAllActivity();
+                                    }
+                                });
+                            }
+                        });
+
                 break;
         }
     }
