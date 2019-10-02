@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alfredbase.BuildConfig;
+import com.alfredbase.store.Store;
 import com.bugsee.library.Bugsee;
 
 import java.util.HashMap;
@@ -16,14 +17,20 @@ import java.util.HashMap;
  * Created by Arif S. on 6/19/19
  */
 public class BugseeHelper {
+    private static boolean isActive;
+
     public static void init(Application application, String token) {
+        isActive = Store.getBoolean(application, Store.BUGSEE_STATUS, true);
+        if (!isActive) return;
+
         HashMap<String, Object> options = new HashMap<>();
         options.put(Bugsee.Option.VideoEnabled, true);//set true to recode video
         options.put(Bugsee.Option.MaxRecordingTime, 2 * 60 * 60);
         options.put(Bugsee.Option.ShakeToTrigger, false);
 
         if (BuildConfig.DEBUG) {
-            Bugsee.launch(application, "f4eb9760-2327-4253-9f5b-533ee0e711c6", options);
+//            Bugsee.launch(application, "f4eb9760-2327-4253-9f5b-533ee0e711c6", options);
+            Bugsee.launch(application, token, options);
         } else {
             Bugsee.launch(application, token, options);
         }
@@ -31,14 +38,17 @@ public class BugseeHelper {
     }
 
     public static void setEmail(String email) {
+        if (!isActive) return;
         Bugsee.setEmail(email);
     }
 
     public static void setAttribute(String key, Object value) {
+        if (!isActive) return;
         Bugsee.setAttribute(key, value);
     }
 
     public static void trace(String key, Object value) {
+        if (!isActive) return;
         Bugsee.setAttribute(key, value);
     }
 
@@ -68,14 +78,17 @@ public class BugseeHelper {
     }
 
     public static void event(String message) {
+        if (!isActive) return;
         Bugsee.event(message);
     }
 
     public static void event(String key, HashMap<String, Object> param) {
+        if (!isActive) return;
         Bugsee.setAttribute(key, param);
     }
 
     public static void log(String message) {
+        if (!isActive) return;
         Bugsee.log(message);
     }
 

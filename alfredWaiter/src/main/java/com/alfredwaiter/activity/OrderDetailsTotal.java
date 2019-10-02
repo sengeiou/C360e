@@ -209,7 +209,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case GET_PRINT_KOT_DATA_SUCCESS:
-                    //printKOT(isRePrintKOT, isPrintLocal);
+                    printKOT(isRePrintKOT, isPrintLocal);
                     break;
                 case GET_PRINT_KOT_DATA_FAILED:
                     //get data kot failed
@@ -890,7 +890,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 
             final OrderDetail orderDetail = orderDetails.get(position);
             final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-                    orderDetail.getItemId(),orderDetail.getItemName());
+                    orderDetail.getItemId());
 
             final List<OrderModifier> modifiers = OrderModifierSQL.getAllOrderModifierByOrderDetailAndNormal(orderDetail);
             StringBuffer stringBuffer = new StringBuffer();
@@ -939,7 +939,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     textView.setBackgroundColor(context
                                             .getResources().getColor(
                                                     R.color.white));
-                                    final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName()).getItemTemplateId();
+                                    final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId()).getItemTemplateId();
                                     final RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                                     int detailNum = OrderDetailSQL.getOrderNotSubmitDetailCountByOrderIdAndItemDetailId(currentOrder.getId(), tag.getItemId());
                                     if (remainingStock != null) {
@@ -960,7 +960,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                                     if (num == 0) {
                                         updateOrderDetail(tag, num);
                                         final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-                                                orderDetail.getItemId(),orderDetail.getItemName());
+                                                orderDetail.getItemId());
                                         ModifierCheckSql.deleteModifierCheck(orderDetail.getId(), currentOrder.getId());
                                     }
                                     refreshList();

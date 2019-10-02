@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
@@ -701,19 +702,17 @@ public class PromotionDataSQL {
 
 
     public static void deletePromotionAndFree(OrderPromotion orderPromotion) {
-
         String delePromotionData = "delete from " + TableNames.OrderPromotion + " where id = ?";
         // 删除免费菜的信息
-        String deleteFree = "delete from "+ TableNames.OrderDetail + " where id = ? and orderDetailStatus < ? ";
+        String deleteFree = "delete from "+ TableNames.OrderDetail + " where id = ?";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
-
         try {
             db.beginTransaction();
             db.execSQL(delePromotionData,
                     new Object[] { String.valueOf(orderPromotion.getId())});
             db.execSQL(deleteFree,
-                    new Object[] { String.valueOf(orderPromotion.getOrderDetailId()), String.valueOf(ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD)});
+                    new Object[] { String.valueOf(orderPromotion.getOrderDetailId())});
 
             db.setTransactionSuccessful();
         } catch (Exception e) {

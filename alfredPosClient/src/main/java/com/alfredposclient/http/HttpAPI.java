@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
@@ -24,6 +25,7 @@ import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
+import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
@@ -38,6 +40,7 @@ import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
@@ -1069,7 +1072,8 @@ public class HttpAPI {
 //                            SyncMsgSQL.add(syncMsg);
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
-                            throw new RuntimeException(error);
+                            initBugseeModifier();
+//                            throw new RuntimeException(error);
                         }
                     });
         }
@@ -1148,11 +1152,29 @@ public class HttpAPI {
                             }
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
-                            throw new RuntimeException(error);
+                            initBugseeModifier();
+//                            throw new RuntimeException(error);
                         }
                     });
         }
 
+    }
+
+    private static void initBugseeModifier() {
+        Restaurant restaurant = RestaurantSQL.getRestaurant();
+        if (restaurant != null) {
+            BugseeHelper.setEmail(restaurant.getEmail());
+            BugseeHelper.setAttribute("restaurant_id", restaurant.getId());
+            BugseeHelper.setAttribute("restaurant_company_id", restaurant.getCompanyId());
+            BugseeHelper.setAttribute("restaurant_address", restaurant.getAddressPrint());
+            BugseeHelper.setAttribute("restaurant_country", restaurant.getCountry());
+            BugseeHelper.setAttribute("restaurant_city", restaurant.getCity());
+        }
+
+//        String employeeId = Store.getString(context, Store.EMPLOYEE_ID);
+//        BugseeHelper.setAttribute("employee_id", employeeId);
+
+//        throw new NullPointerException("Test Crash");
     }
 
     public static void paymentMethodSync(Context context, String url, AsyncHttpClient httpClient, final Handler handler, final int mode) {
@@ -1206,24 +1228,31 @@ public class HttpAPI {
                                             SyncData.SYNC_FAILURE));
                                 }
                             }
-
-
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
-                            if (mode == SyncCentre.MODE_PUSH_SYNC) {
-                                handler.sendMessage(handler.obtainMessage(
-                                        ResultCode.CONNECTION_FAILED, error));
-                            } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
-                                handler.sendMessage(handler.obtainMessage(
-                                        SyncData.SYNC_DATA_TAG,
-                                        SyncData.SYNC_FAILURE));
+                            try
+                            {
+                                if (mode == SyncCentre.MODE_PUSH_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            ResultCode.CONNECTION_FAILED, error));
+                                } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                                super.onFailure(statusCode, headers, responseBody,
+                                        error);
+                                initBugseeModifier();
+//                                throw new RuntimeException(error);
+
                             }
-                            super.onFailure(statusCode, headers, responseBody,
-                                    error);
-                            throw new RuntimeException(error);
+                            catch(Exception e)
+                            {
+                                Log.e("Server Refuse", String.valueOf(e));
+                            }
                         }
                     });
         }
@@ -1255,7 +1284,8 @@ public class HttpAPI {
                                               byte[] responseBody, Throwable error) {
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
-                            throw new RuntimeException(error);
+                            initBugseeModifier();
+//                            throw new RuntimeException(error);
                         }
                     });
         }
@@ -1309,7 +1339,8 @@ public class HttpAPI {
                             SyncMsgSQL.add(syncMsg);
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
-                            throw new RuntimeException(error);
+                            initBugseeModifier();
+//                            throw new RuntimeException(error);
                         }
                     });
         }

@@ -1281,6 +1281,9 @@ public class MainPageOrderView extends LinearLayout {
                     break;
                     case R.id.ll_transfer: {
                         OrderDetail orderDetail = (OrderDetail) view.getTag();
+                        if (orderDetail.getIsFree() == ParamConst.FREE) {
+                            return;
+                        }
                         if (!IntegerUtils.isEmptyOrZero(order.getAppOrderId())) {
                             UIHelp.showShortToast(parent, parent.getString(R.string.order_from_dinner_app_cannot_transfrerred));
                             return;

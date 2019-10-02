@@ -15,7 +15,8 @@ bugsee {
         switch (variant.buildType.name) {
             case 'release': '5f8647d4-30e6-4599-8dd0-ab8c5bd39f84'
                 break
-            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+//            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+            case 'debug': '5f8647d4-30e6-4599-8dd0-ab8c5bd39f84'
                 break
         }
     }

@@ -218,12 +218,12 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BugseeHelper.init(this, "5cc128ed-939d-428a-9060-2813a324b2f2");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         update15to16();
         //HTTPServer.start();
         VERSION = getAppVersionName();
         httpServer = new WaiterHttpServer();
+        BugseeHelper.init(this, "5cc128ed-939d-428a-9060-2813a324b2f2");
         startHttpServer();
         UnCEHandler catchExcep = new UnCEHandler(this, Welcome.class);
         Thread.setDefaultUncaughtExceptionHandler(catchExcep);

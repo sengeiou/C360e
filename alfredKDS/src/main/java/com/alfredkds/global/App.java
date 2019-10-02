@@ -93,8 +93,8 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BugseeHelper.init(this, "856f76df-ba87-4e0a-9049-cfcd31a33a42");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+        BugseeHelper.init(this, "856f76df-ba87-4e0a-9049-cfcd31a33a42");
 
         systemSettings = new SystemSettings(this);
         update15to16();
