@@ -112,4 +112,12 @@ public class SystemSettings {
         return Store.getBoolean(this.context, Store.ALLOW_PARTIAL, false);
     }
 
+    public void setCrashReportStatus(boolean active) {
+        Store.putBoolean(this.context, Store.BUGSEE_STATUS, active);
+    }
+
+    public boolean isCrashReportActive() {
+        return Store.getBoolean(this.context, Store.BUGSEE_STATUS, true);
+    }
+
 }
