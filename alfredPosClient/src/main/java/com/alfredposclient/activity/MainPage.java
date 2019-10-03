@@ -58,6 +58,7 @@ import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RemainingStock;
 import com.alfredbase.javabean.RestaurantConfig;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
@@ -94,6 +95,7 @@ import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
+import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
@@ -104,6 +106,7 @@ import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
+import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.StockCallBack;
@@ -148,6 +151,7 @@ import com.moonearly.utils.service.TcpUdpFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,7 +172,6 @@ public class MainPage extends BaseActivity {
     private static final int GET_TABLESTATUSINFO_DATA = 100;
 
     public static final int CHECK_REQUEST_CODE = 98;
-
     public static final int REFRESH_UNSEAT_TABLE_VIEW = 97;
     public static final int REFRESH_STOCK_NUM = 101;
     public static final int REFRESH_TABLES_STATUS = 102;
@@ -225,7 +228,6 @@ public class MainPage extends BaseActivity {
     public static final int ORDER_TIME_OUT = 145;
     public static final int VIEW_EVENT_TAKE_AWAY = 146;
     public static final int VIEW_EVENT_SET_WEIGHT = 147;
-
     public static final int VIEW_EVENT_SET_APPORDER_TABLE_PACKS = 148;
     public static final int VIEW_EVENT_UNSEAT_ORDER = 149;
     public static final int VIEW_EVENT_FIRE = 150;
@@ -240,7 +242,7 @@ public class MainPage extends BaseActivity {
     public static final int ACTION_REMOVE_ORDER_DETAIL = 161;
     public static final int ACTION_CANCEL_ORDER_DETAIL = 162;
     public static final int VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER = 163;
-
+    public static final int ACTION_KOT_NEXT_KDS = 164;
     public static final int SERVER_TRANSFER_TABLE_FROM_OTHER_RVC = 400;
     public static final int ACTION_MERGE_TABLE = 401;
     public static final int VIEW_EVENT_SHOW_SALES_TYPE = 402;
@@ -254,20 +256,24 @@ public class MainPage extends BaseActivity {
     public static final String HANDLER_MSG_OBJECT_BILL_ON_HOLD = "BILL_ON_HOLD";
     public static final String HANDLER_MSG_OBJECT_VOID = "VOID";
     public static final String HANDLER_MSG_OBJECT_ENTERTAINMENT = "ENTERTAINMENT";
+    public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
+    public static final String HANDLER_MSG_OBJECT_CANCEL_ITEM = "CANCEL_ITEM";
+    // public static final int ACTION_SWITCH_USER_ERROR = 130;
     private static final String HANDLER_MSG_OBJECT_TRANSFER_TABLE = "TRANSFERTABLE";
     private static final String HANDLER_MSG_OBJECT_TRANSFER_ITEM = "TRANSFERITEM";
     private static final String HANDLER_MSG_OBJECT_ITEM_QTY = "ITEM_QTY";
     private static final String HANDLER_MSG_OBJECT_VOID_OR_FREE = "VOID_OR_FREE";
-    public static final String HANDLER_MSG_OBJECT_OPEN_DRAWER = "OPEN_DRAWER";
-    public static final String HANDLER_MSG_OBJECT_CANCEL_ITEM = "CANCEL_ITEM";
     private static final String PAMENT_METHOD = "PAMENTMETHOD";
-
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REPLACEMENT = "STORED_CARD_REPLACEMENT";
+    public MainPageOrderView orderView;
+    public String tableShowAction = SHOW_TABLES;
+    public Order currentOrder;
+    public PrinterLoadingDialog printerLoadingDialog;
+    public SelectOrderSplitDialog selectOrderSplitDialog;
     private TopMenuView topMenuView;
     private MainPageSearchView mainPageSearchView;
-    public MainPageOrderView orderView;
     private MainPageOperatePanel operatePanel;
     private MainPageMenuView mainPageMenuView;
     private CloseOrderWindow closeOrderWindow; // settlement window
@@ -284,23 +290,20 @@ public class MainPage extends BaseActivity {
     private Gson gson = new Gson();
     private boolean isShowTables = false;
     private boolean isTableFirstShow = true;
-    public String tableShowAction = SHOW_TABLES;
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
     private List<TableInfo> tables = new ArrayList<TableInfo>();
     private List<TablesStatusInfo> tableStatusInfo = new ArrayList<TablesStatusInfo>();
     private TableInfo currentTable;
     private TableInfo oldTable;
-    public Order currentOrder;
     private Order oldOrder;
+
+
+    //	public LoadingDialog loadingDialog;
     private List<OrderDetail> orderDetails;
     private VerifyDialog verifyDialog;
 
 
 //	public LoadingDialog loadingDialog;
-
-    public PrinterLoadingDialog printerLoadingDialog;
-
-    public SelectOrderSplitDialog selectOrderSplitDialog;
 
     private OrderSplitPrintWindow orderSplitPrintWindow;
 
@@ -508,10 +511,6 @@ public class MainPage extends BaseActivity {
         }
     };
 
-    public void setTablePacks(String tablePacks) {
-        setTablePacks(currentTable, tablePacks);
-    }
-
     public static void setTablePacks(TableInfo tableInfo, String tablePacks) {
         if (tableInfo != null) {
             tableInfo.setPacks(Integer.parseInt(tablePacks));
@@ -544,6 +543,10 @@ public class MainPage extends BaseActivity {
 //		tables = TableInfoSQL.getAllTables();
 //		handler.sendEmptyMessage(GET_TABLESTATUSINFO_DATA);
 //	}
+
+    public void setTablePacks(String tablePacks) {
+        setTablePacks(currentTable, tablePacks);
+    }
 
     private void openModifiers(OrderDetail orderDetail,
                                List<ItemModifier> itemModifiers, View view) {
@@ -582,7 +585,6 @@ public class MainPage extends BaseActivity {
                         .getIncludedTax().getTax());
     }
 
-
     private void getTableStatusInfo() {
         for (int i = 0; i < places.size(); i++) {
             int id = places.get(i).getId();
@@ -617,7 +619,6 @@ public class MainPage extends BaseActivity {
         transferOrder(table, -1);
     }
 
-
     private void transferOrder(TableInfo table, int transferType) {
         //msg.what
         boolean fromThisRVC = checkIfTableFromThisRVC(table);
@@ -633,7 +634,6 @@ public class MainPage extends BaseActivity {
         }
 
     }
-
 
     private void transferOrder(Order order, int tableId) {
         order.setTableId(tableId);
@@ -721,7 +721,6 @@ public class MainPage extends BaseActivity {
         }
 
     }
-
 
     public Handler handler = new Handler() {
         public void handleMessage(final android.os.Message msg) {
@@ -911,6 +910,10 @@ public class MainPage extends BaseActivity {
 //						RoundAmount roundAmount = ObjectFactory.getInstance()
 //								.getRoundAmount(currentOrder, orderBill, App.instance.getLocalRestaurantConfig().getRoundType());
 //						OrderHelper.setOrderTotalAlfterRound(currentOrder, roundAmount);
+
+                            orderBill.setPrintTime(System.currentTimeMillis());
+                            OrderBillSQL.updatePrintTime(orderBill);
+
                             PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
                                     context);
                             printerLoadingDialog.setTitle(context.getResources().getString(R.string.bill_printing));
@@ -925,6 +928,8 @@ public class MainPage extends BaseActivity {
                                             currentTable.getName(), 1, App.instance.getSystemSettings().getTrainType());
 
                             currentOrder.setOrderStatus(ParamConst.ORDER_STATUS_UNPAY);
+                            BigDecimal remainTotal = BH.getBD(currentOrder.getTotal());
+
                             OrderSQL.update(currentOrder);
                             ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory
                                     .getInstance().getItemModifierList(currentOrder, OrderDetailSQL.getOrderDetails(currentOrder
@@ -932,8 +937,9 @@ public class MainPage extends BaseActivity {
 
                             List<OrderPromotion> orderPromotions = PromotionDataSQL.getPromotionDataOrOrderid(currentOrder.getId());
 
+                            RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(currentOrder, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                             App.instance.remoteBillPrint(printer, title, currentOrder,
-                                    orderItems, orderModifiers, taxMap, null, null, orderPromotions);
+                                    orderItems, orderModifiers, taxMap, null, roundAmount, orderPromotions);
 //						handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                         }
                     } else {
@@ -1164,7 +1170,7 @@ public class MainPage extends BaseActivity {
                 break;
                 case VIEW_EVENT_SHOW_DISCOUNT_WINDOW: {
                     verifyDialog.show(HANDLER_MSG_OBJECT_DISCOUNT,
-                            (Map<String, Object>) msg.obj);
+                            msg.obj);
                     break;
                 }
                 case VIEW_EVENT_SHOW_MODIFY_QUANTITY_WINDOW: {
@@ -1214,6 +1220,12 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (!fromThisRVC) {
+                        return;
+                    }
+                    TableInfo tableInfo = TableInfoSQL.getTableById(currentTable.getPosId());
+
+                    if (tableInfo.getIsLocked() == 1) {
+                        ToastUtils.showToast(MainPage.this, "Transfer table on Going");
                         return;
                     }
                     if (currentTable != null) {
@@ -1389,6 +1401,14 @@ public class MainPage extends BaseActivity {
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
 
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (loadingDialog != null)
+                                    loadingDialog.show();
+                            }
+                        });
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -1509,6 +1529,7 @@ public class MainPage extends BaseActivity {
                     currentTable = (TableInfo) msg.obj;
                     final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
                     if (currentTable != null) {
+
                         new Thread(new Runnable() {
 
                             @Override
@@ -1944,7 +1965,7 @@ public class MainPage extends BaseActivity {
                     if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
                         printerLoadingDialog.dismiss();
                     }
-                    if (msg.obj instanceof String && "KDS".equals((String) msg.obj)) {
+                    if (msg.obj instanceof String && "KDS".equals(msg.obj)) {
                         UIHelp.showToast(context, "Please log in KDS");
                     } else {
 
@@ -2019,11 +2040,11 @@ public class MainPage extends BaseActivity {
                     break;
                 case VIEW_EVENT_TANSFER_PAX:
                     String pax = (String) msg.obj;
-                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_of_pax));
+                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_of_pax), orderDetails);
                     break;
                 case VIEW_EVENT_VOID_OR_FREE:
                     verifyDialog.show(HANDLER_MSG_OBJECT_VOID_OR_FREE,
-                            (Map<String, Object>) msg.obj);
+                            msg.obj);
                     break;
 //			case StoredCardActivity.VIEW_EVENT_STORED_CARD_REFUND:
 //				verifyDialog.show(HANDLER_MSG_OBJECT_STORED_CARD_REFUND, null);
@@ -2063,7 +2084,7 @@ public class MainPage extends BaseActivity {
                     } else {
                         orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                         if (orderDetail != null && !TextUtils.isEmpty(orderDetail.getSpecialInstractions())) {
-                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().toString().replace(context.getResources().getString(R.string.takeaway), "").replace(context.getResources().getString(R.string.takeaway), ""));
+                            orderDetail.setSpecialInstractions(orderDetail.getSpecialInstractions().replace(context.getResources().getString(R.string.takeaway), "").replace(context.getResources().getString(R.string.takeaway), ""));
                         }
                     }
                     OrderHelper.getOrderDetailTax(currentOrder, orderDetail);
@@ -2276,20 +2297,98 @@ public class MainPage extends BaseActivity {
                     verifyDialog.show(HANDLER_MSG_OBJECT_CANCEL_ITEM, tag);
                 }
                 break;
+                case ACTION_KOT_NEXT_KDS:
+                    int orderId = msg.arg1;
+                    int kdsId = msg.arg2;
+//                    sendKOTTmpToKDS(orderId, kdsId);
                 case VIEW_EVENT_OPEN_WAITING_LIST_DATA:
                     currentTable = (TableInfo) msg.obj;
                     closeTables();
                     setDataWaitingList();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC:
+                    if (loadingDialog != null)
+                        loadingDialog.dismiss();
+
                     currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
-                    unseat();
+
+                    String data = (String) msg.obj;
+
+                    try {
+                        Gson gson = new Gson();
+                        JSONObject jsonObject = new JSONObject(data);
+
+                        String toRevenueCenterStr = jsonObject.optString("toRevenue");
+                        String toOrderStr = jsonObject.optString("toOrder");
+                        String tableInfoStr = jsonObject.optString("tableInfo");
+                        String orderDetailStr = jsonObject.optString("orderDetail");
+                        String orderModifierStr = jsonObject.optString("orderModifier");
+
+                        RevenueCenter toRevenueCenter = gson.fromJson(toRevenueCenterStr, RevenueCenter.class);
+                        Order toOrder = gson.fromJson(toOrderStr, Order.class);
+                        TableInfo tableInfo = gson.fromJson(tableInfoStr, TableInfo.class);
+
+                        List<OrderDetail> orderDetails = gson.fromJson(orderDetailStr,
+                                new TypeToken<List<OrderDetail>>() {
+                                }.getType());
+                        List<OrderModifier> orderModifiers = gson.fromJson(orderModifierStr,
+                                new TypeToken<List<OrderModifier>>() {
+                                }.getType());
+
+                        String tableName = tableInfo != null ? tableInfo.getName() : "";
+                        RevenueCenter fromRevenueCenter = App.instance.getRevenueCenter();
+
+                        App.instance.printTransferOrder(
+                                App.instance.getCahierPrinter(), fromRevenueCenter, toRevenueCenter,
+                                currentTable.getName(), tableName,
+                                toOrder, currentOrder, orderDetails, orderModifiers);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    unseat(currentOrder);
                     onBackPressed();
-                    showTables();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
+                    if (loadingDialog != null)
+                        loadingDialog.dismiss();
+
+                    String data2 = (String) msg.obj;
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(data2);
+
+                        String toRevenueCenterStr = jsonObject.optString("toRevenue");
+                        String toOrderStr = jsonObject.optString("toOrder");
+                        String tableInfoStr = jsonObject.optString("tableInfo");
+                        String orderDetailStr = jsonObject.optString("orderDetail");
+                        String orderModifierStr = jsonObject.optString("orderModifier");
+
+                        RevenueCenter toRevenueCenter = gson.fromJson(toRevenueCenterStr, RevenueCenter.class);
+                        Order toOrder = new Gson().fromJson(toOrderStr, Order.class);
+                        TableInfo tableInfo = new Gson().fromJson(tableInfoStr, TableInfo.class);
+
+                        List<OrderModifier> orderModifiers = gson.fromJson(orderModifierStr,
+                                new TypeToken<List<OrderModifier>>() {
+                                }.getType());
+
+                        List<OrderDetail> orderDetailsResult = new ArrayList<>();
+                        orderDetailsResult.add(transfItemOrderDetail);
+                        String tableName = tableInfo != null ? tableInfo.getName() : "";
+                        RevenueCenter fromRevenueCenter = App.instance.getRevenueCenter();
+
+                        App.instance.printTransferOrder(App.instance.getCahierPrinter(),
+                                fromRevenueCenter, toRevenueCenter,
+                                oldTable.getName(), tableName,
+                                toOrder, currentOrder, orderDetailsResult, orderModifiers);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                     final OrderDetail orderDetail = transfItemOrderDetail;
+
                     if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
 
                     } else if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
@@ -2321,21 +2420,61 @@ public class MainPage extends BaseActivity {
                                 unseat(oldOrder);
                             } else {
 
+                                removeItemLogic(orderDetail);
+
+                                List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(oldOrder.getId());
+                                if (orderDetails.size() <= 0) {
+                                    unseat(oldOrder);
+                                }
+                                onBackPressed();
                             }
+                            onBackPressed();
                         }
                     }
-
                     break;
                 default:
                     break;
+
+
             }
         }
-
-        ;
     };
 
+
+
     private void unseat() {
-        unseat(currentOrder);
+        OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
+        KotSummarySQL.deleteKotSummaryByOrder(currentOrder);
+        OrderModifierSQL.deleteOrderModifierByOrder(currentOrder);
+        List<OrderSplit> splits = OrderSplitSQL.getAllOrderSplits(currentOrder);
+        if (splits.size() > 0) {
+            for (OrderSplit split : splits) {
+                OrderSplitSQL.delete(split);
+            }
+        }
+        OrderBillSQL.deleteOrderBillByOrder(currentOrder);
+        OrderSQL.deleteOrder(currentOrder);
+
+        TableInfo tables = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
+        tables.setStatus(ParamConst.TABLE_STATUS_IDLE);
+        if (checkIfTableFromThisRVC(tables)) {
+            TableInfoSQL.updateTables(tables);
+        }
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("tableId", currentTable.getPosId().intValue());
+            jsonObject.put("status", ParamConst.TABLE_STATUS_IDLE);
+            jsonObject.put("RX", RxBus.RX_REFRESH_TABLE);
+            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_WAITER, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+            TcpUdpFactory.sendUdpMsg(BaseApplication.UDP_INDEX_EMENU, TcpUdpFactory.UDP_REQUEST_MSG + jsonObject.toString(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        activityRequestCode = 0;
+        selectOrderSplitDialog.dismiss();
+        tableShowAction = SHOW_TABLES;
+        currentOrder = null;
+        showTables();
     }
 
     private void unseat(Order order) {
@@ -2371,15 +2510,10 @@ public class MainPage extends BaseActivity {
         tableShowAction = SHOW_TABLES;
         order = null;
         currentOrder = null;
-        showTables();
     }
 
     private boolean checkIfTableFromThisRVC(TableInfo tableInfo) {
-        if (tableInfo.getRevenueId().equals(App.instance.getMainPosInfo().getRevenueId())) {
-            return true;
-        } else {
-            return false;
-        }
+        return tableInfo.getRevenueId().equals(App.instance.getMainPosInfo().getRevenueId());
     }
 
     @Override
@@ -2433,7 +2567,7 @@ public class MainPage extends BaseActivity {
     public void finish() {
         SessionStatus sessionStatus = Store.getObject(context,
                 Store.SESSION_STATUS, SessionStatus.class);
-//		List<Order> unPlayOrders = 
+//		List<Order> unPlayOrders =
 //		Order order = OrderSQL.getOrderByUnPlay(sessionStatus);
 
 //		if (order != null) {
@@ -2705,6 +2839,14 @@ public class MainPage extends BaseActivity {
         }
     }
 
+//	private void dismissTables() {
+//		ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
+//				web_tables.getY(), web_tables.getY() + web_tables.getHeight())
+//				.setDuration(300);
+//		animator.start();
+//		isShowTables = false;
+//	}
+
     private void closeTables() {
 //		ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
 //				web_tables.getY(), web_tables.getY() + web_tables.getHeight())
@@ -2720,14 +2862,6 @@ public class MainPage extends BaseActivity {
         isShowTables = false;
 
     }
-
-//	private void dismissTables() {
-//		ObjectAnimator animator = ObjectAnimator.ofFloat(web_tables, "y",
-//				web_tables.getY(), web_tables.getY() + web_tables.getHeight())
-//				.setDuration(300);
-//		animator.start();
-//		isShowTables = false;
-//	}
 
     private void setData() {
         initOrder(currentTable);
@@ -2808,6 +2942,7 @@ public class MainPage extends BaseActivity {
             setDataWaitingList();
         } else {
             setData();
+            //        sendKOTTmpToKDS(orderDetail);
         }
         if (itemModifiers.size() > 0) {
             for (ItemModifier itemModifier : itemModifiers) {
@@ -2824,6 +2959,105 @@ public class MainPage extends BaseActivity {
             mainPageMenuView.openModifiers(currentOrder, orderDetail,
                     itemModifiers);
         }
+    }
+
+    private void sendKOTTmpToKDS(final OrderDetail orderDetail) {
+//        sendKOTTmpToKDS(orderDetail, null, ParamConst.JOB_TMP_KOT);
+    }
+
+    private void sendKOTTmpToKDS(final OrderDetail orderDetail,
+                                 final KotItemDetail mKotItemDetail, final String method) {
+
+        if (currentOrder.getOrderNo().equals(0)) {
+            currentOrder.setOrderNo(OrderHelper.calculateOrderNo(currentOrder.getBusinessDate()));
+            OrderSQL.updateOrderNo(currentOrder);
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Order order = OrderSQL.getOrder(currentOrder.getId());
+                KotSummary kotSummary = ObjectFactory.getInstance()
+                        .getKotSummaryForPlace(
+                                TableInfoSQL.getTableById(
+                                        order.getTableId()).getName(), order,
+                                App.instance.getRevenueCenter(),
+                                App.instance.getBusinessDate());
+
+                User user = App.instance.getUser();
+                if (user != null) {
+                    String empName = user.getFirstName() + user.getLastName();
+                    kotSummary.setEmpName(empName);
+                    KotSummarySQL.updateKotSummaryEmpById(empName, kotSummary.getId());
+                }
+
+                ArrayList<KotItemDetail> kotItemDetails = new ArrayList<>();
+                List<Integer> orderDetailIds = new ArrayList<>();
+                ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
+
+                KotItemDetail kotItemDetail;
+
+                if (method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT) && mKotItemDetail != null) {
+                    kotItemDetail = mKotItemDetail;
+                } else {
+                    kotItemDetail = ObjectFactory
+                            .getInstance()
+                            .getKotItemDetail(
+                                    order,
+                                    orderDetail,
+                                    CoreData.getInstance()
+                                            .getItemDetailById(
+                                                    orderDetail
+                                                            .getItemId()),
+                                    kotSummary,
+                                    App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
+                }
+
+                if (!method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT)) {
+                    kotItemDetail.setItemNum(orderDetail.getItemNum());
+                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_TMP);
+
+                    KotItemDetailSQL.update(kotItemDetail);
+                }
+
+                kotItemDetails.add(kotItemDetail);
+                orderDetailIds.add(orderDetail.getId());
+                ArrayList<OrderModifier> orderModifiers = OrderModifierSQL
+                        .getOrderModifiers(order, orderDetail);
+
+                if (method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT)) {
+                    orderModifiers = new ArrayList<>();
+                }
+
+                for (OrderModifier orderModifier : orderModifiers) {
+                    if (orderModifier.getStatus().equals(ParamConst.ORDER_MODIFIER_STATUS_NORMAL)) {
+                        KotItemModifier kotItemModifier = ObjectFactory
+                                .getInstance()
+                                .getKotItemModifier(
+                                        kotItemDetail,
+                                        orderModifier,
+                                        CoreData.getInstance()
+                                                .getModifier(
+                                                        orderModifier
+                                                                .getModifierId()));
+                        KotItemModifierSQL.update(kotItemModifier);
+                        kotItemModifiers.add(kotItemModifier);
+                    }
+                }
+
+                if (!method.equals(ParamConst.JOB_DELETE_TMP_ITEM_KOT)) {
+                    KotSummarySQL.update(kotSummary);
+                }
+
+                Map<String, Object> orderMap = new HashMap<>();
+                orderMap.put("orderId", currentOrder.getId());
+                orderMap.put("orderDetailIds", orderDetailIds);
+                App.instance.getKdsJobManager().sendKOTTmpToKDS(
+                        kotSummary, kotItemDetails,
+                        kotItemModifiers, method,
+                        orderMap);
+            }
+        }).start();
     }
 
     private boolean verifyTableRepeat(TableInfo newTables) {
@@ -2916,6 +3150,12 @@ public class MainPage extends BaseActivity {
         return pendingIntent;
     }
 
+//	public Handler mmHandler = new Handler() {
+//		public void handleMessage(Message msg) {
+//
+//		};
+//	};
+
     @Override
     protected void onDestroy() {
         unregisterReceiver(receiver);
@@ -2929,12 +3169,6 @@ public class MainPage extends BaseActivity {
         }
         super.onDestroy();
     }
-
-//	public Handler mmHandler = new Handler() {
-//		public void handleMessage(Message msg) {
-//
-//		};
-//	};
 
     public void httpRequestAction(int action, Object obj) {
         switch (action) {
@@ -2958,6 +3192,18 @@ public class MainPage extends BaseActivity {
                 break;
             case SERVER_TRANSFER_TABLE_FROM_OTHER_RVC:
                 handler.sendEmptyMessage(REFRESH_TABLES_STATUS);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void httpRequestActions(int action, Object... objs) {
+        switch (action) {
+            case ACTION_KOT_NEXT_KDS:
+                int orderId = (int) objs[0];
+                int kdsId = (int) objs[1];
+                handler.sendMessage(handler.obtainMessage(ACTION_KOT_NEXT_KDS, orderId, kdsId));
                 break;
             default:
                 break;
@@ -2997,7 +3243,14 @@ public class MainPage extends BaseActivity {
 
         }
 
-//
+        KotSummary kotSummary = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
+
+        if (kotSummary != null) {
+            KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(kotSummary.getId(), tag.getId());
+
+//                            sendKOTTmpToKDS(tag, kotItemDetail, ParamConst.JOB_DELETE_TMP_ITEM_KOT);
+        }
+
 //                            RemainingStockSQL.updateRemainingNum(num,itemTempId);
         OrderDetailSQL.deleteOrderDetail(tag);
         OrderModifierSQL.deleteOrderModifierByOrderDetail(tag);
@@ -3049,8 +3302,6 @@ public class MainPage extends BaseActivity {
                 break;
         }
     }
-
-    ;
 
     private void TempOrderISPaied() {
         Payment payment = ObjectFactory.getInstance().getPayment(currentOrder, ObjectFactory.getInstance().getOrderBill(currentOrder, App.instance.getRevenueCenter()));

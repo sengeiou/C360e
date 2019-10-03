@@ -210,6 +210,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/rlScreenLock"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rl_version">
@@ -227,6 +228,32 @@
 
                     <com.alfredwaiter.view.MyToggleButton
                         android:id="@+id/sb_top_screen_lock"
+                        android:layout_width="50dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="20dp"
+                        android:visibility="visible" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/rlScreenLock">
+
+                    <TextView
+                        android:id="@+id/tvCrashReport"
+                        android:layout_width="wrap_content"
+                        android:layout_height="43dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="left|center_vertical"
+                        android:text="Crash Reporting"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_m" />
+
+                    <com.alfredwaiter.view.MyToggleButton
+                        android:id="@+id/mtCrashReporting"
                         android:layout_width="50dp"
                         android:layout_height="20dp"
                         android:layout_alignParentRight="true"

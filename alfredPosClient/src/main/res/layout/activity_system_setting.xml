@@ -811,6 +811,40 @@
                         </RelativeLayout>
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:id="@+id/llBugsee"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ll_app_order"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/box_system_setting"
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="60dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:padding="10dp"
+                                android:text="@string/crash_reporting"
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/text_size_m" />
+
+                            <com.alfredposclient.view.MyToggleButton
+                                android:id="@+id/mtCrashReporting"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginRight="10dp" />
+                        </RelativeLayout>
+                    </LinearLayout>
+
                 </RelativeLayout>
 
                 <LinearLayout

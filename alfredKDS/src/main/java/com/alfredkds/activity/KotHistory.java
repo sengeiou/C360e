@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.CoreData;
 import com.alfredbase.http.ResultCode;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
@@ -52,7 +53,7 @@ public class KotHistory extends BaseActivity {
         setContentView(R.layout.activity_kot_history);
         loadingDialog = new LoadingDialog(context);
         loadingDialog.setTitle(context.getResources().getString(R.string.undoing));
-        for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPos()) {
+        for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPosList()) {
             if (mainPos.getIsKiosk() != ParamConst.MAINPOSINFO_IS_KIOSK) {
                 isKiosk = false;
             }
@@ -205,28 +206,29 @@ public class KotHistory extends BaseActivity {
 //			if (kotItemDetail.getKotStatus()==ParamConst.KOT_STATUS_DONE ||
 //					(kotItemDetail.getKotStatus() == ParamConst.KOTS_STATUS_UNDONE &&
 //					kotItemDetail.getFinishQty() != 0)) {
-            holder.btn_reduction.setFocusable(true);
-            holder.btn_reduction.setText(R.string.kot_revert);
-            holder.btn_reduction.setBackgroundColor(Color.RED);
-            holder.btn_reduction.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    loadingDialog.show();
-                    kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
-                    KotSummarySQL.update(kotSummary);
-                    kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
-                    KotItemDetailSQL.update(kotItemDetail);
-                    Map<String, Object> parameters = new HashMap<String, Object>();
-                    parameters.put("kotSummary", kotSummary);
-                    parameters.put("kotItemDetail", kotItemDetail);
-
-                    SyncCentre.getInstance().cancelComplete(context,
-                            App.instance.getCurrentConnectedMainPosByRevenueCenterId(kotSummary.getRevenueCenterId()), parameters, handler);
-                    adapter.setKotHistory(App.instance.getKotHistoryData());
-                    adapter.notifyDataSetChanged();
-                }
-            });
+				holder.btn_reduction.setFocusable(true);
+				holder.btn_reduction.setText(R.string.kot_revert);
+				holder.btn_reduction.setBackgroundColor(Color.RED);
+				holder.btn_reduction.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						loadingDialog.show();
+						kotSummary.setStatus(ParamConst.KOTS_STATUS_UNDONE);
+						KotSummarySQL.update(kotSummary);
+						kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNDONE);
+						KotItemDetailSQL.update(kotItemDetail);
+						Map<String, Object> parameters = new HashMap<String, Object>();
+						parameters.put("kotSummary", kotSummary);
+						parameters.put("kotItemDetail", kotItemDetail);
+						parameters.put("userKey", CoreData.getInstance().getUserKey(kotSummary.getRevenueCenterId()));
+						SyncCentre.getInstance().cancelComplete(context, 
+								App.instance.getCurrentConnectedMainPos(kotSummary.getRevenueCenterId()), parameters, handler);
+						
+						adapter.setKotHistory(App.instance.getKotHistoryData());
+						adapter.notifyDataSetChanged();
+					}
+				});
 ////			}else if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
 //				holder.btn_reduction.setClickable(false);
 //				holder.btn_reduction.setText("void");

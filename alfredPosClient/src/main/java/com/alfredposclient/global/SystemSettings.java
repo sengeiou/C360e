@@ -713,4 +713,13 @@ public class SystemSettings {
 
         this.trainType = trainType;
     }
+
+    public void setCrashReportStatus(boolean active) {
+        Store.putBoolean(this.context, Store.BUGSEE_STATUS, active);
+    }
+
+    public boolean isCrashReportActive() {
+        return Store.getBoolean(this.context, Store.BUGSEE_STATUS, true);
+    }
+
 }

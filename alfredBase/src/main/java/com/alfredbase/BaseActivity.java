@@ -266,6 +266,10 @@ public class BaseActivity extends FragmentActivity implements OnClickListener  {
 
     }
 
+    public void httpRequestActions(int action, Object... objs) {
+
+    }
+
     public void kotPrintStatus(int action, Object obj) {
     }
 

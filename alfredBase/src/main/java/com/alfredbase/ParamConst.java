@@ -247,6 +247,7 @@ public class ParamConst {
     public static final int KOT_STATUS_DONE = 3;
     public static final int KOT_STATUS_VOID = 4;
     public static final int KOT_STATUS_DELETE = -1;
+    public static final int KOT_STATUS_TMP = -2;
 
     // KotSummary的status(0-未完成，1-已完成)
     public static final int KOTS_STATUS_UNDONE = 0;
@@ -257,11 +258,16 @@ public class ParamConst {
     public static final int KOTITEMDETAIL_CATEGORYID_SUB = 1;
 
     // Job用 标记placeOrder 发送给KDS的状态
+    public static final String JOB_TMP_KOT = "tmp_kot";
     public static final String JOB_NEW_KOT = "new_kot";
     public static final String JOB_UPDATE_KOT = "update_kot";
-    public static final String JOB_REFRESH_KOT = "refresh_kot";
     public static final String JOB_DELETE_KOT = "delete_kot";
     public static final String JOB_VOID_KOT = "void_kot";
+    public static final String JOB_DELETE_KOT_SUMMARY = "delete_kot_summary";
+    public static final String JOB_DELETE_TMP_ITEM_KOT = "delete_tmp_item_kot";
+    public static final String JOB_KOT_SUMMARY = "kot_summary";
+    public static final String JOB_KOT_UPDATE_ORDER_COUNT = "kot_summary_update_order_count";
+    public static final String JOB_REFRESH_KOT = "refresh_kot";
 
     // Job用 标记transfer table 发送给KDS的装填
     public static final String JOB_MERGER_KOT = "merger_kot";

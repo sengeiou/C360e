@@ -10,6 +10,7 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
@@ -3861,4 +3862,5 @@ public class OrderDetailSQL {
             e.printStackTrace();
         }
     }
+
 }

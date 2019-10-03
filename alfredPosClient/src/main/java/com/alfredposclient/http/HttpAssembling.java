@@ -11,6 +11,7 @@ import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.utils.CommonUtil;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.MachineUtil;
 import com.alfredposclient.global.App;
 import com.google.gson.Gson;
@@ -219,6 +220,25 @@ public class HttpAssembling {
         return getPlaceParam(revenueCenter);
     }
 
+    public static StringEntity getSyncKotItemDetailParam(SyncMsg syncMsg)
+            throws UnsupportedEncodingException {
+        Gson gson = new Gson();
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        map.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        map.put("data", syncMsg);
+        map.put("version", App.instance.VERSION);
+        map.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            map.put("snCode", Build.SERIAL);
+        }
+
+        StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
+        return entity;
+    }
+
     public static StringEntity getUploadOrderInfoParam(SyncMsg syncMsg)
             throws UnsupportedEncodingException {
         Gson gson = new Gson();
@@ -232,6 +252,10 @@ public class HttpAssembling {
         if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
             map.put("snCode", Build.SERIAL);
         }
+
+        String params = gson.toJson(map);
+        LogUtil.log("params : " + params);
+
         StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
         return entity;
     }

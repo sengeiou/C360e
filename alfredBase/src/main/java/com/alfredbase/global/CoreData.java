@@ -67,6 +67,8 @@ import com.alfredbase.store.sql.UserRestaurantSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,6 +76,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class CoreData {
     private static CoreData instance;
@@ -110,6 +114,7 @@ public class CoreData {
     private List<UserRestaurant> userRestaurant;
     private List<KotNotification> kotNotifications;
     private List<LocalDevice> localDevices;
+    private Map<Integer, List<PrinterGroup>> printerGroupMap = new HashMap<>();
 
     private SubPosBean subPosBean;
 
@@ -297,13 +302,43 @@ public class CoreData {
 
     public ArrayList<Printer> getPrintersInGroup(int groupid) {
         ArrayList<Printer> result = new ArrayList<Printer>();
-        for (PrinterGroup pg : this.printerGroups) {
+        List<Printer> summaryPrinter = new ArrayList<>();
+        List<Printer> expediterPrinter = new ArrayList<>();
+
+        for (PrinterGroup pg : getPrinterGroupsById(groupid)) {
             if (pg.getPrinterGroupId().intValue() == groupid) {
                 Printer pt = this.getPrinterById(pg.getPrinterId().intValue());
-                result.add(pt);
+                if (pt == null) continue;
+                if (pt.getPrinterUsageType() == Printer.KDS_SUMMARY)
+                    summaryPrinter.add(pt);
+                else if (pt.getPrinterUsageType() == Printer.KDS_EXPEDITER)
+                    expediterPrinter.add(pt);
+                else
+                    result.add(pt);
+            }
+        }
+        result.addAll(expediterPrinter);//add summary printer before summary
+        result.addAll(summaryPrinter);//add summary printer at last
+        return result;
+    }
+
+    public ArrayList<PrinterGroup> getPrinterGroupInGroup(int groupid) {
+        ArrayList<PrinterGroup> result = new ArrayList<>();
+        for (PrinterGroup pg : getPrinterGroupsById(groupid)) {
+            if (pg.getPrinterGroupId().intValue() == groupid && pg.getIsChildGroup() == 1) {
+                result.add(pg);
             }
         }
         return result;
+    }
+
+    public Printer getPrinterByGroupId(int printerGroupId) {
+        for (Printer printer : getPrinters()) {
+            if (printer.getId() == printerGroupId) {
+                return printer;
+            }
+        }
+        return null;
     }
 
     public List<PrinterGroup> getPrinterGroupByPrinter(int printerId) {
@@ -314,6 +349,25 @@ public class CoreData {
             }
         }
         return printerGroupList;
+    }
+
+    public PrinterGroup getPrinterGroup(int printerGroupId) {
+        for (PrinterGroup pg : getPrinterGroupsById(printerGroupId)) {
+            if (pg.getPrinterGroupId().equals(printerGroupId)) {
+                return pg;
+            }
+        }
+        return null;
+    }
+
+    public List<PrinterGroup> getAllPrinterGroup(int printerGroupId) {
+        List<PrinterGroup> printerGroups = new ArrayList<>();
+        for (PrinterGroup pg : this.printerGroups) {
+            if (pg.getPrinterGroupId().equals(printerGroupId)) {
+                printerGroups.add(pg);
+            }
+        }
+        return printerGroups;
     }
 
     public Modifier getModifier(ItemModifier itemModifier) {
@@ -353,8 +407,15 @@ public class CoreData {
     }
 
 
-    public ItemDetail getItemDetailById(ItemDetail searchItem) {
-        return getItemDetailById(searchItem.getId(), searchItem.getItemName());
+    public ItemDetail getItemDetailById(Integer id) {
+        if (id == null)
+            return null;
+        for (ItemDetail itemDetail : getItemDetails()) {
+            if (itemDetail.getId().intValue() == id.intValue()) {
+                return itemDetail;
+            }
+        }
+        return null;
     }
 
     public ItemDetail getItemDetailById(Integer id, String name) {
@@ -849,8 +910,31 @@ public class CoreData {
 
     public List<PrinterGroup> getPrinterGroups() {
         if (printerGroups == null)
-            return Collections.emptyList();
+            printerGroups = PrinterGroupSQL.getAllPrinterGroup();
         return printerGroups;
+    }
+
+    public List<PrinterGroup> getPrinterGroupsById(int printerGroupId) {
+//        if (!printerGroupMap.containsKey(printerGroupId)) {
+        SortedMap<Integer, PrinterGroup> sortedMap = new TreeMap<>();
+
+        int seqNumber = 0;
+        for (PrinterGroup pg : getPrinterGroups()) {
+
+            if (pg.getPrinterGroupId().equals(printerGroupId)) {
+                seqNumber++;
+                if (pg.getSequenceNumber() == null || pg.getSequenceNumber() <= 0)
+                    pg.setSequenceNumber(seqNumber);
+
+                sortedMap.put(pg.getSequenceNumber(), pg);
+            }
+        }
+
+        List<PrinterGroup> printerGroupList = new ArrayList<>(sortedMap.values());
+        printerGroupMap.put(printerGroupId, printerGroupList);
+//        }
+
+        return printerGroupMap.get(printerGroupId);
     }
 
     public void setPrinterGroups(List<PrinterGroup> printerGroups) {
@@ -1111,27 +1195,18 @@ public class CoreData {
     }
 
     public String getUserKey() {
-        return getUserKey(null);
-    }
-
-    public String getUserKey(Integer revenueId) {
-        //Log.wtf("Test_getuserKey",""+revenueId+" : "+new Gson().toJson(userKey));
-        if (revenueId == null) {
-            for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
-                return entry.getValue();
-            }
-        } else {
-            for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
-                if (entry.getKey().equals(revenueId)) {
-                    return entry.getValue();
-                }
-            }
+        for (Map.Entry<Integer, String> entry : userKey.entrySet()) {
+            return entry.getValue();
         }
-        return null;
+        return "";
     }
 
-    public void setUserKey(Integer revenueId, String key) {
-        this.userKey.put(revenueId, key);
+    public String getUserKey(int revId) {
+        return userKey.get(revId) != null ? userKey.get(revId) : "";
+    }
+
+    public void setUserKey(int revId, String userKey) {
+        this.userKey.put(revId, userKey);
     }
 
     public List<UserRestaurant> getUserRestaurant() {
@@ -1241,6 +1316,5 @@ public class CoreData {
         }
         return newTables;
     }
-
 
 }

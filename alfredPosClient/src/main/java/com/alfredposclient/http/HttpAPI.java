@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alfredbase.ParamConst;
+import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.AsyncHttpResponseHandlerEx;
@@ -24,6 +25,7 @@ import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.ReportDayPayment;
 import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
+import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
 import com.alfredbase.javabean.User;
@@ -38,6 +40,7 @@ import com.alfredbase.store.sql.OrderBillSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
+import com.alfredbase.store.sql.RestaurantSQL;
 import com.alfredbase.store.sql.SyncMsgSQL;
 import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
@@ -1125,7 +1128,8 @@ public class HttpAPI {
 //                            SyncMsgSQL.add(syncMsg);
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
-                            throw new RuntimeException(error);
+                            initBugseeModifier();
+//                            throw new RuntimeException(error);
                         }
                     });
         }
@@ -1204,11 +1208,29 @@ public class HttpAPI {
                             }
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
-                            throw new RuntimeException(error);
+                            initBugseeModifier();
+//                            throw new RuntimeException(error);
                         }
                     });
         }
 
+    }
+
+    private static void initBugseeModifier() {
+        Restaurant restaurant = RestaurantSQL.getRestaurant();
+        if (restaurant != null) {
+            BugseeHelper.setEmail(restaurant.getEmail());
+            BugseeHelper.setAttribute("restaurant_id", restaurant.getId());
+            BugseeHelper.setAttribute("restaurant_company_id", restaurant.getCompanyId());
+            BugseeHelper.setAttribute("restaurant_address", restaurant.getAddressPrint());
+            BugseeHelper.setAttribute("restaurant_country", restaurant.getCountry());
+            BugseeHelper.setAttribute("restaurant_city", restaurant.getCity());
+        }
+
+//        String employeeId = Store.getString(context, Store.EMPLOYEE_ID);
+//        BugseeHelper.setAttribute("employee_id", employeeId);
+
+//        throw new NullPointerException("Test Crash");
     }
 
     public static void paymentMethodSync(Context context, String url, AsyncHttpClient httpClient, final Handler handler, final int mode) {
@@ -1262,30 +1284,68 @@ public class HttpAPI {
                                             SyncData.SYNC_FAILURE));
                                 }
                             }
-
-
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
-                            if (mode == SyncCentre.MODE_PUSH_SYNC) {
-                                handler.sendMessage(handler.obtainMessage(
-                                        ResultCode.CONNECTION_FAILED, error));
-                            } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
-                                handler.sendMessage(handler.obtainMessage(
-                                        SyncData.SYNC_DATA_TAG,
-                                        SyncData.SYNC_FAILURE));
+                            try
+                            {
+                                if (mode == SyncCentre.MODE_PUSH_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            ResultCode.CONNECTION_FAILED, error));
+                                } else if (mode == SyncCentre.MODE_FIRST_SYNC) {
+                                    handler.sendMessage(handler.obtainMessage(
+                                            SyncData.SYNC_DATA_TAG,
+                                            SyncData.SYNC_FAILURE));
+                                }
+                                super.onFailure(statusCode, headers, responseBody,
+                                        error);
+                                initBugseeModifier();
+//                                throw new RuntimeException(error);
+
                             }
-                            super.onFailure(statusCode, headers, responseBody,
-                                    error);
-                            throw new RuntimeException(error);
+                            catch(Exception e)
+                            {
+                                Log.e("Server Refuse", String.valueOf(e));
+                            }
                         }
                     });
         }
 
     }
 
+    public static void syncKotItemDetail(Context context, SyncMsg syncMsg,
+                                         String url, SyncHttpClient httpClient) {
+        StringEntity entity = null;
+        try {
+            entity = HttpAssembling.getUploadOrderInfoParam(syncMsg);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (entity != null) {
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
+                    new AsyncHttpResponseHandlerEx() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers,
+                                              byte[] responseBody) {
+                            super.onSuccess(statusCode, headers, responseBody);
+                            if (resultCode == ResultCode.SUCCESS) {
+                            } else {
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            super.onFailure(statusCode, headers, responseBody,
+                                    error);
+                            initBugseeModifier();
+//                            throw new RuntimeException(error);
+                        }
+                    });
+        }
+    }
 
     /*
      * Sync order and XZReport data from POS to Cloud
@@ -1335,7 +1395,8 @@ public class HttpAPI {
                             SyncMsgSQL.add(syncMsg);
                             super.onFailure(statusCode, headers, responseBody,
                                     error);
-                            throw new RuntimeException(error);
+                            initBugseeModifier();
+//                            throw new RuntimeException(error);
                         }
                     });
         }
@@ -2508,6 +2569,52 @@ public class HttpAPI {
         }
     }
 
+    public static void callAppNo(final Context context, String url,
+                                 AsyncHttpClient httpClient, String params) {
+        try {
+
+            JSONObject jsonObject = new JSONObject(params);
+            String num = jsonObject.getString("callNumber");
+            String tag = jsonObject.getString("numTag");
+            String printerName = jsonObject.getString("printerName");
+            int printerGroupId = jsonObject.getInt("printerGroupId");
+
+            Map<String, Object> requestParams = new HashMap<>();
+            requestParams.put("callNumber", num);
+            requestParams.put("printerGroupId", printerGroupId);
+            requestParams.put("printerName", printerName);
+            requestParams.put("callType", App.instance.getSystemSettings().getCallStyle());
+
+            if (Store.getBoolean(App.instance, Store.CALL_NUM_UPDATE, false)) {
+                requestParams.put("header", Store.getString(App.instance, Store.CALL_NUM_HEADER));
+                requestParams.put("footer", Store.getString(App.instance, Store.CALL_NUM_FOOTER));
+            }
+
+            if (TextUtils.isEmpty(tag)) {
+                requestParams.put("callTag", 0);
+            } else {
+                byte t = (byte) tag.charAt(0);
+                requestParams.put("callTag", t % 64);
+            }
+
+            StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            Store.putBoolean(App.instance, Store.CALL_NUM_UPDATE, false);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            error.printStackTrace();
+                        }
+                    }
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void posCloseSession(final Context context, String url,
                                        AsyncHttpClient httpClient) {
         try {
@@ -3034,21 +3141,20 @@ public class HttpAPI {
         List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
         parameters.put("orderDetail", new Gson().toJson(orderDetails));
 
+
         KotSummary kot = KotSummarySQL.getKotSummary(currentOrder.getId(), currentOrder.getNumTag());
         parameters.put("kotSummary", new Gson().toJson(kot));
 
         ArrayList<KotItemDetail> kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderId(currentOrder.getId());
         parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
 
-        ArrayList<ArrayList<KotItemModifier>> kotItemModifiers = new ArrayList<>();
+        ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
         for (KotItemDetail itemDetail : kotItemDetail) {
             ArrayList<KotItemModifier> kotItemModifier = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(itemDetail.getId());
-            kotItemModifiers.add(kotItemModifier);
+            kotItemModifiers.addAll(kotItemModifier);
 
         }
         parameters.put("kotItemModifier", new Gson().toJson(kotItemModifiers));
-
-
 
         List<OrderBill> orderbill = OrderBillSQL.getAllOrderBillByOrder(currentOrder);
         parameters.put("orderBill", new Gson().toJson(orderbill));
@@ -3060,6 +3166,7 @@ public class HttpAPI {
         parameters.put("orderSplit", new Gson().toJson(orderSplit));
 
         parameters.put("tableId", tableId); //selected tableId
+        parameters.put("tableName", currentOrder.getTableName()); //selected tableId
 
         try {
             httpClient.post(context, url,
@@ -3117,6 +3224,26 @@ public class HttpAPI {
         parameters.put("tableId", tableId); //selected tableId
         parameters.put("pack", pack); //selected tableId
 
+        KotItemDetail kotItemDetail = null;
+        ArrayList<KotItemModifier> kotModifiers = new ArrayList<>();
+        ArrayList<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(transfItemOrderDetail.getId());
+        parameters.put("orderModifier", new Gson().toJson(orderModifiers));
+
+            OrderBill orderbill = OrderBillSQL.getOrderBillByOnlyOrder(oldOrder.getId());
+                parameters.put("orderBill", new Gson().toJson(orderbill));
+
+            KotSummary kot = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
+                parameters.put("kotSummary", new Gson().toJson(kot));
+
+            kotItemDetail = KotItemDetailSQL.getKotItemDetailById(oldOrder.getId());
+            parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+
+        if (kotItemDetail !=  null){
+            kotModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+        }
+        parameters.put("kotModifier", new Gson().toJson(kotModifiers));
+
+
 
         Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));
         try {
@@ -3159,7 +3286,7 @@ public class HttpAPI {
                         }
                     });
         } catch (Exception e) {
-            Log.wtf("Test_sendOrderExcep",""+e.getMessage());
+            Log.wtf("Test_sendOrderExcep", "" + e.getMessage());
 
             e.printStackTrace();
         }

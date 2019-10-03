@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -162,14 +161,13 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                     return;
                 }
 
-                int timely= Store.getInt(App.instance,Store.REPORT_ORDER_TIMELY);
-//				if(!NetworkUtils.isNetworkAvailable(context)&&timely==1){
-//					UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
-//
-//					//return;
-//
-//				}
+                if (!NetworkUtils.isNetworkAvailable(context)) {
+                    UIHelp.showShortToast(parent, parent.getResources().getString(R.string.network_connected));
 
+                    //return;
+
+                }
+                int timely = Store.getInt(App.instance, Store.REPORT_ORDER_TIMELY);
 
                 List<ModifierCheck> allModifierCheck = ModifierCheckSql.getAllModifierCheck(order.getId());
                 Map<Integer, String> categorMap = new HashMap<Integer, String>();
@@ -273,12 +271,18 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                                     orderDetail,
                                                     CoreData.getInstance()
                                                             .getItemDetailById(
-                                                                    orderDetail.getItemId(),
-                                                                    orderDetail.getItemName()),
+                                                                    orderDetail
+                                                                            .getItemId()),
                                                     kotSummary,
                                                     App.instance.getSessionStatus(), ParamConst.KOTITEMDETAIL_CATEGORYID_MAIN);
-                                    kotItemDetail.setItemNum(orderDetail
-                                            .getItemNum());
+                                    kotItemDetail.setItemNum(orderDetail.getItemNum());
+
+                                    //region change status TMP when place order
+//                                    if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_TMP) {
+//                                        kotItemDetail.setKotStatus(ParamConst.KOT_STATUS_UNSEND);
+//                                    }
+                                    //endregion
+
                                     if (kotItemDetail.getKotStatus() == ParamConst.KOT_STATUS_UNDONE) {
                                         kotCommitStatus = ParamConst.JOB_UPDATE_KOT;
                                         kotItemDetail
@@ -439,9 +443,9 @@ public class MainPageOrderViewKiosk extends LinearLayout {
         }
         tv_table_name_ontop.setText(orderNoStr);
         if (!IntegerUtils.isEmptyOrZero(order.getPersons())) {
-            tv_pax.setText(order.getPersons().intValue() + " " + parent.getString(R.string.pax));
+            tv_pax.setText(parent.getString(R.string.pax) + " " + order.getPersons().intValue());
         } else {
-            tv_pax.setText("4 " + parent.getString(R.string.pax));
+            tv_pax.setText(parent.getString(R.string.pax) + " 4");
         }
         tv_item_count.setText("" + itemCount);
         tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()));
@@ -569,8 +573,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                     List<ItemModifier> itemModifiers = CoreData.getInstance()
                             .getItemModifiers(
                                     CoreData.getInstance().getItemDetailById(
-                                            orderDetail.getItemId(),
-                                            orderDetail.getItemName()));
+                                            orderDetail.getItemId()));
                     if (itemModifiers.size() > 0) {
                         Message msg = handler.obtainMessage();
                         msg.what = MainPage.VIEW_EVENT_OPEN_MODIFIERS;
@@ -586,7 +589,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
             });
 
             ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-                    orderDetail.getItemId(),orderDetail.getItemName());
+                    orderDetail.getItemId());
             //  itemDetails will be null in case that wait app keep old
             // wrong menu
             // if (itemDetail == null) {
@@ -630,7 +633,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                             if (tag.getOrderDetailStatus() < ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                                 if (num < 1) {
 
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -661,7 +664,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 //									OrderModifierSQL.updateOrderModifierNum(tag, 999);
                                     OrderHelper.setOrderModifierPirceAndNum(tag, 999);
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -744,7 +747,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                     // kotCommitStatus, null);
 
                                 } else {
-                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName());
+                                    final ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(tag.getItemId());
                                     RemainingStock remainingStock = null;
                                     if (itemDetail != null) {
                                         remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemDetail.getItemTemplateId());
@@ -1146,7 +1149,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
                                         @Override
                                         public void onClick(View arg0) {
-                                            final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId(),tag.getItemName()).getItemTemplateId();
+                                            final int itemTempId = CoreData.getInstance().getItemDetailById(tag.getItemId(), tag.getItemName()).getItemTemplateId();
                                             RemainingStock remainingStock = RemainingStockSQL.getRemainingStockByitemId(itemTempId);
                                             if (remainingStock != null) {
                                                 int num = tag.getItemNum();

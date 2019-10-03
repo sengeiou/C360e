@@ -218,13 +218,20 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         places.clear();
         places = PlaceInfoSQL.getAllPlaceInfo();
 
-        String tableShowAction = ((MainPage) mainPage).tableShowAction;
-        if (!TextUtils.isEmpty(tableShowAction)) {
-            if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
-                for (MultiRVCPlacesDao.Places otherPlace : otherRVCPlaces) {
-                    places.add(otherPlace.getPlaceInfo());
+        try
+        {
+            String tableShowAction = ((MainPage) mainPage).tableShowAction;
+            if (!TextUtils.isEmpty(tableShowAction)) {
+                if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
+                    for (MultiRVCPlacesDao.Places otherPlace : otherRVCPlaces) {
+                        places.add(otherPlace.getPlaceInfo());
+                    }
                 }
             }
+        }
+        catch (Exception e)
+        {
+            Log.e("Error", String.valueOf(e));
         }
 
         PlaceInfo place = new PlaceInfo();
@@ -1459,17 +1466,18 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
 
     private String getAbsoluteUrl(String relativeUrl) {
-        if (App.instance.isDebug) {
+        if (BaseApplication.isDebug) {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
-            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
-        } else if (App.instance.isOpenLog) {
-
+//            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
+            return "http://18.140.71.198/alfred-api/" + relativeUrl;
+        } else if (BaseApplication.isOpenLog) {
             return "http://139.224.17.126/" + relativeUrl;
         } else {
-            if (App.instance.isCartenzLog) {
-                return "http://18.140.71.198/" + relativeUrl;
+            if (BaseApplication.isZeeposDev) {
+                return "http://18.140.71.198:180/" + relativeUrl;
             } else {
+//			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
                 return "http://www.servedbyalfred.biz/" + relativeUrl;
             }
         }

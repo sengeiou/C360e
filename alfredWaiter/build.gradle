@@ -7,7 +7,8 @@ bugsee {
         switch (variant.buildType.name) {
             case 'release': '5cc128ed-939d-428a-9060-2813a324b2f2'
                 break
-            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+//            case 'debug': 'f4eb9760-2327-4253-9f5b-533ee0e711c6'
+            case 'debug': '5cc128ed-939d-428a-9060-2813a324b2f2'
                 break
         }
     }
@@ -41,6 +42,8 @@ android {
         release {
             minifyEnabled false
            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        }
+        debug {
         }
     }
 

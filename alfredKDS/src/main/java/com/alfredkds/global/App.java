@@ -59,18 +59,25 @@ public class App extends BaseApplication {
     public static final int HANDLER_KOT_CALL_NUM_OLD = 100;
     public static final int HANDLER_KOT_COMPLETE_ALL = 102;
     public static final int HANDLER_KOT_COMPLETE = 103;
+    public static final int HANDLER_KOT_NEXT = 104;
+    public static final int HANDLER_KOT_NEXT_SUCCESS = 105;
+    public static final int HANDLER_KOT_NEXT_FAILED = 106;
 
+    public static final int HANDLER_NEXT_KOT = 22;
+    public static final int HANDLER_TMP_KOT = 21;
     public static final int HANDLER_NEW_KOT = 20;
     public static final int HANDLER_UPDATE_KOT = 8;
     public static final int HANDLER_DELETE_KOT = 2;
+    public static final int HANDLER_REFRESH_LOG = 107;
     private static final String DATABASE_NAME = "com.alfredkds";
-    public static final int HANDLER_RELOAD_KOT = 21;
+    public static final int HANDLER_RELOAD_KOT = 23;
     public static App instance;
     //for pairing
-    private ArrayList<String> pairingIps = new ArrayList<>();
+    private List<String> pairingIps = new ArrayList<>();
     private User user;
     private KDSDevice kdsDevice;
-    private Map<Integer, MainPosInfo> mainPosInfos = new HashMap<Integer, MainPosInfo>();
+    private Map<Integer, MainPosInfo> mainPosInfos = new HashMap<>();
+    private Integer currentMainPosId = -1;
     public RingUtil ringUtil;
     private Printer printer;
     public static String TAG = App.class.getName();
@@ -79,13 +86,15 @@ public class App extends BaseApplication {
     private Long businessDate;
     private SystemSettings systemSettings;
     public String VERSION = "0.0.0";
+    private Map<Integer, KDSDevice> kdsDeviceRVCMap = new HashMap<>();
+    private Map<Integer, Integer> rvcIdentifier = new HashMap<>();
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BugseeHelper.init(this, "856f76df-ba87-4e0a-9049-cfcd31a33a42");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
+        BugseeHelper.init(this, "856f76df-ba87-4e0a-9049-cfcd31a33a42");
 
         systemSettings = new SystemSettings(this);
         update15to16();
@@ -123,12 +132,23 @@ public class App extends BaseApplication {
 //		Store.saveObject(this, Store.KDS_DEVICE, this.kdsDevice);
 //	}
 
+    public boolean isBalancer() {
+        return getKdsDevice() != null && getKdsDevice().getKdsType() == Printer.KDS_BALANCER;
+    }
+
     @Override
     protected void onIPChanged() {
         super.onIPChanged();
-        if (getCurrentConnectedMainPos() == null || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
+//        if (isBalancer()) {
+        if (getCurrentConnectedMainPosList().size() <= 0 || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
             return;
         }
+//        } else {
+//            if (getCurrentConnectedMainPos() == null || Store.getObject(App.instance, Store.KDS_USER, User.class) == null) {
+//                return;
+//            }
+//        }
+
         if (getKdsDevice() != null) {
             this.kdsDevice.setIP(CommonUtil.getLocalIpAddress());
             this.setKdsDevice(kdsDevice);
@@ -153,6 +173,16 @@ public class App extends BaseApplication {
         return user;
     }
 
+    public Map<Integer, KDSDevice> getKdsDeviceRVCMap() {
+        return kdsDeviceRVCMap;
+    }
+
+    public void setKdsDeviceRVCMap(Integer id, KDSDevice kdsDevice) {
+        if (!kdsDeviceRVCMap.containsKey(id)) {
+            kdsDeviceRVCMap.put(id, kdsDevice);
+        }
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -168,7 +198,6 @@ public class App extends BaseApplication {
         this.kdsDevice = kdsDevice;
         Store.saveObject(this, Store.KDS_DEVICE, kdsDevice);
     }
-
 
     public SystemSettings getSystemSettings() {
         return systemSettings;
@@ -189,52 +218,68 @@ public class App extends BaseApplication {
     public synchronized void addMainPosInfo(MainPosInfo mainPosInfo) {
         getMainPosInfos();
         this.mainPosInfos.put(mainPosInfo.getRevenueId(), mainPosInfo);
+        currentMainPosId = mainPosInfo.getRevenueId();
         Store.saveObject(instance, Store.MAINPOSINFO_MAP, this.mainPosInfos);
-        ArrayList<Integer> posId = new ArrayList<>();
-        for (Map.Entry<Integer, MainPosInfo> entry : mainPosInfos.entrySet()) {
-            MainPosInfo posInfo = entry.getValue();
-            posId.add(posInfo.getRevenueId());
+        Store.putInt(this, Store.CURRENT_MAIN_POS_ID_CONNECTED, currentMainPosId);
+
+        List<Integer> connectedRVCIds = getRVCConnectedId();
+        if (connectedRVCIds == null) {
+            connectedRVCIds = new ArrayList<>();
         }
-        Store.putString(this, Store.CURRENT_MAIN_POS_ID_CONNECTED, new Gson().toJson(posId));
+
+        if (!connectedRVCIds.contains(currentMainPosId)) {
+            connectedRVCIds.add(currentMainPosId);
+            Store.saveObject(instance, Store.CURRENT_MAIN_POS_IDS_CONNECTED, connectedRVCIds);
+        }
     }
 
-    public List<MainPosInfo> getCurrentConnectedMainPos() {
-        getMainPosInfos();
+    public Integer getRvcIdentifier(int rvcId) {
+        if (rvcIdentifier.size() <= 0) {
+            int i = 0;
 
-        String data = Store.getString(this, Store.CURRENT_MAIN_POS_ID_CONNECTED);
-        ArrayList<Integer> posId = new ArrayList<>();
-        if (!TextUtils.isEmpty(data)) {
-            try {
-                ArrayList<Integer> list = new Gson().fromJson(data, new TypeToken<ArrayList<Integer>>() {
-                }.getType());
-                if (list != null) {
-                    posId.addAll(list);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            for (int rvcId1 : getRVCConnectedId()) {
+                rvcIdentifier.put(rvcId1, i);
+                i++;
             }
         }
 
-        if (posId.size() > 0) {
-            List<MainPosInfo> mainPosInfos = new ArrayList<>();
-            for (Integer cid : posId) {
-                mainPosInfos.add(this.mainPosInfos.get(cid));
-            }
-            return mainPosInfos;
+        return rvcIdentifier.get(rvcId);
+    }
+
+    public MainPosInfo getCurrentConnectedMainPos() {
+        getMainPosInfos();
+        Integer cid = Store.getInt(this, Store.CURRENT_MAIN_POS_ID_CONNECTED);
+        if (cid != null && cid.intValue() > 0) {
+            return this.mainPosInfos.get(cid.intValue());
         } else {
             return null;
         }
+
     }
 
-    public MainPosInfo getCurrentConnectedMainPosByRevenueCenterId(Integer revenueCenterId) {
-        List<MainPosInfo> list = getCurrentConnectedMainPos();
-        for (MainPosInfo pos : list) {
-            if(pos.getRevenueId().equals(revenueCenterId)){
-                return pos;
+    public MainPosInfo getCurrentConnectedMainPos(int rvcId) {
+        getMainPosInfos();
+        return this.mainPosInfos.get(rvcId);
+    }
+
+    public List<Integer> getRVCConnectedId() {
+        return Store.getObject(this, Store.CURRENT_MAIN_POS_IDS_CONNECTED,
+                new TypeToken<List<Integer>>() {
+                }.getType());
+    }
+
+    public List<MainPosInfo> getCurrentConnectedMainPosList() {
+        getMainPosInfos();
+        List<Integer> cids = getRVCConnectedId();
+        List<MainPosInfo> mainPosInfoList = new ArrayList<>();
+
+        if (cids != null) {
+            for (Integer cid : cids) {
+                mainPosInfoList.add(this.mainPosInfos.get(cid));
             }
         }
-        return null;
 
+        return mainPosInfoList;
     }
 
     public Printer getPrinter() {
@@ -249,14 +294,23 @@ public class App extends BaseApplication {
         Store.saveObject(this, Store.KDS_PRINTER, printer);
     }
 
-    public ArrayList<String> getPairingIp() {
+    public List<String> getAllPairingIp() {
         return pairingIps;
     }
 
+    public void setAllPairingIp(List<String> pairingIps) {
+        this.pairingIps = pairingIps;
+    }
+
+    public String getPairingIp() {
+        if (pairingIps.size() > 0)
+            return pairingIps.get(0);
+        return "";
+    }
+
     public void setPairingIp(String pairingIp) {
-        if (!pairingIps.contains(pairingIp)) {
-            this.pairingIps.add(pairingIp);
-        }
+        this.pairingIps.clear();
+        this.pairingIps.add(pairingIp);
     }
 
     public SessionStatus getSessionStatus() {
@@ -285,27 +339,40 @@ public class App extends BaseApplication {
      * 每次刷新KitchenOrder，从数据库取出数据
      */
     public List<Kot> getRefreshKots() {
-        List<Kot> kotList = new ArrayList<Kot>();
-        Kot kot = null;
+        List<Kot> kotList = new ArrayList<>();
+        Kot kot;
         boolean flag = false;
-        List<KotSummary> kotSummaries = new ArrayList<KotSummary>();
-        List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+        List<KotSummary> kotSummaries;
+        List<KotItemDetail> kotItemDetails;
         kotSummaries = KotSummarySQL.getUndoneKotSummary();
-        List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
+        List<KotItemModifier> kotItemModifiers = new ArrayList<>();
+
         for (int i = 0; i < kotSummaries.size(); i++) {
+
             kot = new Kot();
-            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(kotSummaries.get(i).getId(),
+            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderIdForMainPage(
+                    kotSummaries.get(i).getRevenueCenterId(), kotSummaries.get(i).getUniqueId(),
                     kotSummaries.get(i).getOrderId());
+
+            boolean isPlaceOrder = false;
+
             for (int j = 0; j < kotItemDetails.size(); j++) {
                 if (kotSummaries.get(i).getStatus() == ParamConst.KOTS_STATUS_UNDONE) {
                     flag = true;
                 }
-                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
+
+                if (kotItemDetails.get(j).getKotStatus() != ParamConst.KOT_STATUS_TMP) {
+                    isPlaceOrder = true;
+                }
+
+                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j)));
             }
+
             if (flag) {
                 kot.setKotItemDetails(kotItemDetails);
                 kot.setKotItemModifiers(kotItemModifiers);
                 kot.setKotSummary(kotSummaries.get(i));
+                kot.setPlaceOrder(isPlaceOrder);
                 kotList.add(kot);
                 flag = false;
             }
@@ -328,14 +395,16 @@ public class App extends BaseApplication {
         List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
         for (int i = 0; i < kotSummaries.size(); i++) {
             kot = new Kot();
-            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(kotSummaries.get(i).getId(),
+            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdandOrderId(
+                    kotSummaries.get(i).getRevenueCenterId(),
+                    kotSummaries.get(i).getId(),
                     kotSummaries.get(i).getOrderId());
             for (int j = 0; j < kotItemDetails.size(); j++) {
                 if (kotItemDetails.get(j).getKotStatus() < ParamConst.KOT_STATUS_DONE
                         || kotSummaries.get(i).getStatus() == ParamConst.KOTS_STATUS_UNDONE) {
                     flag = true;
                 }
-                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
+                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j)));
             }
             if (flag) {
                 kot.setKotItemDetails(kotItemDetails);
@@ -364,9 +433,9 @@ public class App extends BaseApplication {
         List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
         for (int i = 0; i < kotSummaries.size(); i++) {
             kot = new Kot();
-            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummaries.get(i).getId());
+            kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(kotSummaries.get(i).getId(), kotSummaries.get(i).getRevenueCenterId());
             for (int j = 0; j < kotItemDetails.size(); j++) {
-                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
+                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j)));
             }
             kot.setKotItemDetails(kotItemDetails);
             kot.setKotItemModifiers(kotItemModifiers);
@@ -390,7 +459,7 @@ public class App extends BaseApplication {
         List<KotItemModifier> kotItemModifiers = null;
         for (int i = 0; i < kotItemDetails.size(); i++) {
             KotSummary kotSummary = KotSummarySQL.getKotSummaryById(kotItemDetails.get(i).getKotSummaryId());
-            kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(i).getId());
+            kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(i));
             String kotItem = "";
             if (kotItemModifiers.size() == 0) {
                 kotItem = kotItemDetails.get(i).getItemName();
@@ -442,7 +511,7 @@ public class App extends BaseApplication {
         List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByDishName(dishName);
         List<KotItemModifier> kotItemModifiers = null;
         for (int i = 0; i < kotItemDetails.size(); i++) {
-            kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(i).getId());
+            kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(i));
             String kotItem = "";
             if (kotItemModifiers.size() == 0) {
                 kotItem = kotItemDetails.get(i).getItemName();
@@ -471,10 +540,10 @@ public class App extends BaseApplication {
      */
     public Kot getKot(KotSummary kotSummary) {
         Kot kot = new Kot();
-        List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(kotSummary.getId());
+        List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(kotSummary.getId(), kotSummary.getRevenueCenterId());
         List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
         for (int j = 0; j < kotItemDetails.size(); j++) {
-            kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j).getId()));
+            kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetails.get(j)));
         }
         kot.setKotSummary(kotSummary);
         kot.setKotItemDetails(kotItemDetails);
@@ -489,10 +558,16 @@ public class App extends BaseApplication {
         parameters.put("type", ParamConst.USER_TYPE_KOT);
         parameters.put("device", App.instance.getKdsDevice());
 
-        List<MainPosInfo> datas = App.instance.getCurrentConnectedMainPos();
-        if (datas != null) {
-            for (MainPosInfo data : datas) {
-                SyncCentre.getInstance().login(context, data.getIP(), parameters, handler);
+        List<MainPosInfo> connectedMainPos = new ArrayList<>();
+//        if (isBalancer()) {
+        connectedMainPos = App.instance.getCurrentConnectedMainPosList();
+//        } else {
+//            connectedMainPos.add(App.instance.getCurrentConnectedMainPos());
+//        }
+
+        if (connectedMainPos.size() > 0) {
+            for (MainPosInfo mainPosInfo : connectedMainPos) {
+                SyncCentre.getInstance().login(context, mainPosInfo.getIP(), parameters, handler);
             }
         } else {
             UIHelp.showToast(context, context.getResources().getString(R.string.reconn_pos));
@@ -511,5 +586,33 @@ public class App extends BaseApplication {
             return true;
         }
         return false;
+    }
+
+    public int getBalancerMode() {
+        SystemSettings settings = App.instance.getSystemSettings();
+        int mode = settings.getBalancerMode();
+        int selectedMode = SystemSettings.MODE_NORMAL;
+
+        if (mode == SystemSettings.MODE_BALANCE) {
+            if (settings.getBalancerTime(0) > 0) {
+                if (settings.isBalancerTimeHasCome() && !settings.isBalancerTimeEnded())
+                    selectedMode = SystemSettings.MODE_BALANCE;
+            } else {
+                selectedMode = SystemSettings.MODE_BALANCE;
+            }
+        } else if (mode == SystemSettings.MODE_STACK) {
+            int stackCount = settings.getStackCount();
+
+            if (stackCount > 0) {
+                if (settings.getBalancerTime(0) > 0) {
+                    if (settings.isBalancerTimeHasCome() && !settings.isBalancerTimeEnded())
+                        selectedMode = SystemSettings.MODE_STACK;
+                } else {
+                    selectedMode = SystemSettings.MODE_STACK;
+                }
+            }
+        }
+
+        return selectedMode;
     }
 }

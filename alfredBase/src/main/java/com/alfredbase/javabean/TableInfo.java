@@ -41,6 +41,16 @@ public class TableInfo implements Serializable {
 
     private Integer resolutionHeight;
 
+    private Integer isLocked;
+
+    public Integer getIsLocked() {
+        return isLocked;
+    }
+
+    public void setIsLocked(Integer isLocked) {
+        this.isLocked = isLocked;
+    }
+
     public Integer getPosId() {
         return posId;
     }

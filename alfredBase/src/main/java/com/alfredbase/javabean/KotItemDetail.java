@@ -2,259 +2,340 @@ package com.alfredbase.javabean;
 
 import java.io.Serializable;
 
-public class KotItemDetail implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6754950186409258464L;
+public class KotItemDetail implements Serializable {
 
-	private Integer id;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 6754950186409258464L;
 
-	private Integer restaurantId;
+    private Integer id;
 
-	private Integer revenueId;
+    private Integer restaurantId;
 
-	private Integer orderId;
+    private Integer revenueId;
 
-	private Integer orderDetailId;
-	
-	private Integer printerGroupId;
-	
-	private Integer kotSummaryId;
+    private Integer orderId;
 
-	private String itemName;
+    private Integer orderDetailId;
 
-	private Integer itemNum;
-	//	当前 提交pos机的菜的数量
-	private Integer finishQty;
+    private Integer printerGroupId;
 
-	private Integer sessionStatus;
-	/**
-	 * 0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
-	 */
-	private Integer kotStatus;
+    private Integer kotSummaryId;
 
-	private String specialInstractions;
+    private String itemName;
 
-	private Integer version;
+    private Integer itemNum;
+    //	当前 提交pos机的菜的数量
+    private Integer finishQty;
 
-	private Long createTime;
+    private Integer sessionStatus;
+    /**
+     * 0未发送、1待完成、2更新、3已完成、4已退单、-1已删除
+     */
+    private Integer kotStatus;
 
-	private Long updateTime;
-	//	剩余没有做的菜的数量
-	private Integer unFinishQty;
-	
-	private Integer categoryId;
-	
-	/**
-	 * 是否外带(0不外带、1外带)
-	 */
-	private int isTakeAway;
+    private String specialInstractions;
 
-	private int fireStatus;
+    private Integer version;
 
-	/**
-	 * (0未叫号、1已叫号)
-	 */
-	private  int callType;
+    private Long createTime;
 
-	public KotItemDetail() {
-	}
+    private Long updateTime;
+    //	剩余没有做的菜的数量
+    private Integer unFinishQty;
 
-	public int getCallType() {
-		return callType;
-	}
+    private Integer categoryId;
 
-	public void setCallType(int callType) {
-		this.callType = callType;
-	}
+    /**
+     * 是否外带(0不外带、1外带)
+     */
+    private int isTakeAway;
 
-	public Integer getId() {
-		return id;
-	}
+    private int fireStatus;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    /**
+     * (0未叫号、1已叫号)
+     */
+    private int callType;
 
-	public Integer getRestaurantId() {
-		return restaurantId;
-	}
+    private long expectedTime;
 
-	public void setRestaurantId(Integer restaurantId) {
-		this.restaurantId = restaurantId;
-	}
+    private long startTime;
 
-	public Integer getRevenueId() {
-		return revenueId;
-	}
+    private long endTime;
 
-	public void setRevenueId(Integer revenueId) {
-		this.revenueId = revenueId;
-	}
+    private int itemType;
 
-	public Integer getOrderId() {
-		return orderId;
-	}
+    private Integer itemId;
 
-	public void setOrderId(Integer orderId) {
-		this.orderId = orderId;
-	}
+    private String uniqueId;
 
-	public Integer getOrderDetailId() {
-		return orderDetailId;
-	}
+    private String kotSummaryUniqueId;
 
-	public void setOrderDetailId(Integer orderDetailId) {
-		this.orderDetailId = orderDetailId;
-	}
-	
-	public Integer getPrinterGroupId() {
-		return printerGroupId;
-	}
+    public boolean isChecklist;
 
-	public void setPrinterGroupId(Integer printerGroupId) {
-		if (printerGroupId == null) 
-			printerGroupId = 0;
-		this.printerGroupId = printerGroupId;
-	}
+    public KotItemDetail() {
+    }
 
-	public Integer getKotSummaryId() {
-		return kotSummaryId;
-	}
+    public int getCallType() {
+        return callType;
+    }
 
-	public void setKotSummaryId(Integer kotSummaryId) {
-		this.kotSummaryId = kotSummaryId;
-	}
+    public void setCallType(int callType) {
+        this.callType = callType;
+    }
 
-	public String getItemName() {
-		return itemName;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Integer getItemNum() {
-		return itemNum;
-	}
+    public Integer getRestaurantId() {
+        return restaurantId;
+    }
 
-	public void setItemNum(Integer itemNum) {
-		this.itemNum = itemNum;
-	}
+    public void setRestaurantId(Integer restaurantId) {
+        this.restaurantId = restaurantId;
+    }
 
-	public Integer getFinishQty() {
-		return finishQty;
-	}
+    public Integer getRevenueId() {
+        return revenueId;
+    }
 
-	public void setFinishQty(Integer finishQty) {
-		this.finishQty = finishQty;
-	}
+    public void setRevenueId(Integer revenueId) {
+        this.revenueId = revenueId;
+    }
 
-	public Integer getSessionStatus() {
-		return sessionStatus;
-	}
+    public Integer getOrderId() {
+        return orderId;
+    }
 
-	public void setSessionStatus(Integer sessionStatus) {
-		this.sessionStatus = sessionStatus;
-	}
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 
-	public Integer getKotStatus() {
-		return kotStatus;
-	}
+    public Integer getOrderDetailId() {
+        return orderDetailId;
+    }
 
-	public void setKotStatus(Integer kotStatus) {
-		this.kotStatus = kotStatus;
-	}
+    public void setOrderDetailId(Integer orderDetailId) {
+        this.orderDetailId = orderDetailId;
+    }
 
-	public String getSpecialInstractions() {
-		return specialInstractions;
-	}
+    public Integer getPrinterGroupId() {
+        return printerGroupId;
+    }
 
-	public void setSpecialInstractions(String specialInstractions) {
-		this.specialInstractions = specialInstractions;
-	}
+    public void setPrinterGroupId(Integer printerGroupId) {
+        if (printerGroupId == null)
+            printerGroupId = 0;
+        this.printerGroupId = printerGroupId;
+    }
 
-	public Integer getVersion() {
-		return version;
-	}
+    public Integer getKotSummaryId() {
+        return kotSummaryId;
+    }
 
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+    public void setKotSummaryId(Integer kotSummaryId) {
+        this.kotSummaryId = kotSummaryId;
+    }
 
-	public Long getCreateTime() {
-		return createTime;
-	}
+    public String getItemName() {
+        return itemName;
+    }
 
-	public void setCreateTime(Long createTime) {
-		this.createTime = createTime;
-	}
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
 
-	public Long getUpdateTime() {
-		return updateTime;
-	}
+    public Integer getItemNum() {
+        return itemNum;
+    }
 
-	public void setUpdateTime(Long updateTime) {
-		this.updateTime = updateTime;
-	}
+    public void setItemNum(Integer itemNum) {
+        this.itemNum = itemNum;
+    }
 
-	public Integer getUnFinishQty() {
-		return unFinishQty;
-	}
+    public Integer getFinishQty() {
+        return finishQty;
+    }
 
-	public void setUnFinishQty(Integer unFinishQty) {
-		this.unFinishQty = unFinishQty;
-	}
+    public void setFinishQty(Integer finishQty) {
+        this.finishQty = finishQty;
+    }
 
-	public Integer getCategoryId() {
-		return categoryId;
-	}
+    public Integer getSessionStatus() {
+        return sessionStatus;
+    }
 
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
-	}
+    public void setSessionStatus(Integer sessionStatus) {
+        this.sessionStatus = sessionStatus;
+    }
 
-	public int getIsTakeAway() {
-		return isTakeAway;
-	}
+    public Integer getKotStatus() {
+        return kotStatus;
+    }
 
-	public void setIsTakeAway(int isTakeAway) {
-		this.isTakeAway = isTakeAway;
-	}
+    public void setKotStatus(Integer kotStatus) {
+        this.kotStatus = kotStatus;
+    }
 
-	public int getFireStatus() {
-		return fireStatus;
-	}
+    public String getSpecialInstractions() {
+        return specialInstractions;
+    }
 
-	public void setFireStatus(int fireStatus) {
-		this.fireStatus = fireStatus;
-	}
+    public void setSpecialInstractions(String specialInstractions) {
+        this.specialInstractions = specialInstractions;
+    }
 
-	@Override
-	public String toString() {
-		return "KotItemDetail{" +
-				"id=" + id +
-				", restaurantId=" + restaurantId +
-				", revenueId=" + revenueId +
-				", orderId=" + orderId +
-				", orderDetailId=" + orderDetailId +
-				", printerGroupId=" + printerGroupId +
-				", kotSummaryId=" + kotSummaryId +
-				", itemName='" + itemName + '\'' +
-				", itemNum=" + itemNum +
-				", finishQty=" + finishQty +
-				", sessionStatus=" + sessionStatus +
-				", kotStatus=" + kotStatus +
-				", specialInstractions='" + specialInstractions + '\'' +
-				", version=" + version +
-				", createTime=" + createTime +
-				", updateTime=" + updateTime +
-				", unFinishQty=" + unFinishQty +
-				", categoryId=" + categoryId +
-				", isTakeAway=" + isTakeAway +
-				", fireStatus=" + fireStatus +
-				'}';
-	}
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
+    }
+
+    public Long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Long updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Integer getUnFinishQty() {
+        return unFinishQty;
+    }
+
+    public void setUnFinishQty(Integer unFinishQty) {
+        this.unFinishQty = unFinishQty;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public int getIsTakeAway() {
+        return isTakeAway;
+    }
+
+    public void setIsTakeAway(int isTakeAway) {
+        this.isTakeAway = isTakeAway;
+    }
+
+    public int getFireStatus() {
+        return fireStatus;
+    }
+
+    public void setFireStatus(int fireStatus) {
+        this.fireStatus = fireStatus;
+    }
+
+    public long getExpectedTime() {
+        return expectedTime;
+    }
+
+    public void setExpectedTime(long expectedTime) {
+        this.expectedTime = expectedTime;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
+    public int getItemType() {
+        return itemType;
+    }
+
+    public void setItemType(int itemType) {
+        this.itemType = itemType;
+    }
+
+    public Integer getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public String getKotSummaryUniqueId() {
+        return kotSummaryUniqueId;
+    }
+
+    public void setKotSummaryUniqueId(String kotSummaryUniqueId) {
+        this.kotSummaryUniqueId = kotSummaryUniqueId;
+    }
+
+    @Override
+    public String toString() {
+        return "KotItemDetail{" +
+                "id=" + id +
+                ", restaurantId=" + restaurantId +
+                ", revenueId=" + revenueId +
+                ", orderId=" + orderId +
+                ", orderDetailId=" + orderDetailId +
+                ", printerGroupId=" + printerGroupId +
+                ", kotSummaryId=" + kotSummaryId +
+                ", itemName='" + itemName + '\'' +
+                ", itemNum=" + itemNum +
+                ", finishQty=" + finishQty +
+                ", sessionStatus=" + sessionStatus +
+                ", kotStatus=" + kotStatus +
+                ", specialInstractions='" + specialInstractions + '\'' +
+                ", version=" + version +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", unFinishQty=" + unFinishQty +
+                ", categoryId=" + categoryId +
+                ", isTakeAway=" + isTakeAway +
+                ", fireStatus=" + fireStatus +
+                ", callType=" + callType +
+                ", expectedTime=" + expectedTime +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", itemType=" + itemType +
+                ", itemId=" + itemId +
+                ", isChecklist=" + isChecklist +
+                ", uniqueId='" + uniqueId + '\'' +
+                ", kotSummaryUniqueId='" + kotSummaryUniqueId + '\'' +
+                '}';
+    }
 }

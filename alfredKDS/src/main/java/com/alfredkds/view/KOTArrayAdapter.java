@@ -12,58 +12,52 @@ import com.alfredkds.javabean.Kot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHolder>{
+public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHolder> {
 
-	private Context mContext;
-	private List<Kot> kots = new ArrayList<Kot>();
-	private boolean addFirstItem = false;
-	private Handler handler;
+    private Context mContext;
+    private List<Kot> kots = new ArrayList<Kot>();
+    private boolean addFirstItem = false;
+    private Handler handler;
 //	private Map<Integer, Long> times = new HashMap<Integer, Long>();
 
-	public KOTArrayAdapter(Context mContext, Handler handler) {
-		super();
+    public KOTArrayAdapter(Context mContext, Handler handler) {
+        super();
 //		times.clear();
-		this.mContext = mContext;
-		this.handler = handler;
-	}
+        this.mContext = mContext;
+        this.handler = handler;
+    }
 
-	public void setAddFirstItem(boolean addFirstItem) {
-		this.addFirstItem = addFirstItem;
-	}
+    public void setAddFirstItem(boolean addFirstItem) {
+        this.addFirstItem = addFirstItem;
+    }
 
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
+        View convertView = View.inflate(mContext, R.layout.kot_array_view, null);
+        ViewHolder viewHolder = new ViewHolder(convertView);
+        viewHolder.kotView = (KOTView) convertView.findViewById(R.id.kotview);
+        viewHolder.kotView.setParams(mContext, handler);
+        return viewHolder;
+    }
 
-	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
 
-		View convertView = View.inflate(mContext,R.layout.kot_array_view, null);
-		ViewHolder viewHolder = new ViewHolder(convertView);
-		viewHolder.kotView = (KOTView) convertView.findViewById(R.id.kotview);
-		viewHolder.kotView.setParams(mContext, handler);
-		return viewHolder;
-	}
-
-	@Override
-	public void onBindViewHolder(ViewHolder holder, int position) {
-
-		Kot originKot = kots.get(position);
-		holder.kotView.setData(originKot);
-//		if (addFirstItem && position == 0) {
-//			holder.kotView.showNewKOT();
-//			addFirstItem = false;
-//		}
-	}
+        Kot originKot = kots.get(position);
+        holder.kotView.setData(originKot);
+    }
 
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@Override
-	public int getItemCount() {
-		return kots.size();
-	}
+    @Override
+    public int getItemCount() {
+        return kots.size();
+    }
 
 //	@Override
 //	public View getView(int position, View convertView, ViewGroup parent) {
@@ -96,28 +90,27 @@ public class KOTArrayAdapter extends RecyclerView.Adapter<KOTArrayAdapter.ViewHo
 //		}
 //		return convertView;
 //	}
-	
-	class ViewHolder extends  RecyclerView.ViewHolder{
-		public KOTView kotView;
 
-		public ViewHolder(View itemView) {
-			super(itemView);
-		}
-	}
+    class ViewHolder extends RecyclerView.ViewHolder {
+        public KOTView kotView;
 
-	/**
-	 * @return the kots
-	 */
-	public List<Kot> getKots() {
-		return kots;
-	}
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
 
-	/**
-	 * @param kots
-	 *            the kots to set
-	 */
-	public void setKots(List<Kot> kots) {
-		this.kots = kots;
-	}
+    /**
+     * @return the kots
+     */
+    public List<Kot> getKots() {
+        return kots;
+    }
+
+    /**
+     * @param kots the kots to set
+     */
+    public void setKots(List<Kot> kots) {
+        this.kots = kots;
+    }
 
 }
