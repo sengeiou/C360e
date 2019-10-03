@@ -1481,7 +1481,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             return "http://139.224.17.126/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {
-                return "http://18.140.71.198/alfred-api/" + relativeUrl;//staging
+                return "http://18.140.71.198/" + relativeUrl;
             } else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
                 return "http://www.servedbyalfred.biz/" + relativeUrl;

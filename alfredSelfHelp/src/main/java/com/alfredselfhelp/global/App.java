@@ -114,11 +114,12 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BugseeHelper.init(this, "f252f398-4474-43c3-b287-38e6ce235894");
         VERSION = getAppVersionName();
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         TvPref.init();
         mbPlayIMG = TvPref.readPlayIMGEn();
+
+        BugseeHelper.init(this, "f252f398-4474-43c3-b287-38e6ce235894");
         CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
         strategy.setAppChannel(APPPATH);
         CrashReport.initCrashReport(getApplicationContext(), "4a949e77d4", isOpenLog, strategy);

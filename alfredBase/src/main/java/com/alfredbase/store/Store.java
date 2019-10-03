@@ -17,6 +17,7 @@ public class Store {
 
     private static final String PACK_NAME = Store.class.getPackage().getName();
 
+    public static final String BUGSEE_STATUS = "BUGSEE_STATUS";
     public static final String KDS_ONLINE = "KDS_ONLINE";
     public static final String BALANCER_TIME_START = "BALANCER_TIME_START";
     public static final String BALANCER_TIME_END = "BALANCER_TIME_END";

@@ -41,7 +41,6 @@ public class App extends BaseApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        BugseeHelper.init(this, "855edcc3-0ec8-40f7-b3e8-31ef79540932");
         SQLExe.init(this, DATABASE_NAME, DATABASE_VERSION);
         TvPref.init();
 
@@ -50,6 +49,7 @@ public class App extends BaseApplication {
         CallNumHttpServer callNumHttpServer = new CallNumHttpServer();
         sp = getSharedPreferences("call", Activity.MODE_PRIVATE);
         callList = new ArrayList<CallBean>();
+        BugseeHelper.init(this, "855edcc3-0ec8-40f7-b3e8-31ef79540932");
         try {
             if (!callNumHttpServer.isAlive()) {
                 callNumHttpServer.start();

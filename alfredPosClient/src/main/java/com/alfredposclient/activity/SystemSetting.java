@@ -78,6 +78,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
     private MyToggleButton mt_cancel_order_void;
     private MyToggleButton mt_transfer_print, mt_pos_mode_type;
     private MyToggleButton mt_auto_table, mt_of_pax, mt_print_lable_direction;
+    private MyToggleButton mtCrashReporting;
     private SystemSettings settings;
     private LoadingDialog loadingDialog;
     private int size = 0;
@@ -177,6 +178,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
         tv_callnum_style = (TextView) findViewById(R.id.tv_callnum_style);
         tv_pos_mode_type = (TextView) findViewById(R.id.tv_pos_mode_type);
         ll_set_pos_mode = (RelativeLayout) findViewById(R.id.ll_set_pos_mode);
+        mtCrashReporting = (MyToggleButton) findViewById(R.id.mtCrashReporting);
 
         tv_language = (TextView) findViewById(R.id.tv_language);
         tv_language.setOnClickListener(this);
@@ -246,6 +248,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
         mt_auto_table.setOnStateChangeListeren(this);
         mt_print_bill.setOnStateChangeListeren(this);
         mt_of_pax.setOnStateChangeListeren(this);
+        mtCrashReporting.setOnStateChangeListeren(this);
         ll_set_pos_mode.setOnClickListener(this);
         if (trainDisplay == ParamConst.ENABLE_POS_TRAINING) {
             ll_set_pos_mode.setVisibility(View.GONE);
@@ -430,22 +433,22 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
         }
 
 
-		//print_waiter_once
-		if(settings.isPrintInstructions()){
+        //print_waiter_once
+        if (settings.isPrintInstructions()) {
 
-			mt_print_instructions.setChecked(true);
-		}else{
+            mt_print_instructions.setChecked(true);
+        } else {
 
-			mt_print_instructions.setChecked(false);
-		}
+            mt_print_instructions.setChecked(false);
+        }
 
-		if(settings.isPrintWaiterOnce()){
+        if (settings.isPrintWaiterOnce()) {
 
-			mt_print_waiter_once.setChecked(true);
-		}else{
+            mt_print_waiter_once.setChecked(true);
+        } else {
 
-			mt_print_waiter_once.setChecked(false);
-		}
+            mt_print_waiter_once.setChecked(false);
+        }
 
         if (settings.isPrintBill()) {
             mt_print_bill.setChecked(true);
@@ -472,6 +475,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 //			tv_callnum.setText(App.instance.getCallAppIp());
 //		}
         changePasswordDialog = new ChangePasswordDialog(context, handler);
+
+        mtCrashReporting.setChecked(settings.isCrashReportActive());
     }
 
     @Override
@@ -942,8 +947,8 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 
         //	textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_callnum));
         textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_credit_card_rounding));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_instructions));
-		textTypeFace.setTrajanProRegular((TextView)findViewById(R.id.tv_print_waiter_once));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_print_instructions));
+        textTypeFace.setTrajanProRegular((TextView) findViewById(R.id.tv_print_waiter_once));
 
 
     }
@@ -1173,30 +1178,30 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
                 }
                 break;
 
-			case R.id.mt_print_instructions:
+            case R.id.mt_print_instructions:
 
-				if(checkState){
+                if (checkState) {
 
-					mt_print_instructions.setChecked(true);
-					settings.setPrintInstructions(ParamConst.DEFAULT_TRUE);
-				}else{
+                    mt_print_instructions.setChecked(true);
+                    settings.setPrintInstructions(ParamConst.DEFAULT_TRUE);
+                } else {
 
-					mt_print_instructions.setChecked(false);
-					settings.setPrintInstructions(ParamConst.DEFAULT_FALSE);
-				}
-				break;
+                    mt_print_instructions.setChecked(false);
+                    settings.setPrintInstructions(ParamConst.DEFAULT_FALSE);
+                }
+                break;
 
-			case R.id.mt_print_waiter_once:
-				if(checkState){
+            case R.id.mt_print_waiter_once:
+                if (checkState) {
 
-					mt_print_waiter_once.setChecked(true);
-					settings.setWaiterOnce(ParamConst.DEFAULT_TRUE);
-				}else{
+                    mt_print_waiter_once.setChecked(true);
+                    settings.setWaiterOnce(ParamConst.DEFAULT_TRUE);
+                } else {
 
-					mt_print_waiter_once.setChecked(false);
-					settings.setWaiterOnce(ParamConst.DEFAULT_FALSE);
-				}
-				break;
+                    mt_print_waiter_once.setChecked(false);
+                    settings.setWaiterOnce(ParamConst.DEFAULT_FALSE);
+                }
+                break;
             case R.id.mt_print_bill:
 
                 if (checkState) {
@@ -1222,7 +1227,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 
 
                 DialogFactory.commonTwoBtnDialog(context, SystemSetting.this.getResources().getString(
-						R.string.turning_on_training_mode),
+                        R.string.turning_on_training_mode),
                         SystemSetting.this.getResources().getString(
                                 R.string.turning_on_training_mode_desc),
                         context.getResources().getString(R.string.cancel),
@@ -1299,6 +1304,55 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 //					settings.setTraining(ParamConst.DEFAULT_FALSE);
 //				}
                 break;
+            case R.id.mtCrashReporting:
+                String message;
+
+                final boolean finalCheckedState = checkState;
+
+                if (!finalCheckedState)
+                    message = "Turn off crash reporting? \nsystem will be restart";
+                else
+                    message = "Turn on crash reporting? \nsystem will be restart";
+
+                DialogFactory.commonTwoBtnDialog(context, "", message,
+                        context.getResources().getString(R.string.cancel),
+                        context.getResources().getString(R.string.ok),
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mtCrashReporting.setChecked(!finalCheckedState);
+                            }
+                        },
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mtCrashReporting.setChecked(finalCheckedState);
+                                settings.setCrashReportStatus(finalCheckedState);
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(App.instance, Welcome.class);
+                                        @SuppressLint("WrongConstant")
+                                        PendingIntent restartIntent = PendingIntent.getActivity(
+                                                App.instance.getApplicationContext(), 0, intent,
+                                                Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        AlarmManager mgr = (AlarmManager) App.instance
+                                                .getSystemService(Context.ALARM_SERVICE);
+                                        mgr.set(AlarmManager.RTC,
+                                                System.currentTimeMillis() + 1000,
+                                                restartIntent);
+                                        ActivityManager am = (ActivityManager) App.instance
+                                                .getSystemService(Context.ACTIVITY_SERVICE);
+                                        if (am != null)
+                                            am.killBackgroundProcesses(getPackageName());
+                                        App.instance.finishAllActivity();
+                                    }
+                                });
+                            }
+                        });
+
+                break;
             default:
                 break;
         }
@@ -1319,26 +1373,25 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 //	}
 
 
-	private void dialogChoice() {
-		final String items[] = {"1", "2", "4", "5"};
-		AlertDialog.Builder builder = new AlertDialog.Builder(this,3);
+    private void dialogChoice() {
+        final String items[] = {"1", "2", "4", "5"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, 3);
 
-		int postion = 0;
-		if(settings.getCallStyle()==1)
-		{
-			postion=0;
-		}else if(settings.getCallStyle()==2){
-			postion=1;
-		}else if (settings.getCallStyle() == 4){
-			postion=2;
-		} else if (settings.getCallStyle() == 5) {
-			postion=3;
-		}
+        int postion = 0;
+        if (settings.getCallStyle() == 1) {
+            postion = 0;
+        } else if (settings.getCallStyle() == 2) {
+            postion = 1;
+        } else if (settings.getCallStyle() == 4) {
+            postion = 2;
+        } else if (settings.getCallStyle() == 5) {
+            postion = 3;
+        }
 
-		builder.setSingleChoiceItems(items, postion,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+        builder.setSingleChoiceItems(items, postion,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
                         settings.setCallStyle(Integer.valueOf(items[which]).intValue());
                         tv_callnum_style.setText(settings.getCallStyle() + " " + getString(R.string.style));

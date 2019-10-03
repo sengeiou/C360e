@@ -453,7 +453,7 @@ public class SyncCentre {
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {
-                return "http://18.140.71.198/alfred-api/" + relativeUrl;//staging
+                return "http://18.140.71.198/alfred-api/" + relativeUrl;
             } else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
                 return "http://www.servedbyalfred.biz/alfred-api/" + relativeUrl;

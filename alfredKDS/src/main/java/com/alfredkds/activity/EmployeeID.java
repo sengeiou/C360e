@@ -76,7 +76,6 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
         textTypeFace.setTrajanProRegular(tv_id_5);
     }
 
-    ArrayList<Printer> printerList = new ArrayList<>();
     int pairingCount = 0;
 
     private Handler handler = new Handler() {
@@ -90,6 +89,7 @@ public class EmployeeID extends BaseActivity implements KeyBoardClickListener {
                     List<Printer> printers = PrinterSQL
                             .getAllPrinterByType(1);//get printer device
 
+                    ArrayList<Printer> printerList = new ArrayList<>();
                     for (Printer printer : printers) {//为cashier时不显示
                         if (!(printer.getIsCashdrawer().intValue() == 1)) {
                             printerList.add(printer);

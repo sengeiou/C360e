@@ -264,6 +264,30 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvCrashReportStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:text="Crash Reporting"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_m" />
+
+            <com.alfredkds.view.MyToggleButton
+                android:id="@+id/mtCrashReport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/tv_history"
             android:layout_width="wrap_content"

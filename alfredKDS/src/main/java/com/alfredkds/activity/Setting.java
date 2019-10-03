@@ -1,7 +1,13 @@
 package com.alfredkds.activity;
 
+import android.annotation.SuppressLint;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -57,7 +63,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
     private LinearLayout llContTime;
 
     private MyToggleButton mt_kot_lan, mtPendingList, mtAllowPartial;
-    private MyToggleButton mtKdsOnline;
+    private MyToggleButton mtKdsOnline, mtCrashReport;
 
     private ImageView iv_language;
     private LinearLayout ll_language_setting;
@@ -109,6 +115,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         this.mt_kot_lan = (MyToggleButton) findViewById(R.id.mt_kot_lan);
         this.mtAllowPartial = (MyToggleButton) findViewById(R.id.mtAllowPartial);
         this.mtKdsOnline = (MyToggleButton) findViewById(R.id.mtKdsOnline);
+        this.mtCrashReport = (MyToggleButton) findViewById(R.id.mtCrashReport);
         this.etStackCount = (EditText) findViewById(R.id.etStackCount);
         this.llStackCount = (LinearLayout) findViewById(R.id.llStackCount);
         this.llContTime = (LinearLayout) findViewById(R.id.contTime);
@@ -116,6 +123,7 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         this.mtKdsOnline.setOnStateChangeListeren(this);
         this.mt_kot_lan.setOnStateChangeListeren(this);
         this.mtAllowPartial.setOnStateChangeListeren(this);
+        this.mtCrashReport.setOnStateChangeListeren(this);
         this.tv_kot_history.setOnClickListener(this);
         this.tv_kot_reset.setOnClickListener(this);
         this.tv_switch_account.setOnClickListener(this);
@@ -200,6 +208,8 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
         } else {
             mt_kot_lan.setChecked(false);
         }
+
+        mtCrashReport.setChecked(settings.isCrashReportActive());
 
         mtPendingList.setChecked(settings.isPendingList());
         ll_language_setting = (LinearLayout) findViewById(R.id.ll_language_setting);
@@ -352,6 +362,55 @@ public class Setting extends BaseActivity implements MyToggleButton.OnToggleStat
                 } else {
                     settings.setAllowPartial(false);
                 }
+                break;
+            case R.id.mtCrashReport:
+                String message;
+
+                final boolean finalCheckedState = checkState;
+
+                if (!finalCheckedState)
+                    message = "Turn off crash reporting? \nsystem will be restart";
+                else
+                    message = "Turn on crash reporting? \nsystem will be restart";
+
+                DialogFactory.commonTwoBtnDialog(context, "", message,
+                        context.getResources().getString(R.string.cancel),
+                        context.getResources().getString(R.string.ok),
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mtCrashReport.setChecked(!finalCheckedState);
+                            }
+                        },
+                        new OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                mtCrashReport.setChecked(finalCheckedState);
+                                settings.setCrashReportStatus(finalCheckedState);
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(App.instance, Welcome.class);
+                                        @SuppressLint("WrongConstant")
+                                        PendingIntent restartIntent = PendingIntent.getActivity(
+                                                App.instance.getApplicationContext(), 0, intent,
+                                                Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        AlarmManager mgr = (AlarmManager) App.instance
+                                                .getSystemService(Context.ALARM_SERVICE);
+                                        mgr.set(AlarmManager.RTC,
+                                                System.currentTimeMillis() + 1000,
+                                                restartIntent);
+                                        ActivityManager am = (ActivityManager) App.instance
+                                                .getSystemService(Context.ACTIVITY_SERVICE);
+                                        if (am != null)
+                                            am.killBackgroundProcesses(getPackageName());
+                                        App.instance.finishAllActivity();
+                                    }
+                                });
+                            }
+                        });
+
                 break;
         }
     }

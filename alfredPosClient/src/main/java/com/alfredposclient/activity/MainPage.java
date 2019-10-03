@@ -1611,7 +1611,7 @@ public class MainPage extends BaseActivity {
                     break;
                 case VIEW_EVENT_TANSFER_PAX:
                     String pax = (String) msg.obj;
-                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_of_pax));
+                    setPAXWindow.show(pax, currentOrder, context.getResources().getString(R.string.no_of_pax), orderDetails);
                     break;
                 case VIEW_EVENT_VOID_OR_FREE:
                     verifyDialog.show(HANDLER_MSG_OBJECT_VOID_OR_FREE,

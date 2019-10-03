@@ -18,12 +18,14 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.Order;
+import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
@@ -32,6 +34,8 @@ import com.alfredposclient.activity.SystemSetting;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.view.MoneyKeyboard;
 import com.alfredposclient.view.MoneyKeyboard.KeyBoardClickListener;
+
+import java.util.List;
 
 public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
     private static final int DURATION_1 = 300;
@@ -46,6 +50,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
     private View parentView;
     private Handler handler;
     private Order order;
+    private List<OrderDetail> orderDetails;
     private View contentView;
     private PopupWindow popupWindow;
     private RelativeLayout rl_pax;
@@ -134,6 +139,13 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
     public void show(String str, Order order, String title) {
         this.str = str;
         this.order = order;
+        show(0, title);
+    }
+
+    public void show(String str, Order order, String title, List<OrderDetail> orderDetails) {
+        this.str = str;
+        this.order = order;
+        this.orderDetails = orderDetails;
         show(0, title);
     }
 
@@ -247,6 +259,7 @@ public class SetPAXWindow implements OnClickListener, KeyBoardClickListener {
                     if (order != null) {
                         order.setPersons(num);
                         OrderSQL.updateOrderPersions(num, order.getId());
+                        OrderHelper.setPromotion(order, orderDetails);
                     }
                     Message msg = handler.obtainMessage();
                     msg.what = MainPage.VIEW_EVENT_SET_TABLE_PACKS;
