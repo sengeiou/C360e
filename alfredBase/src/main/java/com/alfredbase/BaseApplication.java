@@ -60,9 +60,10 @@ public class BaseApplication extends Application {
      * 当 isDebug == true， isOpenLog == true 为本地的服务器 (Local server)
      */
 
-    public static boolean isDebug = false;    //	Debug开关 release的时候设置为false
-    public static boolean isOpenLog = false;    //	release 时设置为false
-    public static boolean isZeeposDev = true;    //	zeepos local development
+    public static boolean isDebug = false;          //	Debug开关 release的时候设置为false
+    public static boolean isOpenLog = false;        //	release 时设置为false
+    public static boolean isZeeposDev = false;      //	zeepos local development
+    public static boolean isCuscapiMYDev = true;    //  Cuscapi Malaysia Local Development
 
     protected String APPPATH = "sunmi";// sunmi or google or alibaba;
 
