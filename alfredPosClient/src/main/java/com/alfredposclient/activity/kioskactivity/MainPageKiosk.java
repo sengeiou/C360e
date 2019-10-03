@@ -1838,7 +1838,7 @@ public class MainPageKiosk extends BaseActivity {
 
             List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);
             if (orderSplits.isEmpty()) {
-                closeOrderWindow.show(view_top_line, currentOrder, operatePanel.getWidth(), orderBill, orderDetails);
+                closeOrderWindow.show(view_top_line, currentOrder, operatePanel.getWidth(), orderBill, orderDetails, true);
             } else {
                 int count = OrderDetailSQL.getOrderDetailCountByGroupId(0, currentOrder.getId());
                 if (count == 0) {

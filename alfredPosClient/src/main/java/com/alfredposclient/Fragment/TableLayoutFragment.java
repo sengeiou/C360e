@@ -137,7 +137,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         rl_create_table = (RelativeLayout) view.findViewById(R.id.rl_create_table);
         ll_table_left = (LinearLayout) view.findViewById(R.id.ll_table_left);
         ll_waiting_list = (LinearLayout) view.findViewById(R.id.ll_waiting_list);
-        tvQuickService = (TextView) view.findViewById(R.id.tvQuickService);
+        tvQuickService = (TextView) view.findViewById(R.id.tv_quick_service);
 //        rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
 //        ViewTreeObserver vto = rl_table_area.getViewTreeObserver();
 //        width = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(mainPage, 40.0f))*3/2;
@@ -808,7 +808,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             case R.id.btn_back: {
                 mainPage.onBackPressed();
             }
-            case R.id.tvQuickService:
+            case R.id.tv_quick_service:
                 BugseeHelper.buttonClicked("Open quick service by shortcut");
                 App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
                 UIHelp.startMainPageKiosk(getContext());

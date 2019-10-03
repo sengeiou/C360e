@@ -222,6 +222,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
     private ArrayList<SettlementRestaurant> paymentSettleRestaurant = new ArrayList<>();
     private SettlementAdapter settlementAdapter;
+    private boolean isQuickService;
 
 
     //	private BigDecimal includTax;
@@ -1167,9 +1168,15 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     }
 
     public void show(View view, final Order order, float startX, OrderBill orderBill, List<OrderDetail> orderDetailList) {
+        show(view, order, startX, orderBill, orderDetailList, false);
+    }
+
+    public void show(View view, final Order order, float startX, OrderBill orderBill, List<OrderDetail> orderDetailList, boolean isQuickService) {
         if (isShowing()) {
             return;
         }
+
+        this.isQuickService = isQuickService;
         referenceNum = "";
         App.instance.setClosingOrderId(order.getId());
         this.orderBill = orderBill;
@@ -1336,7 +1343,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 KotSummary kotSummary = KotSummarySQL
                         .getKotSummary(paidOrderId, numTag);
                 PaymentSettlementSQL.deleteAllNoActiveSettlement(payment);
-                if (!App.instance.isRevenueKiosk() && kotSummary != null) {
+                if (!App.instance.isRevenueKiosk() && !isQuickService && kotSummary != null) {
                     List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryIdUndone(kotSummary);
 
                     if (kotItemDetails != null)
@@ -1496,7 +1503,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                     openMoneyKeyboard(View.VISIBLE, ParamConst.SETTLEMENT_TYPE_CASH);
                     selectNumberAction(5);
                     isFirstClickCash = true;
-                break;
+                    break;
                 case R.id.tv_BILL_on_HOLD:
                     if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
                         showPaymentReminder();
@@ -2027,8 +2034,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         BigDecimal cashNum = BH.IsDouble()
                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                 : BH.getBD(show.toString());
-        if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
-        {
+        if (App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp")) {
             cashNum = BH.IsDouble()
                     ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
                     : BH.getBD(show.toString());
@@ -2670,8 +2676,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 BigDecimal shownum = BH.IsDouble()
                         ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                         : BH.getBD(show.toString());
-                if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
-                {
+                if (App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp")) {
                     shownum = BH.IsDouble()
                             ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
                             : BH.getBD(show.toString());
@@ -2698,8 +2703,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
                         selectBD = selectBD.setScale(2, BigDecimal.ROUND_HALF_UP);
-                        if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
-                        {
+                        if (App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp")) {
                             selectBD = BH.IsDouble()
                                     ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
                                     : BH.getBD(show.toString());
@@ -2755,8 +2759,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
-                        if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
-                        {
+                        if (App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp")) {
                             selectBD = BH.IsDouble()
                                     ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
                                     : BH.getBD(show.toString());
@@ -2801,8 +2804,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 BigDecimal shownum = BH.IsDouble()
                         ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                         : BH.getBD(show.toString());
-                if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
-                {
+                if (App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp")) {
                     shownum = BH.IsDouble()
                             ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
                             : BH.getBD(show.toString());
