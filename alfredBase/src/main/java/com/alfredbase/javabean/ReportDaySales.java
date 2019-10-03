@@ -216,6 +216,8 @@ public class ReportDaySales implements Serializable{
 	private String ipay88Nets;
 	private Integer ipay88NetsQty;
 
+	private String salesTypeId;
+
 
 //	private String cashGstDiscount;
 //	private String netsGstDiscount;
@@ -1208,6 +1210,14 @@ public class ReportDaySales implements Serializable{
 
 	public void setIpay88NetsQty(Integer ipay88NetsQty) {
 		this.ipay88NetsQty = ipay88NetsQty;
+	}
+
+	public String getSalesTypeId() {
+		return salesTypeId;
+	}
+
+	public void setSalesTypeId(String salesTypeId) {
+		this.salesTypeId = salesTypeId;
 	}
 
 	@Override

@@ -89,6 +89,7 @@
     <string name="settlement_details">Settlement Details</string>
     <string name="media">Media</string>
     <string name="delivery">Delivery</string>
+    <string name="employee">Employee</string>
     <string name="total_bill">Total Bill</string>
     <string name="custom">Custom</string>
     <string name="voucher">Voucher</string>

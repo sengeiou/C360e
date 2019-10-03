@@ -26,6 +26,7 @@ public class ReportDayTax implements Serializable{
 	 * 税收类型(0消费税，1服务税)
 	 */
 	private Integer taxType;
+	private String salesTypeId;
 
 	public Integer getTaxType() {
 		return taxType;
@@ -106,6 +107,14 @@ public class ReportDayTax implements Serializable{
 	}
 	public void setTaxAmount(String taxAmount) {
 		this.taxAmount = taxAmount;
+	}
+
+	public String getSalesTypeId() {
+		return salesTypeId;
+	}
+
+	public void setSalesTypeId(String salesTypeId) {
+		this.salesTypeId = salesTypeId;
 	}
 
 	@Override

@@ -778,6 +778,10 @@ public class DataHelper {
             db.execSQL("CREATE TABLE "
                     + TableNames.RestaurantConfig
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, paraId INTEGER, paraType INTEGER, paraName TEXT, paraValue1 TEXT, paraValue2 TEXT)");
+            db.execSQL("CREATE TABLE "
+                    + TableNames.ItemDetailPrice
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, itemId INTEGER, salesTypeId INTEGER, taxId INTEGER, paraType INTEGER, itemPrice DOUBLE, createTime LONG, updateTime LONG)");
+
 
             // create index
             db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS localDevice_idx1 on "
@@ -1775,7 +1779,7 @@ public class DataHelper {
                     "itemNum INTEGER,sessionStatus INTEGER,sysCreateTime LONG,sysUpdateTime LONG)");
 
             db.execSQL("ALTER TABLE " + TableNames.Order
-                    + " ADD COLUMN waiterInformation TEXT ");
+                    + " ADD COLUMN waiterInformation TEXT");
             db.execSQL("ALTER TABLE " + TableNames.Order
                     + " ADD COLUMN isWaiterPrint INTEGER default 0 ");
             db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
@@ -1791,6 +1795,25 @@ public class DataHelper {
                     + " ADD COLUMN kotSummaryUniqueId TEXT");
             db.execSQL("ALTER TABLE " + TableNames.KotNotification
                     + " ADD COLUMN kotItemDetailUniqueId TEXT");
+
+            db.execSQL("ALTER TABLE " + TableNames.ReportDaySales
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ReportDayTax
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ReportPluDayItem
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ReportPluDayModifier
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.ReportPluDayComboModifier
+                    + " ADD COLUMN salesTypeId TEXT");
+            db.execSQL("ALTER TABLE " + TableNames.User
+                    + " ADD COLUMN budget TEXT");
+
+
+            db.execSQL("CREATE TABLE "
+                    + TableNames.OrderUser
+                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, orderUserId INTEGER, userId INTEGER, orderId INTEGER, businessDate LONG,"
+                    + " transactionAmount TEXT, createTime LONG, updateTime LONG)");
 
         }
 

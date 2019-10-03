@@ -45,6 +45,7 @@ import com.alfredbase.javabean.NonChargableSettlement;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderUser;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
@@ -64,10 +65,12 @@ import com.alfredbase.store.sql.NonChargableSettlementSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
+import com.alfredbase.store.sql.OrderUserSQL;
 import com.alfredbase.store.sql.PaymentSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.VoidSettlementSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BH;
@@ -164,7 +167,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private TextView tv_discount_num;
     private TextView tv_taxes_num;
     private TextView tv_total_bill_num;
-    private TextView tv_rounding_num, tv_cards_rounding_num, tv_nets_rounding_num;
+    private TextView tv_rounding_num, tv_cards_rounding_num, tv_nets_rounding_num, tv_sub_total_rounding_num;
     //	private TextView tv_grand_total_bill_num;
     private TextView tv_amount_due_num;
 
@@ -293,6 +296,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         tv_nets_rounding_num = (TextView) contentView.findViewById(R.id.tv_nets_rounding_num);
 //		tv_grand_total_bill_num = (TextView) contentView.findViewById(R.id.tv_grand_total_bill_num);
 //		tv_settled_num = (TextView) contentView.findViewById(R.id.tv_settled_num);
+        tv_sub_total_rounding_num = (TextView) contentView.findViewById(R.id.tv_sub_total_rounding_num);
 
 
         tv_special_settlement_title = (TextView) contentView
@@ -467,6 +471,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 .findViewById(R.id.tv_residue_total));
         textTypeFace.setTrajanProBlod((TextView) view
                 .findViewById(R.id.tv_residue_total_num));
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_sub_total_rounding_num));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_item_name));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -704,10 +710,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BH.getBD(sumPaidamount), true);
             }
         }
+
+        BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+        BigDecimal rounding = BH.sub(remainTotalAfterRound, remainTotal, true);
+        String symbol = "";
+        if (rounding.compareTo(BH.getBD("0.00")) == -1) {
+            symbol = "-";
+        }
+        tv_sub_total_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()));
+
         ((TextView) contentView.findViewById(R.id.tv_residue_total_num))
-                .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
-
-
+                .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotalAfterRound.toString()).toString());
 //		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
 //		tv_item_count_num.setText(getItemNumSum() + "");
         tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
@@ -2629,6 +2642,30 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 printBill(true, null);
             }
         }
+        OrderUser ordrUser = OrderUserSQL.getOrderUserByOrderId(order.getId());
+        if (ordrUser != null) updateOrderUser(ordrUser);
+
+    }
+
+    private void updateOrderUser(OrderUser ordrUser) {
+
+//        remainTotal = BH.sub(BH.getBD(order.getTotal()),
+//                BH.getBD(sumPaidamount), true);
+        BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), BH.getBD(order.getTotal()));
+
+        BigDecimal result;
+        User user = UserSQL.getUserById(ordrUser.getUserId());
+        BigDecimal budget = BH.getBD(user.getBudget());
+        result = BH.sub(budget, remainTotalAfterRound, true);
+
+        ordrUser.setTransactionAmount(BH.formatMoney(remainTotalAfterRound.toString()));
+        long time = System.currentTimeMillis();
+        ordrUser.setUpdateTime(time);
+        OrderUserSQL.update(ordrUser);
+
+        user.setBudget(BH.formatMoney(result.toString()));
+        user.setUpdateTime(time);
+        UserSQL.addUser(user);
     }
 
     private void alipayClickEnterAction(String tradeNo, String buyerEmail, BigDecimal paidAmount) {

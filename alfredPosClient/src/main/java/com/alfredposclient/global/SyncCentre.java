@@ -146,6 +146,8 @@ public class SyncCentre {
 
         getRemainingStock(context, handler, MODE_FIRST_SYNC);
 
+        HttpAPI.getItemPrice(context,getAbsoluteUrl(APIName.ITEM_PRICE), httpClient, handler, MODE_FIRST_SYNC);
+
     }
 
     //修改单个菜数量
@@ -178,6 +180,7 @@ public class SyncCentre {
                              Handler handler) {
         HttpAPI.getItem(context, getAbsoluteUrl(APIName.ITEM_GETITEM),
                 httpClient, handler, MODE_FIRST_SYNC);
+        HttpAPI.getItemPrice(context,getAbsoluteUrl(APIName.ITEM_PRICE), httpClient, handler, MODE_FIRST_SYNC);
 //		HttpAPI.getPlaceInfo(context, parameters,
 //				getAbsoluteUrl(APIName.RESTAURANT_GETPLACEINFO), httpClient,
 //				handler, MODE_FIRST_SYNC);
@@ -336,6 +339,7 @@ public class SyncCentre {
                     httpClient, handler, MODE_PUSH_SYNC);
             HttpAPI.getItemCategory(context,
                     getAbsoluteUrl(APIName.ITEM_GETITEMCATEGORY), httpClient, null, MODE_PUSH_SYNC);
+            HttpAPI.getItemPrice(context,getAbsoluteUrl(APIName.ITEM_PRICE), httpClient, handler, MODE_PUSH_SYNC);
         } else if (type.equals(PushMessage.MODIFIER)) {
             HttpAPI.getModifier(context,
                     getAbsoluteUrl(APIName.ITEM_GETMODIFIER), httpClient, handler, MODE_PUSH_SYNC);
@@ -448,7 +452,7 @@ public class SyncCentre {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
 //            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
-            return "http://18.138.252.241/alfred-api/" + relativeUrl;
+            return "http://18.140.71.198/alfred-api/" + relativeUrl;
         } else if (BaseApplication.isOpenLog) {
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
@@ -760,7 +764,7 @@ public class SyncCentre {
                 url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
                 if (BaseApplication.isZeeposDev) {
-                    url = "http://18.140.71.198/alfred-api/" + APIName.REQUEST_ALIPAY;
+                    url = "http://18.140.71.198:180/alfred-api/" + APIName.REQUEST_ALIPAY;
                 } else {
                     url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
                 }

@@ -20,8 +20,8 @@ public class ReportDayTaxSQL {
         try {
             String sql = "replace into "
                     + TableNames.ReportDayTax
-                    + "(id, daySalesId, restaurantId, restaurantName, revenueId, revenueName, businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount,taxType)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "(id, daySalesId, restaurantId, restaurantName, revenueId, revenueName, businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount,taxType, salesTypeId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLExe.getDB().execSQL(
                     sql,
                     new Object[]{reportDayTax.getId(),
@@ -36,7 +36,8 @@ public class ReportDayTaxSQL {
                             reportDayTax.getTaxPercentage() == null ? "0.00" : reportDayTax.getTaxPercentage(),
                             reportDayTax.getTaxQty() == null ? 0 : reportDayTax.getTaxQty(),
                             reportDayTax.getTaxAmount() == null ? "0.00" : reportDayTax.getTaxAmount(),
-                            reportDayTax.getTaxType()
+                            reportDayTax.getTaxType(),
+                            reportDayTax.getSalesTypeId()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,8 +50,8 @@ public class ReportDayTaxSQL {
         try {
             String sql = "replace into "
                     + TableNames.ReportDayTax
-                    + "(id, daySalesId, restaurantId, restaurantName, revenueId, revenueName, businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount,taxType)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + "(id, daySalesId, restaurantId, restaurantName, revenueId, revenueName, businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount,taxType, salesTypeId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             db.execSQL(
                     sql,
                     new Object[]{reportDayTax.getId(),
@@ -65,7 +66,8 @@ public class ReportDayTaxSQL {
                             reportDayTax.getTaxPercentage() == null ? "0.00" : reportDayTax.getTaxPercentage(),
                             reportDayTax.getTaxQty() == null ? 0 : reportDayTax.getTaxQty(),
                             reportDayTax.getTaxAmount() == null ? "0.00" : reportDayTax.getTaxAmount(),
-                            reportDayTax.getTaxType()
+                            reportDayTax.getTaxType(),
+                            reportDayTax.getSalesTypeId()
                     });
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,8 +85,8 @@ public class ReportDayTaxSQL {
             String sql = "replace into "
                     + TableNames.ReportDayTax
                     + "(daySalesId, restaurantId, restaurantName, revenueId, revenueName,"
-                    + " businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount,taxType)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount,taxType, salesTypeId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(sql);
             for (ReportDayTax reportDayTax : reportDayTaxList) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportDayTax.getDaySalesId());
@@ -99,6 +101,7 @@ public class ReportDayTaxSQL {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 10, reportDayTax.getTaxQty());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 11, reportDayTax.getTaxAmount());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 12, reportDayTax.getTaxType());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 13, reportDayTax.getSalesTypeId());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -119,8 +122,8 @@ public class ReportDayTaxSQL {
             String sql = "replace into "
                     + TableNames.ReportDayTax
                     + "(daySalesId, restaurantId, restaurantName, revenueId, revenueName,"
-                    + " businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount,taxType)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?)";
+                    + " businessDate, taxId, taxName, taxPercentage, taxQty, taxAmount,taxType, salesTypeId)"
+                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
             SQLiteStatement sqLiteStatement = db.compileStatement(sql);
             for (ReportDayTax reportDayTax : reportDayTaxList) {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportDayTax.getDaySalesId());
@@ -135,6 +138,7 @@ public class ReportDayTaxSQL {
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 10, reportDayTax.getTaxQty());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 11, reportDayTax.getTaxAmount());
                 SQLiteStatementHelper.bindLong(sqLiteStatement, 12, reportDayTax.getTaxType());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 13, reportDayTax.getSalesTypeId());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -168,6 +172,7 @@ public class ReportDayTaxSQL {
                 reportDayTax.setTaxQty(cursor.getInt(10));
                 reportDayTax.setTaxAmount(cursor.getString(11));
                 reportDayTax.setTaxType(cursor.getInt(12));
+                reportDayTax.setSalesTypeId(cursor.getString(13));
                 return reportDayTax;
             }
         } catch (Exception e) {
@@ -209,6 +214,7 @@ public class ReportDayTaxSQL {
                 reportDayTax.setTaxQty(cursor.getInt(10));
                 reportDayTax.setTaxAmount(cursor.getString(11));
                 reportDayTax.setTaxType(cursor.getInt(12));
+                reportDayTax.setSalesTypeId(cursor.getString(13));
                 result.add(reportDayTax);
             }
         } catch (Exception e) {
@@ -250,6 +256,7 @@ public class ReportDayTaxSQL {
                 reportDayTax.setTaxQty(cursor.getInt(10));
                 reportDayTax.setTaxAmount(cursor.getString(11));
                 reportDayTax.setTaxType(cursor.getInt(12));
+                reportDayTax.setSalesTypeId(cursor.getString(13));
                 result.add(reportDayTax);
             }
         } catch (Exception e) {
@@ -294,6 +301,7 @@ public class ReportDayTaxSQL {
                 reportDayTax.setTaxQty(cursor.getInt(10));
                 reportDayTax.setTaxAmount(cursor.getString(11));
                 reportDayTax.setTaxType(cursor.getInt(12));
+                reportDayTax.setSalesTypeId(cursor.getString(13));
                 reportDayTaxs.add(reportDayTax);
             }
         } catch (Exception e) {
@@ -338,6 +346,7 @@ public class ReportDayTaxSQL {
                 reportDayTax.setTaxQty(cursor.getInt(8));
                 reportDayTax.setTaxAmount(BH.getBD(cursor.getString(9)).toString());
                 reportDayTax.setTaxType(cursor.getInt(10));
+                reportDayTax.setSalesTypeId(cursor.getString(13));
                 reportDayTaxs.add(reportDayTax);
             }
         } catch (Exception e) {

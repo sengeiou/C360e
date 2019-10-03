@@ -424,6 +424,10 @@ public class MainPageOrderView extends LinearLayout {
                 .getName();
         if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.takeaway) + ")";
+        } else if (order.getIsTakeAway() == ParamConst.APP_DELIVERY) {
+            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.delivery) + ")";
+        } else if (order.getIsTakeAway() == ParamConst.EMPLOYEE) {
+            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.employee) + ")";
         }
 
         if (order.getTableId() < 0) {
