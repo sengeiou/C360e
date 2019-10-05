@@ -3891,37 +3891,45 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
             tableInfo.setIsLocked(0);
             TableInfoSQL.updateTables(tableInfo);
-            if (App.getTopActivity() != null) {
 
-                App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
+            //todo transfer add KOT on KDS
+            KotSummary fromKotSummary;
+            if (!TextUtils.isEmpty(kotSummary)) {
+                fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
 
-            }
-            List<KotSummary> kotSummaries = gson.fromJson(kotSummary,
-                    new TypeToken<List<KotSummary>>() {
-                    }.getType());
+                final KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
 
-            if (kotSummaries!=null){
+                if (kotSummaryLocal != null) {
+                    kotSummaryLocal.setTableName(tableInfo.getName());
 
-                for (KotSummary fromKotSummary : kotSummaries) {
-                    fromKotSummary.setTableName(tableInfo.getName());
-                    Map<String, Object> parameters = new HashMap<String, Object>();
+                    final Map<String, Object> parameters = new HashMap<>();
+
                     parameters.put("fromOrder", last);
                     parameters.put("fromTableName", tableInfo.getName());
                     parameters.put("toTableName", last.getTableName());
                     parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
 
-                    App.instance
-                            .getKdsJobManager()
-                            .transferTableDownKot(
-                                    ParamConst.JOB_TRANSFER_KOT,
-                                    null, fromKotSummary,
-                                    parameters);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
 
-
+                            App.instance
+                                    .getKdsJobManager()
+                                    .transferTableDownKot(
+                                            ParamConst.JOB_TRANSFER_KOT,
+                                            null, kotSummaryLocal,
+                                            parameters);
+                        }
+                    }).start();
                 }
             }
 
-            //todo transfer add KOT on KDS
+            if (App.getTopActivity() != null) {
+
+                App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
+
+            }
+
         } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
             Order order = new Gson().fromJson(orderData, Order.class);
             order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
