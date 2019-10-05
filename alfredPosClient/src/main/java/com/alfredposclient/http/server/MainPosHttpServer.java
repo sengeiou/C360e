@@ -3891,12 +3891,35 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
             tableInfo.setIsLocked(0);
             TableInfoSQL.updateTables(tableInfo);
-            if (App.getTopActivity() != null){
+            if (App.getTopActivity() != null) {
 
                 App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
 
             }
+            List<KotSummary> kotSummaries = gson.fromJson(kotSummary,
+                    new TypeToken<List<KotSummary>>() {
+                    }.getType());
 
+            if (kotSummaries!=null){
+
+                for (KotSummary fromKotSummary : kotSummaries) {
+                    fromKotSummary.setTableName(tableInfo.getName());
+                    Map<String, Object> parameters = new HashMap<String, Object>();
+                    parameters.put("fromOrder", last);
+                    parameters.put("fromTableName", tableInfo.getName());
+                    parameters.put("toTableName", last.getTableName());
+                    parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
+
+                    App.instance
+                            .getKdsJobManager()
+                            .transferTableDownKot(
+                                    ParamConst.JOB_TRANSFER_KOT,
+                                    null, fromKotSummary,
+                                    parameters);
+
+
+                }
+            }
 
             //todo transfer add KOT on KDS
         } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
@@ -4268,6 +4291,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 List<KotSummary> kots = new ArrayList<>();
                 kots.add(kot);
                 KotSummarySQL.addKotSummaryList(kots);
+
+
             }
         }
 
@@ -4307,6 +4332,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
 
