@@ -3858,9 +3858,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
         String orderModifier = jsonObject.optString("orderModifier");
         String orderSplit = jsonObject.optString("orderSplit");
 
+        String oldTableName = "";
 
         if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
             Order order = new Gson().fromJson(orderData, Order.class);
+            oldTableName = order.getTableName();
             order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
 //            order.setTableId(targetTableId);
             order.setBusinessDate(App.instance.getBusinessDate());
@@ -3877,7 +3879,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order.setOrderNo(OrderHelper.calculateOrderNo(App.instance.getBusinessDate()));//流水号
             order.setUserId(App.instance.getUser().getId());
             OrderSQL.addOrder(order);
-            Order last = OrderSQL.getLastOrderatTabel(targetTableId);
+            Order newOrder = OrderSQL.getLastOrderatTabel(targetTableId);
 
             TableInfoSQL.updateTables(tableInfo);
 
@@ -3887,7 +3889,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 App.getTopActivity().httpRequestAction(
                         MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
 
-            addOrderDetailFromOtherRVC(last, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
+            addOrderDetailFromOtherRVC(newOrder, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
 
             tableInfo.setIsLocked(0);
             TableInfoSQL.updateTables(tableInfo);
@@ -3904,9 +3906,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                     final Map<String, Object> parameters = new HashMap<>();
 
-                    parameters.put("fromOrder", last);
-                    parameters.put("fromTableName", tableInfo.getName());
-                    parameters.put("toTableName", last.getTableName());
+                    parameters.put("fromOrder", newOrder);
+                    parameters.put("fromTableName", oldTableName);
+                    parameters.put("toTableName", newOrder.getTableName());
                     parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
 
                     new Thread(new Runnable() {

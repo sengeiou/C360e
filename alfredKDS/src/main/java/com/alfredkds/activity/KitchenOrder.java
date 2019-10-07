@@ -303,11 +303,13 @@ public class KitchenOrder extends BaseActivity {
                         adapter.notifyDataSetChanged();
                     }
 
-                    if (kots.isEmpty()) {
-                        itemPopupWindow.dismiss();
-                    }
-                    if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
-                        itemPopupWindow.dismiss();
+                    if (itemPopupWindow != null) {
+                        if (kots.isEmpty()) {
+                            itemPopupWindow.dismiss();
+                        }
+                        if (itemPopupWindow != null && itemPopupWindow.isShowing()) {
+                            itemPopupWindow.dismiss();
+                        }
                     }
                     break;
                 case App.HANDLER_KOT_COMPLETE_USER_FAILED:

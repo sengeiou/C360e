@@ -684,6 +684,63 @@ public class KotItemDetailSQL {
         return result;
     }
 
+    public static ArrayList<KotItemDetail> getKotItemDetailByKotSummaryUniqueId(String kotSummaryUniqueId) {
+        ArrayList<KotItemDetail> result = new ArrayList<KotItemDetail>();
+        String sql = "select * from " + TableNames.KotItemDetail
+                + " where kotSummaryUniqueId = ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{kotSummaryUniqueId});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            KotItemDetail kotItemDetail = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                kotItemDetail = new KotItemDetail();
+                kotItemDetail.setId(cursor.getInt(0));
+                kotItemDetail.setUniqueId(cursor.getString(1));
+                kotItemDetail.setRestaurantId(cursor.getInt(2));
+                kotItemDetail.setRevenueId(cursor.getInt(3));
+                kotItemDetail.setOrderId(cursor.getInt(4));
+                kotItemDetail.setOrderDetailId(cursor.getInt(5));
+                kotItemDetail.setPrinterGroupId(cursor.getInt(6));
+                kotItemDetail.setKotSummaryId(cursor.getInt(7));
+                kotItemDetail.setItemName(cursor.getString(8));
+                kotItemDetail.setItemNum(cursor.getInt(9));
+                kotItemDetail.setFinishQty(cursor.getInt(10));
+                kotItemDetail.setSessionStatus(cursor.getInt(11));
+                kotItemDetail.setKotStatus(cursor.getInt(12));
+                kotItemDetail.setSpecialInstractions(cursor.getString(13));
+                kotItemDetail.setVersion(cursor.getInt(14));
+                kotItemDetail.setCreateTime(cursor.getLong(15));
+                kotItemDetail.setUpdateTime(cursor.getLong(16));
+                kotItemDetail.setUnFinishQty(cursor.getInt(17));
+                kotItemDetail.setCategoryId(cursor.getInt(18));
+                kotItemDetail.setIsTakeAway(cursor.getInt(19));
+                kotItemDetail.setFireStatus(cursor.getInt(20));
+                kotItemDetail.setCallType(cursor.getInt(21));
+                kotItemDetail.setExpectedTime(cursor.getLong(22));
+                kotItemDetail.setStartTime(cursor.getLong(23));
+                kotItemDetail.setEndTime(cursor.getLong(24));
+                kotItemDetail.setItemType(cursor.getInt(25));
+                kotItemDetail.setItemId(cursor.getInt(26));
+                kotItemDetail.setKotSummaryUniqueId(cursor.getString(27));
+                result.add(kotItemDetail);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
     public static ArrayList<KotItemDetail> getKotItemDetailByKotSummaryIdUndone(KotSummary kotSummary) {
         ArrayList<KotItemDetail> result = new ArrayList<KotItemDetail>();
         String sql = "select * from " + TableNames.KotItemDetail

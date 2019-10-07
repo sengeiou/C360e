@@ -17,6 +17,7 @@ import com.alfredbase.javabean.KDSHistory;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.model.KDSDevice;
@@ -97,8 +98,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 } else if (uri.equals(APIName.REFRESH_KOT)) {
                     App.instance.ringUtil.playRingOnce();
                     resp = handlerRefreshKot();
-                }
-                else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
+                } else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
                     resp = handlerTmpKot(body);
                 } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
                     App.instance.ringUtil.playRingOnce();
@@ -122,8 +122,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                     }
 
                     return getJsonResponse(new Gson().toJson(map));
-                }
-                else {
+                } else {
                     resp = getNotFoundResponse();
                 }
             }
@@ -895,6 +894,15 @@ public class KdsHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             Gson gson = new Gson();
             String action = jsonObject.optString("action");
+            Order order = null;
+            if (jsonObject.has("order")) {
+                String orderStr = jsonObject.optString("order");
+
+                if (!TextUtils.isEmpty(orderStr)) {
+                    order = gson.fromJson(orderStr, Order.class);
+                }
+            }
+
             KotSummary toKotSummary = null;
             KotSummary fromKotSummary = null;
             if (!TextUtils.isEmpty(action)) {
@@ -904,6 +912,20 @@ public class KdsHttpServer extends AlfredHttpServer {
                 fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
                 if (fromKotSummary != null) {
                     KotSummarySQL.update(fromKotSummary);
+
+                    List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getKotItemDetailByKotSummaryUniqueId(fromKotSummary.getUniqueId());
+
+                    for (KotItemDetail kotItemDetail : kotItemDetailList) {
+                        kotItemDetail.setOrderId(fromKotSummary.getOrderId());
+                        kotItemDetail.setRevenueId(fromKotSummary.getRevenueCenterId());
+
+                        if (order != null) {
+                            kotItemDetail.setRestaurantId(order.getRestId());
+                        }
+                    }
+
+                    KotItemDetailSQL.addKotItemDetailList(kotItemDetailList);
+
                 } else {
                     resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.transfer_table_failed));
                 }

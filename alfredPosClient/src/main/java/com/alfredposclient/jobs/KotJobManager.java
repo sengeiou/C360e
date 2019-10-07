@@ -1304,7 +1304,7 @@ public class KotJobManager {
 
                     //region check the item is exists in the current kds
                     for (KotItemDetail kid : kdsTracking.kotItemDetails) {
-                        if (kid.getId().equals(kotItemDetail.getId())) {
+                        if (kid.getId().equals(kotItemDetail.getId()) || kid.getUniqueId().equals(kotItemDetail.getUniqueId())) {
 
                             kdsDevice = kdsTracking.kdsDevice;//found kds position of item
 
@@ -1347,7 +1347,7 @@ public class KotJobManager {
 
                     //region check the item is exists in the current kds
                     for (KotItemDetail kid : kdsTracking.kotItemDetails) {
-                        if (kid.getId().equals(kotItemDetail.getId())) {
+                        if (kid.getId().equals(kotItemDetail.getId()) || kid.getUniqueId().equals(kotItemDetail.getUniqueId())) {
 
                             kdsDevice = kdsTracking.kdsDevice;//found kds position of item
 
