@@ -354,6 +354,7 @@ public class MainPage extends BaseActivity {
                     if (loadingDialog != null && loadingDialog.isShowing())
                         loadingDialog.dismiss();
 
+                    if (currentTable == null) return;
                     if (currentTable.getPosId() < 0) {
                         closeTables();
                         setDataWaitingList();
@@ -758,6 +759,7 @@ public class MainPage extends BaseActivity {
                     }
                     break;
                 case VIEW_EVENT_SET_DATA:
+                    if (currentTable == null) return;
                     if (currentTable.getPosId() < 0) {
                         setDataWaitingList();
                     } else {

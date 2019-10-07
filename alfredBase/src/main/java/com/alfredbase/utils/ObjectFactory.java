@@ -2191,7 +2191,6 @@ public class ObjectFactory {
                 kotSummary.setUniqueId(CommonSQL.getUniqueId());
                 kotSummary.setOrderId(order.getId());
                 kotSummary.setOrderNo(order.getOrderNo());//流水号
-
                 kotSummary.setRevenueCenterId(revenueCenter.getId());
                 kotSummary.setRevenueCenterName(revenueCenter.getRevName());
                 kotSummary.setCreateTime(time);

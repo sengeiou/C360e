@@ -2,6 +2,7 @@ package com.alfredposclient.jobs;
 
 import android.content.Context;
 import android.text.TextUtils;
+
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -1738,7 +1739,7 @@ public class KotJobManager {
                 //region check the item is exists in the current kds
                 boolean isPrinterFound = false;
                 for (KotItemDetail kid : kdsTracking.kotItemDetails) {
-                    if (kid.getId().equals(kotItemDetail.getId())) {
+                    if (kid.getUniqueId().equals(kotItemDetail.getUniqueId())) {
 
                         kdsDevice = kdsTracking.kdsDevice;//found kds position of item
 
@@ -1784,7 +1785,7 @@ public class KotJobManager {
 
                 //region check the item is exists in the current kds
                 for (KotItemDetail kid : kdsTracking.kotItemDetails) {
-                    if (kid.getId().equals(kotItemDetail.getId())) {
+                    if (kid.getUniqueId().equals(kotItemDetail.getUniqueId())) {
 
                         kdsDevice = kdsTracking.kdsDevice;//found kds position of item
 
@@ -1887,13 +1888,15 @@ public class KotJobManager {
         Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<Integer, ArrayList<KotItemModifier>>();
         List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
         kotItemModifiers.addAll(KotItemModifierSQL
-                .getKotItemModifiersByKotItemDetail(kotItemDetail
-                        .getId()));
+                .getKotItemModifiersByKotItemDetail(kotItemDetail));
         List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
         if (kotItemDetails == null || kotItemDetails.size() == 0) {
             KotSummarySQL.deleteKotSummary(fromKotSummary);
         }
-        context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
+
+        if (context != null)
+            context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
+
         printKotSummary = toKotSummary;
         boolean printed = false;
         if (App.instance.getSystemSettings().isTransferPrint()) {
@@ -1945,7 +1948,8 @@ public class KotJobManager {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
                         String tableTransferFrom = context.getResources().getString(R.string.table_transfer_from);
-                        printKotSummary.setDescription(String.format(tableTransferFrom + "", fromTableName));                        printed = App.instance.remoteKotPrint(prntd, printKotSummary,
+                        printKotSummary.setDescription(String.format(tableTransferFrom + "", fromTableName));
+                        printed = App.instance.remoteKotPrint(prntd, printKotSummary,
                                 kots.get(prgid), mods.get(prgid), false);
 
                     } else {

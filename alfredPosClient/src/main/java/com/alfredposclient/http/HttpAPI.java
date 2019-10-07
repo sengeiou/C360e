@@ -1233,8 +1233,7 @@ public class HttpAPI {
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
-                            try
-                            {
+                            try {
                                 if (mode == SyncCentre.MODE_PUSH_SYNC) {
                                     handler.sendMessage(handler.obtainMessage(
                                             ResultCode.CONNECTION_FAILED, error));
@@ -1248,9 +1247,7 @@ public class HttpAPI {
                                 initBugseeModifier();
 //                                throw new RuntimeException(error);
 
-                            }
-                            catch(Exception e)
-                            {
+                            } catch (Exception e) {
                                 Log.e("Server Refuse", String.valueOf(e));
                             }
                         }
@@ -3168,25 +3165,28 @@ public class HttpAPI {
         parameters.put("tableId", tableId); //selected tableId
         parameters.put("pack", pack); //selected tableId
 
-        KotItemDetail kotItemDetail = null;
         ArrayList<KotItemModifier> kotModifiers = new ArrayList<>();
         ArrayList<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(transfItemOrderDetail.getId());
         parameters.put("orderModifier", new Gson().toJson(orderModifiers));
 
-            OrderBill orderbill = OrderBillSQL.getOrderBillByOnlyOrder(oldOrder.getId());
-                parameters.put("orderBill", new Gson().toJson(orderbill));
+        OrderBill orderbill = OrderBillSQL.getOrderBillByOnlyOrder(oldOrder.getId());
+        parameters.put("orderBill", new Gson().toJson(orderbill));
 
-            KotSummary kot = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
-                parameters.put("kotSummary", new Gson().toJson(kot));
+        KotSummary kot = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
 
-            kotItemDetail = KotItemDetailSQL.getKotItemDetailById(oldOrder.getId());
-            parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+        if (kot != null) {
+            parameters.put("kotSummary", new Gson().toJson(kot));
 
-        if (kotItemDetail !=  null){
-            kotModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+            KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(kot.getId(), transfItemOrderDetail.getId());
+            if (kotItemDetail != null)
+                parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+
+            if (kotItemDetail != null) {
+                kotModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+            }
         }
-        parameters.put("kotModifier", new Gson().toJson(kotModifiers));
 
+        parameters.put("kotModifier", new Gson().toJson(kotModifiers));
 
 
         Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));
