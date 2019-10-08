@@ -903,13 +903,15 @@ public class KdsHttpServer extends AlfredHttpServer {
                 }
             }
 
-            KotSummary toKotSummary = null;
-            KotSummary fromKotSummary = null;
             if (!TextUtils.isEmpty(action)) {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.transfer_table_failed));
             }
+
+            KotSummary toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
+            KotSummary fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
+
             if (action.equals(ParamConst.JOB_TRANSFER_KOT)) {
-                fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
+
                 if (fromKotSummary != null) {
                     KotSummarySQL.update(fromKotSummary);
 
@@ -918,6 +920,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                     for (KotItemDetail kotItemDetail : kotItemDetailList) {
                         kotItemDetail.setOrderId(fromKotSummary.getOrderId());
                         kotItemDetail.setRevenueId(fromKotSummary.getRevenueCenterId());
+                        kotItemDetail.setKotSummaryUniqueId(fromKotSummary.getUniqueId());
 
                         if (order != null) {
                             kotItemDetail.setRestaurantId(order.getRestId());
@@ -936,15 +939,17 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = getJsonResponse(new Gson().toJson(result));
             }
             if (action.equals(ParamConst.JOB_MERGER_KOT)) {
-                toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
-                fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
-                List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(fromKotSummary.getId(), fromKotSummary.getRevenueCenterId());
+//                toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
+//                fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
+//                List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(fromKotSummary.getId(), fromKotSummary.getRevenueCenterId());
+                List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryUniqueId(fromKotSummary.getUniqueId());
                 KotSummarySQL.update(toKotSummary);
                 if (fromKotSummary != null) {
                     for (int i = 0; i < kotItemDetails.size(); i++) {
                         KotItemDetail kotItemDetail = kotItemDetails.get(i);
                         kotItemDetail.setKotSummaryId(toKotSummary.getId());
                         kotItemDetail.setOrderId(toKotSummary.getOrderId());
+                        kotItemDetail.setKotSummaryUniqueId(toKotSummary.getUniqueId());
                         KotItemDetailSQL.update(kotItemDetail);
                     }
                     KotSummarySQL.deleteKotSummary(fromKotSummary);

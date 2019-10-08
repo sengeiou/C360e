@@ -1404,7 +1404,7 @@ public class KotJobManager {
         }
 
         boolean ret = transferTableItemToPrinter(fromKotSummary,
-                toKotSummary, orderMap);
+                toKotSummary, orderMap, isFromOtherRvc);
 
         if (!ret) {
             if (App.getTopActivity() != null)

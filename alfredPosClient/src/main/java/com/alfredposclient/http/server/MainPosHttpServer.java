@@ -3909,10 +3909,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
             KotSummary fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
 
             if (fromKotSummary != null) {
-                final KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
+//                final KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
+                 KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
 
-                if (kotSummaryLocal != null) {
-                    kotSummaryLocal.setTableName(tableInfo.getName());
+                if (kotSummaryTarget == null) {
+                    kotSummaryTarget = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
+                }
+
+                if (kotSummaryTarget != null) {
+                    kotSummaryTarget.setTableName(tableInfo.getName());
 
                     final Map<String, Object> parameters = new HashMap<>();
 
@@ -3921,6 +3926,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     parameters.put("toTableName", order.getTableName());
                     parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
 
+                    final KotSummary kotSummaryFinal = kotSummaryTarget;
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -3929,7 +3935,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                     .getKdsJobManager()
                                     .transferTableDownKot(
                                             ParamConst.JOB_TRANSFER_KOT,
-                                            null, kotSummaryLocal,
+                                            null, kotSummaryFinal,
                                             parameters, true);
                         }
                     }).start();
@@ -4060,7 +4066,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
         OrderDetail transfItemOrderDetail = new Gson().fromJson(oldOrderDetailDataStr, OrderDetail.class);
         OrderBill orderBill = new Gson().fromJson(orderbillStr, OrderBill.class);
 
-        KotSummary toKotSummary = null;
         KotSummary fromKotSummary = null;
         KotItemDetail kotItemDetails = null;
 
@@ -4071,7 +4076,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
         if (jsonObject.has("kotSummary")) {
             kotSummaryStr = jsonObject.optString("kotSummary");
             fromKotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
-            toKotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
         }
 
         if (jsonObject.has("kotItemDetail")) {
@@ -4176,43 +4180,46 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
 
-            if (fromKotSummary != null) {
+            KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(orderTarget.getId(), orderTarget.getNumTag());
+            if (kotSummaryTarget == null) {
                 int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
                 String uniqueId = CommonSQL.getUniqueId();
-                toKotSummary.setId(newId);
-                toKotSummary.setUniqueId(uniqueId);
-                toKotSummary.setOriginalUniqueId(uniqueId);
-                toKotSummary.setRevenueCenterId(rvc.getId());
-                toKotSummary.setRevenueCenterIndex(rvc.getIndexId());
-                toKotSummary.setRevenueCenterName(rvc.getRevName());
-                toKotSummary.setTableId(tableInfo.getPosId());
-                toKotSummary.setTableName(tableInfo.getName());
-                toKotSummary.setOrderId(orderTarget.getId());
-                toKotSummary.setOrderNo(orderTarget.getOrderNo());
-                toKotSummary.setBusinessDate(App.instance.getBusinessDate());
-                toKotSummary.setNumTag(orderTarget.getNumTag());
-                toKotSummary.setCreateTime(time);
-                toKotSummary.setUpdateTime(time);
+                kotSummaryTarget = new KotSummary();
+                kotSummaryTarget.setId(newId);
+                kotSummaryTarget.setUniqueId(uniqueId);
+                kotSummaryTarget.setOriginalUniqueId(uniqueId);
+                kotSummaryTarget.setRevenueCenterId(rvc.getId());
+                kotSummaryTarget.setRevenueCenterIndex(rvc.getIndexId());
+                kotSummaryTarget.setRevenueCenterName(rvc.getRevName());
+                kotSummaryTarget.setTableId(tableInfo.getPosId());
+                kotSummaryTarget.setTableName(tableInfo.getName());
+                kotSummaryTarget.setOrderId(orderTarget.getId());
+                kotSummaryTarget.setOrderNo(orderTarget.getOrderNo());
+                kotSummaryTarget.setBusinessDate(App.instance.getBusinessDate());
+                kotSummaryTarget.setNumTag(orderTarget.getNumTag());
+                kotSummaryTarget.setCreateTime(time);
+                kotSummaryTarget.setUpdateTime(time);
 
-                KotSummarySQL.update(toKotSummary);
+                KotSummarySQL.update(kotSummaryTarget);
 
-                if (kotItemDetails != null) {
-                    kotItemDetails.setId(CommonSQL.getKotNextSeq(TableNames.KotItemDetail));
-                    kotItemDetails.setOrderId(orderTarget.getId());
-                    kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                    kotItemDetails.setCreateTime(time);
-                    kotItemDetails.setUpdateTime(time);
-                    kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
-                    kotItemDetails.setKotSummaryId(toKotSummary.getId());
-                    kotItemDetails.setKotSummaryUniqueId(toKotSummary.getUniqueId());
-                    kotItemDetails.setOrderId(toKotSummary.getOrderId());
-                    KotItemDetailSQL.update(kotItemDetails);
+            }
 
-                    for (KotItemModifier data : kotModfiers) {
-                        data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
-                        data.setKotItemDetailId(kotItemDetails.getId());
-                        KotItemModifierSQL.update(data);
-                    }
+            if (kotItemDetails != null) {
+                kotItemDetails.setId(CommonSQL.getKotNextSeq(TableNames.KotItemDetail));
+                kotItemDetails.setOrderId(orderTarget.getId());
+                kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                kotItemDetails.setCreateTime(time);
+                kotItemDetails.setUpdateTime(time);
+                kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
+                kotItemDetails.setKotSummaryId(kotSummaryTarget.getId());
+                kotItemDetails.setKotSummaryUniqueId(kotSummaryTarget.getUniqueId());
+                kotItemDetails.setOrderId(kotSummaryTarget.getOrderId());
+                KotItemDetailSQL.update(kotItemDetails);
+
+                for (KotItemModifier data : kotModfiers) {
+                    data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
+                    data.setKotItemDetailId(kotItemDetails.getId());
+                    KotItemModifierSQL.update(data);
                 }
             }
 
@@ -4229,7 +4236,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             parameters.put("currentTableId", tableInfo.getPosId());
 
             if (fromKotSummary != null) {
-                final KotSummary toKotSummaryFinal = toKotSummary;
+                final KotSummary toKotSummaryFinal = kotSummaryTarget;
                 final KotSummary fromKotSummaryFinal = fromKotSummary;
                 final KotItemDetail kotItemDetailFinal = kotItemDetails;
 
@@ -4383,29 +4390,35 @@ public class MainPosHttpServer extends AlfredHttpServer {
             e.printStackTrace();
         }
 
+        KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(last.getId(), last.getNumTag());
         Map<Integer, Integer> mapKotSummary = new HashMap<>();
-        if (!TextUtils.isEmpty(kotSummary)) {
-            KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
-            if (kot != null) {
-                int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
-                mapKotSummary.put(kot.getId(), newId);
-                kot.setId(newId);
-                kot.setRevenueCenterId(rvc.getId());
-                kot.setRevenueCenterIndex(rvc.getIndexId());
-                kot.setRevenueCenterName(rvc.getRevName());
-                kot.setTableId(last.getTableId());
-                kot.setTableName(last.getTableName());
-                kot.setOrderId(last.getId());
-                kot.setOrderNo(last.getOrderNo());
-                kot.setBusinessDate(App.instance.getBusinessDate());
-                kot.setNumTag(last.getNumTag());
-                kot.setCreateTime(time);
-                kot.setUpdateTime(time);
-                List<KotSummary> kots = new ArrayList<>();
-                kots.add(kot);
-                KotSummarySQL.addKotSummaryList(kots);
 
+        if (kotSummaryTarget == null) {
+            if (!TextUtils.isEmpty(kotSummary)) {
+                KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
+                if (kot != null) {
+                    int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
+                    String uniqueId = CommonSQL.getUniqueId();
+                    mapKotSummary.put(kot.getId(), newId);
+                    kot.setId(newId);
+                    kot.setUniqueId(uniqueId);
+                    kot.setOriginalUniqueId(uniqueId);
+                    kot.setRevenueCenterId(rvc.getId());
+                    kot.setRevenueCenterIndex(rvc.getIndexId());
+                    kot.setRevenueCenterName(rvc.getRevName());
+                    kot.setTableId(last.getTableId());
+                    kot.setTableName(last.getTableName());
+                    kot.setOrderId(last.getId());
+                    kot.setOrderNo(last.getOrderNo());
+                    kot.setBusinessDate(App.instance.getBusinessDate());
+                    kot.setNumTag(last.getNumTag());
+                    kot.setCreateTime(time);
+                    kot.setUpdateTime(time);
+                    List<KotSummary> kots = new ArrayList<>();
+                    kots.add(kot);
+                    KotSummarySQL.addKotSummaryList(kots);
 
+                }
             }
         }
 
