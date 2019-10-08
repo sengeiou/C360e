@@ -1276,6 +1276,11 @@ public class KotJobManager {
     /* convert KOT to kot jobs */
     public void transferTableDownKot(String action, KotSummary toKotSummary,
                                      KotSummary fromKotSummary, Map<String, Object> orderMap) {
+        transferTableDownKot(action, toKotSummary, fromKotSummary, orderMap, false);
+    }
+
+    public void transferTableDownKot(String action, KotSummary toKotSummary,
+                                     KotSummary fromKotSummary, Map<String, Object> orderMap, boolean isFromOtherRvc) {
 
         ArrayList<Printer> printers = new ArrayList<>();
         ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
@@ -1411,6 +1416,11 @@ public class KotJobManager {
     /* transfer table`s item to printer */
     private boolean transferTableItemToPrinter(KotSummary fromKotSummary,
                                                KotSummary toKotSummary, Map<String, Object> orderMap) {
+        return transferTableItemToPrinter(fromKotSummary, toKotSummary, orderMap, false);
+    }
+
+    private boolean transferTableItemToPrinter(KotSummary fromKotSummary,
+                                               KotSummary toKotSummary, Map<String, Object> orderMap, boolean isFromOtherRvc) {
         BaseActivity context = App.getTopActivity();
         ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
         KotSummary printKotSummary = null;
@@ -1478,7 +1488,8 @@ public class KotJobManager {
 //			OrderBillSQL.deleteOrderBillByOrder(oldOrder);
 //			OrderBillSQL.add(newOrderBill);
 //			OrderSQL.deleteOrder(oldOrder);
-            context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
+            if (context != null && !isFromOtherRvc)
+                context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
             printKotSummary = toKotSummary;
         } else if (ParamConst.JOB_TRANSFER_KOT.equals(transferAction)) {
             KotSummarySQL.update(fromKotSummary);
@@ -1491,8 +1502,10 @@ public class KotJobManager {
                         .getKotItemModifiersByKotItemDetail(kotItemDetail
                                 .getId()));
             }
-            context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE,
-                    order);
+
+            if (context != null && !isFromOtherRvc)
+                context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE,
+                        order);
             printKotSummary = KotSummarySQL.getKotSummary(fromKotSummary.getOrderId(), fromKotSummary.getNumTag());
         }
         boolean printed = false;
