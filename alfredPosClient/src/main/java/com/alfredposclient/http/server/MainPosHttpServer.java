@@ -3867,8 +3867,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
         String oldTableName = order.getTableName();
         Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
 
-        tableInfo.setIsLocked(1);
-
 //        if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
         //region transfer to new table
         if (orderTarget == null) {
@@ -3890,6 +3888,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
 //        Order newOrder = OrderSQL.getLastOrderatTabel(targetTableId);
 
+        tableInfo.setIsLocked(1);
         TableInfoSQL.updateTables(tableInfo);
         MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
 
