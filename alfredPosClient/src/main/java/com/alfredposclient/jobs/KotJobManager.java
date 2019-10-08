@@ -1568,6 +1568,11 @@ public class KotJobManager {
     /* convert KOT to kot jobs */
     public void transferItemDownKot(KotSummary toKotSummary,
                                     KotSummary fromKotSummary, Map<String, Object> orderMap, KotItemDetail kotItemDetail) {
+        transferItemDownKot(toKotSummary, fromKotSummary, orderMap, kotItemDetail, false);
+    }
+
+    public void transferItemDownKot(KotSummary toKotSummary,
+                                    KotSummary fromKotSummary, Map<String, Object> orderMap, KotItemDetail kotItemDetail, boolean isFromOtherRvc) {
 
         if (toKotSummary == null || fromKotSummary == null) return;
 
@@ -1843,7 +1848,7 @@ public class KotJobManager {
         }
 
         boolean ret = transferItemToPrinter(fromKotSummary,
-                toKotSummary, orderMap, kotItemDetail);
+                toKotSummary, orderMap, kotItemDetail, isFromOtherRvc);
         if (!ret) {
             if (App.getTopActivity() != null)
                 App.getTopActivity().kotPrintStatus(
@@ -1879,6 +1884,11 @@ public class KotJobManager {
     /* transfer item to printer */
     private boolean transferItemToPrinter(KotSummary fromKotSummary,
                                           KotSummary toKotSummary, Map<String, Object> orderMap, KotItemDetail kotItemDetail) {
+        return transferItemToPrinter(fromKotSummary, toKotSummary, orderMap, kotItemDetail, false);
+    }
+
+    private boolean transferItemToPrinter(KotSummary fromKotSummary,
+                                          KotSummary toKotSummary, Map<String, Object> orderMap, KotItemDetail kotItemDetail, boolean isFromOtherRvc) {
         BaseActivity context = App.getTopActivity();
         ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
         KotSummary printKotSummary = null;
@@ -1894,7 +1904,7 @@ public class KotJobManager {
             KotSummarySQL.deleteKotSummary(fromKotSummary);
         }
 
-        if (context != null)
+        if (context != null && !isFromOtherRvc)
             context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
 
         printKotSummary = toKotSummary;

@@ -354,7 +354,6 @@ public class MainPage extends BaseActivity {
                     if (loadingDialog != null && loadingDialog.isShowing())
                         loadingDialog.dismiss();
 
-                    if (currentTable == null) return;
                     if (currentTable.getPosId() < 0) {
                         closeTables();
                         setDataWaitingList();
@@ -759,7 +758,6 @@ public class MainPage extends BaseActivity {
                     }
                     break;
                 case VIEW_EVENT_SET_DATA:
-                    if (currentTable == null) return;
                     if (currentTable.getPosId() < 0) {
                         setDataWaitingList();
                     } else {
@@ -2711,6 +2709,7 @@ public class MainPage extends BaseActivity {
                 handler.sendEmptyMessage(action);
                 break;
             case SERVER_TRANSFER_TABLE_FROM_OTHER_RVC:
+                currentTable = (TableInfo) obj;
                 handler.sendEmptyMessage(REFRESH_TABLES_STATUS);
                 break;
             default:

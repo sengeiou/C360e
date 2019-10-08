@@ -3889,12 +3889,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
             if (App.getTopActivity() != null)
                 App.getTopActivity().httpRequestAction(
-                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
+                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
             addOrderDetailFromOtherRVC(newOrder, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
 
             tableInfo.setIsLocked(0);
             TableInfoSQL.updateTables(tableInfo);
+
+            if (App.getTopActivity() != null)
+                App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
             //todo transfer add KOT on KDS
             KotSummary fromKotSummary;
@@ -3926,12 +3929,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         }
                     }).start();
                 }
-            }
-
-            if (App.getTopActivity() != null) {
-
-                App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
-
             }
 
         } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
@@ -3998,6 +3995,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
     }
 
+    /**
+     * Transfer item from other rvc
+     *
+     * @param jsonObject
+     * @return
+     */
     private Response handlerTransferItemFromOtherRvc(JSONObject jsonObject) {
 
         Map<String, Object> result = new HashMap<String, Object>();
@@ -4043,7 +4046,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
 
-        Order orderTarget = OrderSQL.getOrderByTableId(targetTableId);
+//        Order orderTarget = OrderSQL.getOrderByTableId(targetTableId);
+        Order orderTarget = null;
 
         TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
 
@@ -4066,8 +4070,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         ParamConst.ORDER_STATUS_OPEN_IN_POS,
                         App.instance.getLocalRestaurantConfig()
                                 .getIncludedTax().getTax(), "");
+
+                OrderSQL.addOrder(orderTarget);
+
+                orderTarget = OrderSQL.getOrderByTableId(tableInfo.getPosId());
             }
 
+            int oldOrderDetailId = transfItemOrderDetail.getId();
             int newIdOrderDetail = CommonSQL.getNextSeq(TableNames.OrderDetail);
 
             transfItemOrderDetail.setGroupId(0);
@@ -4081,17 +4090,18 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (currentRevItemDetail != null) {
                 transfItemOrderDetail.setItemId(currentRevItemDetail.getId());
             }
-            transfItemOrderDetail.setTransferFromDetailId(newIdOrderDetail);
+
+            transfItemOrderDetail.setTransferFromDetailId(oldOrderDetailId);
             transfItemOrderDetail.setOrderId(orderTarget.getId());
             transfItemOrderDetail.setOrderOriginId(orderTarget.getId());
             transfItemOrderDetail.setCreateTime(time);
             transfItemOrderDetail.setUpdateTime(time);
             transfItemOrderDetail.setUserId(orderTarget.getUserId());
-
+            OrderDetailSQL.updateOrderDetail(transfItemOrderDetail);
 
             if (orderModifiers != null) {
                 for (OrderModifier data : orderModifiers) {
-                    data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+//                    data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
                     data.setOrderDetailId(newIdOrderDetail);
                     data.setOrderId(orderTarget.getId());
                     data.setCreateTime(time);
@@ -4108,7 +4118,26 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
 
-            OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
+//            OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
+
+            if (orderBill != null) {
+                try {
+                    orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
+                    orderBill.setOrderSplitId(transfItemOrderDetail.getOrderSplitId());
+                    orderBill.setRestaurantId(restaurant.getId());
+                    orderBill.setOrderId(orderTarget.getId());
+                    orderBill.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    orderBill.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(rvc.getId()));
+                    orderBill.setOrderId(orderTarget.getId());
+                    orderBill.setRevenueId(rvc.getId());
+                    orderBill.setUserId(orderTarget.getUserId());
+                    orderBill.setCreateTime(time);
+                    orderBill.setUpdateTime(time);
+                    OrderBillSQL.add(orderBill);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
             if (fromKotSummary != null) {
                 int newId = CommonSQL.getNextSeq(TableNames.KotSummary);
@@ -4119,8 +4148,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 toKotSummary.setRevenueCenterId(rvc.getId());
                 toKotSummary.setRevenueCenterIndex(rvc.getIndexId());
                 toKotSummary.setRevenueCenterName(rvc.getRevName());
-                toKotSummary.setTableId(orderTarget.getTableId());
-                toKotSummary.setTableName(orderTarget.getTableName());
+                toKotSummary.setTableId(tableInfo.getPosId());
+                toKotSummary.setTableName(tableInfo.getName());
                 toKotSummary.setOrderId(orderTarget.getId());
                 toKotSummary.setOrderNo(orderTarget.getOrderNo());
                 toKotSummary.setBusinessDate(App.instance.getBusinessDate());
@@ -4150,6 +4179,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
 
+            if (App.getTopActivity() != null)
+                App.getTopActivity().httpRequestAction(
+                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
+
             String fromTableName = fromKotSummary != null ? fromKotSummary.getTableName() : "";
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put("action", ParamConst.JOB_MERGER_KOT);
@@ -4169,7 +4202,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         App.instance.getKdsJobManager()
                                 .transferItemDownKot(
                                         toKotSummaryFinal,
-                                        fromKotSummaryFinal, parameters, kotItemDetailFinal);
+                                        fromKotSummaryFinal, parameters, kotItemDetailFinal, true);
 
                     }
                 }).start();
@@ -4184,19 +4217,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
             result.put("orderModifier", orderModifierStr);
             result.put("orderTarget", new Gson().toJson(orderTarget));
             result.put("tableTarget", new Gson().toJson(tableInfo));
-            if (orderBill != null) {
 
-                OrderBillSQL.add(orderBill);
-            }
         } catch (Exception e) {
             result.put("resultCode", ResultCode.UNKNOW_ERROR);
             e.printStackTrace();
         }
 
-
-        if (App.getTopActivity() != null)
-            App.getTopActivity().httpRequestAction(
-                    MainPage.REFRESH_TABLES_STATUS, jsonObject);
 
         return getJsonResponse(new Gson().toJson(result));
 
