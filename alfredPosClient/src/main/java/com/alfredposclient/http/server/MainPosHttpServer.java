@@ -2997,7 +2997,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
             List<KotItemDetail> kotItemDetailsCopy = new ArrayList<>();
             for (KotItemDetail kotItemDetail : kotItemDetails) {
-                KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+//                KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
                 if (kidLocal == null) continue;
 
                 kidLocal.setEndTime(System.currentTimeMillis());
@@ -3899,35 +3900,35 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (App.getTopActivity() != null)
                 App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
-            //todo transfer add KOT on KDS
-            KotSummary fromKotSummary;
             if (!TextUtils.isEmpty(kotSummary)) {
-                fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
+                KotSummary fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
 
-                final KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
+                if (fromKotSummary != null) {
+                    final KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
 
-                if (kotSummaryLocal != null) {
-                    kotSummaryLocal.setTableName(tableInfo.getName());
+                    if (kotSummaryLocal != null) {
+                        kotSummaryLocal.setTableName(tableInfo.getName());
 
-                    final Map<String, Object> parameters = new HashMap<>();
+                        final Map<String, Object> parameters = new HashMap<>();
 
-                    parameters.put("fromOrder", newOrder);
-                    parameters.put("fromTableName", oldTableName);
-                    parameters.put("toTableName", newOrder.getTableName());
-                    parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
+                        parameters.put("fromOrder", newOrder);
+                        parameters.put("fromTableName", oldTableName);
+                        parameters.put("toTableName", newOrder.getTableName());
+                        parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
 
-                            App.instance
-                                    .getKdsJobManager()
-                                    .transferTableDownKot(
-                                            ParamConst.JOB_TRANSFER_KOT,
-                                            null, kotSummaryLocal,
-                                            parameters);
-                        }
-                    }).start();
+                                App.instance
+                                        .getKdsJobManager()
+                                        .transferTableDownKot(
+                                                ParamConst.JOB_TRANSFER_KOT,
+                                                null, kotSummaryLocal,
+                                                parameters);
+                            }
+                        }).start();
+                    }
                 }
             }
 
@@ -4140,7 +4141,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             }
 
             if (fromKotSummary != null) {
-                int newId = CommonSQL.getNextSeq(TableNames.KotSummary);
+                int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
                 String uniqueId = CommonSQL.getUniqueId();
                 toKotSummary.setId(newId);
                 toKotSummary.setUniqueId(uniqueId);
@@ -4160,7 +4161,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 KotSummarySQL.update(toKotSummary);
 
                 if (kotItemDetails != null) {
-                    kotItemDetails.setId(CommonSQL.getNextSeq(TableNames.KotItemDetail));
+                    kotItemDetails.setId(CommonSQL.getKotNextSeq(TableNames.KotItemDetail));
                     kotItemDetails.setOrderId(orderTarget.getId());
                     kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
                     kotItemDetails.setCreateTime(time);
@@ -4172,7 +4173,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     KotItemDetailSQL.update(kotItemDetails);
 
                     for (KotItemModifier data : kotModfiers) {
-                        data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
+                        data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
                         data.setKotItemDetailId(kotItemDetails.getId());
                         KotItemModifierSQL.update(data);
                     }
@@ -4350,7 +4351,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         if (!TextUtils.isEmpty(kotSummary)) {
             KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
             if (kot != null) {
-                int newId = CommonSQL.getNextSeq(TableNames.KotSummary);
+                int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
                 mapKotSummary.put(kot.getId(), newId);
                 kot.setId(newId);
                 kot.setRevenueCenterId(rvc.getId());
@@ -4379,7 +4380,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<List<KotItemDetail>>() {
                     }.getType());
             for (KotItemDetail data : kotItemDetails) {
-                int newId = CommonSQL.getNextSeq(TableNames.KotItemDetail);
+                int newId = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
                 mapKotItemDetail.put(data.getId(), newId);
                 data.setId(newId);
                 data.setOrderId(last.getId());
@@ -4401,7 +4402,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<List<KotItemModifier>>() {
                     }.getType());
             for (KotItemModifier data : kotItemModifiers) {
-                data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
+                data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
                 data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
                 KotItemModifierSQL.update(data);
             }
