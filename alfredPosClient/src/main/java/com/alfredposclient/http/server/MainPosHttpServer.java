@@ -3909,8 +3909,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             KotSummary fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
 
             if (fromKotSummary != null) {
-//                final KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
-                 KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
+                KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
 
                 if (kotSummaryTarget == null) {
                     kotSummaryTarget = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
@@ -4180,62 +4179,62 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
 
-            KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(orderTarget.getId(), orderTarget.getNumTag());
-            if (kotSummaryTarget == null) {
-                int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
-                String uniqueId = CommonSQL.getUniqueId();
-                kotSummaryTarget = new KotSummary();
-                kotSummaryTarget.setId(newId);
-                kotSummaryTarget.setUniqueId(uniqueId);
-                kotSummaryTarget.setOriginalUniqueId(uniqueId);
-                kotSummaryTarget.setRevenueCenterId(rvc.getId());
-                kotSummaryTarget.setRevenueCenterIndex(rvc.getIndexId());
-                kotSummaryTarget.setRevenueCenterName(rvc.getRevName());
-                kotSummaryTarget.setTableId(tableInfo.getPosId());
-                kotSummaryTarget.setTableName(tableInfo.getName());
-                kotSummaryTarget.setOrderId(orderTarget.getId());
-                kotSummaryTarget.setOrderNo(orderTarget.getOrderNo());
-                kotSummaryTarget.setBusinessDate(App.instance.getBusinessDate());
-                kotSummaryTarget.setNumTag(orderTarget.getNumTag());
-                kotSummaryTarget.setCreateTime(time);
-                kotSummaryTarget.setUpdateTime(time);
-
-                KotSummarySQL.update(kotSummaryTarget);
-
-            }
-
-            if (kotItemDetails != null) {
-                kotItemDetails.setId(CommonSQL.getKotNextSeq(TableNames.KotItemDetail));
-                kotItemDetails.setOrderId(orderTarget.getId());
-                kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                kotItemDetails.setCreateTime(time);
-                kotItemDetails.setUpdateTime(time);
-                kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
-                kotItemDetails.setKotSummaryId(kotSummaryTarget.getId());
-                kotItemDetails.setKotSummaryUniqueId(kotSummaryTarget.getUniqueId());
-                kotItemDetails.setOrderId(kotSummaryTarget.getOrderId());
-                KotItemDetailSQL.update(kotItemDetails);
-
-                for (KotItemModifier data : kotModfiers) {
-                    data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
-                    data.setKotItemDetailId(kotItemDetails.getId());
-                    KotItemModifierSQL.update(data);
-                }
-            }
-
             if (App.getTopActivity() != null)
                 App.getTopActivity().httpRequestAction(
                         MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
-            String fromTableName = fromKotSummary != null ? fromKotSummary.getTableName() : "";
-            final Map<String, Object> parameters = new HashMap<>();
-            parameters.put("action", ParamConst.JOB_MERGER_KOT);
-            parameters.put("fromOrder", orderTarget);
-            parameters.put("fromTableName", fromTableName);
-            parameters.put("toTableName", tableInfo.getName());
-            parameters.put("currentTableId", tableInfo.getPosId());
-
             if (fromKotSummary != null) {
+                KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(orderTarget.getId(), orderTarget.getNumTag());
+                if (kotSummaryTarget == null) {
+                    int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
+                    String uniqueId = CommonSQL.getUniqueId();
+                    kotSummaryTarget = new KotSummary();
+                    kotSummaryTarget.setId(newId);
+                    kotSummaryTarget.setUniqueId(uniqueId);
+                    kotSummaryTarget.setOriginalUniqueId(uniqueId);
+                    kotSummaryTarget.setRevenueCenterId(rvc.getId());
+                    kotSummaryTarget.setRevenueCenterIndex(rvc.getIndexId());
+                    kotSummaryTarget.setRevenueCenterName(rvc.getRevName());
+                    kotSummaryTarget.setTableId(tableInfo.getPosId());
+                    kotSummaryTarget.setTableName(tableInfo.getName());
+                    kotSummaryTarget.setOrderId(orderTarget.getId());
+                    kotSummaryTarget.setOrderNo(orderTarget.getOrderNo());
+                    kotSummaryTarget.setBusinessDate(App.instance.getBusinessDate());
+                    kotSummaryTarget.setNumTag(orderTarget.getNumTag());
+                    kotSummaryTarget.setCreateTime(time);
+                    kotSummaryTarget.setUpdateTime(time);
+
+                    KotSummarySQL.update(kotSummaryTarget);
+
+                }
+
+                if (kotItemDetails != null) {
+                    kotItemDetails.setId(CommonSQL.getKotNextSeq(TableNames.KotItemDetail));
+                    kotItemDetails.setOrderId(orderTarget.getId());
+                    kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    kotItemDetails.setCreateTime(time);
+                    kotItemDetails.setUpdateTime(time);
+                    kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
+                    kotItemDetails.setKotSummaryId(kotSummaryTarget.getId());
+                    kotItemDetails.setKotSummaryUniqueId(kotSummaryTarget.getUniqueId());
+                    kotItemDetails.setOrderId(kotSummaryTarget.getOrderId());
+                    KotItemDetailSQL.update(kotItemDetails);
+
+                    for (KotItemModifier data : kotModfiers) {
+                        data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
+                        data.setKotItemDetailId(kotItemDetails.getId());
+                        KotItemModifierSQL.update(data);
+                    }
+                }
+
+                String fromTableName = fromKotSummary != null ? fromKotSummary.getTableName() : "";
+                final Map<String, Object> parameters = new HashMap<>();
+                parameters.put("action", ParamConst.JOB_MERGER_KOT);
+                parameters.put("fromOrder", orderTarget);
+                parameters.put("fromTableName", fromTableName);
+                parameters.put("toTableName", tableInfo.getName());
+                parameters.put("currentTableId", tableInfo.getPosId());
+
                 final KotSummary toKotSummaryFinal = kotSummaryTarget;
                 final KotSummary fromKotSummaryFinal = fromKotSummary;
                 final KotItemDetail kotItemDetailFinal = kotItemDetails;
@@ -4390,11 +4389,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
             e.printStackTrace();
         }
 
-        KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(last.getId(), last.getNumTag());
         Map<Integer, Integer> mapKotSummary = new HashMap<>();
+        if (!TextUtils.isEmpty(kotSummary)) {
 
-        if (kotSummaryTarget == null) {
-            if (!TextUtils.isEmpty(kotSummary)) {
+            KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(last.getId(), last.getNumTag());
+
+            if (kotSummaryTarget == null) {
                 KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
                 if (kot != null) {
                     int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
@@ -4425,35 +4425,39 @@ public class MainPosHttpServer extends AlfredHttpServer {
         //String kotItemDetail
         Map<Integer, Integer> mapKotItemDetail = new HashMap<>();
         try {
-            List<KotItemDetail> kotItemDetails = gson.fromJson(kotItemDetail,
-                    new TypeToken<List<KotItemDetail>>() {
-                    }.getType());
-            for (KotItemDetail data : kotItemDetails) {
-                int newId = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
-                mapKotItemDetail.put(data.getId(), newId);
-                data.setId(newId);
-                data.setOrderId(last.getId());
-                data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
-                data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
-                data.setRestaurantId(last.getRestId());
-                data.setCreateTime(time);
-                data.setUpdateTime(time);
+            if (!TextUtils.isEmpty(kotItemDetail)) {
+                List<KotItemDetail> kotItemDetails = gson.fromJson(kotItemDetail,
+                        new TypeToken<List<KotItemDetail>>() {
+                        }.getType());
+                for (KotItemDetail data : kotItemDetails) {
+                    int newId = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
+                    mapKotItemDetail.put(data.getId(), newId);
+                    data.setId(newId);
+                    data.setOrderId(last.getId());
+                    data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
+                    data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
+                    data.setRestaurantId(last.getRestId());
+                    data.setCreateTime(time);
+                    data.setUpdateTime(time);
 
-                KotItemDetailSQL.update(data);
+                    KotItemDetailSQL.update(data);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            List<KotItemModifier> kotItemModifiers = gson.fromJson(kotItemModifier,
-                    new TypeToken<List<KotItemModifier>>() {
-                    }.getType());
-            for (KotItemModifier data : kotItemModifiers) {
-                data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
-                data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
-                KotItemModifierSQL.update(data);
+            if (!TextUtils.isEmpty(kotItemModifier)) {
+                List<KotItemModifier> kotItemModifiers = gson.fromJson(kotItemModifier,
+                        new TypeToken<List<KotItemModifier>>() {
+                        }.getType());
+                for (KotItemModifier data : kotItemModifiers) {
+                    data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
+                    data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
+                    KotItemModifierSQL.update(data);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
