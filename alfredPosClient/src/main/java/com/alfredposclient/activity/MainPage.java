@@ -1169,8 +1169,11 @@ public class MainPage extends BaseActivity {
                                                 currentTable.getName());
                                         parameters.put("currentTableId",
                                                 currentTable.getPosId());
+
                                         kotItemDetail.setKotSummaryId(toKotSummary.getId().intValue());
                                         kotItemDetail.setOrderId(toKotSummary.getOrderId().intValue());
+                                        kotItemDetail.setKotSummaryUniqueId(toKotSummary.getUniqueId());
+
                                         KotItemDetailSQL.update(kotItemDetail);
                                         int surplusCount = OrderDetailSQL.getNoVoidCountByOrderId(oldOrder.getId());
                                         if (surplusCount == 0) {

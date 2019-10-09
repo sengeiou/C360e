@@ -541,15 +541,14 @@ public class KotJobManager {
 
     private Map<Integer, ArrayList<KotItemModifier>> getComboModifiers(KotItemDetail kotItemDetail, ArrayList<KotItemModifier> modifiers,
                                                                        Map<Integer, ArrayList<KotItemModifier>> modCombo) {
-
-        int kotItemDetailId = kotItemDetail.getId();
+        String kotItemDetailUniqueId = kotItemDetail.getUniqueId();
 
         for (KotItemModifier kotItemModifier : modifiers) {
             int printerGroupId = kotItemModifier.getPrinterId();
 
             if (printerGroupId <= 0) continue;
 
-            if (kotItemModifier.getKotItemDetailId() == kotItemDetailId) {
+            if (kotItemModifier.getKotItemDetailUniqueId().equals(kotItemDetailUniqueId)) {
                 if (modCombo.containsKey(printerGroupId)) {
                     ArrayList<KotItemModifier> tmp = modCombo.get(printerGroupId);
                     tmp.add(kotItemModifier);
@@ -1293,8 +1292,16 @@ public class KotJobManager {
             //region find all printer position
             if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {
                 //region Package item
-                ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.
-                        getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                ArrayList<KotItemModifier> kotItemModifiers;
+
+                if (isFromOtherRvc) {
+                    kotItemModifiers = KotItemModifierSQL.
+                            getKotItemModifiersByKotItemDetail(kotItemDetail);
+                } else {
+                    kotItemModifiers = KotItemModifierSQL.
+                            getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+                }
+
                 Map<Integer, ArrayList<KotItemModifier>> modCombo = getComboModifiers(kotItemDetail, kotItemModifiers,
                         new HashMap<Integer, ArrayList<KotItemModifier>>());
 
@@ -1737,8 +1744,16 @@ public class KotJobManager {
         //region find all printer position
         if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {
             //region Package item
-            ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.
-                    getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+            ArrayList<KotItemModifier> kotItemModifiers;
+
+            if (isFromOtherRvc) {
+                kotItemModifiers = KotItemModifierSQL.
+                        getKotItemModifiersByKotItemDetail(kotItemDetail);
+            } else {
+                kotItemModifiers = KotItemModifierSQL.
+                        getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+            }
+
             Map<Integer, ArrayList<KotItemModifier>> modCombo = getComboModifiers(kotItemDetail, kotItemModifiers,
                     new HashMap<Integer, ArrayList<KotItemModifier>>());
 
