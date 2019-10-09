@@ -927,6 +927,8 @@ public class KdsHttpServer extends AlfredHttpServer {
                         }
                     }
 
+                    KotItemDetailSQL.addKotItemDetailList(kotItemDetailList);
+
                 } else {
                     resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.transfer_table_failed));
                 }

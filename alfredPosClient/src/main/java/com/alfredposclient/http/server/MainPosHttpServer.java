@@ -3896,7 +3896,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
         addOrderDetailFromOtherRVC(order, orderDetail, kotSummary, orderbill, orderModifier,
-                orderSplit, kotItemDetail, kotItemModifier, true);
+                orderSplit, kotItemDetail, kotItemModifier, transferType, true);
 
         tableInfo.setIsLocked(0);
         TableInfoSQL.updateTables(tableInfo);
@@ -3945,7 +3945,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         //create tmp transfer kot
                         //used for transfer table to kds
                         addOrderDetailFromOtherRVC(oldOrder, orderDetail, kotSummary, orderbill, orderModifier,
-                                orderSplit, kotItemDetail, kotItemModifier, false);
+                                orderSplit, kotItemDetail, kotItemModifier, transferType,false);
 
                         final Map<String, Object> parameters = new HashMap<String, Object>();
                         parameters.put("fromOrder", oldOrder);
@@ -4169,7 +4169,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
             transfItemOrderDetail.setCreateTime(time);
             transfItemOrderDetail.setUpdateTime(time);
             transfItemOrderDetail.setUserId(orderTarget.getUserId());
-//            OrderDetailSQL.updateOrderDetail(transfItemOrderDetail);
             OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
 
             if (orderModifiers != null) {
@@ -4312,11 +4311,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
      * @param orderSplit
      * @param kotItemDetail
      * @param kotItemModifier
-     * @param isMerge         true = create new id for all, base on current rvc
+     * @param isCreateNew         true = create new id for all, base on current rvc
      */
     private void addOrderDetailFromOtherRVC(Order last, String orderDetail, String kotSummary,
                                             String orderbill, String orderModifier, String orderSplit,
-                                            String kotItemDetail, String kotItemModifier, boolean isMerge) {
+                                            String kotItemDetail, String kotItemModifier, int transferType, boolean isCreateNew) {
 
         RevenueCenter rvc = App.instance.getRevenueCenter();
         Restaurant resto = CoreData.getInstance().getRestaurant();
@@ -4328,7 +4327,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<List<OrderSplit>>() {
                     }.getType());
             for (OrderSplit data : orderSplits) {
-                if (isMerge) {
+                if (isCreateNew) {
                     int newId = CommonSQL.getNextSeq(TableNames.OrderSplit);
                     mapSplit.put(data.getId(), newId);
 
@@ -4360,7 +4359,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 int oldId = orderDetail1.getId();
                 int newId = CommonSQL.getNextSeq(TableNames.OrderDetail);
 
-                if (isMerge) {
+                if (isCreateNew) {
                     mapOrderDetail.put(orderDetail1.getId(), newId);
                     orderDetail1.setId(newId);
                     if (mapSplit.size() > 0) {
@@ -4387,7 +4386,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                 if (orderModifiers != null) {
                     for (OrderModifier data : orderModifiers) {
-                        if (isMerge) {
+                        if (isCreateNew) {
                             if (data.getOrderDetailId() == oldId) {
                                 data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
                                 data.setOrderId(last.getId());
@@ -4417,7 +4416,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<List<OrderBill>>() {
                     }.getType());
             for (OrderBill orderbill1 : orderbills) {
-                if (isMerge) {
+                if (isCreateNew) {
                     orderbill1.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
                     if (mapSplit.size() > 0) {
                         Integer value = mapSplit.get(orderbill1.getOrderSplitId());
@@ -4444,38 +4443,39 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
         Map<Integer, Integer> mapKotSummary = new HashMap<>();
+        Map<String, String> mapKotSummaryUniqueId = new HashMap<>();
         if (!TextUtils.isEmpty(kotSummary)) {
 
-            KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(last.getId(), last.getNumTag());
+            KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
+            if (kot != null) {
+                if (isCreateNew) {
+                    int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
+                    String uniqueId = CommonSQL.getUniqueId();
+                    mapKotSummary.put(kot.getId(), newId);
+                    mapKotSummaryUniqueId.put(kot.getUniqueId(), uniqueId);
+                    kot.setId(newId);
 
-            if (kotSummaryTarget == null) {
-                KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
-                if (kot != null) {
-                    if (isMerge) {
-                        int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
-                        String uniqueId = CommonSQL.getUniqueId();
-                        mapKotSummary.put(kot.getId(), newId);
-                        kot.setId(newId);
+                    if (transferType == MainPage.ACTION_MERGE_TABLE) {
                         kot.setUniqueId(uniqueId);
                         kot.setOriginalUniqueId(uniqueId);
-                        kot.setRevenueCenterId(rvc.getId());
-                        kot.setRevenueCenterIndex(rvc.getIndexId());
-                        kot.setRevenueCenterName(rvc.getRevName());
-                        kot.setTableId(last.getTableId());
-                        kot.setTableName(last.getTableName());
-                        kot.setOrderId(last.getId());
-                        kot.setOrderNo(last.getOrderNo());
-                        kot.setBusinessDate(App.instance.getBusinessDate());
-                        kot.setNumTag(last.getNumTag());
-                        kot.setCreateTime(time);
-                        kot.setUpdateTime(time);
                     }
 
-                    List<KotSummary> kots = new ArrayList<>();
-                    kots.add(kot);
-                    KotSummarySQL.addKotSummaryList(kots);
-
+                    kot.setRevenueCenterId(rvc.getId());
+                    kot.setRevenueCenterIndex(rvc.getIndexId());
+                    kot.setRevenueCenterName(rvc.getRevName());
+                    kot.setTableId(last.getTableId());
+                    kot.setTableName(last.getTableName());
+                    kot.setOrderId(last.getId());
+                    kot.setOrderNo(last.getOrderNo());
+                    kot.setBusinessDate(App.instance.getBusinessDate());
+                    kot.setNumTag(last.getNumTag());
+                    kot.setCreateTime(time);
+                    kot.setUpdateTime(time);
                 }
+
+                List<KotSummary> kots = new ArrayList<>();
+                kots.add(kot);
+                KotSummarySQL.addKotSummaryList(kots);
             }
         }
 
@@ -4487,10 +4487,15 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         new TypeToken<List<KotItemDetail>>() {
                         }.getType());
                 for (KotItemDetail data : kotItemDetails) {
-                    if (isMerge) {
+                    if (isCreateNew) {
                         int newId = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
                         mapKotItemDetail.put(data.getId(), newId);
                         data.setId(newId);
+
+                        if (transferType == MainPage.ACTION_MERGE_TABLE) {
+                            data.setKotSummaryUniqueId(mapKotSummaryUniqueId.get(data.getKotSummaryUniqueId()));
+                        }
+
                         data.setOrderId(last.getId());
                         data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
                         data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
@@ -4513,7 +4518,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         new TypeToken<List<KotItemModifier>>() {
                         }.getType());
                 for (KotItemModifier data : kotItemModifiers) {
-                    if (isMerge) {
+                    if (isCreateNew) {
                         data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
                         data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
                     }
