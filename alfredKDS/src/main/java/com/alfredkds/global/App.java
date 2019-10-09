@@ -347,8 +347,6 @@ public class App extends BaseApplication {
         kotSummaries = KotSummarySQL.getUndoneKotSummary();
         List<KotItemModifier> kotItemModifiers = new ArrayList<>();
 
-        List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getAllKotItemDetail();
-
         for (int i = 0; i < kotSummaries.size(); i++) {
 
             kot = new Kot();

@@ -3887,8 +3887,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order = orderTarget;
         }
 
-//        Order newOrder = OrderSQL.getLastOrderatTabel(targetTableId);
-
         tableInfo.setIsLocked(1);
         TableInfoSQL.updateTables(tableInfo);
         MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
@@ -3897,7 +3895,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             App.getTopActivity().httpRequestAction(
                     MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
-        addOrderDetailFromOtherRVC(order, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
+        addOrderDetailFromOtherRVC(order, orderDetail, kotSummary, orderbill, orderModifier,
+                orderSplit, kotItemDetail, kotItemModifier, true);
 
         tableInfo.setIsLocked(0);
         TableInfoSQL.updateTables(tableInfo);
@@ -3943,6 +3942,11 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                     } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
 
+                        //create tmp transfer kot
+                        //used for transfer table to kds
+                        addOrderDetailFromOtherRVC(oldOrder, orderDetail, kotSummary, orderbill, orderModifier,
+                                orderSplit, kotItemDetail, kotItemModifier, false);
+
                         final Map<String, Object> parameters = new HashMap<String, Object>();
                         parameters.put("fromOrder", oldOrder);
                         parameters.put("fromTableName", oldTableName);
@@ -3968,20 +3972,23 @@ public class MainPosHttpServer extends AlfredHttpServer {
         //endregion
 
 //        } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
-////            order.setTableId(-1);
-////            OrderSQL.addOrder(order);
-////            Order last = OrderSQL.getLastOrderatTabel(-1);
-//            Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, order.getBusinessDate(), App.instance.getSessionStatus());
+//            order.setTableId(-1);
+//            OrderSQL.addOrder(order);
+//            Order orderFrom = OrderSQL.getLastOrderatTabel(-1);
+//
+//            tableInfo.setIsLocked(1);
+//            TableInfoSQL.updateTables(tableInfo);
 //
 //            if (App.getTopActivity() != null)
 //                App.getTopActivity().httpRequestAction(
 //                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 //
-//            addOrderDetailFromOtherRVC(orderTarget, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
+//            //add fake order
+//            addOrderDetailFromOtherRVC(orderFrom, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
 //
 //            tableInfo.setIsLocked(0);
 //            TableInfoSQL.updateTables(tableInfo);
-//
+
 //            List<OrderDetail> orderDetails = new ArrayList<>();
 //
 //            List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(last.getId().intValue());
@@ -4296,7 +4303,20 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
     }
 
-    private void addOrderDetailFromOtherRVC(Order last, String orderDetail, String kotSummary, String orderbill, String orderModifier, String orderSplit, String kotItemDetail, String kotItemModifier) {
+    /**
+     * @param last
+     * @param orderDetail
+     * @param kotSummary
+     * @param orderbill
+     * @param orderModifier
+     * @param orderSplit
+     * @param kotItemDetail
+     * @param kotItemModifier
+     * @param isMerge         true = create new id for all, base on current rvc
+     */
+    private void addOrderDetailFromOtherRVC(Order last, String orderDetail, String kotSummary,
+                                            String orderbill, String orderModifier, String orderSplit,
+                                            String kotItemDetail, String kotItemModifier, boolean isMerge) {
 
         RevenueCenter rvc = App.instance.getRevenueCenter();
         Restaurant resto = CoreData.getInstance().getRestaurant();
@@ -4308,16 +4328,19 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<List<OrderSplit>>() {
                     }.getType());
             for (OrderSplit data : orderSplits) {
-                int newId = CommonSQL.getNextSeq(TableNames.OrderSplit);
-                mapSplit.put(data.getId(), newId);
+                if (isMerge) {
+                    int newId = CommonSQL.getNextSeq(TableNames.OrderSplit);
+                    mapSplit.put(data.getId(), newId);
 
-                data.setId(newId);
-                data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                data.setTableId(last.getTableId());
-                data.setOrderId(last.getId());
-                data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    data.setId(newId);
+                    data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    data.setTableId(last.getTableId());
+                    data.setOrderId(last.getId());
+                    data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                }
                 OrderSplitSQL.add(data);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -4336,47 +4359,52 @@ public class MainPosHttpServer extends AlfredHttpServer {
             for (OrderDetail orderDetail1 : orderDetails) {
                 int oldId = orderDetail1.getId();
                 int newId = CommonSQL.getNextSeq(TableNames.OrderDetail);
-                mapOrderDetail.put(orderDetail1.getId(), newId);
-                orderDetail1.setId(newId);
-                if (mapSplit.size() > 0) {
-                    Integer value = mapSplit.get(orderDetail1.getOrderSplitId());
-                    if (value != null) {
-                        orderDetail1.setOrderSplitId(value);
+
+                if (isMerge) {
+                    mapOrderDetail.put(orderDetail1.getId(), newId);
+                    orderDetail1.setId(newId);
+                    if (mapSplit.size() > 0) {
+                        Integer value = mapSplit.get(orderDetail1.getOrderSplitId());
+                        if (value != null) {
+                            orderDetail1.setOrderSplitId(value);
+                        }
                     }
+
+                    ItemDetail currentRevItemDetail = ItemDetailSQL.getItemDetailByName(rvc.getId(), orderDetail1.getItemName());
+
+                    if (currentRevItemDetail != null) {
+                        mapItemId.put(orderDetail1.getItemId(), currentRevItemDetail.getId());
+                        orderDetail1.setItemId(currentRevItemDetail.getId());
+                    }
+
+                    orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
+                    orderDetail1.setOrderId(last.getId());
+                    orderDetail1.setCreateTime(time);
+                    orderDetail1.setUpdateTime(time);
+                    orderDetail1.setUserId(last.getUserId());
                 }
-
-                ItemDetail currentRevItemDetail = ItemDetailSQL.getItemDetailByName(rvc.getId(), orderDetail1.getItemName());
-
-                if (currentRevItemDetail != null) {
-                    mapItemId.put(orderDetail1.getItemId(), currentRevItemDetail.getId());
-                    orderDetail1.setItemId(currentRevItemDetail.getId());
-                }
-
-                orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
-                orderDetail1.setOrderId(last.getId());
-                orderDetail1.setCreateTime(time);
-                orderDetail1.setUpdateTime(time);
-                orderDetail1.setUserId(last.getUserId());
                 OrderDetailSQL.addOrderDetailETC(orderDetail1);
 
                 if (orderModifiers != null) {
                     for (OrderModifier data : orderModifiers) {
-                        if (data.getOrderDetailId() == oldId) {
-                            data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
-                            data.setOrderId(last.getId());
-                            data.setOrderDetailId(newId);
-                            data.setCreateTime(time);
-                            data.setUpdateTime(time);
-                            data.setUserId(last.getUserId());
-                            data.setItemId(orderDetail1.getItemId());
+                        if (isMerge) {
+                            if (data.getOrderDetailId() == oldId) {
+                                data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+                                data.setOrderId(last.getId());
+                                data.setOrderDetailId(newId);
+                                data.setCreateTime(time);
+                                data.setUpdateTime(time);
+                                data.setUserId(last.getUserId());
+                                data.setItemId(orderDetail1.getItemId());
 
-                            ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
-                            if (item != null) {
-                                data.setPrinterId(item.getPrinterId());
-                                data.setItemId(item.getId());
+                                ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
+                                if (item != null) {
+                                    data.setPrinterId(item.getPrinterId());
+                                    data.setItemId(item.getId());
+                                }
                             }
-                            OrderModifierSQL.addOrderModifier(data);
                         }
+                        OrderModifierSQL.addOrderModifier(data);
                     }
                 }
             }
@@ -4389,24 +4417,26 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<List<OrderBill>>() {
                     }.getType());
             for (OrderBill orderbill1 : orderbills) {
-                orderbill1.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
-                if (mapSplit.size() > 0) {
-                    Integer value = mapSplit.get(orderbill1.getOrderSplitId());
-                    if (value != null) {
-                        orderbill1.setOrderSplitId(value);
+                if (isMerge) {
+                    orderbill1.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
+                    if (mapSplit.size() > 0) {
+                        Integer value = mapSplit.get(orderbill1.getOrderSplitId());
+                        if (value != null) {
+                            orderbill1.setOrderSplitId(value);
+                        }
                     }
+                    orderbill1.setRestaurantId(resto.getId());
+                    orderbill1.setOrderId(last.getId());
+                    orderbill1.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    orderbill1.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(rvc.getId()));
+                    orderbill1.setOrderId(last.getId());
+                    orderbill1.setRestaurantId(CoreData.getInstance().getRestaurant()
+                            .getId());
+                    orderbill1.setRevenueId(rvc.getId());
+                    orderbill1.setUserId(last.getUserId());
+                    orderbill1.setCreateTime(time);
+                    orderbill1.setUpdateTime(time);
                 }
-                orderbill1.setRestaurantId(resto.getId());
-                orderbill1.setOrderId(last.getId());
-                orderbill1.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                orderbill1.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(rvc.getId()));
-                orderbill1.setOrderId(last.getId());
-                orderbill1.setRestaurantId(CoreData.getInstance().getRestaurant()
-                        .getId());
-                orderbill1.setRevenueId(rvc.getId());
-                orderbill1.setUserId(last.getUserId());
-                orderbill1.setCreateTime(time);
-                orderbill1.setUpdateTime(time);
                 OrderBillSQL.add(orderbill1);
             }
         } catch (Exception e) {
@@ -4421,23 +4451,26 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (kotSummaryTarget == null) {
                 KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
                 if (kot != null) {
-                    int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
-                    String uniqueId = CommonSQL.getUniqueId();
-                    mapKotSummary.put(kot.getId(), newId);
-                    kot.setId(newId);
-                    kot.setUniqueId(uniqueId);
-                    kot.setOriginalUniqueId(uniqueId);
-                    kot.setRevenueCenterId(rvc.getId());
-                    kot.setRevenueCenterIndex(rvc.getIndexId());
-                    kot.setRevenueCenterName(rvc.getRevName());
-                    kot.setTableId(last.getTableId());
-                    kot.setTableName(last.getTableName());
-                    kot.setOrderId(last.getId());
-                    kot.setOrderNo(last.getOrderNo());
-                    kot.setBusinessDate(App.instance.getBusinessDate());
-                    kot.setNumTag(last.getNumTag());
-                    kot.setCreateTime(time);
-                    kot.setUpdateTime(time);
+                    if (isMerge) {
+                        int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
+                        String uniqueId = CommonSQL.getUniqueId();
+                        mapKotSummary.put(kot.getId(), newId);
+                        kot.setId(newId);
+                        kot.setUniqueId(uniqueId);
+                        kot.setOriginalUniqueId(uniqueId);
+                        kot.setRevenueCenterId(rvc.getId());
+                        kot.setRevenueCenterIndex(rvc.getIndexId());
+                        kot.setRevenueCenterName(rvc.getRevName());
+                        kot.setTableId(last.getTableId());
+                        kot.setTableName(last.getTableName());
+                        kot.setOrderId(last.getId());
+                        kot.setOrderNo(last.getOrderNo());
+                        kot.setBusinessDate(App.instance.getBusinessDate());
+                        kot.setNumTag(last.getNumTag());
+                        kot.setCreateTime(time);
+                        kot.setUpdateTime(time);
+                    }
+
                     List<KotSummary> kots = new ArrayList<>();
                     kots.add(kot);
                     KotSummarySQL.addKotSummaryList(kots);
@@ -4454,16 +4487,18 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         new TypeToken<List<KotItemDetail>>() {
                         }.getType());
                 for (KotItemDetail data : kotItemDetails) {
-                    int newId = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
-                    mapKotItemDetail.put(data.getId(), newId);
-                    data.setId(newId);
-                    data.setOrderId(last.getId());
-                    data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                    data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
-                    data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
-                    data.setRestaurantId(last.getRestId());
-                    data.setCreateTime(time);
-                    data.setUpdateTime(time);
+                    if (isMerge) {
+                        int newId = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
+                        mapKotItemDetail.put(data.getId(), newId);
+                        data.setId(newId);
+                        data.setOrderId(last.getId());
+                        data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                        data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
+                        data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
+                        data.setRestaurantId(last.getRestId());
+                        data.setCreateTime(time);
+                        data.setUpdateTime(time);
+                    }
 
                     KotItemDetailSQL.update(data);
                 }
@@ -4478,8 +4513,10 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         new TypeToken<List<KotItemModifier>>() {
                         }.getType());
                 for (KotItemModifier data : kotItemModifiers) {
-                    data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
-                    data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
+                    if (isMerge) {
+                        data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
+                        data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
+                    }
                     KotItemModifierSQL.update(data);
                 }
             }

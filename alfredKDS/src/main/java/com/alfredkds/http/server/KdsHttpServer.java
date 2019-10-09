@@ -927,8 +927,6 @@ public class KdsHttpServer extends AlfredHttpServer {
                         }
                     }
 
-                    KotItemDetailSQL.addKotItemDetailList(kotItemDetailList);
-
                 } else {
                     resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.transfer_table_failed));
                 }
@@ -949,9 +947,15 @@ public class KdsHttpServer extends AlfredHttpServer {
                         KotItemDetail kotItemDetail = kotItemDetails.get(i);
                         kotItemDetail.setKotSummaryId(toKotSummary.getId());
                         kotItemDetail.setOrderId(toKotSummary.getOrderId());
+                        kotItemDetail.setRevenueId(toKotSummary.getRevenueCenterId());
                         kotItemDetail.setKotSummaryUniqueId(toKotSummary.getUniqueId());
-                        KotItemDetailSQL.update(kotItemDetail);
+
+                        if (order != null) {
+                            kotItemDetail.setRestaurantId(order.getRestId());
+                        }
                     }
+
+                    KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
                     KotSummarySQL.deleteKotSummary(fromKotSummary);
                 }
 

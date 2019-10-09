@@ -1283,7 +1283,8 @@ public class KotJobManager {
                                      KotSummary fromKotSummary, Map<String, Object> orderMap, boolean isFromOtherRvc) {
 
         ArrayList<Printer> printers = new ArrayList<>();
-        ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
+//        ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryId(fromKotSummary.getId());
+        ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryUniqueId(fromKotSummary.getUniqueId());
         KotSummaryLog kotSummaryLogs = new Gson().fromJson(fromKotSummary.getKotSummaryLog(), KotSummaryLog.class);
 
         //region start loop for all kotItemDetails
