@@ -3863,6 +3863,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         long time = System.currentTimeMillis();
         Order order = new Gson().fromJson(orderData, Order.class);
+        Order oldOrder = new Gson().fromJson(orderData, Order.class);
         TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
         String oldTableName = order.getTableName();
         Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
@@ -3905,7 +3906,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
         if (!TextUtils.isEmpty(kotSummary)) {
-            KotSummary fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
+            final KotSummary fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
 
             if (fromKotSummary != null) {
                 KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
@@ -3917,26 +3918,50 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 if (kotSummaryTarget != null) {
                     kotSummaryTarget.setTableName(tableInfo.getName());
 
-                    final Map<String, Object> parameters = new HashMap<>();
+                    if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
 
-                    parameters.put("fromOrder", order);
-                    parameters.put("fromTableName", oldTableName);
-                    parameters.put("toTableName", order.getTableName());
-                    parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
+                        final Map<String, Object> parameters = new HashMap<>();
 
-                    final KotSummary kotSummaryFinal = kotSummaryTarget;
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
+                        parameters.put("fromOrder", order);
+                        parameters.put("fromTableName", oldTableName);
+                        parameters.put("toTableName", order.getTableName());
+                        parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
 
-                            App.instance
-                                    .getKdsJobManager()
-                                    .transferTableDownKot(
-                                            ParamConst.JOB_TRANSFER_KOT,
-                                            null, kotSummaryFinal,
-                                            parameters, true);
-                        }
-                    }).start();
+                        final KotSummary kotSummaryFinal = kotSummaryTarget;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                App.instance
+                                        .getKdsJobManager()
+                                        .transferTableDownKot(
+                                                ParamConst.JOB_TRANSFER_KOT,
+                                                null, kotSummaryFinal,
+                                                parameters, true);
+                            }
+                        }).start();
+
+                    } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
+
+                        final Map<String, Object> parameters = new HashMap<String, Object>();
+                        parameters.put("fromOrder", oldOrder);
+                        parameters.put("fromTableName", oldTableName);
+                        parameters.put("toTableName", order.getTableName());
+                        parameters.put("currentTableId", tableInfo.getPosId());
+                        parameters.put("action", ParamConst.JOB_MERGER_KOT);
+
+                        final KotSummary kotSummaryFinal = kotSummaryTarget;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                App.instance.getKdsJobManager()
+                                        .transferTableDownKot(
+                                                ParamConst.JOB_MERGER_KOT,
+                                                kotSummaryFinal,
+                                                fromKotSummary, parameters, true);
+                            }
+                        }).start();
+                    }
                 }
             }
         }
