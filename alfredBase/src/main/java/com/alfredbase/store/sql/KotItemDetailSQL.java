@@ -8,6 +8,7 @@ import android.util.Log;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
@@ -1747,6 +1748,16 @@ public class KotItemDetailSQL {
         String sql = "delete from " + TableNames.KotItemDetail + " where kotSummaryId = ? and revenueId = ?";
         try {
             SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getId(), kotSummary.getRevenueCenterId()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteAllKotItemDetailByOrder(Order order) {
+        String sql = "delete from " + TableNames.KotItemDetail
+                + " where orderId = ? and numTag = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{order.getId(), order.getNumTag()});
         } catch (Exception e) {
             e.printStackTrace();
         }
