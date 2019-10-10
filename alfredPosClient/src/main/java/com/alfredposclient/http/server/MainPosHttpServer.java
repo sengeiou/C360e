@@ -4138,6 +4138,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
 
+        boolean isMerge = false;
         Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
 
         TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
@@ -4152,6 +4153,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         try {
             if (orderTarget == null) {
+                isMerge = true;
                 orderTarget = ObjectFactory.getInstance().getOrder(
                         ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tableInfo,
                         App.instance.getRevenueCenter(), App.instance.getUser(),
@@ -4374,16 +4376,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
             List<OrderDetail> orderDetails = gson.fromJson(orderDetail,
                     new TypeToken<List<OrderDetail>>() {
                     }.getType());
-            List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
-                    new TypeToken<List<OrderModifier>>() {
-                    }.getType());
 
             for (OrderDetail orderDetail1 : orderDetails) {
                 int oldId = orderDetail1.getId();
                 int newId = CommonSQL.getNextSeq(TableNames.OrderDetail);
 
                 if (isCreateNew) {
-                    mapOrderDetail.put(orderDetail1.getId(), newId);
+                    mapOrderDetail.put(oldId, newId);
                     orderDetail1.setId(newId);
                     if (mapSplit.size() > 0) {
                         Integer value = mapSplit.get(orderDetail1.getOrderSplitId());
@@ -4411,32 +4410,34 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
 
                 OrderDetailSQL.addOrderDetailETC(orderDetail1);
+            }
 
-                if (orderModifiers != null) {
-                    for (OrderModifier data : orderModifiers) {
-                        if (isCreateNew) {
-                            if (data.getOrderDetailId() == oldId) {
-                                data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
-                                data.setOrderId(order.getId());
-                                data.setOrderDetailId(newId);
-                                data.setCreateTime(time);
-                                data.setUpdateTime(time);
-                                data.setUserId(order.getUserId());
-                                data.setItemId(orderDetail1.getItemId());
+            List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
+                    new TypeToken<List<OrderModifier>>() {
+                    }.getType());
 
-                                ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
-                                if (item != null) {
-                                    data.setPrinterId(item.getPrinterId());
-                                    data.setItemId(item.getId());
-                                }
-                            }
-                        } else {
-                            //fake id to delete temporary data
-                            //on merge table
-                            data.setOrderId(-1);
+            if (orderModifiers != null) {
+                for (OrderModifier data : orderModifiers) {
+                    if (isCreateNew) {
+                        data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+                        data.setOrderId(order.getId());
+                        data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
+                        data.setCreateTime(time);
+                        data.setUpdateTime(time);
+                        data.setUserId(order.getUserId());
+                        data.setItemId(mapItemId.get(data.getItemId()));
+
+                        ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
+                        if (item != null) {
+                            data.setPrinterId(item.getPrinterId());
+                            data.setItemId(item.getId());
                         }
-                        OrderModifierSQL.addOrderModifier(data);
+                    } else {
+                        //fake id to delete temporary data
+                        //on merge table
+                        data.setOrderId(-1);
                     }
+                    OrderModifierSQL.addOrderModifier(data);
                 }
             }
         } catch (Exception e) {
