@@ -218,8 +218,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         places.clear();
         places = PlaceInfoSQL.getAllPlaceInfo();
 
-        try
-        {
+        try {
             String tableShowAction = ((MainPage) mainPage).tableShowAction;
             if (!TextUtils.isEmpty(tableShowAction)) {
                 if (tableShowAction.equals(MainPage.TRANSFER_TABLE) || tableShowAction.equals(MainPage.TRANSFER_ITEM)) {
@@ -228,9 +227,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e("Error", String.valueOf(e));
         }
 
@@ -292,11 +289,14 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 
         }
 
-        String placeName = "";
-        if (places.size() > selectPlaceIndex){
-
+        String placeName;
+        if (places.size() > selectPlaceIndex) {
+            placeName = places.get(selectPlaceIndex).getPlaceName();
+        } else {
+            selectPlaceIndex = 0;
             placeName = places.get(selectPlaceIndex).getPlaceName();
         }
+
         boolean isPlaceInfoExist = PlaceInfoSQL.checkPlaceInfoExistByName(placeName);
         if (isPlaceInfoExist) {
             newTables = TableInfoSQL.getTableInfosByPlaces(places.get(selectPlaceIndex));
@@ -329,6 +329,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
+            selectPlaceIndex = 0;
             refresh();
         }
     }

@@ -3125,7 +3125,7 @@ public class HttpAPI {
                                 message.arg2 = -1;
                                 message.what = App.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC;
                                 handler.sendMessage(message);
-                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+//                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
                             } else {
                                 String body = new String(responseBody);
                                 handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
@@ -3206,7 +3206,7 @@ public class HttpAPI {
                                 message.arg2 = -1;
                                 message.what = App.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC;
                                 handler.sendMessage(message);
-                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+//                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
                             } else {
                                 String body = new String(responseBody);
                                 handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
