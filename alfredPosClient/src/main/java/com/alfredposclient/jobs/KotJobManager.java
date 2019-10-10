@@ -1430,93 +1430,57 @@ public class KotJobManager {
     private boolean transferTableItemToPrinter(KotSummary fromKotSummary,
                                                KotSummary toKotSummary, Map<String, Object> orderMap, boolean isFromOtherRvc) {
         BaseActivity context = App.getTopActivity();
-        ArrayList<Integer> printerGrougIds = new ArrayList<Integer>();
+        ArrayList<Integer> printerGrougIds = new ArrayList<>();
         KotSummary printKotSummary = null;
-        // map printergroudId to Kot: Group ID --> Details
-        Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<Integer, ArrayList<KotItemDetail>>();
-        // map printerGroudId to Modifiers
-        Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<Integer, ArrayList<KotItemModifier>>();
-        List<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
-        List<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
+        Map<Integer, ArrayList<KotItemDetail>> kots = new HashMap<>();
+        Map<Integer, ArrayList<KotItemModifier>> mods = new HashMap<>();
+        List<KotItemModifier> kotItemModifiers = new ArrayList<>();
+        List<KotItemDetail> kotItemDetails = new ArrayList<>();
         String transferAction = (String) orderMap.get("action");
+
         if (ParamConst.JOB_MERGER_KOT.equals(transferAction)) {
 
-//			Order oldOrder = (Order) orderMap.get("fromOrder");
+            kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryUniqueId(fromKotSummary.getUniqueId());
 
-//			TableInfo currentTable = TableInfoSQL.getTableById((Integer) orderMap
-//					.get("currentTableId"));
-            kotItemDetails = KotItemDetailSQL
-                    .getKotItemDetailBySummaryId(fromKotSummary.getId());
-            kotItemModifiers = new ArrayList<KotItemModifier>();
-            for (KotItemDetail kotItemDetail : kotItemDetails) {
-                kotItemDetail.setKotSummaryId(toKotSummary.getId().intValue());
-                kotItemDetail.setOrderId(toKotSummary.getOrderId().intValue());
-                KotItemDetailSQL.update(kotItemDetail);
-                kotItemModifiers.addAll(KotItemModifierSQL
-                        .getKotItemModifiersByKotItemDetail(kotItemDetail
-                                .getId()));
-            }
-            KotSummarySQL.deleteKotSummary(fromKotSummary);
-//			Order newOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId(), oldOrder.getBusinessDate());
-//			OrderBill newOrderBill = ObjectFactory.getInstance().getOrderBill(
-//					newOrder, App.instance.getRevenueCenter());
-//			List<OrderDetail> orderDetails = OrderDetailSQL
-//					.getUnFreeOrderDetails(oldOrder);
-//			if (!orderDetails.isEmpty()) {
-//				for (OrderDetail orderDetail : orderDetails) {
-//					OrderDetail newOrderDetail = ObjectFactory.getInstance()
-//							.getOrderDetailForTransferTable(newOrder,
-//									orderDetail);
-////					if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
-//						OrderDetailTaxSQL.updateOrderDetailTaxForTransation(newOrderDetail, orderDetail);
-////					}
-//					OrderDetailSQL.addOrderDetailETC(newOrderDetail);
-//					List<OrderModifier> orderModifiers = OrderModifierSQL
-//							.getOrderModifiers(orderDetail);
-//					if (orderModifiers.isEmpty()) {
-//						continue;
-//					}
-//					for (OrderModifier orderModifier : orderModifiers) {
-//						OrderModifier newOrderModifier = ObjectFactory
-//								.getInstance().getOrderModifier(
-//										newOrder,
-//										newOrderDetail,
-//										CoreData.getInstance().getModifier(
-//												orderModifier.getModifierId()),
-//										orderModifier.getPrinterId().intValue());
-//						OrderModifierSQL.addOrderModifier(newOrderModifier);
-//					}
-//				}
-//			}
-////			if(!IntegerUtils.isEmptyOrZero(oldOrder.getAppOrderId()){
-////				OrderDetailTaxSQL.updateOrderDetailTaxForTransation(newOrderDetail, orderDetail);
-////			}
-//			OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-//			OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-//			OrderBillSQL.deleteOrderBillByOrder(oldOrder);
-//			OrderBillSQL.add(newOrderBill);
-//			OrderSQL.deleteOrder(oldOrder);
-            if (context != null && !isFromOtherRvc)
-                context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
+                kotItemModifiers = new ArrayList<>();
+
+                for (KotItemDetail kotItemDetail : kotItemDetails) {
+                    if (!isFromOtherRvc) {
+                        kotItemDetail.setKotSummaryId(toKotSummary.getId().intValue());
+                        kotItemDetail.setOrderId(toKotSummary.getOrderId().intValue());
+                        KotItemDetailSQL.update(kotItemDetail);
+                    }
+
+                    kotItemModifiers.addAll(KotItemModifierSQL
+                            .getKotItemModifiersByKotItemDetail(kotItemDetail));
+                }
+
+                KotSummarySQL.deleteKotSummary(fromKotSummary);
+
+                if (context != null && !isFromOtherRvc)
+                    context.kotPrintStatus(ParamConst.JOB_TYPE_POS_MERGER_TABLE, null);
+
             printKotSummary = toKotSummary;
+
         } else if (ParamConst.JOB_TRANSFER_KOT.equals(transferAction)) {
             KotSummarySQL.update(fromKotSummary);
             Order order = (Order) orderMap.get("fromOrder");
-//			OrderSQL.update(order);
+
             kotItemDetails = KotItemDetailSQL
-                    .getKotItemDetailBySummaryId(fromKotSummary.getId());
+                    .getKotItemDetailByKotSummaryUniqueId(fromKotSummary.getUniqueId());
+
             for (KotItemDetail kotItemDetail : kotItemDetails) {
                 kotItemModifiers.addAll(KotItemModifierSQL
-                        .getKotItemModifiersByKotItemDetail(kotItemDetail
-                                .getId()));
+                        .getKotItemModifiersByKotItemDetail(kotItemDetail));
             }
 
             if (context != null && !isFromOtherRvc)
-                context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE,
-                        order);
+                context.kotPrintStatus(ParamConst.JOB_TYPE_POS_TRANSFER_TABLE, order);
             printKotSummary = KotSummarySQL.getKotSummary(fromKotSummary.getOrderId(), fromKotSummary.getNumTag());
         }
+
         boolean printed = false;
+
         if (App.instance.getSystemSettings().isTransferPrint()) {
             for (KotItemDetail items : kotItemDetails) {
                 Integer pgid = items.getPrinterGroupId();
@@ -1567,7 +1531,7 @@ public class KotJobManager {
                     PrinterDevice prntd = App.instance.getPrinterDeviceById(prnt
                             .getId());
 
-                    if (prntd != null) {
+                    if (prntd != null && printKotSummary != null) {
                         prntd.setGroupId(prgid.intValue());
                         String fromTableName = (String) orderMap.get("fromTableName");
                         String tableTransferFrom = context.getResources().getString(R.string.table_transfer_from);
@@ -1607,139 +1571,6 @@ public class KotJobManager {
         //transfer only one item
         int toCount = toKotSummary.getOrderDetailCount();
         int fromCount = fromKotSummary.getOrderDetailCount();
-
-//        List<KotSummaryLog> kotSummaryLogs = new Gson().fromJson(fromKotSummary.getKotSummaryLog(),
-//                new TypeToken<List<KotSummaryLog>>() {
-//                }.getType());
-//        List<KotSummaryLog> unreverseKotSummaryLogs = new ArrayList<>(kotSummaryLogs);
-//
-//        Collections.reverse(kotSummaryLogs);
-//
-//        OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(kotItemDetail.getOrderDetailId());
-//        ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(orderDetail.getItemId());
-//
-//        if (itemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {
-//            //region Package item
-//
-//            ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.
-//                    getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
-//            Map<Integer, ArrayList<KotItemModifier>> modCombo = getComboModifiers(kotItemDetail, kotItemModifiers,
-//                    new HashMap<Integer, ArrayList<KotItemModifier>>());
-//
-//            List<KotSummaryLog> copyKotSummaryLogs = new ArrayList<>(kotSummaryLogs);
-//            List<Printer> printerList = new ArrayList<>();
-//
-//            for (Map.Entry<Integer, ArrayList<KotItemModifier>> map : modCombo.entrySet()) {//get all printer from all group
-//                printerList.addAll(CoreData.getInstance().getPrintersInGroup(map.getKey()));
-//
-//                toCount += map.getValue().size();
-//                fromCount -= map.getValue().size();
-//            }
-//
-//            for (Integer printerGroupId : modCombo.keySet()) {
-//                boolean isFound = false;
-//
-//                for (KotSummaryLog ksl : copyKotSummaryLogs) {
-//
-//                    KDSDevice kdsDevice;
-//                    List<KotItemDetail> logKotItemDetailList = ksl.kotItemDetails;
-//
-//                    //region set kotsummary log to destination kotsummary
-//                    List<KotSummaryLog> toKotSummaryLogs;
-//                    if (!TextUtils.isEmpty(toKotSummary.getKotSummaryLog())) {
-//                        toKotSummaryLogs = new Gson().fromJson(toKotSummary.getKotSummaryLog(),
-//                                new TypeToken<List<KotSummaryLog>>() {
-//                                }.getType());
-//                        toKotSummaryLogs.add(ksl);
-//                    } else {
-//                        toKotSummaryLogs = unreverseKotSummaryLogs;
-//                    }
-//
-//                    toKotSummary.setKotSummaryLog(new Gson().toJson(toKotSummaryLogs));
-//                    //endregion
-//
-//                    for (KotItemDetail kid : logKotItemDetailList) {
-//                        if (kid.getId().equals(kotItemDetail.getId())) {
-//
-//                            kdsDevice = ksl.kdsDevice;
-//
-//                            for (Printer printer : printerList) {
-//                                if (printer.getId().equals(kdsDevice.getDevice_id())) {
-//
-//                                    Printer nextPrinter = getNextPrinter(kid.getPrinterGroupId(), printer.getId());
-//
-//                                    if (nextPrinter != null)
-//                                        printer.isShowNext = nextPrinter.isShowNext;
-//
-//                                    printers.add(printer);
-//                                    break;
-//                                }
-//                            }
-//
-//                            isFound = true;
-//                            break;
-//                        }
-//                    }
-//
-//                    if (isFound) {
-//                        copyKotSummaryLogs.remove(ksl);
-//                        break;
-//                    }
-//                }
-//            }
-//            //endregion
-//        } else {
-//
-//            //region item normal
-//            //transfer only one item
-//            toCount += 1;
-//            fromCount -= 1;
-//
-//            for (KotSummaryLog ksl : kotSummaryLogs) {
-//                List<KotItemDetail> logKotItemDetailList = ksl.kotItemDetails;
-//                KDSDevice kdsDevice = null;
-//
-//                //region set kotsummary log to destination kotsummary
-//                List<KotSummaryLog> toKotSummaryLogs;
-//                if (!TextUtils.isEmpty(toKotSummary.getKotSummaryLog())) {
-//                    toKotSummaryLogs = new Gson().fromJson(toKotSummary.getKotSummaryLog(),
-//                            new TypeToken<List<KotSummaryLog>>() {
-//                            }.getType());
-//                    toKotSummaryLogs.add(ksl);
-//                } else {
-//                    toKotSummaryLogs = unreverseKotSummaryLogs;
-//                }
-//
-//                toKotSummary.setKotSummaryLog(new Gson().toJson(toKotSummaryLogs));
-//                //endregion
-//
-//                for (KotItemDetail kid : logKotItemDetailList) {
-//                    if (kid.getId().equals(kotItemDetail.getId())) {
-//
-//                        kdsDevice = ksl.kdsDevice;
-//
-//                        ArrayList<Printer> tmpPrinter = CoreData.getInstance().getPrintersInGroup(kid.getPrinterGroupId());
-//                        for (Printer printer : tmpPrinter) {
-//                            if (printer.getId().equals(kdsDevice.getDevice_id())) {
-//                                Printer nextPrinter = getNextPrinter(kid.getPrinterGroupId(), printer.getId());
-//
-//                                if (nextPrinter != null)
-//                                    printer.isShowNext = nextPrinter.isShowNext;
-//
-//                                printers.add(printer);
-//                                break;
-//                            }
-//                        }
-//                        break;
-//                    }
-//                }
-//
-//                if (kdsDevice != null) {
-//                    break;
-//                }
-//            }
-//            //endregion
-//        }
 
         //region find all printer position
         if (kotItemDetail.getItemType() == ParamConst.ITEMDETAIL_COMBO_ITEM) {
