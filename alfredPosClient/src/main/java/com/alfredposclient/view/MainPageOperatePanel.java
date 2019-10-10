@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -17,6 +18,7 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
@@ -257,10 +259,23 @@ public class MainPageOperatePanel extends LinearLayout implements
                     handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX, tv_pax.getText().toString()));
                     break;
                 case R.id.tv_take_away:
-                    if (order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY) {
+                    if (order.getIsTakeAway() == ParamConst.TAKE_AWAY)
+                    {
                         order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-                    } else {
+                        for(OrderDetail orderDetail : orderDetails)
+                        {
+                            orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                            OrderDetailSQL.updateOrderDetail(orderDetail);
+                        }
+                    }
+                    else
+                    {
                         order.setIsTakeAway(ParamConst.TAKE_AWAY);
+                        for(OrderDetail orderDetail : orderDetails)
+                        {
+                            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+                            OrderDetailSQL.updateOrderDetail(orderDetail);
+                        }
                     }
                     OrderSQL.updateOrder(order);
                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);

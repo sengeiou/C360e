@@ -20,7 +20,9 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.BH;
 import com.alfredbase.utils.ButtonClickTimer;
@@ -31,6 +33,9 @@ import com.alfredposclient.adapter.DiscountAdapter;
 import com.alfredposclient.view.DiscountMoneyKeyboard;
 import com.alfredposclient.view.DiscountMoneyKeyboard.KeyBoardClickListener;
 import com.google.gson.Gson;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_1 = 300;
@@ -67,7 +72,8 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		this.parentView = parentView;
 	}
 
-	private void init() {
+	private void init()
+	{
 		contentView = LayoutInflater.from(parent).inflate(
 				R.layout.popup_discount, null);
 
@@ -87,11 +93,14 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 
 
 		inputView = tv_discount_percent;
-		if (order != null) {
+		if (order != null)
+		{
 			contentView.findViewById(R.id.ll_discount_layout).setVisibility(View.VISIBLE);
 			discountAdapter = new DiscountAdapter(parent, order);
 			discount_listview.setAdapter(discountAdapter);
-			if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY){
+			if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY)
+			{
+				Log.i("Passed here", "2");
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 						BH.getBD(order.getDiscountRate()),
 						BH.getBD(100), true)));
@@ -100,19 +109,30 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				tv_count_sign.setBackgroundResource(R.color.white);
 				tv_percent_sign.setBackgroundResource(R.color.brown);
 				tv_percent_sign.setTextColor(parent.getResources().getColor(R.color.white));
-			}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY){
+			}
+			else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
+			{
+				Log.i("Passed here", "3");
 				tv_discount_percent.setText(ParamConst.INT_ZERO);
 				tv_discount_count.setText(BH.formatMoney(order.getDiscountPrice()).toString());
 				inputView = tv_discount_count;
 				tv_count_sign.setBackgroundResource(R.color.brown);
 				tv_count_sign.setTextColor(parent.getResources().getColor(R.color.white));
 				tv_percent_sign.setBackgroundResource(R.color.white);
-			}else {
+			}
+			else
+			{
+				Log.i("Passed here", "4");
 				sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
-				if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_NULL) {
+				if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_NULL)
+				{
+					Log.i("Passed here", "5");
 					tv_discount_percent.setText(ParamConst.INT_ZERO);
 					tv_discount_count.setText(BH.formatMoney("").toString());
-				} else if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER) {
+				}
+				else if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER)
+				{
+					Log.i("Passed here", "6");
 					tv_discount_percent
 							.setText(BH.intFormat.format(BH.mul(
 									BH.getBD(order.getDiscountRate()),
@@ -120,22 +140,33 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 
 					tv_discount_count.setText(BH.formatMoney(BH.mul(
 							BH.getBD(order.getDiscountRate()),
-							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString()).toString());
-				} else {
-					if (BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))) {
+							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString()));
+					Log.i("Passed", BH.mul(
+							BH.getBD(order.getDiscountRate()),
+							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString());
+				}
+				else
+				{
+					Log.i("Passed here", "7");
+					if (BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice)))
+					{
 						tv_discount_percent
 								.setText(BH.intFormat.format(BH.mul(
 										BH.div(BH.getBD(order.getDiscountPrice()), BH.sub(BH.getBD(order.getSubTotal()),
 												BH.getBD(sumRealPrice), false), false),
 										BH.getBD(100), true)));
-					} else {
+					}
+					else
+					{
+						Log.i("Passed here", "8");
 						tv_discount_percent.setText(ParamConst.INT_ZERO);
 					}
 					tv_discount_count.setText(BH.getBD(order.getDiscountPrice()).toString());
 				}
 			}
-		} else {
-
+		}
+		else
+		{
 			contentView.findViewById(R.id.ll_discount_layout).setVisibility(View.GONE);
 			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
@@ -145,13 +176,17 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 						BH.getBD(orderDetail.getRealPrice()),
 						BH.getBD(orderDetail.getDiscountRate()), true)
 						.toString());
-			} else if (orderDetail.getDiscountPrice() != null) {
+			}
+			else if (orderDetail.getDiscountPrice() != null)
+			{
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 						BH.div(BH.getBD(orderDetail.getDiscountPrice()),
 								BH.getBD(orderDetail.getRealPrice()), false),
 						BH.getBD(100), true)));
 				tv_discount_count.setText(BH.getBD(orderDetail.getDiscountPrice()).toString());
-			} else {
+			}
+			else
+			{
 				tv_discount_percent.setText(ParamConst.INT_ZERO);
 				tv_discount_count.setText(ParamConst.DOUBLE_ZERO);
 			}
@@ -305,11 +340,13 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		tv_percent_sign.setTextColor(parent.getResources().getColor(R.color.white));
 		if (order != null) {
 			if(TextUtils.isEmpty(discountByCategory))
-			tv_discount_count.setText(BH.mul(
-					BH.sub(BH.getBD(order.getSubTotal()),
-					BH.getBD(sumRealPrice), false),
-					BH.div(BH.getBD(percent), BH.getBD(100), false),
-					true).toString());
+			{
+				tv_discount_count.setText(BH.mul(
+						BH.sub(BH.getBD(order.getSubTotal()),
+								BH.getBD(sumRealPrice), false),
+						BH.div(BH.getBD(percent), BH.getBD(100), false),
+						true).toString());
+			}
 		} else {
 			tv_discount_count.setText(BH.mul(
 					BH.getBD(orderDetail.getRealPrice()),
@@ -366,15 +403,19 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 					return;
 				tv_discount_percent.setText(percent + "");
 				keyBuffer.append(key);
-				if (order != null) {
+				if (order != null)
+				{
 					if(TextUtils.isEmpty(discountByCategory))
+					{
 					tv_discount_count.setText(BH.mul(
 							BH.sub(BH.getBD(order.getSubTotal()),
 							BH.getBD(sumRealPrice), false),
 							BH.div(BH.getBD(percent), BH.getBD(100), false),
 							true).toString());
-				} else {
-
+					}
+				}
+				else
+				{
 					tv_discount_count.setText(
 							BH.mul(BH.getBD(orderDetail.getRealPrice()),
                                     BH.div(BH.getBD(percent), BH.getBD(100),false),
