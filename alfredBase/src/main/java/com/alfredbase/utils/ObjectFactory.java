@@ -526,6 +526,7 @@ public class ObjectFactory {
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
                 order.setPlaceId(placesId);
+                order.setTableName(tables.getName());
                 order.setTableId(posId);
                 long time = System.currentTimeMillis();
                 order.setCreateTime(time);

@@ -367,16 +367,26 @@ public class MainPage extends BaseActivity {
                         setData();
                     }
                 }
-                    break;
-                case VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER:
-                    if (oldTable != null) {
-                        if (oldTable.getPosId() < 0) {
-                            TableInfoSQL.deleteTableInfo(oldTable.getPosId());
+                break;
+                case VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER: {
+
+                    final boolean fromThisRVC = checkIfTableFromThisRVC(currentTable);
+                    if (!fromThisRVC) {
+                        currentTable = oldTable;
+                        closeTables();
+                    } else {
+
+                        if (oldTable != null) {
+                            if (oldTable.getPosId() < 0) {
+                                TableInfoSQL.deleteTableInfo(oldTable.getPosId());
+                            }
                         }
+
+                        closeTables();
+                        setData();
                     }
-                    closeTables();
-                    setData();
-                    break;
+                }
+                break;
                 case VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER:
                     closeTables();
                     mergerOrderSetData();
@@ -1078,23 +1088,28 @@ public class MainPage extends BaseActivity {
                                         } else {
                                             mergerOrder();
                                             handler.sendMessage(handler
-                                                    .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER));
+                                                    .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER));
                                         }
                                     } else {
                                         mergerOrder();
-                                        handler.sendMessage(handler
-                                                .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER));
+                                        if (!fromThisRVC)
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_TRANSFER));
+                                        else
+                                            handler.sendMessage(handler
+                                                    .obtainMessage(VIEW_EVENT_DISMISS_TABLES_AFTER_MERGER));
 
                                     }
 
                                 }
                                 if (oldTable != null) {
-                                    oldTable.setStatus(ParamConst.TABLE_STATUS_IDLE);
                                     if (checkIfTableFromThisRVC(oldTable)) {
+                                        oldTable.setStatus(ParamConst.TABLE_STATUS_IDLE);
                                         TableInfoSQL.updateTables(oldTable);
-                                    } else {
-                                        TableInfoSQL.updateTables(currentTable);
                                     }
+//                                    else {
+//                                        TableInfoSQL.updateTables(currentTable);
+//                                    }
                                 }
 
                             }
@@ -1892,7 +1907,8 @@ public class MainPage extends BaseActivity {
                     if (loadingDialog != null)
                         loadingDialog.dismiss();
 
-                    currentTable = oldTable;
+                    if (oldTable != null)
+                        currentTable = oldTable;
                     currentOrder = OrderSQL.getLastOrderatTabel(currentTable.getPosId());
 
                     final String data = (String) msg.obj;
@@ -1941,7 +1957,6 @@ public class MainPage extends BaseActivity {
                     }).start();
 
                     unseat(currentOrder);
-//                    onBackPressed();
                     break;
                 case BaseApplication.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC:
                     if (loadingDialog != null)

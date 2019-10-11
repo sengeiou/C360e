@@ -3865,7 +3865,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
         Order order = new Gson().fromJson(orderData, Order.class);
         final Order oldOrder = new Gson().fromJson(orderData, Order.class);
         TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
-        String oldTableName = order.getTableName();
         Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
 
 //        if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
@@ -3922,7 +3921,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         final Map<String, Object> parameters = new HashMap<>();
 
                         parameters.put("fromOrder", order);
-                        parameters.put("fromTableName", oldTableName);
+                        parameters.put("fromTableName", oldOrder.getTableName());
                         parameters.put("toTableName", order.getTableName());
                         parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
 
@@ -3949,7 +3948,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                         final Map<String, Object> parameters = new HashMap<String, Object>();
                         parameters.put("fromOrder", oldOrder);
-                        parameters.put("fromTableName", oldTableName);
+                        parameters.put("fromTableName", oldOrder.getTableName());
                         parameters.put("toTableName", order.getTableName());
                         parameters.put("currentTableId", tableInfo.getPosId());
                         parameters.put("action", ParamConst.JOB_MERGER_KOT);
@@ -4115,6 +4114,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         OrderBill orderBill = new Gson().fromJson(orderbillStr, OrderBill.class);
 
         KotSummary fromKotSummary = null;
+        KotSummary toKotSummary = null;
         KotItemDetail kotItemDetails = null;
 
         List<KotItemModifier> kotModfiers = new ArrayList<>();
@@ -4124,6 +4124,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         if (jsonObject.has("kotSummary")) {
             kotSummaryStr = jsonObject.optString("kotSummary");
             fromKotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
+            toKotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
         }
 
         if (jsonObject.has("kotItemDetail")) {
@@ -4238,7 +4239,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 if (kotSummaryTarget == null) {
                     int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
                     String uniqueId = CommonSQL.getUniqueId();
-                    kotSummaryTarget = new KotSummary();
+
+                    kotSummaryTarget = toKotSummary;//duplicate from original kot
                     kotSummaryTarget.setId(newId);
                     kotSummaryTarget.setUniqueId(uniqueId);
                     kotSummaryTarget.setOriginalUniqueId(uniqueId);
@@ -4246,13 +4248,19 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     kotSummaryTarget.setRevenueCenterIndex(rvc.getIndexId());
                     kotSummaryTarget.setRevenueCenterName(rvc.getRevName());
                     kotSummaryTarget.setTableId(tableInfo.getPosId());
-                    kotSummaryTarget.setTableName(tableInfo.getName());
                     kotSummaryTarget.setOrderId(orderTarget.getId());
                     kotSummaryTarget.setOrderNo(orderTarget.getOrderNo());
                     kotSummaryTarget.setBusinessDate(App.instance.getBusinessDate());
                     kotSummaryTarget.setNumTag(orderTarget.getNumTag());
                     kotSummaryTarget.setCreateTime(time);
                     kotSummaryTarget.setUpdateTime(time);
+                    kotSummaryTarget.setIsTakeAway(orderTarget.getIsTakeAway());
+
+                    if (rvc.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
+                        kotSummaryTarget.setTableName(orderTarget.getTableName());
+                    } else {
+                        kotSummaryTarget.setTableName(tableInfo.getName());
+                    }
 
                     KotSummarySQL.update(kotSummaryTarget);
 

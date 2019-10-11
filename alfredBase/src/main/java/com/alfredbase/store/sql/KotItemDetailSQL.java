@@ -1350,6 +1350,30 @@ public class KotItemDetailSQL {
         return result;
     }
 
+    public static int getKotItemDetailCountBySummaryUniqueId(String kotSummaryUniqueId) {
+        int result = 0;
+        String sql = "select id from " + TableNames.KotItemDetail
+                + " where kotSummaryUniqueId = ? and unFinishQty > 0 and kotStatus < 3 and categoryId = 0";
+
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{kotSummaryUniqueId});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            result = cursor.getCount();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
     public static int getAllKotItemDetailCountBySummaryId(int kotSummaryId) {
         int result = 0;
         String sql = "select id from " + TableNames.KotItemDetail
