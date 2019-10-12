@@ -17,6 +17,7 @@ import com.alfredbase.javabean.KDSHistory;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.PrinterGroup;
 import com.alfredbase.javabean.model.KDSDevice;
@@ -97,8 +98,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                 } else if (uri.equals(APIName.REFRESH_KOT)) {
                     App.instance.ringUtil.playRingOnce();
                     resp = handlerRefreshKot();
-                }
-                else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
+                } else if (uri.equals(APIName.SUBMIT_TMP_KOT)) {
                     resp = handlerTmpKot(body);
                 } else if (uri.equals(APIName.SUBMIT_NEXT_KOT)) {
                     App.instance.ringUtil.playRingOnce();
@@ -122,8 +122,7 @@ public class KdsHttpServer extends AlfredHttpServer {
                     }
 
                     return getJsonResponse(new Gson().toJson(map));
-                }
-                else {
+                } else {
                     resp = getNotFoundResponse();
                 }
             }
@@ -895,15 +894,41 @@ public class KdsHttpServer extends AlfredHttpServer {
             JSONObject jsonObject = new JSONObject(params);
             Gson gson = new Gson();
             String action = jsonObject.optString("action");
-            KotSummary toKotSummary = null;
-            KotSummary fromKotSummary = null;
+            Order order = null;
+            if (jsonObject.has("order")) {
+                String orderStr = jsonObject.optString("order");
+
+                if (!TextUtils.isEmpty(orderStr)) {
+                    order = gson.fromJson(orderStr, Order.class);
+                }
+            }
+
             if (!TextUtils.isEmpty(action)) {
                 resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.transfer_table_failed));
             }
+
+            KotSummary toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
+            KotSummary fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
+
             if (action.equals(ParamConst.JOB_TRANSFER_KOT)) {
-                fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
+
                 if (fromKotSummary != null) {
                     KotSummarySQL.update(fromKotSummary);
+
+                    List<KotItemDetail> kotItemDetailList = KotItemDetailSQL.getKotItemDetailByKotSummaryUniqueId(fromKotSummary.getUniqueId());
+
+                    for (KotItemDetail kotItemDetail : kotItemDetailList) {
+                        kotItemDetail.setOrderId(fromKotSummary.getOrderId());
+                        kotItemDetail.setRevenueId(fromKotSummary.getRevenueCenterId());
+                        kotItemDetail.setKotSummaryUniqueId(fromKotSummary.getUniqueId());
+
+                        if (order != null) {
+                            kotItemDetail.setRestaurantId(order.getRestId());
+                        }
+                    }
+
+                    KotItemDetailSQL.addKotItemDetailList(kotItemDetailList);
+
                 } else {
                     resp = this.getInternalErrorResponse(App.getTopActivity().getResources().getString(R.string.transfer_table_failed));
                 }
@@ -914,17 +939,25 @@ public class KdsHttpServer extends AlfredHttpServer {
                 resp = getJsonResponse(new Gson().toJson(result));
             }
             if (action.equals(ParamConst.JOB_MERGER_KOT)) {
-                toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
-                fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
-                List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(fromKotSummary.getId(), fromKotSummary.getRevenueCenterId());
+//                toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
+//                fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
+//                List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailBySummaryIdRvcId(fromKotSummary.getId(), fromKotSummary.getRevenueCenterId());
+                List<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByKotSummaryUniqueId(fromKotSummary.getUniqueId());
                 KotSummarySQL.update(toKotSummary);
                 if (fromKotSummary != null) {
                     for (int i = 0; i < kotItemDetails.size(); i++) {
                         KotItemDetail kotItemDetail = kotItemDetails.get(i);
                         kotItemDetail.setKotSummaryId(toKotSummary.getId());
                         kotItemDetail.setOrderId(toKotSummary.getOrderId());
-                        KotItemDetailSQL.update(kotItemDetail);
+                        kotItemDetail.setRevenueId(toKotSummary.getRevenueCenterId());
+                        kotItemDetail.setKotSummaryUniqueId(toKotSummary.getUniqueId());
+
+                        if (order != null) {
+                            kotItemDetail.setRestaurantId(order.getRestId());
+                        }
                     }
+
+                    KotItemDetailSQL.addKotItemDetailList(kotItemDetails);
                     KotSummarySQL.deleteKotSummary(fromKotSummary);
                 }
 
@@ -948,6 +981,14 @@ public class KdsHttpServer extends AlfredHttpServer {
             KotSummary toKotSummary = gson.fromJson(jsonObject.optString("toKotSummary"), KotSummary.class);
             KotSummary fromKotSummary = gson.fromJson(jsonObject.optString("fromKotSummary"), KotSummary.class);
             KotItemDetail kotItemDetail = gson.fromJson(jsonObject.optString("tansferKotItem"), KotItemDetail.class);
+
+            KotItemDetail kotItemDetailLocal = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
+            if (kotItemDetailLocal != null) {
+                //update id local
+                //because some function use kot item detail id not uniqueid
+                kotItemDetailLocal.setId(kotItemDetail.getId());
+                KotItemDetailSQL.update(kotItemDetailLocal);
+            }
 
             KotItemDetailSQL.update(kotItemDetail);
             KotSummarySQL.update(toKotSummary);

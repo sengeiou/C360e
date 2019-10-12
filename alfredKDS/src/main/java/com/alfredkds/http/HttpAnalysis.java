@@ -315,7 +315,8 @@ public class HttpAnalysis {
             if (object.has("kotSummaryId")) {
                 if (object.has("kotSummary")) {
                     KotSummary kotSummary = gson.fromJson(object.optString("kotSummary"), KotSummary.class);
-                    int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId(), kotSummary.getRevenueCenterId());
+//                    int count = KotItemDetailSQL.getKotItemDetailCountBySummaryId(kotSummary.getId(), kotSummary.getRevenueCenterId());
+                    int count = KotItemDetailSQL.getKotItemDetailCountBySummaryUniqueId(kotSummary.getUniqueId());
                     if (count == 0) {
                         KotSummarySQL.updateKotSummaryStatusByUniqueId(ParamConst.KOTS_STATUS_DONE, kotSummary.getUniqueId());
                     }

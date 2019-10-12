@@ -3751,6 +3751,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                 if (orderModifiers != null) {
                     for (OrderModifier orderModifier : orderModifiers) {
+                        if (!orderModifier.getOrderDetailId().equals(od.getId())) continue;
+
                         if (IntegerUtils.isEmptyOrZero(orderModifier.getPrinterId())
                                 || orderModifier.getPrinterId().intValue() == prtDevice.getDevice_id()) {
                             if (!IntegerUtils.isEmptyOrZero(orderModifier.getModifierNum()) && orderModifier.getModifierNum().intValue() > 1) {
@@ -3765,7 +3767,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 }
             }
 
-            transferOrder.AddFooter("", TimeUtil.getPrintDate(System.currentTimeMillis()));
+            transferOrder.AddFooter("", TimeUtil.getPrintDateTime(System.currentTimeMillis()));
 
             pqMgr.queuePrint(transferOrder.getJobForQueue());
             printMgr.addJob(prtDevice.getIP(), transferOrder);
