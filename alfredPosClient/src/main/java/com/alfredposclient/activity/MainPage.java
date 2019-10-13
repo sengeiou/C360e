@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -2451,11 +2452,11 @@ public class MainPage extends BaseActivity {
     }
 
     private void addOrderDetail(OrderDetail orderDetail) {
-        List<ItemModifier> itemModifiers = CoreData.getInstance()
-                .getItemModifiers(
-                        CoreData.getInstance().getItemDetailById(
-                                orderDetail.getItemId(), orderDetail.getItemName()));
+        ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName());
+        List<ItemModifier> itemModifiers = CoreData.getInstance().getItemModifiers(itemDetail);
+
         OrderDetailSQL.addOrderDetailETC(orderDetail);
+        new AddOrderAsync().execute(orderDetail);
         if (currentTable.getPosId() < 0) {
             setDataWaitingList();
         } else {
@@ -2465,17 +2466,33 @@ public class MainPage extends BaseActivity {
         if (itemModifiers.size() > 0) {
             for (ItemModifier itemModifier : itemModifiers) {
 
-                final Modifier modifier_type = CoreData.getInstance().getModifier(
-                        itemModifier);
+                final Modifier modifier_type = CoreData.getInstance().getModifier(itemModifier);
                 if (modifier_type.getMinNumber() > 0) {
-                    ModifierCheck modifierCheck = null;
-                    modifierCheck = ObjectFactory.getInstance().getModifierCheck(currentOrder, orderDetail, modifier_type, itemModifier);
+                    ModifierCheck modifierCheck = ObjectFactory.getInstance().getModifierCheck(currentOrder, orderDetail, modifier_type, itemModifier);
                     ModifierCheckSql.addModifierCheck(modifierCheck);
                 }
             }
 
-            mainPageMenuView.openModifiers(currentOrder, orderDetail,
-                    itemModifiers);
+            mainPageMenuView.openModifiers(currentOrder, orderDetail, itemModifiers);
+        }
+    }
+    
+
+    private class AddOrderAsync extends AsyncTask<OrderDetail, OrderDetail, OrderDetail[]> {
+
+        @Override
+        protected OrderDetail[] doInBackground(OrderDetail... orderDetails) {
+            for (int i = 0; i < orderDetails.length; i++) {
+             OrderDetailSQL.updateOrder(orderDetails[i]);
+            }
+            return orderDetails;
+        }
+
+        @Override
+        protected void onPostExecute(OrderDetail[] orderDetails) {
+            super.onPostExecute(orderDetails);
+            setData();
+
         }
     }
 

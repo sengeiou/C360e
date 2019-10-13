@@ -614,8 +614,8 @@ public class MainPageMenuView extends LinearLayout {
 		isSelectSub = 0;
 	}
 	
-	public void openModifiers(Order order, OrderDetail orderDetail,
-			List<ItemModifier> itemModifiers) {
+	public void openModifiers(Order order, OrderDetail orderDetail, List<ItemModifier> itemModifiers) {
+
 		initMenuModifierDetail(order, orderDetail, itemModifiers);
 		if (AnimatorListenerImpl.isRunning) {
 			return;

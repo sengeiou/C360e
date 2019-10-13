@@ -50,8 +50,14 @@ public class OrderDetailSQL {
         calculate(order, orderDetail);
         add(orderDetail);
         OrderHelper.addDefaultModifiers(order, orderDetail);
-        updateFreeOrderDetail(order, orderDetail);
+//        updateFreeOrderDetail(order, orderDetail);
+//        OrderSQL.updateOrder(order);
+    }
+
+    public static void updateOrder(OrderDetail orderDetail){
+        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
         OrderSQL.updateOrder(order);
+
     }
 
     public static void addOrderDetailETCFromWaiter(OrderDetail orderDetail) {
