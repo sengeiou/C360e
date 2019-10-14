@@ -8,6 +8,7 @@ import android.util.Log;
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
@@ -684,6 +685,63 @@ public class KotItemDetailSQL {
         return result;
     }
 
+    public static ArrayList<KotItemDetail> getKotItemDetailByKotSummaryUniqueId(String kotSummaryUniqueId) {
+        ArrayList<KotItemDetail> result = new ArrayList<KotItemDetail>();
+        String sql = "select * from " + TableNames.KotItemDetail
+                + " where kotSummaryUniqueId = ?";
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{kotSummaryUniqueId});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            KotItemDetail kotItemDetail = null;
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+                    .moveToNext()) {
+                kotItemDetail = new KotItemDetail();
+                kotItemDetail.setId(cursor.getInt(0));
+                kotItemDetail.setUniqueId(cursor.getString(1));
+                kotItemDetail.setRestaurantId(cursor.getInt(2));
+                kotItemDetail.setRevenueId(cursor.getInt(3));
+                kotItemDetail.setOrderId(cursor.getInt(4));
+                kotItemDetail.setOrderDetailId(cursor.getInt(5));
+                kotItemDetail.setPrinterGroupId(cursor.getInt(6));
+                kotItemDetail.setKotSummaryId(cursor.getInt(7));
+                kotItemDetail.setItemName(cursor.getString(8));
+                kotItemDetail.setItemNum(cursor.getInt(9));
+                kotItemDetail.setFinishQty(cursor.getInt(10));
+                kotItemDetail.setSessionStatus(cursor.getInt(11));
+                kotItemDetail.setKotStatus(cursor.getInt(12));
+                kotItemDetail.setSpecialInstractions(cursor.getString(13));
+                kotItemDetail.setVersion(cursor.getInt(14));
+                kotItemDetail.setCreateTime(cursor.getLong(15));
+                kotItemDetail.setUpdateTime(cursor.getLong(16));
+                kotItemDetail.setUnFinishQty(cursor.getInt(17));
+                kotItemDetail.setCategoryId(cursor.getInt(18));
+                kotItemDetail.setIsTakeAway(cursor.getInt(19));
+                kotItemDetail.setFireStatus(cursor.getInt(20));
+                kotItemDetail.setCallType(cursor.getInt(21));
+                kotItemDetail.setExpectedTime(cursor.getLong(22));
+                kotItemDetail.setStartTime(cursor.getLong(23));
+                kotItemDetail.setEndTime(cursor.getLong(24));
+                kotItemDetail.setItemType(cursor.getInt(25));
+                kotItemDetail.setItemId(cursor.getInt(26));
+                kotItemDetail.setKotSummaryUniqueId(cursor.getString(27));
+                result.add(kotItemDetail);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
     public static ArrayList<KotItemDetail> getKotItemDetailByKotSummaryIdUndone(KotSummary kotSummary) {
         ArrayList<KotItemDetail> result = new ArrayList<KotItemDetail>();
         String sql = "select * from " + TableNames.KotItemDetail
@@ -1292,6 +1350,30 @@ public class KotItemDetailSQL {
         return result;
     }
 
+    public static int getKotItemDetailCountBySummaryUniqueId(String kotSummaryUniqueId) {
+        int result = 0;
+        String sql = "select id from " + TableNames.KotItemDetail
+                + " where kotSummaryUniqueId = ? and unFinishQty > 0 and kotStatus < 3 and categoryId = 0";
+
+        Cursor cursor = null;
+        SQLiteDatabase db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql, new String[]{kotSummaryUniqueId});
+            int count = cursor.getCount();
+            if (count < 1) {
+                return result;
+            }
+            result = cursor.getCount();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
+    }
+
     public static int getAllKotItemDetailCountBySummaryId(int kotSummaryId) {
         int result = 0;
         String sql = "select id from " + TableNames.KotItemDetail
@@ -1690,6 +1772,16 @@ public class KotItemDetailSQL {
         String sql = "delete from " + TableNames.KotItemDetail + " where kotSummaryId = ? and revenueId = ?";
         try {
             SQLExe.getDB().execSQL(sql, new Object[]{kotSummary.getId(), kotSummary.getRevenueCenterId()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteAllKotItemDetailByOrder(Order order) {
+        String sql = "delete from " + TableNames.KotItemDetail
+                + " where orderId = ? and numTag = ?";
+        try {
+            SQLExe.getDB().execSQL(sql, new Object[]{order.getId(), order.getNumTag()});
         } catch (Exception e) {
             e.printStackTrace();
         }

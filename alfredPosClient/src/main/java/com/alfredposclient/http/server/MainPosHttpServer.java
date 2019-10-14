@@ -1911,7 +1911,9 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                 if (kdsTracking.kdsDevice.getDevice_id() == dev.getDevice_id() &&
                                         kdsTracking.kdsDevice.getIP().equals(dev.getIP())) {
                                     for (KotItemDetail kid : kdsTracking.kotItemDetails) {
-                                        kotItemDetails.add(KotItemDetailSQL.getKotItemDetailById(kid.getId()));
+                                        KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailById(kid.getId());
+                                        if (kotItemDetail == null) continue;
+                                        kotItemDetails.add(kotItemDetail);
                                     }
                                     kotSummaries.add(kotSummary);
                                 }
@@ -2995,7 +2997,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
             List<KotItemDetail> kotItemDetailsCopy = new ArrayList<>();
             for (KotItemDetail kotItemDetail : kotItemDetails) {
-                KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+//                KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailById(kotItemDetail.getId());
+                KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
                 if (kidLocal == null) continue;
 
                 kidLocal.setEndTime(System.currentTimeMillis());
@@ -3849,7 +3852,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         String orderDetail = jsonObject.optString("orderDetail");
         String kotSummary = jsonObject.optString("kotSummary");
         String kotItemDetail = jsonObject.optString("kotItemDetail");
-        String kotItemModifier = jsonObject.optString("kotItemModifier");
+        final String kotItemModifier = jsonObject.optString("kotItemModifier");
 
         String orderbill = jsonObject.optString("orderBill");
         int targetTableId = jsonObject.optInt("tableId");
@@ -3858,152 +3861,300 @@ public class MainPosHttpServer extends AlfredHttpServer {
         String orderModifier = jsonObject.optString("orderModifier");
         String orderSplit = jsonObject.optString("orderSplit");
 
+        long time = System.currentTimeMillis();
+        Order order = new Gson().fromJson(orderData, Order.class);
+        final Order oldOrder = new Gson().fromJson(orderData, Order.class);
+        TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
+        Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
 
-        if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
-            Order order = new Gson().fromJson(orderData, Order.class);
+//        if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
+        //region transfer to new table
+        if (orderTarget == null) {
             order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-//            order.setTableId(targetTableId);
             order.setBusinessDate(App.instance.getBusinessDate());
             order.setRestId(CoreData.getInstance().getRestaurant().getId());
-
-            TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
-            tableInfo.setIsLocked(1);
             order.setPlaceId(tableInfo.getPlacesId());
             order.setTableName(tableInfo.getName());
             order.setTableId(tableInfo.getPosId());
-            long time = System.currentTimeMillis();
             order.setCreateTime(time);
             order.setUpdateTime(time);
             order.setOrderNo(OrderHelper.calculateOrderNo(App.instance.getBusinessDate()));//流水号
             order.setUserId(App.instance.getUser().getId());
             OrderSQL.addOrder(order);
-            Order last = OrderSQL.getLastOrderatTabel(targetTableId);
-
-            TableInfoSQL.updateTables(tableInfo);
-
-            MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
-
-            if (App.getTopActivity() != null)
-                App.getTopActivity().httpRequestAction(
-                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
-
-            addOrderDetailFromOtherRVC(last, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
-
-            tableInfo.setIsLocked(0);
-            TableInfoSQL.updateTables(tableInfo);
-            if (App.getTopActivity() != null){
-
-                App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
-
-            }
-
-
-            //todo transfer add KOT on KDS
-        } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
-            Order order = new Gson().fromJson(orderData, Order.class);
-            order.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-            order.setTableId(-1);
-            OrderSQL.addOrder(order);
-            Order last = OrderSQL.getLastOrderatTabel(-1);
-
-            addOrderDetailFromOtherRVC(last, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
-
-            List<OrderDetail> orderDetails = new ArrayList<>();
-
-            List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(last.getId().intValue());
-            StringBuffer orderSplitIds = new StringBuffer();
-            if (orderSplits != null && orderSplits.size() > 0) {
-                for (int i = 0; i < orderSplits.size(); i++) {
-                    orderSplitIds.append(orderSplits.get(i).getId());
-                    if (i < orderSplits.size() - 1) {
-                        orderSplitIds.append(',');
-                    }
-                }
-            }
-            if (orderSplitIds.length() > 0) {
-                orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(last, orderSplitIds.toString()));
-            } else {
-                orderDetails.addAll(OrderDetailSQL
-                        .getUnFreeOrderDetails(last));
-            }
-
-            Order newOrder = OrderSQL.getUnfinishedOrderAtTable(targetTableId, last.getBusinessDate(), App.instance.getSessionStatus());
-            if (!orderDetails.isEmpty()) {
-                for (OrderDetail orderDetailNewOrder : orderDetails) {
-                    OrderDetail newOrderDetail = ObjectFactory.getInstance()
-                            .getOrderDetailForTransferTable(newOrder, orderDetailNewOrder);
-                    OrderDetailSQL.addOrderDetailETC(newOrderDetail);
-                    List<OrderModifier> orderModifiers = OrderModifierSQL
-                            .getOrderModifiers(orderDetailNewOrder);
-                    if (orderModifiers.isEmpty()) {
-                        continue;
-                    }
-                    for (OrderModifier orderModif : orderModifiers) {
-                        OrderModifier newOrderModifier = ObjectFactory
-                                .getInstance().getOrderModifier(
-                                        newOrder,
-                                        newOrderDetail,
-                                        CoreData.getInstance().getModifier(
-                                                orderModif.getModifierId()),
-                                        orderModif.getPrinterId().intValue());
-                        OrderModifierSQL.addOrderModifier(newOrderModifier);
-                    }
-                }
-            }
-
-
-            TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
-            int pax = tableInfo.getPacks() + last.getPersons();
-            MainPage.setTablePacks(tableInfo, String.valueOf(pax));
-
-            //todo transfer add KOT on KDS
-
-
+            order = OrderSQL.getUnfinishedOrderAtTable(targetTableId, order.getBusinessDate(), App.instance.getSessionStatus());
+        } else {
+            order = orderTarget;
         }
+
+        tableInfo.setIsLocked(1);
+        TableInfoSQL.updateTables(tableInfo);
+        MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
+
+        if (App.getTopActivity() != null)
+            App.getTopActivity().httpRequestAction(
+                    MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
+
+        addOrderDetailFromOtherRVC(order, orderDetail, kotSummary, orderbill, orderModifier,
+                orderSplit, kotItemDetail, kotItemModifier, transferType, true);
+
+        tableInfo.setIsLocked(0);
+        TableInfoSQL.updateTables(tableInfo);
+
+        if (App.getTopActivity() != null)
+            App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
+
+        if (!TextUtils.isEmpty(kotSummary)) {
+            final KotSummary fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
+
+            if (fromKotSummary != null) {
+                KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(order.getId(), order.getNumTag());
+
+                if (kotSummaryTarget == null) {
+                    kotSummaryTarget = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
+                }
+
+                if (kotSummaryTarget != null) {
+                    kotSummaryTarget.setTableName(tableInfo.getName());
+
+                    if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
+
+                        final Map<String, Object> parameters = new HashMap<>();
+
+                        parameters.put("fromOrder", order);
+                        parameters.put("fromTableName", oldOrder.getTableName());
+                        parameters.put("toTableName", order.getTableName());
+                        parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
+
+                        final KotSummary kotSummaryFinal = kotSummaryTarget;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                App.instance
+                                        .getKdsJobManager()
+                                        .transferTableDownKot(
+                                                ParamConst.JOB_TRANSFER_KOT,
+                                                null, kotSummaryFinal,
+                                                parameters, true);
+                            }
+                        }).start();
+
+                    } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
+
+                        //create tmp transfer kot
+                        //used for transfer table to kds
+                        addOrderDetailFromOtherRVC(oldOrder, orderDetail, kotSummary, orderbill, orderModifier,
+                                orderSplit, kotItemDetail, kotItemModifier, transferType, false);
+
+                        final Map<String, Object> parameters = new HashMap<String, Object>();
+                        parameters.put("fromOrder", oldOrder);
+                        parameters.put("fromTableName", oldOrder.getTableName());
+                        parameters.put("toTableName", order.getTableName());
+                        parameters.put("currentTableId", tableInfo.getPosId());
+                        parameters.put("action", ParamConst.JOB_MERGER_KOT);
+
+                        final KotSummary kotSummaryFinal = kotSummaryTarget;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                App.instance.getKdsJobManager()
+                                        .transferTableDownKot(
+                                                ParamConst.JOB_MERGER_KOT,
+                                                kotSummaryFinal,
+                                                fromKotSummary, parameters, true);
+
+                                //delete tmp data
+                                oldOrder.setId(-1);
+                                OrderSplitSQL.deleteOrderSplitPaxByOrderId(oldOrder);
+                                OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
+                                OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
+                                OrderBillSQL.deleteOrderBillByOrder(oldOrder);
+                                KotSummarySQL.deleteKotSummaryByOrder(oldOrder);
+                                KotItemDetailSQL.deleteAllKotItemDetailByOrder(oldOrder);
+
+                                if (!TextUtils.isEmpty(kotItemModifier)) {
+                                    List<KotItemModifier> kotItemModifiers = gson.fromJson(kotItemModifier,
+                                            new TypeToken<List<KotItemModifier>>() {
+                                            }.getType());
+
+                                    KotItemModifierSQL.deleteKotItemModifiers(kotItemModifiers);
+                                }
+
+                            }
+                        }).start();
+                    }
+                }
+            }
+        }
+        //endregion
+
+//        } else if (transferType == MainPage.ACTION_MERGE_TABLE) {
+//            order.setTableId(-1);
+//            OrderSQL.addOrder(order);
+//            Order orderFrom = OrderSQL.getLastOrderatTabel(-1);
+//
+//            tableInfo.setIsLocked(1);
+//            TableInfoSQL.updateTables(tableInfo);
+//
+//            if (App.getTopActivity() != null)
+//                App.getTopActivity().httpRequestAction(
+//                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
+//
+//            //add fake order
+//            addOrderDetailFromOtherRVC(orderFrom, orderDetail, kotSummary, orderbill, orderModifier, orderSplit, kotItemDetail, kotItemModifier);
+//
+//            tableInfo.setIsLocked(0);
+//            TableInfoSQL.updateTables(tableInfo);
+
+//            List<OrderDetail> orderDetails = new ArrayList<>();
+//
+//            List<OrderSplit> orderSplits = OrderSplitSQL.getFinishedOrderSplits(last.getId().intValue());
+//            StringBuffer orderSplitIds = new StringBuffer();
+//            if (orderSplits != null && orderSplits.size() > 0) {
+//                for (int i = 0; i < orderSplits.size(); i++) {
+//                    orderSplitIds.append(orderSplits.get(i).getId());
+//                    if (i < orderSplits.size() - 1) {
+//                        orderSplitIds.append(',');
+//                    }
+//                }
+//            }
+//            if (orderSplitIds.length() > 0) {
+//                orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetailsWithOutSplit(last, orderSplitIds.toString()));
+//            } else {
+//                orderDetails.addAll(OrderDetailSQL.getUnFreeOrderDetails(last));
+//            }
+//
+////            if (!orderDetails.isEmpty()) {
+////                for (OrderDetail orderDetailNewOrder : orderDetails) {
+////                    OrderDetail newOrderDetail = ObjectFactory.getInstance()
+////                            .getOrderDetailForTransferTable(newOrder, orderDetailNewOrder);
+////                    OrderDetailSQL.addOrderDetailETC(newOrderDetail);
+////                    List<OrderModifier> orderModifiers = OrderModifierSQL
+////                            .getOrderModifiers(orderDetailNewOrder);
+////                    if (orderModifiers.isEmpty()) {
+////                        continue;
+////                    }
+////                    for (OrderModifier orderModif : orderModifiers) {
+////                        OrderModifier newOrderModifier = ObjectFactory
+////                                .getInstance().getOrderModifier(
+////                                        newOrder,
+////                                        newOrderDetail,
+////                                        CoreData.getInstance().getModifier(
+////                                                orderModif.getModifierId()),
+////                                        orderModif.getPrinterId().intValue());
+////                        OrderModifierSQL.addOrderModifier(newOrderModifier);
+////                    }
+////                }
+////            }
+//
+//
+//            int pax = tableInfo.getPacks() + last.getPersons();
+//            MainPage.setTablePacks(tableInfo, String.valueOf(pax));
+//
+////            if (App.getTopActivity() != null)
+////                App.getTopActivity().httpRequestAction(MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
+////
+////            if (!TextUtils.isEmpty(kotSummary)) {
+////                KotSummary fromKotSummary = gson.fromJson(kotSummary, KotSummary.class);
+////
+////                if (fromKotSummary != null) {
+////                    final KotSummary kotSummaryLocal = KotSummarySQL.getKotSummaryByUniqueId(fromKotSummary.getUniqueId());
+////
+////                    if (kotSummaryLocal != null) {
+////                        kotSummaryLocal.setTableName(tableInfo.getName());
+////
+////                        final Map<String, Object> parameters = new HashMap<>();
+////
+////                        parameters.put("fromOrder", newOrder);
+////                        parameters.put("fromTableName", oldTableName);
+////                        parameters.put("toTableName", newOrder.getTableName());
+////                        parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
+////
+////                        new Thread(new Runnable() {
+////                            @Override
+////                            public void run() {
+////
+////                                App.instance
+////                                        .getKdsJobManager()
+////                                        .transferTableDownKot(
+////                                                ParamConst.JOB_TRANSFER_KOT,
+////                                                null, kotSummaryLocal,
+////                                                parameters, true);
+////                            }
+////                        }).start();
+////                    }
+////                }
+////            }
+//
+//        }
 
     }
 
+    /**
+     * Transfer item from other rvc
+     *
+     * @param jsonObject
+     * @return
+     */
     private Response handlerTransferItemFromOtherRvc(JSONObject jsonObject) {
 
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("resultCode", ResultCode.SUCCESS);
 
-//        String oldOrderData = jsonObject.optString("order");
-        String kotSummary = jsonObject.optString("kotSummary");
-        String kotItemDetail = jsonObject.optString("kotItemDetail");
-        String kotItemModifier = jsonObject.optString("kotModifier");
-        String orderbill = jsonObject.optString("orderBill");
-        String oldOrderDetailData = jsonObject.optString("orderDetail");
-        String orderModifier = jsonObject.optString("orderModifier");
-
+        String kotSummaryStr = "";
+        String kotItemDetailStr = "";
+        String kotItemModifierStr = "";
+        String orderbillStr = jsonObject.optString("orderBill");
+        String oldOrderDetailDataStr = jsonObject.optString("orderDetail");
+        String orderModifierStr = jsonObject.optString("orderModifier");
         int packs = jsonObject.optInt("pack");
         int targetTableId = jsonObject.optInt("tableId");
 
-        OrderDetail transfItemOrderDetail = new Gson().fromJson(oldOrderDetailData, OrderDetail.class);
-        OrderBill orderBill = new Gson().fromJson(orderbill, OrderBill.class);
+        OrderDetail transfItemOrderDetail = new Gson().fromJson(oldOrderDetailDataStr, OrderDetail.class);
+        OrderBill orderBill = new Gson().fromJson(orderbillStr, OrderBill.class);
 
-        KotSummary kotSummarys = new Gson().fromJson(kotSummary, KotSummary.class);
-        KotItemDetail kotItemDetails = new Gson().fromJson(kotItemDetail, KotItemDetail.class);
+        KotSummary fromKotSummary = null;
+        KotSummary toKotSummary = null;
+        KotItemDetail kotItemDetails = null;
 
-        List<KotItemModifier> kotModfiers = gson.fromJson(kotItemModifier, new TypeToken<List<KotItemModifier>>() {
+        List<KotItemModifier> kotModfiers = new ArrayList<>();
+        List<OrderModifier> orderModifiers = gson.fromJson(orderModifierStr, new TypeToken<List<OrderModifier>>() {
         }.getType());
-        List<OrderModifier> orderModifiers = gson.fromJson(orderModifier, new TypeToken<List<OrderModifier>>() {
-        }.getType());
+
+        if (jsonObject.has("kotSummary")) {
+            kotSummaryStr = jsonObject.optString("kotSummary");
+            fromKotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
+            toKotSummary = new Gson().fromJson(kotSummaryStr, KotSummary.class);
+        }
+
+        if (jsonObject.has("kotItemDetail")) {
+            kotItemDetailStr = jsonObject.optString("kotItemDetail");
+            kotItemDetails = new Gson().fromJson(kotItemDetailStr, KotItemDetail.class);
+        }
+
+        if (jsonObject.has("kotModifier")) {
+            kotItemModifierStr = jsonObject.optString("kotModifier");
+            kotModfiers = gson.fromJson(kotItemModifierStr, new TypeToken<List<KotItemModifier>>() {
+            }.getType());
+        }
 
 
-        Order orderTarget = OrderSQL.getOrderByTableId(targetTableId);
+        boolean isMerge = false;
+        Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
 
         TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
+
         tableInfo.setPacks(tableInfo.getPacks() + packs);
         tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
         TableInfoSQL.updateTables(tableInfo);
 
         RevenueCenter rvc = App.instance.getRevenueCenter();
-        Restaurant resto = CoreData.getInstance().getRestaurant();
+        Restaurant restaurant = CoreData.getInstance().getRestaurant();
         long time = System.currentTimeMillis();
 
         try {
             if (orderTarget == null) {
+                isMerge = true;
                 orderTarget = ObjectFactory.getInstance().getOrder(
                         ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tableInfo,
                         App.instance.getRevenueCenter(), App.instance.getUser(),
@@ -4013,8 +4164,12 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         ParamConst.ORDER_STATUS_OPEN_IN_POS,
                         App.instance.getLocalRestaurantConfig()
                                 .getIncludedTax().getTax(), "");
+
+                OrderSQL.addOrder(orderTarget);
+                orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
             }
 
+            int oldOrderDetailId = transfItemOrderDetail.getId();
             int newIdOrderDetail = CommonSQL.getNextSeq(TableNames.OrderDetail);
 
             transfItemOrderDetail.setGroupId(0);
@@ -4028,13 +4183,14 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (currentRevItemDetail != null) {
                 transfItemOrderDetail.setItemId(currentRevItemDetail.getId());
             }
-            transfItemOrderDetail.setTransferFromDetailId(newIdOrderDetail);
+
+            transfItemOrderDetail.setTransferFromDetailId(oldOrderDetailId);
             transfItemOrderDetail.setOrderId(orderTarget.getId());
             transfItemOrderDetail.setOrderOriginId(orderTarget.getId());
             transfItemOrderDetail.setCreateTime(time);
             transfItemOrderDetail.setUpdateTime(time);
             transfItemOrderDetail.setUserId(orderTarget.getUserId());
-
+            OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
 
             if (orderModifiers != null) {
                 for (OrderModifier data : orderModifiers) {
@@ -4055,82 +4211,139 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 }
             }
 
-            OrderDetailSQL.addOrderDetailETC(transfItemOrderDetail);
-
-            if (kotSummarys != null) {
-                int newId = CommonSQL.getNextSeq(TableNames.KotSummary);
-//                mapKotSummary.put(kot.getId(), newId);
-                kotSummarys.setId(newId);
-                kotSummarys.setRevenueCenterId(rvc.getId());
-                kotSummarys.setRevenueCenterIndex(rvc.getIndexId());
-                kotSummarys.setRevenueCenterName(rvc.getRevName());
-                kotSummarys.setTableId(orderTarget.getTableId());
-                kotSummarys.setTableName(orderTarget.getTableName());
-                kotSummarys.setOrderId(orderTarget.getId());
-                kotSummarys.setOrderNo(orderTarget.getOrderNo());
-                kotSummarys.setBusinessDate(App.instance.getBusinessDate());
-                kotSummarys.setNumTag(orderTarget.getNumTag());
-                kotSummarys.setCreateTime(time);
-                kotSummarys.setUpdateTime(time);
-                List<KotSummary> kots = new ArrayList<>();
-                kots.add(kotSummarys);
-                KotSummarySQL.addKotSummaryList(kots);
-            }
-
-            if (kotItemDetails != null) {
-                kotItemDetails.setId(CommonSQL.getNextSeq(TableNames.KotItemDetail));
-                kotItemDetails.setOrderId(orderTarget.getId());
-                kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                kotItemDetails.setKotSummaryId(kotSummarys.getId());
-                kotItemDetails.setCreateTime(time);
-                kotItemDetails.setUpdateTime(time);
-                kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
-
-                KotItemDetailSQL.update(kotItemDetails);
-            }
-
-            if (kotItemModifier != null) {
-                for (KotItemModifier data : kotModfiers) {
-                    data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
-                    data.setKotItemDetailId(kotItemDetails.getId());
-                    KotItemModifierSQL.update(data);
+            if (orderBill != null) {
+                try {
+                    orderBill.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
+                    orderBill.setOrderSplitId(transfItemOrderDetail.getOrderSplitId());
+                    orderBill.setRestaurantId(restaurant.getId());
+                    orderBill.setOrderId(orderTarget.getId());
+                    orderBill.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    orderBill.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(rvc.getId()));
+                    orderBill.setOrderId(orderTarget.getId());
+                    orderBill.setRevenueId(rvc.getId());
+                    orderBill.setUserId(orderTarget.getUserId());
+                    orderBill.setCreateTime(time);
+                    orderBill.setUpdateTime(time);
+                    OrderBillSQL.add(orderBill);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-//            KotItemModifierSQL.addKotItemModifierList(kotModfiers);
 
-            //TODO: modifier, all kot, orderbill
+            if (App.getTopActivity() != null)
+                App.getTopActivity().httpRequestAction(
+                        MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
-            KotItemDetail details = KotItemDetailSQL.getMainKotItemDetailByOrderDetailId(kotSummarys.getId(), transfItemOrderDetail.getId());
+            if (fromKotSummary != null) {
+                KotSummary kotSummaryTarget = KotSummarySQL.getKotSummary(orderTarget.getId(), orderTarget.getNumTag());
+                if (kotSummaryTarget == null) {
+                    int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
+                    String uniqueId = CommonSQL.getUniqueId();
+
+                    kotSummaryTarget = toKotSummary;//duplicate from original kot
+                    kotSummaryTarget.setId(newId);
+                    kotSummaryTarget.setUniqueId(uniqueId);
+                    kotSummaryTarget.setOriginalUniqueId(uniqueId);
+                    kotSummaryTarget.setRevenueCenterId(rvc.getId());
+                    kotSummaryTarget.setRevenueCenterIndex(rvc.getIndexId());
+                    kotSummaryTarget.setRevenueCenterName(rvc.getRevName());
+                    kotSummaryTarget.setTableId(tableInfo.getPosId());
+                    kotSummaryTarget.setOrderId(orderTarget.getId());
+                    kotSummaryTarget.setOrderNo(orderTarget.getOrderNo());
+                    kotSummaryTarget.setBusinessDate(App.instance.getBusinessDate());
+                    kotSummaryTarget.setNumTag(orderTarget.getNumTag());
+                    kotSummaryTarget.setCreateTime(time);
+                    kotSummaryTarget.setUpdateTime(time);
+                    kotSummaryTarget.setIsTakeAway(orderTarget.getIsTakeAway());
+
+                    if (rvc.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
+                        kotSummaryTarget.setTableName(orderTarget.getTableName());
+                    } else {
+                        kotSummaryTarget.setTableName(tableInfo.getName());
+                    }
+
+                    KotSummarySQL.update(kotSummaryTarget);
+
+                }
+
+                if (kotItemDetails != null) {
+                    kotItemDetails.setId(CommonSQL.getKotNextSeq(TableNames.KotItemDetail));
+                    kotItemDetails.setOrderId(orderTarget.getId());
+                    kotItemDetails.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    kotItemDetails.setCreateTime(time);
+                    kotItemDetails.setUpdateTime(time);
+                    kotItemDetails.setOrderDetailId(transfItemOrderDetail.getId());
+                    kotItemDetails.setKotSummaryId(kotSummaryTarget.getId());
+                    kotItemDetails.setKotSummaryUniqueId(kotSummaryTarget.getUniqueId());
+                    kotItemDetails.setOrderId(kotSummaryTarget.getOrderId());
+                    KotItemDetailSQL.update(kotItemDetails);
+
+                    for (KotItemModifier data : kotModfiers) {
+                        data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
+                        data.setKotItemDetailId(kotItemDetails.getId());
+                        KotItemModifierSQL.update(data);
+                    }
+                }
+
+                String fromTableName = fromKotSummary != null ? fromKotSummary.getTableName() : "";
+                final Map<String, Object> parameters = new HashMap<>();
+                parameters.put("action", ParamConst.JOB_MERGER_KOT);
+                parameters.put("fromOrder", orderTarget);
+                parameters.put("fromTableName", fromTableName);
+                parameters.put("toTableName", tableInfo.getName());
+                parameters.put("currentTableId", tableInfo.getPosId());
+
+                final KotSummary toKotSummaryFinal = kotSummaryTarget;
+                final KotSummary fromKotSummaryFinal = fromKotSummary;
+                final KotItemDetail kotItemDetailFinal = kotItemDetails;
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        App.instance.getKdsJobManager()
+                                .transferItemDownKot(
+                                        toKotSummaryFinal,
+                                        fromKotSummaryFinal, parameters, kotItemDetailFinal, true);
+
+                    }
+                }).start();
+            }
+
             String orderDetail = jsonObject.optString("orderDetail");
 
             result.put("toRevenue", new Gson().toJson(App.instance.getRevenueCenter()));
             result.put("toOrder", new Gson().toJson(orderTarget));
             result.put("tableInfo", new Gson().toJson(tableInfo));
             result.put("orderDetail", orderDetail);
-            result.put("orderModifier", orderModifier);
+            result.put("orderModifier", orderModifierStr);
             result.put("orderTarget", new Gson().toJson(orderTarget));
             result.put("tableTarget", new Gson().toJson(tableInfo));
-            if (orderBill != null) {
 
-                OrderBillSQL.add(orderBill);
-            }
         } catch (Exception e) {
             result.put("resultCode", ResultCode.UNKNOW_ERROR);
             e.printStackTrace();
         }
 
-        //todo transfer add KOT on KDS
-
-
-        App.getTopActivity().httpRequestAction(
-                MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, jsonObject);
 
         return getJsonResponse(new Gson().toJson(result));
 
 
     }
 
-    private void addOrderDetailFromOtherRVC(Order last, String orderDetail, String kotSummary, String orderbill, String orderModifier, String orderSplit, String kotItemDetail, String kotItemModifier) {
+    /**
+     * @param order
+     * @param orderDetail
+     * @param kotSummary
+     * @param orderbill
+     * @param orderModifier
+     * @param orderSplit
+     * @param kotItemDetail
+     * @param kotItemModifier
+     * @param isCreateNew     true = create new id for all, base on current rvc
+     */
+    private void addOrderDetailFromOtherRVC(Order order, String orderDetail, String kotSummary,
+                                            String orderbill, String orderModifier, String orderSplit,
+                                            String kotItemDetail, String kotItemModifier, int transferType, boolean isCreateNew) {
 
         RevenueCenter rvc = App.instance.getRevenueCenter();
         Restaurant resto = CoreData.getInstance().getRestaurant();
@@ -4142,16 +4355,24 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<List<OrderSplit>>() {
                     }.getType());
             for (OrderSplit data : orderSplits) {
-                int newId = CommonSQL.getNextSeq(TableNames.OrderSplit);
-                mapSplit.put(data.getId(), newId);
+                if (isCreateNew) {
+                    int newId = CommonSQL.getNextSeq(TableNames.OrderSplit);
+                    mapSplit.put(data.getId(), newId);
 
-                data.setId(newId);
-                data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                data.setTableId(last.getTableId());
-                data.setOrderId(last.getId());
-                data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    data.setId(newId);
+                    data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    data.setTableId(order.getTableId());
+                    data.setOrderId(order.getId());
+                    data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                } else {
+                    //fake id to delete temporary data
+                    //on merge table
+                    data.setOrderId(-1);
+                }
+
                 OrderSplitSQL.add(data);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -4163,55 +4384,68 @@ public class MainPosHttpServer extends AlfredHttpServer {
             List<OrderDetail> orderDetails = gson.fromJson(orderDetail,
                     new TypeToken<List<OrderDetail>>() {
                     }.getType());
-            List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
-                    new TypeToken<List<OrderModifier>>() {
-                    }.getType());
 
             for (OrderDetail orderDetail1 : orderDetails) {
                 int oldId = orderDetail1.getId();
                 int newId = CommonSQL.getNextSeq(TableNames.OrderDetail);
-                mapOrderDetail.put(orderDetail1.getId(), newId);
-                orderDetail1.setId(newId);
-                if (mapSplit.size() > 0) {
-                    Integer value = mapSplit.get(orderDetail1.getOrderSplitId());
-                    if (value != null) {
-                        orderDetail1.setOrderSplitId(value);
-                    }
-                }
 
-                ItemDetail currentRevItemDetail = ItemDetailSQL.getItemDetailByName(rvc.getId(), orderDetail1.getItemName());
-
-                if (currentRevItemDetail != null) {
-                    mapItemId.put(orderDetail1.getItemId(), currentRevItemDetail.getId());
-                    orderDetail1.setItemId(currentRevItemDetail.getId());
-                }
-
-                orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
-                orderDetail1.setOrderId(last.getId());
-                orderDetail1.setCreateTime(time);
-                orderDetail1.setUpdateTime(time);
-                orderDetail1.setUserId(last.getUserId());
-                OrderDetailSQL.addOrderDetailETC(orderDetail1);
-
-                if (orderModifiers != null) {
-                    for (OrderModifier data : orderModifiers) {
-                        if (data.getOrderDetailId() == oldId) {
-                            data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
-                            data.setOrderId(last.getId());
-                            data.setOrderDetailId(newId);
-                            data.setCreateTime(time);
-                            data.setUpdateTime(time);
-                            data.setUserId(last.getUserId());
-                            data.setItemId(orderDetail1.getItemId());
-
-                            ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
-                            if (item != null) {
-                                data.setPrinterId(item.getPrinterId());
-                                data.setItemId(item.getId());
-                            }
-                            OrderModifierSQL.addOrderModifier(data);
+                if (isCreateNew) {
+                    mapOrderDetail.put(oldId, newId);
+                    orderDetail1.setId(newId);
+                    if (mapSplit.size() > 0) {
+                        Integer value = mapSplit.get(orderDetail1.getOrderSplitId());
+                        if (value != null) {
+                            orderDetail1.setOrderSplitId(value);
                         }
                     }
+
+                    ItemDetail currentRevItemDetail = ItemDetailSQL.getItemDetailByName(rvc.getId(), orderDetail1.getItemName());
+
+                    if (currentRevItemDetail != null) {
+                        mapItemId.put(orderDetail1.getItemId(), currentRevItemDetail.getId());
+                        orderDetail1.setItemId(currentRevItemDetail.getId());
+                    }
+
+                    orderDetail1.setOrderOriginId(orderDetail1.getOrderId());
+                    orderDetail1.setOrderId(order.getId());
+                    orderDetail1.setCreateTime(time);
+                    orderDetail1.setUpdateTime(time);
+                    orderDetail1.setUserId(order.getUserId());
+                } else {
+                    //fake id to delete temporary data
+                    //on merge table
+                    orderDetail1.setOrderId(-1);
+                }
+
+                OrderDetailSQL.addOrderDetailETC(orderDetail1);
+            }
+
+            List<OrderModifier> orderModifiers = gson.fromJson(orderModifier,
+                    new TypeToken<List<OrderModifier>>() {
+                    }.getType());
+
+            if (orderModifiers != null) {
+                for (OrderModifier data : orderModifiers) {
+                    if (isCreateNew) {
+                        data.setId(CommonSQL.getNextSeq(TableNames.OrderModifier));
+                        data.setOrderId(order.getId());
+                        data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
+                        data.setCreateTime(time);
+                        data.setUpdateTime(time);
+                        data.setUserId(order.getUserId());
+                        data.setItemId(mapItemId.get(data.getItemId()));
+
+                        ItemDetail item = ItemDetailSQL.getItemDetailById(data.getItemId());
+                        if (item != null) {
+                            data.setPrinterId(item.getPrinterId());
+                            data.setItemId(item.getId());
+                        }
+                    } else {
+                        //fake id to delete temporary data
+                        //on merge table
+                        data.setOrderId(-1);
+                    }
+                    OrderModifierSQL.addOrderModifier(data);
                 }
             }
         } catch (Exception e) {
@@ -4223,24 +4457,31 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     new TypeToken<List<OrderBill>>() {
                     }.getType());
             for (OrderBill orderbill1 : orderbills) {
-                orderbill1.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
-                if (mapSplit.size() > 0) {
-                    Integer value = mapSplit.get(orderbill1.getOrderSplitId());
-                    if (value != null) {
-                        orderbill1.setOrderSplitId(value);
+                if (isCreateNew) {
+                    orderbill1.setId(CommonSQL.getNextSeq(TableNames.OrderBill));
+                    if (mapSplit.size() > 0) {
+                        Integer value = mapSplit.get(orderbill1.getOrderSplitId());
+                        if (value != null) {
+                            orderbill1.setOrderSplitId(value);
+                        }
                     }
+                    orderbill1.setRestaurantId(resto.getId());
+                    orderbill1.setOrderId(order.getId());
+                    orderbill1.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                    orderbill1.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(rvc.getId()));
+                    orderbill1.setOrderId(order.getId());
+                    orderbill1.setRestaurantId(CoreData.getInstance().getRestaurant()
+                            .getId());
+                    orderbill1.setRevenueId(rvc.getId());
+                    orderbill1.setUserId(order.getUserId());
+                    orderbill1.setCreateTime(time);
+                    orderbill1.setUpdateTime(time);
+                } else {
+                    //fake id to delete temporary data
+                    //on merge table
+                    orderbill1.setOrderId(-1);
                 }
-                orderbill1.setRestaurantId(resto.getId());
-                orderbill1.setOrderId(last.getId());
-                orderbill1.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                orderbill1.setBillNo(RevenueCenterSQL.getBillNoFromRevenueCenter(rvc.getId()));
-                orderbill1.setOrderId(last.getId());
-                orderbill1.setRestaurantId(CoreData.getInstance().getRestaurant()
-                        .getId());
-                orderbill1.setRevenueId(rvc.getId());
-                orderbill1.setUserId(last.getUserId());
-                orderbill1.setCreateTime(time);
-                orderbill1.setUpdateTime(time);
+
                 OrderBillSQL.add(orderbill1);
             }
         } catch (Exception e) {
@@ -4248,23 +4489,40 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
         Map<Integer, Integer> mapKotSummary = new HashMap<>();
+        Map<String, String> mapKotSummaryUniqueId = new HashMap<>();
         if (!TextUtils.isEmpty(kotSummary)) {
+
             KotSummary kot = new Gson().fromJson(kotSummary, KotSummary.class);
             if (kot != null) {
-                int newId = CommonSQL.getNextSeq(TableNames.KotSummary);
-                mapKotSummary.put(kot.getId(), newId);
-                kot.setId(newId);
-                kot.setRevenueCenterId(rvc.getId());
-                kot.setRevenueCenterIndex(rvc.getIndexId());
-                kot.setRevenueCenterName(rvc.getRevName());
-                kot.setTableId(last.getTableId());
-                kot.setTableName(last.getTableName());
-                kot.setOrderId(last.getId());
-                kot.setOrderNo(last.getOrderNo());
-                kot.setBusinessDate(App.instance.getBusinessDate());
-                kot.setNumTag(last.getNumTag());
-                kot.setCreateTime(time);
-                kot.setUpdateTime(time);
+                if (isCreateNew) {
+                    int newId = CommonSQL.getKotNextSeq(TableNames.KotSummary);
+                    String uniqueId = CommonSQL.getUniqueId();
+                    mapKotSummary.put(kot.getId(), newId);
+                    mapKotSummaryUniqueId.put(kot.getUniqueId(), uniqueId);
+                    kot.setId(newId);
+
+                    if (transferType == MainPage.ACTION_MERGE_TABLE) {
+                        kot.setUniqueId(uniqueId);
+                        kot.setOriginalUniqueId(uniqueId);
+                    }
+
+                    kot.setRevenueCenterId(rvc.getId());
+                    kot.setRevenueCenterIndex(rvc.getIndexId());
+                    kot.setRevenueCenterName(rvc.getRevName());
+                    kot.setTableId(order.getTableId());
+                    kot.setTableName(order.getTableName());
+                    kot.setOrderId(order.getId());
+                    kot.setOrderNo(order.getOrderNo());
+                    kot.setBusinessDate(App.instance.getBusinessDate());
+                    kot.setNumTag(order.getNumTag());
+                    kot.setCreateTime(time);
+                    kot.setUpdateTime(time);
+                } else {
+                    //fake id to delete temporary data
+                    //on merge table
+                    kot.setOrderId(-1);
+                }
+
                 List<KotSummary> kots = new ArrayList<>();
                 kots.add(kot);
                 KotSummarySQL.addKotSummaryList(kots);
@@ -4274,39 +4532,61 @@ public class MainPosHttpServer extends AlfredHttpServer {
         //String kotItemDetail
         Map<Integer, Integer> mapKotItemDetail = new HashMap<>();
         try {
-            List<KotItemDetail> kotItemDetails = gson.fromJson(kotItemDetail,
-                    new TypeToken<List<KotItemDetail>>() {
-                    }.getType());
-            for (KotItemDetail data : kotItemDetails) {
-                int newId = CommonSQL.getNextSeq(TableNames.KotItemDetail);
-                mapKotItemDetail.put(data.getId(), newId);
-                data.setId(newId);
-                data.setOrderId(last.getId());
-                data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
-                data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
-                data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
-                data.setRestaurantId(last.getRestId());
-                data.setCreateTime(time);
-                data.setUpdateTime(time);
+            if (!TextUtils.isEmpty(kotItemDetail)) {
+                List<KotItemDetail> kotItemDetails = gson.fromJson(kotItemDetail,
+                        new TypeToken<List<KotItemDetail>>() {
+                        }.getType());
+                for (KotItemDetail data : kotItemDetails) {
+                    if (isCreateNew) {
+                        int newId = CommonSQL.getKotNextSeq(TableNames.KotItemDetail);
+                        mapKotItemDetail.put(data.getId(), newId);
+                        data.setId(newId);
 
-                KotItemDetailSQL.update(data);
+                        if (transferType == MainPage.ACTION_MERGE_TABLE) {
+                            data.setKotSummaryUniqueId(mapKotSummaryUniqueId.get(data.getKotSummaryUniqueId()));
+                        }
+
+                        data.setOrderId(order.getId());
+                        data.setRevenueId(App.instance.getMainPosInfo().getRevenueId());
+                        data.setKotSummaryId(mapKotSummary.get(data.getKotSummaryId()));
+                        data.setOrderDetailId(mapOrderDetail.get(data.getOrderDetailId()));
+                        data.setRestaurantId(order.getRestId());
+                        data.setCreateTime(time);
+                        data.setUpdateTime(time);
+                    } else {
+                        //fake id to delete temporary data
+                        //on merge table
+                        data.setOrderId(-1);
+                    }
+
+                    KotItemDetailSQL.update(data);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            List<KotItemModifier> kotItemModifiers = gson.fromJson(kotItemModifier,
-                    new TypeToken<List<KotItemModifier>>() {
-                    }.getType());
-            for (KotItemModifier data : kotItemModifiers) {
-                data.setId(CommonSQL.getNextSeq(TableNames.KotItemModifier));
-                data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
-                KotItemModifierSQL.update(data);
+            if (!TextUtils.isEmpty(kotItemModifier)) {
+                List<KotItemModifier> kotItemModifiers = gson.fromJson(kotItemModifier,
+                        new TypeToken<List<KotItemModifier>>() {
+                        }.getType());
+                for (KotItemModifier data : kotItemModifiers) {
+                    if (isCreateNew) {
+                        data.setId(CommonSQL.getKotNextSeq(TableNames.KotItemModifier));
+                        data.setKotItemDetailId(mapKotItemDetail.get(data.getKotItemDetailId()));
+                    } else {
+                        //fake id to delete temporary data
+                        //on merge table
+                        //data.setOrderId(-1);
+                    }
+                    KotItemModifierSQL.update(data);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
 

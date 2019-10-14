@@ -345,7 +345,7 @@ public class App extends BaseApplication {
         List<KotSummary> kotSummaries;
         List<KotItemDetail> kotItemDetails;
         kotSummaries = KotSummarySQL.getUndoneKotSummary();
-        List<KotItemModifier> kotItemModifiers = new ArrayList<>();
+//        List<KotItemModifier> kotItemModifiers = new ArrayList<>();
 
         for (int i = 0; i < kotSummaries.size(); i++) {
 
@@ -355,6 +355,7 @@ public class App extends BaseApplication {
                     kotSummaries.get(i).getOrderId());
 
             boolean isPlaceOrder = false;
+            List<KotItemModifier> kotItemModifiers = new ArrayList<>();
 
             for (int j = 0; j < kotItemDetails.size(); j++) {
                 if (kotSummaries.get(i).getStatus() == ParamConst.KOTS_STATUS_UNDONE) {
