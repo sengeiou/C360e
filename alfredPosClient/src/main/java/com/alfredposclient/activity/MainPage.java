@@ -1131,7 +1131,13 @@ public class MainPage extends BaseActivity {
                                     if (currentTable.getStatus() == ParamConst.TABLE_STATUS_IDLE) {
                                         currentOrder = null;
                                     } else {
+                                        //merge order
                                         currentOrder = OrderSQL.getUnfinishedOrderAtTable(currentTable.getPosId().intValue(), App.instance.getBusinessDate(), App.instance.getSessionStatus());
+
+                                        if (currentOrder != null) {
+                                            TableInfo oldTable = TableInfoSQL.getTableById(currentOrder.getTableId().intValue());
+                                            currentTable.setPacks(currentTable.getPacks() + oldTable.getPacks());
+                                        }
                                     }
 
                                     initOrder(currentTable);
@@ -3323,6 +3329,7 @@ public class MainPage extends BaseActivity {
             currentTable.setPacks(currentTable.getPacks() + oldTable.getPacks());
 
             initOrder(currentTable);
+            setTablePacks(currentTable.getPacks() + "");
         } else {
             for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
                 if (currentTable.getRevenueId().equals(otherPlace.getRevenueId())) {
