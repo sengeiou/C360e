@@ -48,6 +48,10 @@ public class OrderDetailSQL {
         if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
             return;
         }
+        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
+        {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         add(orderDetail);
         OrderHelper.addDefaultModifiers(order, orderDetail);
@@ -65,6 +69,10 @@ public class OrderDetailSQL {
         if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
             return;
         }
+        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
+        {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         add(orderDetail);
         updateFreeOrderDetail(order, orderDetail);
@@ -76,6 +84,10 @@ public class OrderDetailSQL {
             return;
         }
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
+        {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         updateOrderDetail(orderDetail);
         updateFreeOrderDetailForWaiter(order, orderDetail);
@@ -87,6 +99,10 @@ public class OrderDetailSQL {
             return;
         }
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
+        {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         updateOrderDetail(orderDetail);
         OrderHelper.addDefaultModifiers(order, orderDetail);
