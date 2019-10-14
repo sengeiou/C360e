@@ -3869,9 +3869,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         int persons = order.getPersons();
 
-        if (tableInfo.getPacks() != null)
-            persons += tableInfo.getPacks();
-
 //        if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
         //region transfer to new table
         if (orderTarget == null) {
@@ -3889,6 +3886,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order = OrderSQL.getUnfinishedOrderAtTable(targetTableId, order.getBusinessDate(), App.instance.getSessionStatus());
         } else {
             order = orderTarget;
+            persons += order.getPersons();
         }
 
         tableInfo.setPacks(persons);
