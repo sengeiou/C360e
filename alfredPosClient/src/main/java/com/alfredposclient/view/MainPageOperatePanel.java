@@ -264,6 +264,7 @@ public class MainPageOperatePanel extends LinearLayout implements
                         order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                         for(OrderDetail orderDetail : orderDetails)
                         {
+                            orderDetail.setSpecialInstractions("");
                             orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
                             OrderDetailSQL.updateOrderDetail(orderDetail);
                         }
