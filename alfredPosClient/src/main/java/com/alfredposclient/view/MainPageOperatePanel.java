@@ -189,14 +189,14 @@ public class MainPageOperatePanel extends LinearLayout implements
                     break;
                 }
                 case R.id.tv_discount: {
-                    if (orderDetails.isEmpty()) {
+                    if (orderDetails.isEmpty() || OrderSplitSQL.getFinishedOrderSplits(order.getId()).size() > 0) {
                         UIHelp.showToast(parent, parent.getResources().getString(R.string.order_first));
                         return;
                     }
                     boolean canDiscount = true;
                     for (OrderDetail orderDetail : orderDetails) {
-                        if (orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-                                && orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
+                        if (orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+                                && orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
                                 && orderDetail.getIsItemDiscount() == ParamConst.ITEM_DISCOUNT
                                 && orderDetail.getIsFree() == ParamConst.NOT_FREE) {
                             canDiscount = true;

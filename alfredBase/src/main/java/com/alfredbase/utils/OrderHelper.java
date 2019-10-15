@@ -417,9 +417,9 @@ public class OrderHelper {
 	 */
 	public static BigDecimal getOrderDetailDiscountPrice(OrderDetail orderDetail) {
 		BigDecimal discountPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+		if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
 				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
 				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
 			discountPrice = BH.mul(BH.getBD(orderDetail.getRealPrice()),
@@ -474,32 +474,72 @@ public class OrderHelper {
 		return discount;
 	}
 
-	public static void setOrderDiscount(Order order,
-			List<OrderDetail> orderDetails) {
+	public static void setOrderDiscount(Order order, List<OrderDetail> orderDetails)
+	{
 		BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER
-				|| order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY) {
-			discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
-			for (OrderDetail orderDetail : orderDetails) {
-				if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE){
-					discount = BH.add(discount, BH.mul(
-							BH.getBD(orderDetail.getRealPrice()),
-							BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
-							true);
-					}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+		if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER
+				|| order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				Boolean completedOrder = false;
+				for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+				{
+					if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+					{
+						if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+						{
+							completedOrder = true;
+						}
+					}
+				}
+				if(!completedOrder)
+				{
+					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE)
+					{
+						discount = BH.add(discount, BH.mul(
+								BH.getBD(orderDetail.getRealPrice()),
+								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
+								true);
+					}
+					else if(orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB)
+					{
 						discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
 					}
 				}
-		} else {
-				for (OrderDetail orderDetail : orderDetails) {
-					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-						discount = BH.add(discount,
-								BH.getBD(orderDetail.getDiscountPrice()), true);
-					} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+			}
+		}
+		else
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				Boolean completedOrder = false;
+				for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+				{
+					if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+					{
+						if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+						{
+							completedOrder = true;
+						}
+					}
+				}
+				if(!completedOrder)
+				{
+					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB)
+					{
+						discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
+					}
+					else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
 //									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
-									) {
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
+					)
+					{
 						discount = BH.add(discount, BH.mul(
 								BH.getBD(orderDetail.getRealPrice()),
 								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
@@ -507,9 +547,10 @@ public class OrderHelper {
 					}
 				}
 			}
+		}
 
-			order.setOrderRound(BH.formatRound(BH.getBD(discount)).toString());
-			order.setDiscountAmount(BH.getBD(discount).toString());
+		order.setOrderRound(BH.formatRound(BH.getBD(discount)).toString());
+		order.setDiscountAmount(BH.getBD(discount).toString());
 	}
 	// 只有修改orderDiscount的时候才能调用这个方法
 	public static void setOrderDiscountByOrder(Order order,
@@ -1579,8 +1620,8 @@ public class OrderHelper {
 		}
 	}
 
-	public static void setOrderSplitDiscount(Order order, OrderSplit orderSplit,
-			List<OrderDetail> orderDetails) {
+	public static void setOrderSplitDiscount(Order order, OrderSplit orderSplit, List<OrderDetail> orderDetails)
+    {
 //			BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
 //			for (OrderDetail orderDetail : orderDetails) {
 //					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
@@ -1596,46 +1637,72 @@ public class OrderHelper {
 //						}
 //					}
 //				}
+//	    Discount via setting a number on order menu
 		BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER
-				|| order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY) {
-			discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
-			for (OrderDetail orderDetail : orderDetails) {
-				if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE){
-					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
-						discount = BH.add(discount, BH.mul(
-								BH.getBD(orderDetail.getRealPrice()),
-								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
-								true);
+		if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER || order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				if(orderSplit.getOrderStatus() != ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+				{
+					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+                    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+                    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE)
+					{
+						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue())
+						{
+							discount = BH.add(discount, BH.mul(
+									BH.getBD(orderDetail.getRealPrice()),
+									BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
+									true);
+						}
 					}
-				}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
-						discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
-					}
-				}
-			}
-		} else {
-			for (OrderDetail orderDetail : orderDetails) {
-				if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
-						discount = BH.add(discount,
-								BH.getBD(orderDetail.getDiscountPrice()), true);
-					}
-				} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-						|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
-//									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-						|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
-						) {
-					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
-						discount = BH.add(discount, BH.mul(
-								BH.getBD(orderDetail.getRealPrice()),
-								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
-								true);
+					else if(orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
+                            || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+                            || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB)
+					{
+						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue())
+						{
+							discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
+						}
 					}
 				}
 			}
 		}
-			orderSplit.setDiscountAmount(BH.getBD(discount).toString());
+//		Discount via setting percentage
+		else
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				if(orderSplit.getOrderStatus() != ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+				{
+					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB)
+					{
+						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue())
+						{
+							discount = BH.add(discount,
+									BH.getBD(orderDetail.getDiscountPrice()), true);
+						}
+					}
+					else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+//									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE)
+					{
+						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue())
+						{
+							discount = BH.add(discount, BH.mul(
+									BH.getBD(orderDetail.getRealPrice()),
+									BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
+									true);
+						}
+					}
+
+				}
+			}
+		}
+		discount = discount.setScale(2, BigDecimal.ROUND_HALF_UP);
+		orderSplit.setDiscountAmount(BH.getBD(discount).toString());
 	}
 
 	public static void setOrderSplitSubTotal(Order order, OrderSplit orderSplit,

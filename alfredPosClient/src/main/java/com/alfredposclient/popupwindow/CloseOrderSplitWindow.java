@@ -827,8 +827,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
                 @Override
                 public void call(PaymentSettlement paymentSettlement) {
-                    int paymentTypeId = paymentSettlement.getPaymentTypeId()
-                            .intValue();
+                    int paymentTypeId = paymentSettlement.getPaymentTypeId();
 //					if(paymentTypeId == ParamConst.SETTLEMENT_TYPE_ALIPAY){
 //						return;
 //					}
@@ -926,20 +925,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         case ParamConst.SETTLEMENT_TYPE_FOODPANDA:
 
                             break;
-                        case ParamConst.SETTLEMENT_TYPE_VOID: {
-                            addVoidOrEntTax();
-                            VoidSettlement voidSettlement = VoidSettlementSQL
-                                    .getVoidSettlementByPament(payment.getId(),
-                                            paymentSettlement.getId());
-                            subPaymentSettlement = voidSettlement;
-                            if (parent instanceof EditSettlementPage) {
-                                voidSettlement.setIsActive(ParamConst.PAYMENT_SETT_IS_NO_ACTIVE);
-                                VoidSettlementSQL.addVoidSettlement(voidSettlement);
-                            } else {
-                                VoidSettlementSQL.deleteVoidSettlement(voidSettlement);
-                            }
-                        }
-                        break;
+                        case ParamConst.SETTLEMENT_TYPE_VOID:
                         case ParamConst.SETTLEMENT_TYPE_REFUND: {
                             addVoidOrEntTax();
                             VoidSettlement voidSettlement = VoidSettlementSQL
