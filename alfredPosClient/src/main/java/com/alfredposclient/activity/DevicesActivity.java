@@ -21,6 +21,7 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
 import com.alfredbase.javabean.LocalDevice;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.model.KDSDevice;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.javabean.model.PrinterDevice;
@@ -28,6 +29,7 @@ import com.alfredbase.javabean.model.RVCDevice;
 import com.alfredbase.javabean.model.WaiterDevice;
 import com.alfredbase.store.sql.LocalDeviceSQL;
 import com.alfredbase.store.sql.PrinterSQL;
+import com.alfredbase.store.sql.RevenueCenterSQL;
 import com.alfredbase.utils.BarcodeUtil;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.ObjectFactory;
@@ -97,6 +99,7 @@ public class DevicesActivity extends BaseActivity {
     private SelectPrintWindow selectPrintWindow;
     private int dex = 0;
     private Observable<UdpMsg> observable2;
+    private List<RevenueCenter> revenueCenterList;
 
     Map<Integer, List<PrinterDevice>> map = new HashMap<Integer, List<PrinterDevice>>();
 
@@ -401,6 +404,17 @@ public class DevicesActivity extends BaseActivity {
                                 || device.getName().toLowerCase().equals("printer")
                                 || device.getName().toLowerCase().equals("waiter"))) {
 
+                            boolean isSameRestaurant = false;
+
+                            for (RevenueCenter revenueCenter : revenueCenterList) {
+                                if (revenueCenter.getRevName().equalsIgnoreCase(device.getName())) {
+                                    isSameRestaurant = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isSameRestaurant) return;
+
                             String[] splitIp = device.getIp().split("\\.");
                             int lastId = 0;
                             try {
@@ -656,6 +670,9 @@ public class DevicesActivity extends BaseActivity {
 //        refreshPrinterDevices(null);
         App.instance.discoverPrinter(handler);
         deviceGroupAdapter.setSelectIndex(dex);
+
+        revenueCenterList = RevenueCenterSQL.getAllRevenueCenter();
+
         registEvent();
     }
 
