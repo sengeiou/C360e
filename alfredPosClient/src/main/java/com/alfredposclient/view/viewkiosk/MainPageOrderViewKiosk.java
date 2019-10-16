@@ -253,6 +253,12 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                                     placedOrder.getTableId()).getName(), placedOrder,
                                             App.instance.getRevenueCenter(),
                                             App.instance.getBusinessDate());
+
+                            boolean isButtonQuickService = Store.getBoolean(context, Store.BUTTON_QUICK_SERVICE, false);
+                            if (isButtonQuickService) {
+                                kotSummary.setTableName("");
+                            }
+
                             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                             List<Integer> orderDetailIds = new ArrayList<Integer>();
                             ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();

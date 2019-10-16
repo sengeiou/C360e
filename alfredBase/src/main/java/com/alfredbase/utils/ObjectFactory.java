@@ -2202,6 +2202,7 @@ public class ObjectFactory {
                 kotSummary.setNumTag(order.getNumTag());
 
             }
+
             if (revenueCenter.getIsKiosk() == ParamConst.REVENUECENTER_IS_KIOSK) {
                 kotSummary.setTableName(order.getTableName());
             } else {

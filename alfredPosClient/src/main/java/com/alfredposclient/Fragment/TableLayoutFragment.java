@@ -43,6 +43,7 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
@@ -176,6 +177,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             refreshView();
         }
 
+        Store.putBoolean(getContext(), Store.BUTTON_QUICK_SERVICE, false);
 
         tableAdapter = new TableAdapter();
         lv_table_list.setAdapter(tableAdapter);
@@ -811,6 +813,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             case R.id.tv_quick_service:
                 BugseeHelper.buttonClicked("Open quick service by shortcut");
                 App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
+                Store.putBoolean(getContext(), Store.BUTTON_QUICK_SERVICE, true);
                 UIHelp.startMainPageKiosk(getContext());
                 break;
         }

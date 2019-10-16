@@ -32,6 +32,7 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -354,6 +355,12 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                                                     order.getTableId()).getName(), order,
                                                             App.instance.getRevenueCenter(),
                                                             App.instance.getBusinessDate());
+
+                                            boolean isButtonQuickService = Store.getBoolean(getContext(), Store.BUTTON_QUICK_SERVICE, false);
+                                            if (isButtonQuickService) {
+                                                kotSummary.setTableName("");
+                                            }
+
                                             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                                             List<Integer> orderDetailIds = new ArrayList<Integer>();
                                             ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();

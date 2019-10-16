@@ -834,7 +834,10 @@ public class MainPageKiosk extends BaseActivity {
 //                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
 //
 //                            } else {
-                            if (!App.instance.isRevenueKiosk()) {
+
+                            boolean isButtonQuickService = Store.getBoolean(context, Store.BUTTON_QUICK_SERVICE, false);
+
+                            if (!App.instance.isRevenueKiosk() && !isButtonQuickService) {
                                 App.instance.remoteBillPrint(printer, title, paidOrder,
                                             orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,orderPromotions);
                             } else {
@@ -2131,6 +2134,8 @@ public class MainPageKiosk extends BaseActivity {
         }
 //		App.instance.unBindPushWebSocketService();
         XMPP.getInstance().setCanCheckAppOrder(false);
+
+        Store.putBoolean(context, Store.BUTTON_QUICK_SERVICE, false);
         super.onDestroy();
     }
 
