@@ -296,6 +296,7 @@ public class MainPage extends BaseActivity {
     private View view_top_line;
     private OrderDetail transfItemOrderDetail;
     private OrderDetail oldTransItemOrderDetail;
+    public static boolean isLoading ;
 
     //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
@@ -2388,6 +2389,7 @@ public class MainPage extends BaseActivity {
             showTables();
             return;
         }
+
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 //        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
 //
@@ -2399,6 +2401,7 @@ public class MainPage extends BaseActivity {
             TableInfoSQL.updateTables(currentTable);
         }
         mainPageMenuView.setParam(currentOrder, handler);
+
         orderView.setParam(this, currentOrder, orderDetails, handler);
 
 //        DiffData data = new DiffData(this);//实例化data类
@@ -2481,6 +2484,12 @@ public class MainPage extends BaseActivity {
     private class AddOrderAsync extends AsyncTask<OrderDetail, OrderDetail, OrderDetail[]> {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            isLoading = true;
+        }
+
+        @Override
         protected OrderDetail[] doInBackground(OrderDetail... orderDetails) {
             for (int i = 0; i < orderDetails.length; i++) {
              OrderDetailSQL.updateOrder(orderDetails[i]);
@@ -2491,6 +2500,7 @@ public class MainPage extends BaseActivity {
         @Override
         protected void onPostExecute(OrderDetail[] orderDetails) {
             super.onPostExecute(orderDetails);
+            isLoading = false;
             setData();
 
         }

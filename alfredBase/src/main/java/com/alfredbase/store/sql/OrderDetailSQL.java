@@ -151,6 +151,25 @@ public class OrderDetailSQL {
         }
     }
 
+    public static void updateOrderDetailAndOrder(OrderDetail orderDetail,Boolean isModifier) {
+        if (orderDetail == null) {
+            return;
+        }
+
+        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        calculate(order, orderDetail);
+        updateOrderDetail(orderDetail);
+
+        updateFreeOrderDetail(order, orderDetail);
+        OrderSQL.updateOrder(order,isModifier);
+        if (orderDetail.getGroupId().intValue() > 0) {
+            OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
+            if (orderSplit != null) {
+                OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
+            }
+        }
+    }
+
     public static void updateOrderDetailAndOrderForWaiter(
             OrderDetail orderDetail) {
         if (orderDetail == null) {

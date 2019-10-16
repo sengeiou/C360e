@@ -79,6 +79,15 @@ public class OrderSQL {
 		update(order);
 	}
 
+	public static void updateOrder(Order order,Boolean isModifier) {
+		if (order == null) {
+			return;
+		}
+		calculate(order,isModifier);
+
+		update(order);
+	}
+
 	/**
 	 * 修改订单Order折扣，调用这个方法
 	 *
@@ -232,6 +241,29 @@ public class OrderSQL {
 			}
 		}
 		//OrderSQL.updateOrder(order);
+	}
+
+	public static void calculate(Order order, Boolean isModifier) {
+
+		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
+		OrderHelper.setOrderSubTotal(order, orderDetails);
+		updateOrderDetail(order);
+		orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
+		OrderHelper.setOrderBeforTax(order, orderDetails);
+		OrderHelper.setOrderDiscount(order, orderDetails);
+		OrderHelper.setOrderTax(order, orderDetails);
+		OrderHelper.setOrderTotal(order, orderDetails);
+		OrderHelper.setPromotion(order,orderDetails);
+		OrderHelper.setOrderInclusiveTaxPrice(order);
+
+		List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(order);
+		if(orderSplits != null && orderSplits.size() > 0){
+			for(OrderSplit orderSplit : orderSplits){
+				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
+			}
+		}
+		if (isModifier)
+		OrderSQL.updateOrder(order);
 	}
 	/**
 	 * 修改订单Order折扣，调用这个方法
