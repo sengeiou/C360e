@@ -133,7 +133,7 @@ public class SystemSetting extends BaseActivity implements OnClickListener, MyTo
 
         } else {
             findViewById(R.id.ll_print_lable).setVisibility(View.GONE);
-            findViewById(R.id.ll_app_order).setVisibility(View.GONE);
+            findViewById(R.id.ll_app_order).setVisibility(View.VISIBLE);
             findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
             findViewById(R.id.ll_print_bill).setVisibility(View.GONE);
             findViewById(R.id.ll_of_pax).setVisibility(View.VISIBLE);
