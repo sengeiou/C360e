@@ -1860,6 +1860,7 @@ public class App extends BaseApplication {
             printerDialog();
             return false;
         }
+
         try {
             Gson gson = new Gson();
             String printstr = gson.toJson(printer);

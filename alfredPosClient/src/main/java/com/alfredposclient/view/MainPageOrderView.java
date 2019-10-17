@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
-import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
@@ -59,7 +57,6 @@ import com.alfredbase.utils.ColorUtils;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
-import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
@@ -73,9 +70,6 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.NetworkUtils;
-import com.google.gson.Gson;
-import com.path.android.jobqueue.network.NetworkUtil;
-import com.google.gson.Gson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -231,10 +225,10 @@ public class MainPageOrderView extends LinearLayout {
                             List<OrderDetail> placedOrderDetails
                                     = OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
                             KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForPlace(
-                                            TableInfoSQL.getTableById(
-                                                    placedOrder.getTableId()).getName(), placedOrder,
-                                            App.instance.getRevenueCenter(),
-                                            App.instance.getBusinessDate());
+                                    TableInfoSQL.getTableById(
+                                            placedOrder.getTableId()).getName(), placedOrder,
+                                    App.instance.getRevenueCenter(),
+                                    App.instance.getBusinessDate());
                             User user = App.instance.getUser();
                             if (user != null) {
 
@@ -428,6 +422,10 @@ public class MainPageOrderView extends LinearLayout {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.delivery) + ")";
         } else if (order.getIsTakeAway() == ParamConst.EMPLOYEE) {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.employee) + ")";
+        } else if (order.getIsTakeAway() == ParamConst.DINE_IN) {
+            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.app_dine_in) + ")";
+        } else {
+            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.app_dine_in) + ")";
         }
 
         if (order.getTableId() < 0) {

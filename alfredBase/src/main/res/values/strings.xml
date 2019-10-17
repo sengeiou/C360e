@@ -90,6 +90,7 @@
     <string name="media">Media</string>
     <string name="delivery">Delivery</string>
     <string name="employee">Employee</string>
+    <string name="dine_in">Dine In</string>
     <string name="total_bill">Total Bill</string>
     <string name="custom">Custom</string>
     <string name="voucher">Voucher</string>

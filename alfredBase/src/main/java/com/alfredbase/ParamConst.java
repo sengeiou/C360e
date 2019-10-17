@@ -567,6 +567,7 @@ public class ParamConst {
 
     public static final int ENABLE_POS_TRAINING = 1;
     public static final int DISABLE_POS_TRAINING = 0;
+    public static final int ORDER_FORM_DINER_APP = 1;
 
 
 }
