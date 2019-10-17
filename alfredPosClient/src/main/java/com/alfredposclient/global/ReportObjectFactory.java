@@ -1,6 +1,7 @@
 package com.alfredposclient.global;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -2406,18 +2407,27 @@ public class ReportObjectFactory {
                         itemSalesQty += orderDetail.getItemNum();
                         itemSalesDicimal = BH.add(itemSalesDicimal,
                                 BH.getBD(orderDetail.getRealPrice()), true);
-                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL) {
-                            if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL)
+                        {
+                            if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB)
+                            {
                                 discount = BH.add(discount,
                                         BH.getBD(orderDetail.getDiscountPrice()),
                                         true);
                                 discountQty++;
-                            } else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
+                            }
+                            else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE)
+                            {
                                 discountPer = BH.add(discountPer, BH.mul(
                                         BH.getBD(orderDetail.getRealPrice()),
                                         BH.getBD(orderDetail.getDiscountRate()), false),
                                         true);
                                 discountPerQty++;
+                            }
+                            else
+                            {
+                                discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
+                                discountQty++;
                             }
                         }
                         if (!IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())) {
@@ -2427,9 +2437,8 @@ public class ReportObjectFactory {
                         }
                     }
 //				discountPer = BH.add(discountPer, BH.getBD(order.getDiscountPrice()), true);
-                    discount = BH.add(discount,
-                            BH.getBD(order.getDiscountPrice()), true);
-                    discountQty++;
+//              discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
+//               discountQty++;
                 }
                 break;
                 case ParamConst.ORDER_DISCOUNT_TYPE_NULL:

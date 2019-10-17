@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
@@ -213,7 +214,6 @@ public class OrderSQL {
 	}
 
 	public static void calculate(Order order) {
-
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		OrderHelper.setOrderSubTotal(order, orderDetails);
 		updateOrderDetail(order);
@@ -252,7 +252,8 @@ public class OrderSQL {
 	 *
 	 * @param order
 	 */
-	private static void updateOrderDetail(Order order) {
+	private static void updateOrderDetail(Order order)
+	{
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER)
 		{
@@ -299,6 +300,15 @@ public class OrderSQL {
 			if(BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))){
 				String discount_rate = BH.div(BH.getBD(order.getDiscountPrice()),
 						BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), false).toString();
+				for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+				{
+					if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+					{
+						order.setDiscountPrice(String.valueOf(BH.sub(BH.getBD(order.getDiscountPrice()), BH.getBD(finishedOrder.getDiscountAmount()), false)));
+						sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
+						discount_rate = BH.div(BH.getBD(order.getDiscountPrice()), BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), false).toString();
+					}
+				}
 				for (OrderDetail orderDetail : orderDetails)
 				{
 					Boolean completedOrder = false;
@@ -329,8 +339,7 @@ public class OrderSQL {
 						}
 						if (orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE && orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
 							orderDetail.setDiscountRate(discount_rate);
-							orderDetail
-									.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB);
+							orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB);
 							orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(discount_rate), BH.getBD(orderDetail.getRealPrice()), false).toString());
 							OrderDetailSQL.updateOrderDetail(orderDetail);
 						}
@@ -390,7 +399,8 @@ public class OrderSQL {
 					}
 				}
 			}
-		}else if(order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
+		}
+		else if(order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
 		{
 			List<String> categoryId = Arrays.asList(order.getDiscountCategoryId().split(","));
 			BigDecimal sumRatePrice = BH.getBD(ParamConst.DOUBLE_ZERO);

@@ -525,6 +525,7 @@ public class OrderHelper {
 						if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
 						{
 							completedOrder = true;
+                            discount = BH.sub(discount, BH.getBD(finishedOrder.getDiscountAmount()), false);
 						}
 					}
 				}
