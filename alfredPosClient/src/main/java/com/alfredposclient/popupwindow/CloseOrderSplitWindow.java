@@ -1196,6 +1196,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
         tv_cards_cvv_num.setText("");
 
+        remainTotal = remainTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
+
         if (!App.instance.getSystemSettings().isCardRounding()) {
 
             tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
@@ -1211,8 +1213,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             if (rounding.compareTo(BH.getBD("0.00")) == -1) {
                 symbol = "-";
             }
-            tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()).toString());
-            tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()).toString());
+            tv_cards_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()));
+            tv_cards_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()));
             cardAmountPaidNum = remainTotalAfterRound;
             tv_cards_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotalAfterRound).toString()).toString());
         }
@@ -1245,9 +1247,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         initBillSummary();
         contentView.findViewById(R.id.ll_subtotal_layout).setVisibility(
                 View.INVISIBLE);
-        tv_nets_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
+        tv_nets_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()));
         tv_nets_ref_num.setText("");
-        tv_nets_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
+        tv_nets_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()));
         tv_nets_ref_num.setBackgroundColor(parent.getResources()
                 .getColor(R.color.default_line_indicator_selected_color));
         tv_nets_amount_paid_num.setBackgroundColor(parent.getResources()
@@ -1267,9 +1269,9 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         } else if (payTypeId == ParamConst.SETTLEMENT_TYPE_EZLINK) {
             tv_wechat_ali_settlement.setText("EZ-Link Settlement");
         }
-        tv_wechat_ali_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
+        tv_wechat_ali_amount_due_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()));
         tv_wechat_ali_ref_num.setText("");
-        tv_wechat_ali_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
+        tv_wechat_ali_amount_paid_num.setText(BH.formatMoney(BH.getBD(remainTotal).toString()));
 //		tv_wechat_ali_ref_num.setBackgroundColor(parent.getResources()
 //				.getColor(R.color.default_line_indicator_selected_color));
         tv_wechat_ali_amount_paid_num.setBackgroundColor(parent.getResources()
@@ -2283,10 +2285,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             show.delete(0, show.length());
         }
         show.append(num * 100);
-        tv_total_amount_num
-                .setText(BH.formatMoney(BH.getBD(num).toString()).toString());
-        tv_part_total_amount_num
-                .setText(BH.formatMoney(BH.getBD(num).toString()).toString());
+        tv_total_amount_num.setText(BH.formatMoney(BH.getBD(num).toString()));
+        tv_part_total_amount_num.setText(BH.formatMoney(BH.getBD(num).toString()));
 //		showCashChange();
         BigDecimal cashNum = BH.getBD(num);
         BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
@@ -2294,10 +2294,10 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
         if (change > 0) {
             BigDecimal changeNum = BH.sub(cashNum, remainTotalAfterRound, true);
             tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-                    + BH.formatMoney(BH.getBD(changeNum).toString()).toString());
+                    + BH.formatMoney(BH.getBD(changeNum).toString()));
             clickEnterAction();
         } else {
-            tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0).toString());
+            tv_change_action_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(0));
         }
     }
 
@@ -2398,7 +2398,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 }
 
                 BigDecimal paidBD = BH.getBD(paymentMethod.getPartAcount());
-                if (viewTag == ParamConst.SETTLEMENT_CUSTOM_PART) {
+                if (viewTag == ParamConst.SETTLEMENT_CUSTOM_PART)
+                {
                     paidBD = BH.getBD(tv_part_total_amount_num.getText().toString());
                 }
                 if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
@@ -2484,7 +2485,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 PaymentSettlement paymentSettlement = null;
                 //四舍五入
                 if (!App.instance.getSystemSettings().isCardRounding()) {
-                    paidBD = cardAmountPaidNum;
+//                    paidBD = cardAmountPaidNum;
+                    paidBD = BH.getBD(tv_cards_amount_paid_num.getText().toString());
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
                                 .getInstance().getPaymentSettlementForCard(
@@ -3043,6 +3045,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 BigDecimal shownum = BH.IsDouble()
                         ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                         : BH.getBD(show.toString());
+                if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+                {
+                    shownum = BH.IsDouble()
+                            ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                            : BH.getBD(show.toString());
+                }
 //                BigDecimal shownum = BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true);
                 tv_total_amount_num.setText(shownum.toString());
                 showCashChange();
@@ -3057,11 +3065,18 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 if (selectView != null && selectView == tv_cards_amount_paid_num) {
                     selectView.setInputType(InputType.TYPE_CLASS_NUMBER);
                     if (TextUtils.isEmpty(show)) {
-                        selectView.setText(BH.formatMoney(0).toString());
+                        selectView.setText(BH.formatMoney(0));
                     } else {
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
+                        selectBD = selectBD.setScale(2, BigDecimal.ROUND_HALF_UP);
+                        if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+                        {
+                            selectBD = BH.IsDouble()
+                                    ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                                    : BH.getBD(show.toString());
+                        }
 
                         if (!BH.compare(selectBD, remainTotal)) {
                             selectView.setText(BH.formatMoney(selectBD.toString()).toString());
@@ -3121,6 +3136,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         BigDecimal selectBD = BH.IsDouble()
                                 ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                                 : BH.getBD(show.toString());
+                        if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+                        {
+                            selectBD = BH.IsDouble()
+                                    ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                                    : BH.getBD(show.toString());
+                        }
                         if (!BH.compare(selectBD, remainTotal)) {
                             selectView.setText(BH.formatMoney(selectBD.toString()).toString());
                         } else {
@@ -3145,6 +3166,12 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 BigDecimal shownum = BH.IsDouble()
                         ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true)
                         : BH.getBD(show.toString());
+                if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+                {
+                    shownum = BH.IsDouble()
+                            ? BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("1"), true)
+                            : BH.getBD(show.toString());
+                }
 //                BigDecimal shownum = BH.mul(BH.getBD(show.toString()), BH.getBDNoFormat("0.01"), true);
                 tv_part_total_amount_num.setText(shownum.toString());
 
