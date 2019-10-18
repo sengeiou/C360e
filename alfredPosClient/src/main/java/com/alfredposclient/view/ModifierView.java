@@ -71,8 +71,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
     }
 
 
-    public void setParams(final Order order, final OrderDetail orderDetail,
-                          final ItemModifier itemModifier, final Handler mHandler, final int height) {
+    public void setParams(final Order order, final OrderDetail orderDetail, final ItemModifier itemModifier, final Handler mHandler, final int height) {
         num = 0;
 //		int count = (int)Math.floor(height-ScreenSizeUtil.dip2px(parent,70))/
 //				(ScreenSizeUtil.dip2px(parent,ModifierView.MARGIN_SIZE * 2)+(ScreenSizeUtil.dip2px(parent,ModifierView.ITEM_SIZE)));
@@ -110,16 +109,17 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                     break;
                 final Modifier modifier = modifiers.get(i * count + j);
                 TextView textView = new TextView(context);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        ScreenSizeUtil.dip2px(parent, ITEM_SIZE), ScreenSizeUtil.dip2px(parent, ITEM_SIZE));
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ScreenSizeUtil.dip2px(parent, ITEM_SIZE), ScreenSizeUtil.dip2px(parent, ITEM_SIZE));
+
                 param.bottomMargin = ScreenSizeUtil.dip2px(parent, MARGIN_SIZE);
                 param.topMargin = ScreenSizeUtil.dip2px(parent, MARGIN_SIZE);
                 param.leftMargin = ScreenSizeUtil.dip2px(parent, MARGIN_SIZE);
                 param.rightMargin = ScreenSizeUtil.dip2px(parent, MARGIN_SIZE);
+
                 textView.setLayoutParams(param);
                 textView.setGravity(Gravity.CENTER);
-                OrderModifier orderModifier = CoreData.getInstance().getOrderModifier(orderModifiers,
-                        modifier);
+                OrderModifier orderModifier = CoreData.getInstance().getOrderModifier(orderModifiers, modifier);
+
                 if (orderModifier != null && orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
                     textView.setBackgroundResource(R.drawable.box_modifier_click);
                     textView.setTextColor(Color.WHITE);
@@ -141,18 +141,18 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                         }
                         int ods = orderDetail.getOrderDetailStatus();
 
-                        //: 零时阻止编辑已经发送到厨房的modifier
+                        // prevents editing of modifiers that have been sent to the kitchen
                         if (ods == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                             return;
                         }
 
-                        //
+
                         if (ods != ParamConst.ORDERDETAIL_STATUS_ADDED) {
                             orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
                             OrderDetailSQL.updateOrderDetail(orderDetail);
                         }
                         Modifier tag = (Modifier) v.getTag();
-
+//
                         OrderModifier orderModifier = CoreData.getInstance().getOrderModifier(orderModifiers, tag);
                         if (orderModifier != null) {
                             if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
@@ -164,9 +164,8 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                                 System.out.println("===" + (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO));
                                 System.out.println("===" + (modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT));
                                 System.out.println("===" + (num >= modifier_type.getOptionQty()));
-                                if (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO
-                                        && modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT
-                                        && num >= modifier_type.getOptionQty()) {
+
+                                if (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO && modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT && num >= modifier_type.getOptionQty()) {
                                     UIHelp.showShortToast(parent, String.format(parent.getResources().getString(R.string.the_most_selections), modifier_type.getOptionQty()));
                                     return;
                                 }
@@ -176,12 +175,10 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                                 num++;
                             }
                         } else {
-                            System.out.println(orderDetail.getIsSet() == ParamConst.IS_SET_COMBO);
-                            System.out.println(modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT);
-                            System.out.println(num >= modifier_type.getOptionQty());
-                            if (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO
-                                    && modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT
-                                    && num >= modifier_type.getOptionQty()) {
+//                            System.out.println(orderDetail.getIsSet() == ParamConst.IS_SET_COMBO);
+//                            System.out.println(modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT);
+//                            System.out.println(num >= modifier_type.getOptionQty());
+                            if (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO && modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT && num >= modifier_type.getOptionQty()) {
                                 UIHelp.showShortToast(parent, String.format(parent.getResources().getString(R.string.the_most_selections), modifier_type.getOptionQty()));
                                 return;
                             }
@@ -207,6 +204,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                                 num++;
                             } else if (max == 0) {
 //                                ((MainPage)parent).addModifier(orderModifier);
+
                                 OrderModifierSQL.addOrderModifier(orderModifier);
                                 num++;
 

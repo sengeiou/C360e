@@ -19,11 +19,15 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.BH;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +104,7 @@ public class OrderDetailSQL {
     }
 
     /**
-     * 修改OrderDetail的Discount信息时调用
+     * Called when modifying the OrderDetail's Discount information
      *
      * @param orderDetail
      */
@@ -125,7 +129,7 @@ public class OrderDetailSQL {
     }
 
     /**
-     * 修改OrderDetail的非Discount信息时调用
+     * Called when modifying the non-Discount information of OrderDetail
      *
      * @param orderDetail
      */
@@ -136,13 +140,37 @@ public class OrderDetailSQL {
 //		orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
 //		orderDetail.setDiscountRate(ParamConst.DOUBLE_ZERO);
 //		orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
-        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
-        calculate(order, orderDetail);
-        updateOrderDetail(orderDetail);
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        long currentTime1 = Calendar.getInstance().getTimeInMillis();
+        long currentTime2 = Calendar.getInstance().getTimeInMillis();
+        long currentTime3 = Calendar.getInstance().getTimeInMillis();
+        long currentTime4 = Calendar.getInstance().getTimeInMillis();
+        long currentTime5 = Calendar.getInstance().getTimeInMillis();
+        long currentTime6 = Calendar.getInstance().getTimeInMillis();
+        long currentTime7 = Calendar.getInstance().getTimeInMillis();
 
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
+        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        LogUtil.e("Sam start calculate",sdf.format(currentTime));
+        calculate(order, orderDetail);
+        LogUtil.e("Sam End calculate",sdf.format(currentTime1));
+
+        LogUtil.e("Sam Start Update Order Detail",sdf.format(currentTime2));
+        updateOrderDetail(orderDetail);
+        LogUtil.e("Sam End Update Order Detail",sdf.format(currentTime3));
+
+        LogUtil.e("Sam Start Update Free Detail",sdf.format(currentTime4));
         updateFreeOrderDetail(order, orderDetail);
+        LogUtil.e("Sam End Update Free Detail",sdf.format(currentTime5));
+
+
 //		order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL);
+        LogUtil.e("Sam Start Update Order",sdf.format(currentTime6));
         OrderSQL.updateOrder(order);
+        LogUtil.e("Sam End Update Order",sdf.format(currentTime7));
+
+
         if (orderDetail.getGroupId().intValue() > 0) {
             OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
             if (orderSplit != null) {
@@ -391,11 +419,9 @@ public class OrderDetailSQL {
     }
 
     private static void calculate(Order order, OrderDetail orderDetail) {
-        orderDetail.setModifierPrice(OrderHelper.getOrderDetailModifierPrice(
-                order, orderDetail).toString());
+        orderDetail.setModifierPrice(OrderHelper.getOrderDetailModifierPrice(order, orderDetail).toString());
 
-        orderDetail.setRealPrice(OrderHelper.getOrderDetailRealPrice(order,
-                orderDetail).toString());
+        orderDetail.setRealPrice(OrderHelper.getOrderDetailRealPrice(order, orderDetail).toString());
     }
 
 

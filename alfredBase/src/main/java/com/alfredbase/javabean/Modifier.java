@@ -30,36 +30,36 @@ public class Modifier implements Serializable{
 	
 
 	/**
-	 * 是否可用(-1删除，0禁用，1正常)
+	 * Is it available (-1 delete, 0 disable, 1 normal)
 	 */
 	private Integer isActive;
 	/**
-	 * 是否默认(0非默认，1默认)
+	 * Whether it is default (0 is not default, 1 default)
 	 */
 	private Integer isDefault;
 	
 	/**
-	 * 用做标记套餐的modifier 通过itemId可以拿到 打印机组
+	 * The modifier used as the markup package can be obtained by the itemId.
 	 */
 	private Integer itemId;
 	
 	/**
-	 * 是否为套餐下面的菜（0配料，1套餐）
+	 * Whether it is the dish under the course (0 ingredients, 1 course)
 	 */
 	private int isSet;
 	/**
-	 * 套餐里面用的
+	 * Used in the package
 	 */
 	private int qty;
 	/**
-	 * 选择默认项,0没有选择规则  1必须选择默认项 2任意选择几 
-	 * 注意：这个字段是ModifierGroup使用的
+	 * Select the default item, 0 does not select the rule 1 must select the default item 2 arbitrarily select a few
+	 * Note: This field is used by the ModifierGroup.
 	 */
 	private int mustDefault;
 	
 	/**
-	 * 任意选择数量 当mustDefault为2的时候才有用
-	 * 注意：这个字段是ModifierGroup使用的
+	 * Any number of choices is useful when mustDefault is 2.
+	 * Note: This field is used by the ModifierGroup.
 	 */
 	private int  optionQty;
 	private int  minNumber;

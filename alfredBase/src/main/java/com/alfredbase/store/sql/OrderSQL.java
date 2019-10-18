@@ -89,7 +89,7 @@ public class OrderSQL {
 	}
 
 	/**
-	 * 修改订单Order折扣，调用这个方法
+	 * Modify the order Order discount, call this method
 	 *
 	 * @param order
 	 */
@@ -240,7 +240,8 @@ public class OrderSQL {
 				OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
 			}
 		}
-		//OrderSQL.updateOrder(order);
+//		OrderSQL.updateOrder(order);
+
 	}
 
 	public static void calculate(Order order, Boolean isModifier) {
@@ -263,10 +264,10 @@ public class OrderSQL {
 			}
 		}
 		if (isModifier)
-		OrderSQL.updateOrder(order);
+		OrderSQL.updateOrder(order,isModifier);
 	}
 	/**
-	 * 修改订单Order折扣，调用这个方法
+	 * Modify the order Order discount, call this method
 	 *
 	 * @param order
 	 */
@@ -280,7 +281,7 @@ public class OrderSQL {
 		OrderHelper.setOrderInclusiveTaxPrice(order);
     }
 	/**
-	 * 修改订单Order折扣，调用这个方法
+	 * Modify the order Order discount, call this method
 	 *
 	 * @param order
 	 */

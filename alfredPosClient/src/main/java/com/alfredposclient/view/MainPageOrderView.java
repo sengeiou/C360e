@@ -654,6 +654,10 @@ public class MainPageOrderView extends LinearLayout {
             holder.tv_qty.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
+
+                    if (MainPage.isLoading){
+                        return;
+                    }
                     collapseLastOpen();
                     if (!ButtonClickTimer.canClick(arg0)) {
                         return;
@@ -869,6 +873,9 @@ public class MainPageOrderView extends LinearLayout {
 
                 @Override
                 public void onClick(View v) {
+                    if (MainPage.isLoading){
+                        return;
+                    }
                     collapseLastOpen();
                     if (!ButtonClickTimer.canClick(v)) {
                         return;
@@ -1187,6 +1194,8 @@ public class MainPageOrderView extends LinearLayout {
                     }
                     break;
                     case R.id.ll_remove: {
+                        if (MainPage.isLoading)
+                            break;
                         final OrderDetail tag = (OrderDetail) view.getTag();
                         if (tag.getIsFree().intValue() == ParamConst.FREE) {
                             return;
@@ -1210,6 +1219,8 @@ public class MainPageOrderView extends LinearLayout {
                     }
                     break;
                     case R.id.ll_void: {
+                        if (MainPage.isLoading)
+                            break;
                         OrderDetail orderDetail = (OrderDetail) view.getTag();
                         if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
                             return;

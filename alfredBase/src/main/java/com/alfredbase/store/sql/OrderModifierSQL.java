@@ -49,6 +49,36 @@ public class OrderModifierSQL {
 			e.printStackTrace();
 		}
 	}
+
+	public static void addOrderModifier(OrderModifier orderModifier,Boolean isModifier) {
+		if (orderModifier == null) {
+			return;
+		}
+		try {
+			String sql = "insert into "
+					+ TableNames.OrderModifier
+					+ "(orderId, orderDetailId, orderOriginId, userId, itemId, modifierId, modifierNum, status, modifierPrice, createTime, updateTime, printerId, modifierItemPrice)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] { orderModifier.getOrderId(),
+							orderModifier.getOrderDetailId(),
+							orderModifier.getOrderOriginId(),
+							orderModifier.getUserId(),
+							orderModifier.getItemId(),
+							orderModifier.getModifierId(),
+							orderModifier.getModifierNum(),
+							orderModifier.getStatus(),
+							orderModifier.getModifierPrice(),
+							orderModifier.getCreateTime(),
+							orderModifier.getUpdateTime(),
+							orderModifier.getPrinterId(),
+							orderModifier.getModifierItemPrice()});
+			updateOrderDetail(orderModifier,isModifier);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void addOrderModifierForDiner(OrderModifier orderModifier) {
 		if (orderModifier == null) {
 			return;
@@ -139,6 +169,37 @@ public class OrderModifierSQL {
 			e.printStackTrace();
 		}
 	}
+
+	public static void updateOrderModifier(OrderModifier orderModifier,Boolean isModifier) {
+		if (orderModifier == null) {
+			return;
+		}
+		try {
+			String sql = "replace into "
+					+ TableNames.OrderModifier
+					+ "(id,orderId, orderDetailId, orderOriginId, userId, itemId, modifierId, modifierNum, status, modifierPrice, createTime, updateTime, printerId, modifierItemPrice)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			SQLExe.getDB().execSQL(
+					sql,
+					new Object[] { orderModifier.getId(),
+							orderModifier.getOrderId(),
+							orderModifier.getOrderDetailId(),
+							orderModifier.getOrderOriginId(),
+							orderModifier.getUserId(),
+							orderModifier.getItemId(),
+							orderModifier.getModifierId(),
+							orderModifier.getModifierNum(),
+							orderModifier.getStatus(),
+							orderModifier.getModifierPrice(),
+							orderModifier.getCreateTime(),
+							orderModifier.getUpdateTime(),
+							orderModifier.getPrinterId(),
+							orderModifier.getModifierItemPrice()});
+			updateOrderDetail(orderModifier,isModifier);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public static void updateOrderModifierForWaiter(OrderModifier orderModifier) {
 		if (orderModifier == null) {
@@ -172,9 +233,13 @@ public class OrderModifierSQL {
 	}
 
 	private static void updateOrderDetail(OrderModifier orderModifier) {
-		OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(orderModifier
-				.getOrderDetailId());
+		OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(orderModifier.getOrderDetailId());
 		OrderDetailSQL.updateOrderDetailAndOrder(orderDetail);
+	}
+
+	private static void updateOrderDetail(OrderModifier orderModifier,Boolean isModifier) {
+		OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(orderModifier.getOrderDetailId());
+		OrderDetailSQL.updateOrderDetailAndOrder(orderDetail,isModifier);
 	}
 	
 	private static void updateOrderDetailForWaiter(OrderModifier orderModifier) {

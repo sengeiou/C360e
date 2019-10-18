@@ -2458,8 +2458,8 @@ public class MainPage extends BaseActivity {
         ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName());
         List<ItemModifier> itemModifiers = CoreData.getInstance().getItemModifiers(itemDetail);
 
-        OrderDetailSQL.addOrderDetailETC(orderDetail);
-        new AddOrderAsync().execute(orderDetail);
+
+
         if (currentTable.getPosId() < 0) {
             setDataWaitingList();
         } else {
@@ -2477,9 +2477,14 @@ public class MainPage extends BaseActivity {
             }
 
             mainPageMenuView.openModifiers(currentOrder, orderDetail, itemModifiers);
+
+            new AddOrderAsync().execute(orderDetail);
+
         }
+        OrderDetailSQL.addOrderDetailETC(orderDetail);
+        new AddOrderAsync().execute(orderDetail);
     }
-    
+
 
     private class AddOrderAsync extends AsyncTask<OrderDetail, OrderDetail, OrderDetail[]> {
 
