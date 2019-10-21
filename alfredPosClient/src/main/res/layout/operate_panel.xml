@@ -73,6 +73,14 @@
             android:textSize="@dimen/text_size_big" />
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/et_bar_code"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/rl_split_fire"
+        android:gravity="center"
+        android:singleLine="true" />
+
     <TextView
         android:id="@+id/tv_bill_content"
         android:layout_width="match_parent"

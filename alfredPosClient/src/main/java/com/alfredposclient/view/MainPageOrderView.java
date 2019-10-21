@@ -734,6 +734,28 @@ public class MainPageOrderView extends LinearLayout {
                                             .updateOrderDetailAndOrder(tag);
 //									OrderModifierSQL.updateOrderModifierNum(tag, num);
                                     OrderHelper.setOrderModifierPirceAndNum(tag, num);
+
+                                    if (!CommonUtil.isNull(tag.getDiscountRate())) {
+                                        if (BH.compare(BH.getBD(tag.getDiscountRate()), BH.getBD(ParamConst.DOUBLE_ZERO))) {
+                                            tag.setDiscountRate(tag.getDiscountRate());
+                                            tag.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE);
+                                            tag.setDiscountPrice(BH.mul(BH.getBD(tag.getRealPrice()), BH.getBDNoFormat(tag.getDiscountRate()), true).toString());
+                                        } else {
+                                            tag.setDiscountPrice(ParamConst.INT_ZERO);
+                                            tag.setDiscountRate(ParamConst.INT_ZERO);
+                                            tag.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+                                        }
+                                    } else {
+                                        if (BH.compare(BH.getBD(tag.getDiscountPrice()), BH.getBD(ParamConst.DOUBLE_ZERO))) {
+                                            tag.setDiscountPrice(tag.getDiscountPrice());
+                                            tag.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB);
+                                        } else {
+                                            tag.setDiscountRate(ParamConst.INT_ZERO);
+                                            tag.setDiscountPrice(ParamConst.INT_ZERO);
+                                            tag.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+                                        }
+                                    }
+                                    OrderDetailSQL.updateOrderDetailAndOrderByDiscount(tag);
                                 }
                             } else {
                                 if (num < 1) {
