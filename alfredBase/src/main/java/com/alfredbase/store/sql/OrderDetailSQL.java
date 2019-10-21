@@ -140,35 +140,18 @@ public class OrderDetailSQL {
 //		orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
 //		orderDetail.setDiscountRate(ParamConst.DOUBLE_ZERO);
 //		orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
-        long currentTime = Calendar.getInstance().getTimeInMillis();
-        long currentTime1 = Calendar.getInstance().getTimeInMillis();
-        long currentTime2 = Calendar.getInstance().getTimeInMillis();
-        long currentTime3 = Calendar.getInstance().getTimeInMillis();
-        long currentTime4 = Calendar.getInstance().getTimeInMillis();
-        long currentTime5 = Calendar.getInstance().getTimeInMillis();
-        long currentTime6 = Calendar.getInstance().getTimeInMillis();
-        long currentTime7 = Calendar.getInstance().getTimeInMillis();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
-        LogUtil.e("Sam start calculate",sdf.format(currentTime));
         calculate(order, orderDetail);
-        LogUtil.e("Sam End calculate",sdf.format(currentTime1));
 
-        LogUtil.e("Sam Start Update Order Detail",sdf.format(currentTime2));
         updateOrderDetail(orderDetail);
-        LogUtil.e("Sam End Update Order Detail",sdf.format(currentTime3));
 
-        LogUtil.e("Sam Start Update Free Detail",sdf.format(currentTime4));
         updateFreeOrderDetail(order, orderDetail);
-        LogUtil.e("Sam End Update Free Detail",sdf.format(currentTime5));
 
 
 //		order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL);
-        LogUtil.e("Sam Start Update Order",sdf.format(currentTime6));
         OrderSQL.updateOrder(order);
-        LogUtil.e("Sam End Update Order",sdf.format(currentTime7));
 
 
         if (orderDetail.getGroupId().intValue() > 0) {

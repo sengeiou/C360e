@@ -296,7 +296,7 @@ public class MainPage extends BaseActivity {
     private View view_top_line;
     private OrderDetail transfItemOrderDetail;
     private OrderDetail oldTransItemOrderDetail;
-    public static boolean isLoading ;
+    public static boolean isLoading;
 
     //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
@@ -2459,7 +2459,6 @@ public class MainPage extends BaseActivity {
         List<ItemModifier> itemModifiers = CoreData.getInstance().getItemModifiers(itemDetail);
 
 
-
         if (currentTable.getPosId() < 0) {
             setDataWaitingList();
         } else {
@@ -2478,13 +2477,12 @@ public class MainPage extends BaseActivity {
 
             mainPageMenuView.openModifiers(currentOrder, orderDetail, itemModifiers);
 
-            new AddOrderAsync().execute(orderDetail);
+//            new AddOrderAsync().execute(orderDetail);
 
         }
         OrderDetailSQL.addOrderDetailETC(orderDetail);
         new AddOrderAsync().execute(orderDetail);
     }
-
 
     private class AddOrderAsync extends AsyncTask<OrderDetail, OrderDetail, OrderDetail[]> {
 
@@ -2492,23 +2490,47 @@ public class MainPage extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             isLoading = true;
+            Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, true);
         }
 
         @Override
         protected OrderDetail[] doInBackground(OrderDetail... orderDetails) {
             for (int i = 0; i < orderDetails.length; i++) {
-             OrderDetailSQL.updateOrder(orderDetails[i]);
+                OrderDetailSQL.updateOrder(orderDetails[i]);
             }
+
+            LogUtil.log("calculate modifier bulk");
+            OrderModifierSQL.updateModifierByOrderDetail(orderDetails[0]);
             return orderDetails;
         }
 
         @Override
         protected void onPostExecute(OrderDetail[] orderDetails) {
             super.onPostExecute(orderDetails);
+            Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
             isLoading = false;
             setData();
 
         }
+    }
+
+    public void AddModifier(final OrderModifier orderModifier) {
+
+        new AsyncTask<OrderModifier, OrderModifier, OrderModifier>() {
+
+            @Override
+            protected OrderModifier doInBackground(OrderModifier... orderModifiers) {
+                OrderModifierSQL.addOrderModifier(orderModifier);
+                return orderModifiers[0];
+            }
+
+            @Override
+            protected void onPostExecute(OrderModifier orderModifier) {
+                super.onPostExecute(orderModifier);
+                setData();
+            }
+        };
+
     }
 
     private void sendKOTTmpToKDS(final OrderDetail orderDetail) {

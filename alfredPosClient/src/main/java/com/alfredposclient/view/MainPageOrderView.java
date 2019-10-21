@@ -420,8 +420,8 @@ public class MainPageOrderView extends LinearLayout {
             // KotSummarySQL.update(kotSummary);
             // }
         }
-
-        if (MainPage.isLoading) {
+        boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+        if (isOnProgress) {
             tv_sub_total.setVisibility(GONE);
             tv_discount.setVisibility(GONE);
             tv_taxes.setVisibility(GONE);
@@ -655,7 +655,9 @@ public class MainPageOrderView extends LinearLayout {
                 @Override
                 public void onClick(View arg0) {
 
-                    if (MainPage.isLoading){
+                    boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+
+                    if (isOnProgress){
                         return;
                     }
                     collapseLastOpen();
@@ -873,7 +875,9 @@ public class MainPageOrderView extends LinearLayout {
 
                 @Override
                 public void onClick(View v) {
-                    if (MainPage.isLoading){
+                    boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+
+                    if (isOnProgress){
                         return;
                     }
                     collapseLastOpen();
@@ -1194,7 +1198,8 @@ public class MainPageOrderView extends LinearLayout {
                     }
                     break;
                     case R.id.ll_remove: {
-                        if (MainPage.isLoading)
+                        boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+                        if (isOnProgress)
                             break;
                         final OrderDetail tag = (OrderDetail) view.getTag();
                         if (tag.getIsFree().intValue() == ParamConst.FREE) {
@@ -1219,7 +1224,8 @@ public class MainPageOrderView extends LinearLayout {
                     }
                     break;
                     case R.id.ll_void: {
-                        if (MainPage.isLoading)
+                        boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+                        if (isOnProgress)
                             break;
                         OrderDetail orderDetail = (OrderDetail) view.getTag();
                         if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {

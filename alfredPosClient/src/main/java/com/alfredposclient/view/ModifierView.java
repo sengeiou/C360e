@@ -2,6 +2,7 @@ package com.alfredposclient.view;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -22,6 +23,8 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.Printer;
+import com.alfredbase.store.Store;
+import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
@@ -154,10 +157,13 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                         Modifier tag = (Modifier) v.getTag();
 //
                         OrderModifier orderModifier = CoreData.getInstance().getOrderModifier(orderModifiers, tag);
+
+                        //Start Setting data
                         if (orderModifier != null) {
                             if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
                                 orderModifier.setStatus(ParamConst.ORDER_MODIFIER_STATUS_DELETE);
                                 orderModifier.setUpdateTime(System.currentTimeMillis());
+
                                 OrderModifierSQL.updateOrderModifier(orderModifier);
                                 num--;
                             } else {
@@ -171,6 +177,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                                 }
                                 orderModifier.setUpdateTime(System.currentTimeMillis());
                                 orderModifier.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
+
                                 OrderModifierSQL.updateOrderModifier(orderModifier);
                                 num++;
                             }
@@ -199,13 +206,14 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                             int max = modifier_type.getMaxNumber();
                             orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
                             if (max > 0 && num <= max - 1) {
+//                                ((MainPage)parent).AddModifier(orderModifier);
+                                OrderModifierSQL.addOrderModifier(orderModifier, true);
 
-                                OrderModifierSQL.addOrderModifier(orderModifier);
                                 num++;
                             } else if (max == 0) {
-//                                ((MainPage)parent).addModifier(orderModifier);
+//                                ((MainPage)parent).AddModifier(orderModifier);
 
-                                OrderModifierSQL.addOrderModifier(orderModifier);
+                                OrderModifierSQL.addOrderModifier(orderModifier, true);
                                 num++;
 
                             } else {
@@ -230,9 +238,30 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 //						refreshView((TextView)v, orderModifier);
 //						orderModifiers= OrderModifierSQL
 //								.getOrderModifiers(order, orderDetail);
-                        Message msg = handler.obtainMessage();
-                        msg.what = MainPage.VIEW_EVENT_SET_DATA;
-                        handler.sendMessage(msg);
+
+                        boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+
+                        if (!isOnProgress) {
+                            LogUtil.log("calculate modifier single");
+                            final OrderModifier orderModifierFinal = orderModifier;
+
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    OrderModifierSQL.updateOrderDetail(orderModifierFinal);
+                                    return null;
+                                }
+
+                                @Override
+                                protected void onPostExecute(Void aVoid) {
+                                    super.onPostExecute(aVoid);
+                                    Message msg = handler.obtainMessage();
+                                    msg.what = MainPage.VIEW_EVENT_SET_DATA;
+                                    handler.sendMessage(msg);
+                                }
+                            }.execute();
+                        }
+
                     }
 
 
