@@ -1477,7 +1477,12 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         } else {
             if (BaseApplication.isZeeposDev) {
                 return "http://18.138.252.241/" + relativeUrl;
-            } else {
+            }
+            else if (BaseApplication.isCuscapiMYDev)
+            {
+                return "http://18.138.252.241:180/" + relativeUrl;
+            }
+            else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
                 return "http://www.servedbyalfred.biz/" + relativeUrl;
             }

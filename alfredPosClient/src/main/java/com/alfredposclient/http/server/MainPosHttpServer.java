@@ -3868,6 +3868,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
         TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
         Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
 
+        int persons = order.getPersons();
+
 //        if (transferType == MainPage.ACTION_TRANSFER_TABLE) {
         //region transfer to new table
         if (orderTarget == null) {
@@ -3885,11 +3887,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order = OrderSQL.getUnfinishedOrderAtTable(targetTableId, order.getBusinessDate(), App.instance.getSessionStatus());
         } else {
             order = orderTarget;
+            persons += order.getPersons();
         }
 
+        tableInfo.setPacks(persons);
         tableInfo.setIsLocked(1);
         TableInfoSQL.updateTables(tableInfo);
-        MainPage.setTablePacks(tableInfo, String.valueOf(order.getPersons()));
+        MainPage.setTablePacks(tableInfo, tableInfo.getPacks() + "");
 
         if (App.getTopActivity() != null)
             App.getTopActivity().httpRequestAction(
@@ -4140,7 +4144,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
 
-        boolean isMerge = false;
         Order orderTarget = OrderSQL.getUnfinishedOrderAtTable(targetTableId, App.instance.getBusinessDate(), App.instance.getSessionStatus());
 
         TableInfo tableInfo = TableInfoSQL.getTableById(targetTableId);
@@ -4148,6 +4151,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         tableInfo.setPacks(tableInfo.getPacks() + packs);
         tableInfo.setStatus(ParamConst.TABLE_STATUS_DINING);
         TableInfoSQL.updateTables(tableInfo);
+        MainPage.setTablePacks(tableInfo, packs + "");
 
         RevenueCenter rvc = App.instance.getRevenueCenter();
         Restaurant restaurant = CoreData.getInstance().getRestaurant();
@@ -4155,7 +4159,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         try {
             if (orderTarget == null) {
-                isMerge = true;
                 orderTarget = ObjectFactory.getInstance().getOrder(
                         ParamConst.ORDER_ORIGIN_POS, App.instance.getSubPosBeanId(), tableInfo,
                         App.instance.getRevenueCenter(), App.instance.getUser(),

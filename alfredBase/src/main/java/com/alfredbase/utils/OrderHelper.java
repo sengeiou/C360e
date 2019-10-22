@@ -1,6 +1,5 @@
 package com.alfredbase.utils;
 
-import android.content.ClipData;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -58,101 +57,114 @@ public class OrderHelper {
 		BigDecimal preTaxPrice = BH.sub(BH.getBD(orderDetail.getRealPrice()),
 				getOrderDetailDiscountPrice(orderDetail), false);
 
-		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(
-				orderDetail.getItemId(), orderDetail.getItemName());
+		ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName());
 		BigDecimal taxTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if(itemDetail == null || itemDetail.getTaxCategoryId() == null)
+		{
 			return taxTotal;
-		List<TaxCategory> taxCategories = CoreData.getInstance()
-				.getTaxCategorys(itemDetail.getTaxCategoryId());
-		if (taxCategories.size() > 0) {
-			for (TaxCategory taxCategory : taxCategories) {
+		}
+		List<TaxCategory> taxCategories = CoreData.getInstance().getTaxCategorys(itemDetail.getTaxCategoryId());
+		if (taxCategories.size() > 0)
+		{
+			for (TaxCategory taxCategory : taxCategories)
+			{
 				Tax tax = CoreData.getInstance().getTax(taxCategory.getTaxId());
-				if (tax == null) {
+				if (tax == null)
+				{
 					continue;
 				}
-              if(tax.getBeforeDiscount()==0){
-
-				OrderDetailTax orderDetailTax = ObjectFactory.getInstance()
-						.getOrderDetailTax(order, orderDetail, tax, taxCategory.getIndex().intValue());
-				if (taxCategory.getTaxOn().intValue() == ParamConst.TAX_ON_TAX_1
-						|| taxCategory.getTaxOn().intValue() == ParamConst.TAX_ON_TAX_2) {
-					TaxCategory temp = CoreData.getInstance().getTaxCategory(
-							taxCategory.getTaxOnId());
-
-					Tax taxOn = CoreData.getInstance().getTax(temp.getTaxId());
-					if(taxOn.getBeforeDiscount()==0){
-					if (order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY
-							|| orderDetail.getIsTakeAway() == ParamConst.TAKE_AWAY) {
-						if (orderDetailTax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-							orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
-						} else if (taxOn.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE
-								&& tax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-							taxTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
-							orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
-						} else if (taxOn.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-							taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice,
-									BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
-							orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-									BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
-						} else if (tax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-							taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice,
-									BH.getBDNoFormat(taxOn.getTaxPercentage()), false), false);
-							orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-									BH.getBDNoFormat(taxOn.getTaxPercentage()), false).toString());
-						} else {
-							BigDecimal priceOntax = BH.add(
-									preTaxPrice,
-									BH.mul(preTaxPrice,
-											BH.getBDNoFormat(taxOn.getTaxPercentage()), false),
-									false);
-
-							taxTotal = BH.add(taxTotal, BH.mul(priceOntax,
-									BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
-							orderDetailTax.setTaxPrice(BH.mul(priceOntax,
-									BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
+				if(tax.getBeforeDiscount()==0)
+				{
+					OrderDetailTax orderDetailTax = ObjectFactory.getInstance().getOrderDetailTax(order, orderDetail, tax, taxCategory.getIndex());
+					Boolean completedOrder = false;
+					for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+					{
+						if(orderDetailTax.getOrderSplitId().equals(finishedOrder.getId()))
+						{
+							if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+							{
+								completedOrder = true;
+							}
 						}
-					} else {
-						BigDecimal priceOntax = BH.add(
-								preTaxPrice,
-								BH.mul(preTaxPrice,
-										BH.getBDNoFormat(taxOn.getTaxPercentage()), false),
-								false);
-
-						taxTotal = BH.add(taxTotal, BH.mul(priceOntax,
-								BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
-						orderDetailTax.setTaxPrice(BH.mul(priceOntax,
-								BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
-					}}
-
-				} else {
-					if (order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY
-							|| orderDetail.getIsTakeAway() == ParamConst.TAKE_AWAY) {
-						if (tax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-							orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
-						} else {
-							taxTotal = BH.add(
-									taxTotal,
-									BH.mul(preTaxPrice,
-											BH.getBDNoFormat(tax.getTaxPercentage()), false),
-									false);
-							orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-									BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
-						}
-					} else {
-						taxTotal = BH.add(
-								taxTotal,
-								BH.mul(preTaxPrice,
-										BH.getBDNoFormat(tax.getTaxPercentage()), false),
-								false);
-						orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-								BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
 					}
+					if (taxCategory.getTaxOn() == ParamConst.TAX_ON_TAX_1 || taxCategory.getTaxOn() == ParamConst.TAX_ON_TAX_2)
+					{
+						TaxCategory temp = CoreData.getInstance().getTaxCategory(taxCategory.getTaxOnId());
+						Tax taxOn = CoreData.getInstance().getTax(temp.getTaxId());
+						if(taxOn.getBeforeDiscount()==0)
+						{
+							if (orderDetail.getIsTakeAway() == ParamConst.TAKE_AWAY)
+							{
+								if (orderDetailTax.getTaxType() == ParamConst.TAX_TYPE_SERVICE) {
+									orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
+								} else if (taxOn.getTaxType() == ParamConst.TAX_TYPE_SERVICE
+										&& tax.getTaxType() == ParamConst.TAX_TYPE_SERVICE) {
+									taxTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
+									orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
+								} else if (taxOn.getTaxType() == ParamConst.TAX_TYPE_SERVICE) {
+									taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice,
+											BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
+									orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
+											BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
+								} else if (tax.getTaxType() == ParamConst.TAX_TYPE_SERVICE) {
+									taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice,
+											BH.getBDNoFormat(taxOn.getTaxPercentage()), false), false);
+									orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
+											BH.getBDNoFormat(taxOn.getTaxPercentage()), false).toString());
+								} else {
+									BigDecimal priceOntax = BH.add(
+											preTaxPrice,
+											BH.mul(preTaxPrice,
+													BH.getBDNoFormat(taxOn.getTaxPercentage()), false),
+											false);
 
+									taxTotal = BH.add(taxTotal, BH.mul(priceOntax,
+											BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
+									orderDetailTax.setTaxPrice(BH.mul(priceOntax,
+											BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
+								}
+							}
+							else
+							{
+								BigDecimal priceOntax = BH.add(
+										preTaxPrice,
+										BH.mul(preTaxPrice,
+												BH.getBDNoFormat(taxOn.getTaxPercentage()), false),
+										false);
+
+								taxTotal = BH.add(taxTotal, BH.mul(priceOntax,
+										BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
+								orderDetailTax.setTaxPrice(BH.mul(priceOntax,
+										BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
+							}
+						}
+					}
+					else
+					{
+						if(!completedOrder)
+						{
+							if (order.getIsTakeAway() == ParamConst.TAKE_AWAY || orderDetail.getIsTakeAway() == ParamConst.TAKE_AWAY)
+							{
+								if (tax.getTaxType() == ParamConst.TAX_TYPE_SERVICE)
+								{
+									orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
+								}
+								else
+								{
+									taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice, BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
+									orderDetailTax.setTaxPrice(BH.mul(preTaxPrice, BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
+								}
+							}
+							else
+							{
+								taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice, BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
+								orderDetailTax.setTaxPrice(BH.mul(preTaxPrice, BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
+							}
+						}
+					}
+					OrderDetailTaxSQL.updateOrderDetailTax(orderDetailTax);
 				}
-				OrderDetailTaxSQL.updateOrderDetailTax(orderDetailTax);
 			}
-		}
 		}
 		return taxTotal;
 	}
@@ -184,36 +196,51 @@ public class OrderHelper {
 
 				if(tax.getBeforeDiscount()==1) {
 
-					OrderDetailTax orderDetailTax = ObjectFactory.getInstance()
-							.getOrderDetailTax(order, orderDetail, tax, taxCategory.getIndex().intValue());
-					if ((taxCategory.getTaxOn().intValue() == ParamConst.TAX_ON_TAX_1
-							|| taxCategory.getTaxOn().intValue() == ParamConst.TAX_ON_TAX_2)) {
-						TaxCategory temp = CoreData.getInstance().getTaxCategory(
-								taxCategory.getTaxOnId());
+					OrderDetailTax orderDetailTax = ObjectFactory.getInstance().getOrderDetailTax(order, orderDetail, tax, taxCategory.getIndex());
+					if ((taxCategory.getTaxOn() == ParamConst.TAX_ON_TAX_1 || taxCategory.getTaxOn() == ParamConst.TAX_ON_TAX_2))
+					{
+						TaxCategory temp = CoreData.getInstance().getTaxCategory(taxCategory.getTaxOnId());
 
 						Tax taxOn = CoreData.getInstance().getTax(temp.getTaxId());
-						if(taxOn.getBeforeDiscount()==1){
+						if(taxOn.getBeforeDiscount()==1)
+						{
+							if (order.getIsTakeAway() == ParamConst.TAKE_AWAY || orderDetail.getIsTakeAway() == ParamConst.TAKE_AWAY)
+							{
+								if (orderDetailTax.getTaxType() == ParamConst.TAX_TYPE_SERVICE)
+								{
+									orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
+								}
+								else if (taxOn.getTaxType() == ParamConst.TAX_TYPE_SERVICE && tax.getTaxType() == ParamConst.TAX_TYPE_SERVICE)
+								{
+									taxTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
+									orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
+								}
+								else if (taxOn.getTaxType() == ParamConst.TAX_TYPE_SERVICE)
+								{
+									taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice, BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
+									orderDetailTax.setTaxPrice(BH.mul(preTaxPrice, BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
+								}
+								else if (tax.getTaxType() == ParamConst.TAX_TYPE_SERVICE)
+								{
+									taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice, BH.getBDNoFormat(taxOn.getTaxPercentage()), false), false);
+									orderDetailTax.setTaxPrice(BH.mul(preTaxPrice, BH.getBDNoFormat(taxOn.getTaxPercentage()), false).toString());
+								}
+								else
+								{
+								BigDecimal priceOntax = BH.add(
+										preTaxPrice,
+										BH.mul(preTaxPrice,
+												BH.getBDNoFormat(taxOn.getTaxPercentage()), false),
+										false);
 
-
-						if (order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY
-								|| orderDetail.getIsTakeAway() == ParamConst.TAKE_AWAY) {
-							if (orderDetailTax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-								orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
-							} else if (taxOn.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE
-									&& tax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-								taxTotal = BH.getBD(ParamConst.DOUBLE_ZERO);
-								orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
-							} else if (taxOn.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-								taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice,
+								taxTotal = BH.add(taxTotal, BH.mul(priceOntax,
 										BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
-								orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
+								orderDetailTax.setTaxPrice(BH.mul(priceOntax,
 										BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
-							} else if (tax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
-								taxTotal = BH.add(taxTotal, BH.mul(preTaxPrice,
-										BH.getBDNoFormat(taxOn.getTaxPercentage()), false), false);
-								orderDetailTax.setTaxPrice(BH.mul(preTaxPrice,
-										BH.getBDNoFormat(taxOn.getTaxPercentage()), false).toString());
-							} else {
+								}
+							}
+							else
+							{
 								BigDecimal priceOntax = BH.add(
 										preTaxPrice,
 										BH.mul(preTaxPrice,
@@ -225,24 +252,14 @@ public class OrderHelper {
 								orderDetailTax.setTaxPrice(BH.mul(priceOntax,
 										BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
 							}
-						} else {
-							BigDecimal priceOntax = BH.add(
-									preTaxPrice,
-									BH.mul(preTaxPrice,
-											BH.getBDNoFormat(taxOn.getTaxPercentage()), false),
-									false);
-
-							taxTotal = BH.add(taxTotal, BH.mul(priceOntax,
-									BH.getBDNoFormat(tax.getTaxPercentage()), false), false);
-							orderDetailTax.setTaxPrice(BH.mul(priceOntax,
-									BH.getBDNoFormat(tax.getTaxPercentage()), false).toString());
-						}
 						}
 
-					} else {
-						if (order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY
+					}
+					else
+					{
+						if (order.getIsTakeAway() == ParamConst.TAKE_AWAY
 								|| orderDetail.getIsTakeAway() == ParamConst.TAKE_AWAY) {
-							if (tax.getTaxType().intValue() == ParamConst.TAX_TYPE_SERVICE) {
+							if (tax.getTaxType() == ParamConst.TAX_TYPE_SERVICE) {
 								orderDetailTax.setTaxPrice(ParamConst.DOUBLE_ZERO);
 							} else {
 								taxTotal = BH.add(
@@ -400,9 +417,9 @@ public class OrderHelper {
 	 */
 	public static BigDecimal getOrderDetailDiscountPrice(OrderDetail orderDetail) {
 		BigDecimal discountPrice = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+		if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
 				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
 				|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
 			discountPrice = BH.mul(BH.getBD(orderDetail.getRealPrice()),
@@ -457,32 +474,73 @@ public class OrderHelper {
 		return discount;
 	}
 
-	public static void setOrderDiscount(Order order,
-			List<OrderDetail> orderDetails) {
+	public static void setOrderDiscount(Order order, List<OrderDetail> orderDetails)
+	{
 		BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER
-				|| order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY) {
-			discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
-			for (OrderDetail orderDetail : orderDetails) {
-				if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE){
-					discount = BH.add(discount, BH.mul(
-							BH.getBD(orderDetail.getRealPrice()),
-							BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
-							true);
-					}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+		if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER
+				|| order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				Boolean completedOrder = false;
+				for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+				{
+					if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+					{
+						if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+						{
+							completedOrder = true;
+						}
+					}
+				}
+				if(!completedOrder)
+				{
+					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE)
+					{
+						discount = BH.add(discount, BH.mul(
+								BH.getBD(orderDetail.getRealPrice()),
+								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
+								true);
+					}
+					else if(orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB)
+					{
 						discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
 					}
 				}
-		} else {
-				for (OrderDetail orderDetail : orderDetails) {
-					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-						discount = BH.add(discount,
-								BH.getBD(orderDetail.getDiscountPrice()), true);
-					} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+			}
+		}
+		else
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				Boolean completedOrder = false;
+				for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+				{
+					if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+					{
+						if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+						{
+							completedOrder = true;
+                            discount = BH.sub(discount, BH.getBD(finishedOrder.getDiscountAmount()), false);
+						}
+					}
+				}
+				if(!completedOrder)
+				{
+					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB)
+					{
+						discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
+					}
+					else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
 //									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
-									) {
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
+					)
+					{
 						discount = BH.add(discount, BH.mul(
 								BH.getBD(orderDetail.getRealPrice()),
 								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
@@ -490,9 +548,10 @@ public class OrderHelper {
 					}
 				}
 			}
+		}
 
-			order.setOrderRound(BH.formatRound(BH.getBD(discount)).toString());
-			order.setDiscountAmount(BH.getBD(discount).toString());
+		order.setOrderRound(BH.formatRound(BH.getBD(discount)).toString());
+		order.setDiscountAmount(BH.getBD(discount).toString());
 	}
 	// 只有修改orderDiscount的时候才能调用这个方法
 	public static void setOrderDiscountByOrder(Order order,
@@ -1480,7 +1539,8 @@ public class OrderHelper {
 		order.setTaxAmount(BH.getBD(tax).toString());
 	}
 
-	public static void setOrderTax(Order order, List<OrderDetail> orderDetails) {
+	public static void setOrderTax(Order order, List<OrderDetail> orderDetails)
+	{
 		BigDecimal tax = BH.getBD(ParamConst.DOUBLE_ZERO);
 		if (orderDetails.size() > 0) {
 			for (OrderDetail orderDetail : orderDetails) {
@@ -1561,8 +1621,8 @@ public class OrderHelper {
 		}
 	}
 
-	public static void setOrderSplitDiscount(Order order, OrderSplit orderSplit,
-			List<OrderDetail> orderDetails) {
+	public static void setOrderSplitDiscount(Order order, OrderSplit orderSplit, List<OrderDetail> orderDetails)
+    {
 //			BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
 //			for (OrderDetail orderDetail : orderDetails) {
 //					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
@@ -1578,46 +1638,72 @@ public class OrderHelper {
 //						}
 //					}
 //				}
+//	    Discount via setting a number on order menu
 		BigDecimal discount = BH.getBD(ParamConst.DOUBLE_ZERO);
-		if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER
-				|| order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY) {
-			discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
-			for (OrderDetail orderDetail : orderDetails) {
-				if (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE){
-					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
-						discount = BH.add(discount, BH.mul(
-								BH.getBD(orderDetail.getRealPrice()),
-								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
-								true);
+		if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER || order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				if(orderSplit.getOrderStatus() != ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+				{
+					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+                    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+                    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE)
+					{
+						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue())
+						{
+							discount = BH.add(discount, BH.mul(
+									BH.getBD(orderDetail.getRealPrice()),
+									BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
+									true);
+						}
 					}
-				}else if(orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
-						discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
-					}
-				}
-			}
-		} else {
-			for (OrderDetail orderDetail : orderDetails) {
-				if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
-					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
-						discount = BH.add(discount,
-								BH.getBD(orderDetail.getDiscountPrice()), true);
-					}
-				} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-						|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
-//									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-						|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
-						) {
-					if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue()) {
-						discount = BH.add(discount, BH.mul(
-								BH.getBD(orderDetail.getRealPrice()),
-								BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
-								true);
+					else if(orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
+                            || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+                            || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB)
+					{
+						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue())
+						{
+							discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
+						}
 					}
 				}
 			}
 		}
-			orderSplit.setDiscountAmount(BH.getBD(discount).toString());
+//		Discount via setting percentage
+		else
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				if(orderSplit.getOrderStatus() != ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+				{
+					if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB)
+					{
+						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue())
+						{
+							discount = BH.add(discount,
+									BH.getBD(orderDetail.getDiscountPrice()), true);
+						}
+					}
+					else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+//									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+							|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE)
+					{
+						if(orderSplit.getGroupId().intValue() == orderDetail.getGroupId().intValue())
+						{
+							discount = BH.add(discount, BH.mul(
+									BH.getBD(orderDetail.getRealPrice()),
+									BH.getBDNoFormat(orderDetail.getDiscountRate()), false),
+									true);
+						}
+					}
+
+				}
+			}
+		}
+		discount = discount.setScale(2, BigDecimal.ROUND_HALF_UP);
+		orderSplit.setDiscountAmount(BH.getBD(discount).toString());
 	}
 
 	public static void setOrderSplitSubTotal(Order order, OrderSplit orderSplit,
