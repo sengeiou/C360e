@@ -1035,7 +1035,11 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
                     String total = theOrder.getTotal().toString();
-                    String grandTotal = theOrder.getTotal().toString();
+                    String grandTotal= "";
+                    if (theOrder.getGrandTotal() != null)
+                        grandTotal = theOrder.getGrandTotal().toString();
+                    else
+                        grandTotal = theOrder.getTotal().toString();
                     if (!TextUtils.isEmpty(theOrder.getGrandTotal())) {
                         grandTotal = theOrder.getGrandTotal().toString();
                     }

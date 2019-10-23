@@ -2140,11 +2140,12 @@ public class App extends BaseApplication {
             String total = order.getTotal();
             String rounding = "0.00";
             if (roundAmount != null) {
-                total = BH.sub(BH.getBD(BH.formatMoney(order.getTotal())),
-                        BH.getBD(roundAmount.getRoundBalancePrice()), true)
-                        .toString();
+//                total = BH.sub(BH.getBD(BH.formatMoney(order.getTotal())),
+//                        BH.getBD(roundAmount.getRoundBalancePrice()), true)
+//                        .toString();
                 rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                         .toString();
+                order.setGrandTotal(roundAmount.getRoundAlfterPrice());
             }
 //            if(order.getPromotion()!=null){
 //                total = BH.add(BH.getReplace(BH.formatMoney(total)),
@@ -2283,11 +2284,12 @@ public class App extends BaseApplication {
                 String total = order.getTotal();
                 String rounding = "0.00";
                 if (roundAmount != null) {
-                    total = BH.sub(BH.getBD(order.getTotal()),
-                            BH.getBD(roundAmount.getRoundBalancePrice()), true)
-                            .toString();
+//                    total = BH.sub(BH.getBD(order.getTotal()),
+//                            BH.getBD(roundAmount.getRoundBalancePrice()), true)
+//                            .toString();
                     rounding = BH.getBD(roundAmount.getRoundBalancePrice())
                             .toString();
+                    order.setGrandTotal(roundAmount.getRoundAlfterPrice());
                 }
 //                if(order.getPromotion()!=null){
 //                    total = BH.add(BH.getReplace(BH.formatMoney(total)),
