@@ -453,7 +453,7 @@ public class SyncCentre {
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {
-                return "http://18.140.71.198/alfred-api/" + relativeUrl;
+                return "http://18.138.252.241/alfred-api/" + relativeUrl;
             }
             else if (BaseApplication.isCuscapiMYDev)
             {
@@ -765,7 +765,7 @@ public class SyncCentre {
                 url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
                 if (BaseApplication.isZeeposDev) {
-                    url = "http://18.140.71.198/alfred-api/" + APIName.REQUEST_ALIPAY;
+                    url = "http://18.138.252.241/alfred-api/" + APIName.REQUEST_ALIPAY;
                 }
                 else if (BaseApplication.isCuscapiMYDev)
                 {

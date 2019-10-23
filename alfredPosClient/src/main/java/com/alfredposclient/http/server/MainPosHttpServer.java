@@ -3001,6 +3001,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 KotItemDetail kidLocal = KotItemDetailSQL.getKotItemDetailByUniqueId(kotItemDetail.getUniqueId());
                 if (kidLocal == null) continue;
 
+                kidLocal.setKotStatus(kotItemDetail.getKotStatus());
                 kidLocal.setEndTime(System.currentTimeMillis());
                 KotItemDetailSQL.update(kidLocal);
                 kotItemDetailsCopy.add(kidLocal);

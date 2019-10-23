@@ -6,7 +6,9 @@
     android:versionName="1.0.11">
 
     <uses-permission android:name=" android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-sdk android:targetSdkVersion="18" />
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     <application

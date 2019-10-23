@@ -3,6 +3,8 @@
     android:versionCode="12"
     android:versionName="1.0.11" >
 
+    <uses-sdk android:minSdkVersion="9"/>
+
     <!--声明使用usb-->
     <uses-feature android:name="android.hardware.usb.host"></uses-feature>
     <uses-permission android:name="android.hardware.usb.accessory"/>
