@@ -247,6 +247,7 @@ public class MainPage extends BaseActivity {
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REPLACEMENT = "STORED_CARD_REPLACEMENT";
+    private static final int View_REFRESH_AFTERBACKGROUND = 402;
     public MainPageOrderView orderView;
     public String tableShowAction = SHOW_TABLES;
     public Order currentOrder;
@@ -771,6 +772,10 @@ public class MainPage extends BaseActivity {
                             mainPageMenuView.refreshAllMenu();
                         }
                     }
+                    break;
+                case View_REFRESH_AFTERBACKGROUND:
+                    setData();
+                    Store.putBoolean(context, String.valueOf(currentOrder.getId()), false);
                     break;
                 case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
                     if (currentTable.getPosId() < 0) {
@@ -2457,7 +2462,7 @@ public class MainPage extends BaseActivity {
         modifyQuantityWindow.show(quantity, dismissCall);
     }
 
-    private void addOrderDetail(OrderDetail orderDetail) {
+    private void addOrderDetail(final OrderDetail orderDetail) {
         ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName());
         List<ItemModifier> itemModifiers = CoreData.getInstance().getItemModifiers(itemDetail);
 
@@ -2483,14 +2488,21 @@ public class MainPage extends BaseActivity {
 
         }
         OrderDetailSQL.addOrderDetailETC(orderDetail);
-        Executor executor = Executors.newFixedThreadPool(5);
-        addOrderAsync = new AddOrderAsync().executeOnExecutor(executor, orderDetail);
-
-//        if (addOrderAsync.getStatus() == AsyncTask.Status.RUNNING){
-//            Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, true);
-//        }else{
-//            Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
-//        }
+        setData();
+        Store.putBoolean(context, String.valueOf(currentOrder.getId()), true);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LogUtil.e("SAMDEBUG","current Thread" + Thread.currentThread().getName());
+                OrderDetailSQL.updateOrder(orderDetail);
+                Store.putBoolean(context, String.valueOf(currentOrder.getId()), false);
+                Message msg = handler.obtainMessage();
+                msg.what = MainPage.VIEW_EVENT_SET_DATA;
+                handler.sendMessage(msg);
+            }
+        }).start();
+//        Executor executor = Executors.newFixedThreadPool(5);
+//        addOrderAsync = new AddOrderAsync().executeOnExecutor(executor, orderDetail);
     }
 
     private class AddOrderAsync extends AsyncTask<OrderDetail, OrderDetail, OrderDetail[]> {

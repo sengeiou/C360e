@@ -2,7 +2,6 @@ package com.alfredposclient.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -246,31 +245,43 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                         if (!isOnProgress) {
                             LogUtil.d("SAMDEBUG", "calculate modifier single");
                             final OrderModifier orderModifierFinal = orderModifier;
-                            new AsyncTask<Void, Void, Void>() {
-
+                            Store.putBoolean(context, String.valueOf(order.getId()), true);
+                            new Thread(new Runnable() {
                                 @Override
-                                protected void onPreExecute() {
-                                    super.onPreExecute();
-//                                    Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, true);
-                                }
-
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    LogUtil.e("SAMDEBUG","current Thread" + Thread.currentThread().getName());
+                                public void run() {
+                                    LogUtil.e("SAMDEBUG","modif current Thread" + Thread.currentThread().getName());
                                     OrderModifierSQL.updateOrderDetail(orderModifierFinal);
-                                    return null;
-                                }
-
-                                @Override
-                                protected void onPostExecute(Void aVoid) {
-                                    super.onPostExecute(aVoid);
-//                                    Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+                                    Store.putBoolean(context, String.valueOf(order.getId()), false);
                                     Message msg = handler.obtainMessage();
                                     msg.what = MainPage.VIEW_EVENT_SET_DATA;
                                     handler.sendMessage(msg);
                                 }
-
-                            }.execute();
+                            }).start();
+//                            new AsyncTask<Void, Void, Void>() {
+//
+//                                @Override
+//                                protected void onPreExecute() {
+//                                    super.onPreExecute();
+////                                    Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, true);
+//                                }
+//
+//                                @Override
+//                                protected Void doInBackground(Void... voids) {
+//                                    LogUtil.e("SAMDEBUG","current Thread" + Thread.currentThread().getName());
+//                                    OrderModifierSQL.updateOrderDetail(orderModifierFinal);
+//                                    return null;
+//                                }
+//
+//                                @Override
+//                                protected void onPostExecute(Void aVoid) {
+//                                    super.onPostExecute(aVoid);
+////                                    Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+//                                    Message msg = handler.obtainMessage();
+//                                    msg.what = MainPage.VIEW_EVENT_SET_DATA;
+//                                    handler.sendMessage(msg);
+//                                }
+//
+//                            }.execute();
 
                         }
 
