@@ -58,6 +58,7 @@ import com.alfredbase.utils.ColorUtils;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
@@ -150,6 +151,12 @@ public class MainPageOrderView extends LinearLayout {
                     return;
                 }
 
+                boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
+
+                if (isOnProgress){
+                    UIHelp.showShortToast(parent, parent.getResources().getString(R.string.order_in_progress));
+                    return;
+                }
                 if (orderDetails.isEmpty()) {
                     UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
                     return;
@@ -356,6 +363,7 @@ public class MainPageOrderView extends LinearLayout {
                         }
                     }).start();
                 }
+                Store.remove(context, String.valueOf(order.getId()));
 
             }
         });
@@ -420,8 +428,10 @@ public class MainPageOrderView extends LinearLayout {
             // KotSummarySQL.update(kotSummary);
             // }
         }
-        boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+        boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
+
         if (isOnProgress) {
+            LogUtil.e("SAMDEBUG", String.valueOf(isOnProgress));
             tv_sub_total.setVisibility(GONE);
             tv_discount.setVisibility(GONE);
             tv_taxes.setVisibility(GONE);
@@ -433,6 +443,8 @@ public class MainPageOrderView extends LinearLayout {
             progress_grand_total.setVisibility(VISIBLE);
 
         } else {
+            LogUtil.e("SAMDEBUG", String.valueOf(isOnProgress));
+
             progress_subtotal.setVisibility(GONE);
             progres_discount.setVisibility(GONE);
             progress_tax.setVisibility(GONE);
@@ -1224,9 +1236,6 @@ public class MainPageOrderView extends LinearLayout {
                     }
                     break;
                     case R.id.ll_void: {
-                        boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
-                        if (isOnProgress)
-                            break;
                         OrderDetail orderDetail = (OrderDetail) view.getTag();
                         if (orderDetail.getIsFree().intValue() == ParamConst.FREE) {
                             return;

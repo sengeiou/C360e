@@ -140,6 +140,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -296,7 +298,8 @@ public class MainPage extends BaseActivity {
     private View view_top_line;
     private OrderDetail transfItemOrderDetail;
     private OrderDetail oldTransItemOrderDetail;
-    public static boolean isLoading;
+
+    public static AsyncTask addOrderAsync;
 
     //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
@@ -2477,11 +2480,17 @@ public class MainPage extends BaseActivity {
 
             mainPageMenuView.openModifiers(currentOrder, orderDetail, itemModifiers);
 
-//            new AddOrderAsync().execute(orderDetail);
 
         }
         OrderDetailSQL.addOrderDetailETC(orderDetail);
-        new AddOrderAsync().execute(orderDetail);
+        Executor executor = Executors.newFixedThreadPool(5);
+        addOrderAsync = new AddOrderAsync().executeOnExecutor(executor, orderDetail);
+
+//        if (addOrderAsync.getStatus() == AsyncTask.Status.RUNNING){
+//            Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, true);
+//        }else{
+//            Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+//        }
     }
 
     private class AddOrderAsync extends AsyncTask<OrderDetail, OrderDetail, OrderDetail[]> {
@@ -2489,49 +2498,37 @@ public class MainPage extends BaseActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            isLoading = true;
-            Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, true);
+            Store.putBoolean(context, String.valueOf(currentOrder.getId()), true);
+            setData();
         }
 
         @Override
         protected OrderDetail[] doInBackground(OrderDetail... orderDetails) {
+            LogUtil.e("SAMDEBUG", "current Thread" + Thread.currentThread().getName());
             for (int i = 0; i < orderDetails.length; i++) {
                 OrderDetailSQL.updateOrder(orderDetails[i]);
             }
 
             LogUtil.log("calculate modifier bulk");
             OrderModifierSQL.updateModifierByOrderDetail(orderDetails[0]);
+            LogUtil.e("SAMDEBUG", "OnBackground " + orderDetails[0].getItemName());
             return orderDetails;
         }
 
         @Override
         protected void onPostExecute(OrderDetail[] orderDetails) {
             super.onPostExecute(orderDetails);
-            Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
-            isLoading = false;
+//            if (addOrderAsync.getStatus() == AsyncTask.Status.RUNNING) {
+//                Store.putBoolean(context, String.valueOf(currentOrder.getId()), true);
+//            } else {
+                Store.putBoolean(context, String.valueOf(currentOrder.getId()), false);
+//            }
+            LogUtil.e("SAMDEBUG", "OnPost" + orderDetails[0].getItemName());
             setData();
 
         }
     }
 
-    public void AddModifier(final OrderModifier orderModifier) {
-
-        new AsyncTask<OrderModifier, OrderModifier, OrderModifier>() {
-
-            @Override
-            protected OrderModifier doInBackground(OrderModifier... orderModifiers) {
-                OrderModifierSQL.addOrderModifier(orderModifier);
-                return orderModifiers[0];
-            }
-
-            @Override
-            protected void onPostExecute(OrderModifier orderModifier) {
-                super.onPostExecute(orderModifier);
-                setData();
-            }
-        };
-
-    }
 
     private void sendKOTTmpToKDS(final OrderDetail orderDetail) {
 //        sendKOTTmpToKDS(orderDetail, null, ParamConst.JOB_TMP_KOT);

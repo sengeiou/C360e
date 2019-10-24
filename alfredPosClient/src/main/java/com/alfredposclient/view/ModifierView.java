@@ -24,7 +24,6 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.ModifierSQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
@@ -47,7 +46,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
     private Context context;
     private BaseActivity parent;
     private LinearLayout ll_detail;
-    private TextView tv_type,tv_type_min;
+    private TextView tv_type, tv_type_min;
     private Handler handler;
     private TextTypeFace textTypeFace;
     private List<OrderModifier> orderModifiers;
@@ -69,7 +68,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
         View.inflate(context, R.layout.dish_supplement_view, this);
         ll_detail = (LinearLayout) findViewById(R.id.ll_detail);
         tv_type = (TextView) findViewById(R.id.tv_type);
-        tv_type_min=(TextView)findViewById(R.id.tv_type_min) ;
+        tv_type_min = (TextView) findViewById(R.id.tv_type_min);
         initTextTypeFace();
     }
 
@@ -85,14 +84,13 @@ public class ModifierView extends LinearLayout implements OnClickListener {
         final Modifier modifier_type = CoreData.getInstance().getModifier(
                 itemModifier);
         tv_type.setText(modifier_type.getCategoryName());
-        if(modifier_type.getMinNumber()>0)
-        {
+        if (modifier_type.getMinNumber() > 0) {
             tv_type_min.setVisibility(VISIBLE);
-        }else {
+        } else {
             tv_type_min.setVisibility(GONE);
         }
 
-        tv_type_min.setText(context.getResources().getString(R.string.at_least)+" "+modifier_type.getMinNumber()+" "+context.getResources().getString(R.string.items));
+        tv_type_min.setText(context.getResources().getString(R.string.at_least) + " " + modifier_type.getMinNumber() + " " + context.getResources().getString(R.string.items));
         List<Modifier> modifiers = CoreData.getInstance().getModifiers(
                 modifier_type);
         int childCount = modifiers.size();
@@ -218,7 +216,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 
                             } else {
 
-                                UIHelp.showShortToast(parent, context.getString(R.string.at_only)+" " + max +" "+ context.getString(R.string.items));
+                                UIHelp.showShortToast(parent, context.getString(R.string.at_only) + " " + max + " " + context.getString(R.string.items));
                             }
 
 
@@ -228,7 +226,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                         if (min > 0) {
                             int checkNim = 0;
                             checkNim = min - num;
-                            ModifierCheckSql.update(checkNim, tag.getCategoryId(), orderModifier.getOrderDetailId(),order.getId());
+                            ModifierCheckSql.update(checkNim, tag.getCategoryId(), orderModifier.getOrderDetailId(), order.getId());
                         }
 
                         //	LogUtil.e("ModifierView", "==å®½===" +num);
@@ -239,15 +237,26 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 //						orderModifiers= OrderModifierSQL
 //								.getOrderModifiers(order, orderDetail);
 
-                        boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
+                        Message msg = handler.obtainMessage();
+                        msg.what = MainPage.VIEW_EVENT_SET_DATA;
+                        handler.sendMessage(msg);
+
+                        boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
 
                         if (!isOnProgress) {
-                            LogUtil.log("calculate modifier single");
+                            LogUtil.d("SAMDEBUG", "calculate modifier single");
                             final OrderModifier orderModifierFinal = orderModifier;
-
                             new AsyncTask<Void, Void, Void>() {
+
+                                @Override
+                                protected void onPreExecute() {
+                                    super.onPreExecute();
+//                                    Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, true);
+                                }
+
                                 @Override
                                 protected Void doInBackground(Void... voids) {
+                                    LogUtil.e("SAMDEBUG","current Thread" + Thread.currentThread().getName());
                                     OrderModifierSQL.updateOrderDetail(orderModifierFinal);
                                     return null;
                                 }
@@ -255,12 +264,16 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                                 @Override
                                 protected void onPostExecute(Void aVoid) {
                                     super.onPostExecute(aVoid);
+//                                    Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
                                     Message msg = handler.obtainMessage();
                                     msg.what = MainPage.VIEW_EVENT_SET_DATA;
                                     handler.sendMessage(msg);
                                 }
+
                             }.execute();
+
                         }
+
 
                     }
 

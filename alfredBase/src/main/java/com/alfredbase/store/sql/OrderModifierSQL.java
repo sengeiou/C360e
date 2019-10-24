@@ -118,34 +118,7 @@ public class OrderModifierSQL {
     }
 
     public static void updateOrderModifier(OrderModifier orderModifier) {
-        if (orderModifier == null) {
-            return;
-        }
-        try {
-            String sql = "replace into "
-                    + TableNames.OrderModifier
-                    + "(id,orderId, orderDetailId, orderOriginId, userId, itemId, modifierId, modifierNum, status, modifierPrice, createTime, updateTime, printerId, modifierItemPrice)"
-                    + " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-            SQLExe.getDB().execSQL(
-                    sql,
-                    new Object[]{orderModifier.getId(),
-                            orderModifier.getOrderId(),
-                            orderModifier.getOrderDetailId(),
-                            orderModifier.getOrderOriginId(),
-                            orderModifier.getUserId(),
-                            orderModifier.getItemId(),
-                            orderModifier.getModifierId(),
-                            orderModifier.getModifierNum(),
-                            orderModifier.getStatus(),
-                            orderModifier.getModifierPrice(),
-                            orderModifier.getCreateTime(),
-                            orderModifier.getUpdateTime(),
-                            orderModifier.getPrinterId(),
-                            orderModifier.getModifierItemPrice()});
-            updateOrderDetail(orderModifier);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        updateOrderModifier(orderModifier, false);
     }
 
     public static void updateOrderModifier(OrderModifier orderModifier, Boolean isModifier) {
@@ -173,7 +146,8 @@ public class OrderModifierSQL {
                             orderModifier.getUpdateTime(),
                             orderModifier.getPrinterId(),
                             orderModifier.getModifierItemPrice()});
-            updateOrderDetail(orderModifier, isModifier);
+            if (!isModifier)
+                updateOrderDetail(orderModifier);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -223,7 +197,7 @@ public class OrderModifierSQL {
         OrderDetailSQL.updateOrderDetailAndOrder(orderDetail);
     }
 
-    private static void updateOrderDetail(OrderModifier orderModifier, Boolean isModifier) {
+    public static void updateOrderDetail(OrderModifier orderModifier, Boolean isModifier) {
         OrderDetail orderDetail = OrderDetailSQL.getOrderDetail(orderModifier.getOrderDetailId());
         OrderDetailSQL.updateOrderDetailAndOrder(orderDetail, isModifier);
     }
