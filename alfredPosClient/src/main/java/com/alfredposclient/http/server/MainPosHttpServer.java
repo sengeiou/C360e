@@ -3851,6 +3851,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
     private void handlerTransferFromOtherRvc(JSONObject jsonObject) {
         String orderData = jsonObject.optString("order");
         String orderDetail = jsonObject.optString("orderDetail");
+        String oldTableStr = jsonObject.optString("oldTable");
         String kotSummary = jsonObject.optString("kotSummary");
         String kotItemDetail = jsonObject.optString("kotItemDetail");
         final String kotItemModifier = jsonObject.optString("kotItemModifier");
@@ -3861,6 +3862,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
         String orderModifier = jsonObject.optString("orderModifier");
         String orderSplit = jsonObject.optString("orderSplit");
+
+        TableInfo oldTable = null;
+
+        if (!TextUtils.isEmpty(oldTableStr))
+            oldTable = new Gson().fromJson(oldTableStr, TableInfo.class);
+
+        String oldTableName = oldTable != null ? oldTable.getName() : "";
 
         long time = System.currentTimeMillis();
         Order order = new Gson().fromJson(orderData, Order.class);
@@ -3877,7 +3885,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order.setBusinessDate(App.instance.getBusinessDate());
             order.setRestId(CoreData.getInstance().getRestaurant().getId());
             order.setPlaceId(tableInfo.getPlacesId());
-            order.setTableName(tableInfo.getName());
+//            order.setTableName(tableInfo.getName());
             order.setTableId(tableInfo.getPosId());
             order.setCreateTime(time);
             order.setUpdateTime(time);
@@ -3899,7 +3907,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             App.getTopActivity().httpRequestAction(
                     MainPage.SERVER_TRANSFER_TABLE_FROM_OTHER_RVC, tableInfo);
 
-        addOrderDetailFromOtherRVC(order, orderDetail, kotSummary, orderbill, orderModifier,
+        addOrderDetailFromOtherRVC(order, orderDetail, tableInfo, kotSummary, orderbill, orderModifier,
                 orderSplit, kotItemDetail, kotItemModifier, transferType, true);
 
         tableInfo.setIsLocked(0);
@@ -3926,8 +3934,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
                         final Map<String, Object> parameters = new HashMap<>();
 
                         parameters.put("fromOrder", order);
-                        parameters.put("fromTableName", oldOrder.getTableName());
-                        parameters.put("toTableName", order.getTableName());
+                        parameters.put("fromTableName", oldTableName);
+                        parameters.put("toTableName", tableInfo.getName());
                         parameters.put("action", ParamConst.JOB_TRANSFER_KOT);
 
                         final KotSummary kotSummaryFinal = kotSummaryTarget;
@@ -3948,13 +3956,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                         //create tmp transfer kot
                         //used for transfer table to kds
-                        addOrderDetailFromOtherRVC(oldOrder, orderDetail, kotSummary, orderbill, orderModifier,
+                        addOrderDetailFromOtherRVC(oldOrder, orderDetail, tableInfo, kotSummary, orderbill, orderModifier,
                                 orderSplit, kotItemDetail, kotItemModifier, transferType, false);
 
                         final Map<String, Object> parameters = new HashMap<String, Object>();
                         parameters.put("fromOrder", oldOrder);
-                        parameters.put("fromTableName", oldOrder.getTableName());
-                        parameters.put("toTableName", order.getTableName());
+                        parameters.put("fromTableName", oldTableName);
+                        parameters.put("toTableName", tableInfo.getName());
                         parameters.put("currentTableId", tableInfo.getPosId());
                         parameters.put("action", ParamConst.JOB_MERGER_KOT);
 
@@ -4345,7 +4353,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
      * @param kotItemModifier
      * @param isCreateNew     true = create new id for all, base on current rvc
      */
-    private void addOrderDetailFromOtherRVC(Order order, String orderDetail, String kotSummary,
+    private void addOrderDetailFromOtherRVC(Order order, String orderDetail, TableInfo tableInfo, String kotSummary,
                                             String orderbill, String orderModifier, String orderSplit,
                                             String kotItemDetail, String kotItemModifier, int transferType, boolean isCreateNew) {
 
@@ -4514,7 +4522,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     kot.setRevenueCenterIndex(rvc.getIndexId());
                     kot.setRevenueCenterName(rvc.getRevName());
                     kot.setTableId(order.getTableId());
-                    kot.setTableName(order.getTableName());
+                    kot.setTableName(tableInfo.getName());
                     kot.setOrderId(order.getId());
                     kot.setOrderNo(order.getOrderNo());
                     kot.setBusinessDate(App.instance.getBusinessDate());
@@ -4527,9 +4535,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     kot.setOrderId(-1);
                 }
 
-                List<KotSummary> kots = new ArrayList<>();
-                kots.add(kot);
-                KotSummarySQL.addKotSummaryList(kots);
+                KotSummarySQL.addKotSummary(kot);
             }
         }
 
