@@ -3956,7 +3956,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                         //create tmp transfer kot
                         //used for transfer table to kds
-                        addOrderDetailFromOtherRVC(oldOrder, orderDetail, tableInfo, kotSummary, orderbill, orderModifier,
+                        String currentTimeStr = String.valueOf(System.currentTimeMillis()).substring(9, 12);
+                        String fakeIdStr = currentTimeStr + oldOrder.getId();
+                        int fakeId = -Integer.parseInt(fakeIdStr);
+                        final Order fakeOrder = new Order();
+                        fakeOrder.setId(fakeId);
+
+                        LogUtil.log("current time substr : " + currentTimeStr);
+                        LogUtil.log("fakeId : " + fakeId);
+
+                        addOrderDetailFromOtherRVC(fakeOrder, orderDetail, tableInfo, kotSummary, orderbill, orderModifier,
                                 orderSplit, kotItemDetail, kotItemModifier, transferType, false);
 
                         final Map<String, Object> parameters = new HashMap<String, Object>();
@@ -3976,14 +3985,13 @@ public class MainPosHttpServer extends AlfredHttpServer {
                                                 kotSummaryFinal,
                                                 fromKotSummary, parameters, true);
 
-                                //delete tmp data
-                                oldOrder.setId(-1);
-                                OrderSplitSQL.deleteOrderSplitPaxByOrderId(oldOrder);
-                                OrderDetailSQL.deleteOrderDetailByOrder(oldOrder);
-                                OrderModifierSQL.deleteOrderModifierByOrder(oldOrder);
-                                OrderBillSQL.deleteOrderBillByOrder(oldOrder);
-                                KotSummarySQL.deleteKotSummaryByOrder(oldOrder);
-                                KotItemDetailSQL.deleteAllKotItemDetailByOrder(oldOrder);
+                                //region delete tmp data
+                                OrderSplitSQL.deleteOrderSplitPaxByOrderId(fakeOrder);
+                                OrderDetailSQL.deleteOrderDetailByOrder(fakeOrder);
+                                OrderModifierSQL.deleteOrderModifierByOrder(fakeOrder);
+                                OrderBillSQL.deleteOrderBillByOrder(fakeOrder);
+                                KotSummarySQL.deleteKotSummaryByOrder(fakeOrder);
+                                KotItemDetailSQL.deleteAllKotItemDetailByOrder(fakeOrder);
 
                                 if (!TextUtils.isEmpty(kotItemModifier)) {
                                     List<KotItemModifier> kotItemModifiers = gson.fromJson(kotItemModifier,
@@ -3992,6 +4000,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                                     KotItemModifierSQL.deleteKotItemModifiers(kotItemModifiers);
                                 }
+                                //endregion
 
                             }
                         }).start();
@@ -4379,7 +4388,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 } else {
                     //fake id to delete temporary data
                     //on merge table
-                    data.setOrderId(-1);
+                    data.setOrderId(order.getId());
                 }
 
                 OrderSplitSQL.add(data);
@@ -4426,7 +4435,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 } else {
                     //fake id to delete temporary data
                     //on merge table
-                    orderDetail1.setOrderId(-1);
+                    orderDetail1.setOrderId(order.getId());
                 }
 
                 OrderDetailSQL.addOrderDetailETC(orderDetail1);
@@ -4455,7 +4464,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     } else {
                         //fake id to delete temporary data
                         //on merge table
-                        data.setOrderId(-1);
+                        data.setOrderId(order.getId());
                     }
                     OrderModifierSQL.addOrderModifier(data);
                 }
@@ -4491,7 +4500,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 } else {
                     //fake id to delete temporary data
                     //on merge table
-                    orderbill1.setOrderId(-1);
+                    orderbill1.setOrderId(order.getId());
                 }
 
                 OrderBillSQL.add(orderbill1);
@@ -4532,7 +4541,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                 } else {
                     //fake id to delete temporary data
                     //on merge table
-                    kot.setOrderId(-1);
+                    kot.setOrderId(order.getId());
                 }
 
                 KotSummarySQL.addKotSummary(kot);
@@ -4566,7 +4575,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     } else {
                         //fake id to delete temporary data
                         //on merge table
-                        data.setOrderId(-1);
+                        data.setOrderId(order.getId());
                     }
 
                     KotItemDetailSQL.update(data);
@@ -4588,7 +4597,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
                     } else {
                         //fake id to delete temporary data
                         //on merge table
-                        //data.setOrderId(-1);
+                        //data.setOrderId(order.getId());
                     }
                     KotItemModifierSQL.update(data);
                 }
