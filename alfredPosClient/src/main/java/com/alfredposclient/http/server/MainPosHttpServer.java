@@ -3885,7 +3885,6 @@ public class MainPosHttpServer extends AlfredHttpServer {
             order.setBusinessDate(App.instance.getBusinessDate());
             order.setRestId(CoreData.getInstance().getRestaurant().getId());
             order.setPlaceId(tableInfo.getPlacesId());
-//            order.setTableName(tableInfo.getName());
             order.setTableId(tableInfo.getPosId());
             order.setCreateTime(time);
             order.setUpdateTime(time);
