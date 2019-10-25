@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +17,7 @@ import com.alfredbase.ParamHelper;
 import com.alfredbase.SureDialog;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.BarcodeDetail;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
@@ -26,6 +26,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.UserCustomSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
@@ -37,6 +38,8 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,26 +104,59 @@ public class MainPageOperatePanel extends LinearLayout implements
         {
             @Override
             public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-                if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN) {
+                if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN)
+                {
                     String barCode = et_bar_code.getText().toString();
+                    String itemBarCode = barCode;
+                    String priceBarCode = barCode;
+                    BigDecimal itemPrice = new BigDecimal(0);
+                    BigDecimal calculatedWeight;
+                    Boolean weightCalculator = false;
+                    for(BarcodeDetail barCodeDetail: UserCustomSQL.getAllBarCodeProperties())
+                    {
+                        switch(barCodeDetail.getBarCodeName())
+                        {
+                            case "item_detail_id":
+                                itemBarCode = itemBarCode.substring(0, barCodeDetail.getBarCodeLength());
+                                weightCalculator = true;
+                            case "item_price":
+                                priceBarCode = priceBarCode.substring(priceBarCode.length() - barCodeDetail.getBarCodeLength());
+                                String frontPrice = priceBarCode.substring(0, barCodeDetail.getBarCodePriceFront());
+                                String backPrice = priceBarCode.substring(priceBarCode.length() - (priceBarCode.length() - frontPrice.length()));
+                                itemPrice = new BigDecimal(frontPrice + "." + backPrice).setScale(2, BigDecimal.ROUND_FLOOR);
+                        }
+                    }
+
                     if (TextUtils.isEmpty(barCode)) {
                         UIHelp.showToast(parent, parent.getString(R.string.barcode_cannot_empty));
                         return false;
                     }
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(barCode);
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(itemBarCode);
                     OrderDetail orderDetail = null;
                     SureDialog sureDialog = new SureDialog(parent);
-                    et_bar_code.postDelayed(new Runnable() {
-
+                    et_bar_code.postDelayed(new Runnable()
+                    {
                         @Override
                         public void run() {
                             et_bar_code.setText("");
                             et_bar_code.requestFocus();
                         }
                     }, 500);
-                    if (itemDetail != null) {
-                        orderDetail = ObjectFactory.getInstance()
-                                .getOrderDetail(order, itemDetail, 0);
+                    if (itemDetail != null)
+                    {
+                        orderDetail = ObjectFactory.getInstance().getOrderDetail(order, itemDetail, 0);
+                        if(weightCalculator)
+                        {
+                            try
+                            {
+                                calculatedWeight = itemPrice.divide(new BigDecimal(orderDetail.getItemPrice()), 3, RoundingMode.HALF_UP);
+                                orderDetail.setWeight(String.valueOf(calculatedWeight));
+                            }
+                            catch (Exception e)
+                            {
+                                UIHelp.showToast(parent, "Weight is not changed, barcode format is invalid!");
+                            }
+                        }
                     }
                     if (orderDetail == null) {
                         sureDialog.show(false);

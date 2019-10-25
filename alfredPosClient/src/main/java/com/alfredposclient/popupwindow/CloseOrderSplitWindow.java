@@ -2127,17 +2127,13 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 // show.append(0);
                 break;
             case ParamConst.SETTLEMENT_TYPE_ALIPAY:
-                initWeChatAlipaySettlement(payTypeId);
-                contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
-                        View.VISIBLE);
-                // show.append(0);
-                break;
             case ParamConst.SETTLEMENT_TYPE_EZLINK:
                 initWeChatAlipaySettlement(payTypeId);
                 contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
                         View.VISIBLE);
                 // show.append(0);
                 break;
+            // show.append(0);
 
 
             case ParamConst.SETTLEMENT_CUSTOM_PAYMENT:
@@ -2194,13 +2190,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         View.GONE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
-                contentView.findViewById(R.id.ll_special_settlement).setVisibility(
-                        View.GONE);
-                break;
             case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD:
-                contentView.findViewById(R.id.ll_special_settlement).setVisibility(
-                        View.GONE);
-                break;
             case ParamConst.SETTLEMENT_TYPE_VOID:
             case ParamConst.SETTLEMENT_TYPE_REFUND:
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(
@@ -2211,9 +2201,6 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         View.GONE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_ALIPAY:
-                contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
-                        View.INVISIBLE);
-                break;
             case ParamConst.SETTLEMENT_TYPE_EZLINK:
                 contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
                         View.INVISIBLE);
@@ -2722,6 +2709,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
             break;
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT: {
+                disableButtons();
                 deleteVoidOrEntTax();
                 PaymentSQL.addPayment(payment);
                 PaymentSettlement paymentSettlement = ObjectFactory.getInstance()

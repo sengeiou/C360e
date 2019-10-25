@@ -236,11 +236,12 @@ public class OrderSplitPrintWindow implements OnClickListener {
 			holder.tv_qty.setBackgroundColor(context.getResources().getColor(
 					R.color.white));
 			holder.tv_qty.setTag(orderDetail);
-
 			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()));
 
 			// 以下计算过程应该是不需要的，数据库的total数据是准确的，但是还没有时间测试
-			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
+			    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
+				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
 
 				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
 					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
@@ -253,7 +254,9 @@ public class OrderSplitPrintWindow implements OnClickListener {
 									BH.getBD(orderDetail.getDiscountPrice()),
 									true).toString());
 				}
-			} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
+			} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+			            || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
+					    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE) {
 				BigDecimal discount = BH.mul(
 						BH.getBD(orderDetail.getRealPrice()),
 						BH.getBDNoFormat(orderDetail.getDiscountRate()), true);
