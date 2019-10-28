@@ -3013,16 +3013,16 @@ public class MainPosHttpServer extends AlfredHttpServer {
             KotSummarySQL.updateKotSummaryLog(localKotSummary);
             KotSummarySQL.updateKotCompleteTime(localKotSummary);
 
-            // : fix bug: filter out old data that may be in KDS
+            //region : fix bug: filter out old data that may be in KDS
             ArrayList<KotItemDetail> filteredKotItemDetails = new ArrayList<KotItemDetail>();
             for (int i = 0; i < kotItemDetailsCopy.size(); i++) {
                 KotItemDetail kotItemDetail = kotItemDetailsCopy.get(i);
                 if (kotItemDetail.getOrderId().intValue() == localKotSummary.getOrderId().intValue())
                     filteredKotItemDetails.add(kotItemDetail);
             }
+            //endregion
 
             List<KotItemDetail> resultKotItemDetails = new ArrayList<KotItemDetail>();
-            // end bug fix
 
             for (int i = 0; i < filteredKotItemDetails.size(); i++) {
                 KotItemDetail kotItemDetail = filteredKotItemDetails.get(i);
@@ -3055,6 +3055,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
 
                 kotNotifications.add(kotNotification);
             }
+
             if (filteredKotItemDetails.size() > 0) {
                 KotItemDetailSQL.addKotItemDetailList(filteredKotItemDetails);
                 KotNotificationSQL.addKotNotificationList(kotNotifications);

@@ -3244,7 +3244,8 @@ public class MainPage extends BaseActivity {
     }
 
     private void transferOrder(TableInfo table, int transferType) {
-        //msg.what
+        if (currentOrder == null) return;
+
         boolean fromThisRVC = checkIfTableFromThisRVC(table);
         if (fromThisRVC) {
             transferOrder(currentOrder, table.getPosId());
