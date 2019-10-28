@@ -642,7 +642,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     boolean canPrint = false;
                     for (KotItemDetail item : itemDetailsList) {
                         kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
-                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+//                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+                        ArrayList<KotItemModifier> modList = getModifiersByDetailUniqueId(item.getUniqueId(), modifiersList);
                         int size = getModifierSizehavePrintId(modList);
                         if (size != 0) {
                             canPrint = false;
@@ -685,7 +686,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             } else {
                 if (printJobMgr != null) {
                     for (KotItemDetail item : itemDetailsList) {
-                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+//                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+                        ArrayList<KotItemModifier> modList = getModifiersByDetailUniqueId(item.getUniqueId(), modifiersList);
                         int size = getModifierSizehavePrintId(modList);
                         if (size != 0) {
                             List<KotItemModifier> comboItems = getComboItemModifier(prtDevice.getDevice_id(), modList);
@@ -1035,7 +1037,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
                     String total = theOrder.getTotal().toString();
-                    String grandTotal= "";
+                    String grandTotal = "";
                     if (theOrder.getGrandTotal() != null)
                         grandTotal = theOrder.getGrandTotal().toString();
                     else
@@ -1842,6 +1844,17 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         return result;
     }
 
+    private ArrayList<KotItemModifier> getModifiersByDetailUniqueId(String uniqueId, ArrayList<
+            KotItemModifier> modsList) {
+        ArrayList<KotItemModifier> result = new ArrayList<>();
+        for (KotItemModifier mod : modsList) {
+            if (mod.getKotItemDetailUniqueId().equals(uniqueId)) {
+                result.add(mod);
+            }
+        }
+        return result;
+    }
+
     private ArrayList<KotItemModifier> getComboItemModifier(int printId, List<
             KotItemModifier> modsList) {
         ArrayList<KotItemModifier> result = new ArrayList<KotItemModifier>();
@@ -2039,7 +2052,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     boolean canPrint = false;
                     for (KotItemDetail item : itemDetailsList) {
                         kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
-                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+//                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+                        ArrayList<KotItemModifier> modList = getModifiersByDetailUniqueId(item.getUniqueId(), modifiersList);
                         int size = getModifierSizehavePrintId(modList);
                         if (size != 0) {
                             canPrint = false;
@@ -2081,7 +2095,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             } else {
                 if (printJobMgr != null) {
                     for (KotItemDetail item : itemDetailsList) {
-                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+//                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+                        ArrayList<KotItemModifier> modList = getModifiersByDetailUniqueId(item.getUniqueId(), modifiersList);
                         int size = getModifierSizehavePrintId(modList);
                         if (size != 0) {
                             List<KotItemModifier> comboItems = getComboItemModifier(prtDevice.getDevice_id(), modList);
@@ -3239,7 +3254,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 boolean canPrint = false;
                 for (KotItemDetail item : itemDetailsList) {
                     kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
-                    ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+//                    ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+                    ArrayList<KotItemModifier> modList = getModifiersByDetailUniqueId(item.getUniqueId(), modifiersList);
 //						   int size = getModifierSizehavePrintId(modList);
 //						   if (size != 0){
 //							   canPrint = false;

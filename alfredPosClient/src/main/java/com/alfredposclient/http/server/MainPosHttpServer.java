@@ -1533,8 +1533,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
             for (KotItemDetail kotItemDetail : kotItemDetails) {
                 kotItemModifiers
                         .addAll(KotItemModifierSQL
-                                .getKotItemModifiersByKotItemDetail(kotItemDetail
-                                        .getId()));
+                                .getKotItemModifiersByKotItemDetail(kotItemDetail));
             }
 
             result.put("kotSummary", kotSummary);
@@ -3389,7 +3388,7 @@ public class MainPosHttpServer extends AlfredHttpServer {
         }
 
         ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotSummary.getOrderId());
-        ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
+//        ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
 
         for (KotItemDetail items : kotItemDetails) {
             Integer pgid = items.getPrinterGroupId();
@@ -3401,6 +3400,8 @@ public class MainPosHttpServer extends AlfredHttpServer {
             if (items.getKotStatus() == ParamConst.KOT_STATUS_VOID) continue;
 
             int kotItemDetailId = items.getId().intValue();
+            String kotItemDetailUniqueId = items.getUniqueId();
+            ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(items);
 
             // Get all Group ids that KOT blongs to
             if (!printerGroupIds.contains(pgid))
@@ -3419,19 +3420,20 @@ public class MainPosHttpServer extends AlfredHttpServer {
             // modifier
             if (mods.containsKey(pgid)) {
                 ArrayList<KotItemModifier> tmp = mods.get(pgid);
-                for (KotItemModifier mof : kotItemModifiers) {
-                    if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
-                        tmp.add(mof);
-                    }
-                }
+//                for (KotItemModifier mof : kotItemModifiers) {
+//                    if (mof.getKotItemDetailUniqueId().equals(kotItemDetailUniqueId)) {
+//                        tmp.add(mof);
+//                    }
+//                }
+                tmp.addAll(kotItemModifiers);
             } else {
-                ArrayList<KotItemModifier> tmp = new ArrayList<>();
-                for (KotItemModifier mof : kotItemModifiers) {
-                    if (mof.getKotItemDetailId().intValue() == kotItemDetailId) {
-                        tmp.add(mof);
-                    }
-                }
-                mods.put(items.getPrinterGroupId(), tmp);
+//                ArrayList<KotItemModifier> tmp = new ArrayList<>();
+//                for (KotItemModifier mof : kotItemModifiers) {
+//                    if (mof.getKotItemDetailUniqueId().equals(kotItemDetailUniqueId)) {
+//                        tmp.add(mof);
+//                    }
+//                }
+                mods.put(items.getPrinterGroupId(), kotItemModifiers);
             }
         }
 
