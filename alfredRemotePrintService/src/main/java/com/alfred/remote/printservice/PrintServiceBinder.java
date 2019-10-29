@@ -214,8 +214,9 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
     @Override
     public void printDaySalesReport(String xzType, String printer, String title, String report, String tax, String customPayment, String useropen, String sessionSales)
-            throws RemoteException {
-        try {
+    {
+        try
+        {
             Gson gson = new Gson();
             PrinterDevice prtDevice = gson.fromJson(printer, PrinterDevice.class);
             PrinterTitle prtTitle = gson.fromJson(title, PrinterTitle.class);
@@ -227,10 +228,14 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
             }.getType());
             List<ReportUserOpenDrawer> reportUserOpenDrawers = gson.fromJson(useropen, new TypeToken<List<ReportUserOpenDrawer>>() {
             }.getType());
-            List<ReportSessionSales> reportSessionSales = null;
+            List<ReportSessionSales> reportSessionSales = new ArrayList<>();
             if (!TextUtils.isEmpty(sessionSales)) {
                 reportSessionSales = gson.fromJson(sessionSales, new TypeToken<List<ReportSessionSales>>() {
                 }.getType());
+                if(reportSessionSales == null)
+                {
+                    reportSessionSales = new ArrayList<>();
+                }
             }
             PrintManager printMgr = this.service.getPrintMgr();
             JobManager printJobMgr = printMgr.configureJobManager(prtDevice.getIP());
@@ -266,9 +271,10 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                 printMgr.addJob(prtDevice.getIP(), salesPrint);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
-
         }
     }
 

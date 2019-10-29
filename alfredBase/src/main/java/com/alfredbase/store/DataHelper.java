@@ -3,7 +3,6 @@ package com.alfredbase.store;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.alfredbase.BaseApplication;
 import com.alfredbase.ParamConst;
@@ -779,25 +778,6 @@ public class DataHelper {
             db.execSQL("CREATE TABLE "
                     + TableNames.RestaurantConfig
                     + "(id INTEGER PRIMARY KEY AUTOINCREMENT, restaurantId INTEGER, paraId INTEGER, paraType INTEGER, paraName TEXT, paraValue1 TEXT, paraValue2 TEXT)");
-            db.execSQL("CREATE TABLE "
-                    + TableNames.CustomValues
-                    + "(id INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, storeValue TEXT,remarks TEXT)");
-
-//          TESTING PURPOSES FOR MENATE, REMOVE THIS ONCE DEBUGGING IS COMPLETE
-            try
-            {
-                String sql = "INSERT INTO "
-                        + TableNames.CustomValues
-                        + "(id, type, storeValue, remarks)"
-                        + " values (?,?,?,?)";
-                db.execSQL(sql, new Object[] {'1', "0", "{\"barcode_format\": [{\"variable_name\": \"item_detail_id\",\"length\": \"7\",\"priority\": \"1\", \"barcode_front_price\": \"0\"},{\"variable_name\": \"item_price\",\"length\": \"6\",\"priority\": \"2\", \"barcode_front_price\": \"3\"}]}", "aaa"});
-//                db.execSQL(sql, new Object[] {'2', "137", "item_price", '6', '2', '3'});
-            }
-            catch (Exception e)
-            {
-                Log.e("Checker", String.valueOf(e));
-            }
-//          TESTING PURPOSES FOR MENATE, REMOVE THIS ONCE DEBUGGING IS COMPLETE
 
             // create index
             db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS localDevice_idx1 on "

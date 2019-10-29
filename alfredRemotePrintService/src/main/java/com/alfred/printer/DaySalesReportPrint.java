@@ -1,7 +1,5 @@
 package com.alfred.printer;
 
-import android.text.TextUtils;
-
 import com.alfred.remote.printservice.App;
 import com.alfred.remote.printservice.PrintService;
 import com.alfred.remote.printservice.R;
@@ -11,9 +9,7 @@ import com.alfredbase.javabean.ReportDaySales;
 import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.model.ReportSessionSales;
 import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
-import com.alfredbase.store.sql.TaxCategorySQL;
 import com.alfredbase.utils.BH;
-import com.alfredbase.utils.ObjectFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -252,7 +248,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
         this.addItem(PrintService.instance.getResources().getString(R.string.item_sales), reportDaySales.getItemSalesQty().toString(),
                 BH.formatThree(reportDaySales.getItemSales()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.stored_card_sales), reportDaySales.getTopUpsQty().toString(),
-                BH.formatMoney(BH.getBD(reportDaySales.getTopUps()).toString()).toString(), 1);
+                BH.formatMoney(BH.getBD(reportDaySales.getTopUps()).toString()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.ent_items), reportDaySales.getFocItemQty().toString(),
                 BH.formatThree( reportDaySales.getFocItem()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.ent_bills), reportDaySales.getFocBillQty().toString(),
@@ -269,6 +265,10 @@ public class DaySalesReportPrint extends ReportBasePrint {
                 BH.formatThree(reportDaySales.getDiscountPer()), 1);
         this.addItemWithLang(PrintService.instance.getResources().getString(R.string.discount_on_pri), reportDaySales.getDiscountQty().toString(),
                 BH.formatThree(reportDaySales.getDiscount()), PrintData.LANG_EN, 1);
+        if(reportDaySales.getPromotionQty() == null)
+        {
+            reportDaySales.setPromotionQty(0);
+        }
         this.addItem("Promotions", reportDaySales.getPromotionQty().toString(),  BH.formatThree(reportDaySales.getPromotionTotal()), 1);
 
 
