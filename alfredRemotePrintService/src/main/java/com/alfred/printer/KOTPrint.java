@@ -382,10 +382,11 @@ public class KOTPrint extends PrintJob{
 	}
 	
 	public void AddKotItem(String itemName, int qty, int scale) {
-		scale = 2;
+		scale = 1;
 		PrintData kot = new PrintData();
 		kot.setDataFormat(PrintData.FORMAT_TXT);
 		kot.setFontsize(scale);
+		kot.setTextBold(1);
 		kot.setMarginTop(20);
 		kot.setLanguage(PrintData.LANG_CN);
 		kot.setText(this.getTwoColContent(itemName, new Integer(qty).toString(), scale));
@@ -402,7 +403,9 @@ public class KOTPrint extends PrintJob{
 
 			PrintData kot = new PrintData();
 			kot.setDataFormat(PrintData.FORMAT_TXT);
-			kot.setFontsize(10);
+//			kot.setFontsize(10);
+			kot.setFontsize(1);
+			kot.setTextBold(1);
 			kot.setUnderline(true);
 			kot.setLanguage(PrintData.LANG_CN);
 			kot.setTextAlign(PrintData.ALIGN_LEFT);
