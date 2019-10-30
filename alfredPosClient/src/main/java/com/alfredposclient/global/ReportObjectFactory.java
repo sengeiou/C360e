@@ -1,6 +1,7 @@
 package com.alfredposclient.global;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -12,6 +13,7 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderPromotion;
+import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Promotion;
@@ -2363,14 +2365,13 @@ public class ReportObjectFactory {
             orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(order);
             switch (order.getDiscountType()) {
                 case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER:
-                case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY: {
-                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
-                            .size(); orderDetailIndex++) {
-                        OrderDetail orderDetail = orderDetailList
-                                .get(orderDetailIndex);
+                case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY:
+                {
+                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++)
+                    {
+                        OrderDetail orderDetail = orderDetailList.get(orderDetailIndex);
                         itemSalesQty += orderDetail.getItemNum();
-                        itemSalesDicimal = BH.add(itemSalesDicimal,
-                                BH.getBD(orderDetail.getRealPrice()), true);
+                        itemSalesDicimal = BH.add(itemSalesDicimal, BH.getBD(orderDetail.getRealPrice()), true);
                         if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL) {
                             if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
                                 discount = BH.add(discount,
@@ -2387,7 +2388,8 @@ public class ReportObjectFactory {
                                         true);
                             }
                         }
-                        if (!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())) {
+                        if (!IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway()))
+                        {
                             takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()), false);
                             takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
                             takeawayQty += orderDetail.getItemNum();
@@ -2397,50 +2399,58 @@ public class ReportObjectFactory {
                 }
                 break;
                 case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER:
-                case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY: {
-                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
-                            .size(); orderDetailIndex++) {
-                        OrderDetail orderDetail = orderDetailList
-                                .get(orderDetailIndex);
+                case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY:
+                {
+                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++)
+                    {
+                        OrderDetail orderDetail = orderDetailList.get(orderDetailIndex);
                         itemSalesQty += orderDetail.getItemNum();
                         itemSalesDicimal = BH.add(itemSalesDicimal,
                                 BH.getBD(orderDetail.getRealPrice()), true);
-                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL) {
-                            if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL)
+                        {
+                            if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB)
+                            {
                                 discount = BH.add(discount,
                                         BH.getBD(orderDetail.getDiscountPrice()),
                                         true);
                                 discountQty++;
-                            } else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
+                            }
+                            else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE)
+                            {
                                 discountPer = BH.add(discountPer, BH.mul(
                                         BH.getBD(orderDetail.getRealPrice()),
                                         BH.getBD(orderDetail.getDiscountRate()), false),
                                         true);
                                 discountPerQty++;
                             }
+                            else
+                            {
+                                discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
+                                discountQty++;
+                            }
                         }
-                        if (!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())) {
+                        if (!IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())) {
                             takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()), false);
                             takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
                             takeawayQty += orderDetail.getItemNum();
                         }
                     }
 //				discountPer = BH.add(discountPer, BH.getBD(order.getDiscountPrice()), true);
-                    discount = BH.add(discount,
-                            BH.getBD(order.getDiscountPrice()), true);
-                    discountQty++;
+//              discount = BH.add(discount, BH.getBD(order.getDiscountPrice()), true);
+//               discountQty++;
                 }
                 break;
                 case ParamConst.ORDER_DISCOUNT_TYPE_NULL:
-                case ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL: {
-                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList
-                            .size(); orderDetailIndex++) {
-                        OrderDetail orderDetail = orderDetailList
-                                .get(orderDetailIndex);
+                case ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL:
+                {
+                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++)
+                    {
+                        OrderDetail orderDetail = orderDetailList.get(orderDetailIndex);
                         itemSalesQty += orderDetail.getItemNum();
-                        itemSalesDicimal = BH.add(itemSalesDicimal,
-                                BH.getBD(orderDetail.getRealPrice()), true);
-                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL) {
+                        itemSalesDicimal = BH.add(itemSalesDicimal, BH.getBD(orderDetail.getRealPrice()), true);
+                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL)
+                        {
                             if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
                                 discountPer = BH
                                         .add(discountPer,
@@ -2457,7 +2467,8 @@ public class ReportObjectFactory {
                                 discountQty++;
                             }
                         }
-                        if (!IntegerUtils.isEmptyOrZero(order.getIsTakeAway()) || !IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())) {
+                        if (!IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway()))
+                        {
                             takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()), false);
                             takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
                             takeawayQty += orderDetail.getItemNum();

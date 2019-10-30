@@ -126,12 +126,13 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
             @Override
             public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
                 if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN) {
-                    String barCode = new String(et_bar_code.getText().toString());
+                    String barCode = et_bar_code.getText().toString();
                     if (TextUtils.isEmpty(barCode)) {
                         UIHelp.showToast(parent, parent.getString(R.string.barcode_cannot_empty));
                         return false;
                     }
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(barCode);
+                    Log.i("Checker", barCode);
                     OrderDetail orderDetail = null;
                     SureDialog sureDialog = new SureDialog(parent);
                     et_bar_code.postDelayed(new Runnable() {

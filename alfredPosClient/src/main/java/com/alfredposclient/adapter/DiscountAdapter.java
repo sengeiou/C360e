@@ -16,9 +16,11 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
+import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
 import com.alfredbase.store.sql.OrderDetailSQL;
+import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 
@@ -64,22 +66,48 @@ public class DiscountAdapter extends BaseAdapter {
         this.activity = activity;
     }
 
-    public String getSelectedItem(int discountType) {
+    public String getSelectedItem(int discountType)
+    {
         String discountCategoryId = "";
-        boolean has = false;
-        if (sparseBooleanArray.size() > 0) {
-            has = true;
-            OrderDetailSQL.updateDiscountTypeBeforeByMainCategoryId(order.getId().intValue());
-            for (int i = 0; i < sparseBooleanArray.size(); i++) {
-                int key = sparseBooleanArray.keyAt(i);
-                if (sparseBooleanArray.get(key)) {
-                    OrderDetailSQL.updateDiscountTypeByMainCategoryId(discountType, key, order.getId());
-                    if (!TextUtils.isEmpty(discountCategoryId)) {
-                        discountCategoryId = discountCategoryId + "," + key;
-                    } else {
-                        discountCategoryId = key + "";
+        if (sparseBooleanArray.size() > 0)
+        {
+            Boolean completedOrder = false;
+            for(OrderDetail orderDetail : OrderDetailSQL.getOrderDetails(order.getId()))
+            {
+                for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+                {
+                    if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+                    {
+                        if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+                        {
+                            completedOrder = true;
+                        }
                     }
                 }
+            }
+            if(!completedOrder)
+            {
+                OrderDetailSQL.updateDiscountTypeBeforeByMainCategoryId(order.getId());
+                for (int i = 0; i < sparseBooleanArray.size(); i++)
+                {
+                    int key = sparseBooleanArray.keyAt(i);
+                    if (sparseBooleanArray.get(key))
+                    {
+                        OrderDetailSQL.updateDiscountTypeByMainCategoryId(discountType, key, order.getId());
+                        if (!TextUtils.isEmpty(discountCategoryId))
+                        {
+                            discountCategoryId = discountCategoryId + "," + key;
+                        }
+                        else
+                        {
+                            discountCategoryId = key + "";
+                        }
+                    }
+                }
+            }
+            else
+            {
+
             }
         }
 

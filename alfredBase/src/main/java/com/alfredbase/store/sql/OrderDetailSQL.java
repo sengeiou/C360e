@@ -48,6 +48,10 @@ public class OrderDetailSQL {
         if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
             return;
         }
+        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
+        {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         add(orderDetail);
         OrderHelper.addDefaultModifiers(order, orderDetail);
@@ -65,6 +69,10 @@ public class OrderDetailSQL {
         if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
             return;
         }
+        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
+        {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         add(orderDetail);
         updateFreeOrderDetail(order, orderDetail);
@@ -76,6 +84,10 @@ public class OrderDetailSQL {
             return;
         }
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
+        {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         updateOrderDetail(orderDetail);
         updateFreeOrderDetailForWaiter(order, orderDetail);
@@ -87,6 +99,10 @@ public class OrderDetailSQL {
             return;
         }
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
+        {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         updateOrderDetail(orderDetail);
         OrderHelper.addDefaultModifiers(order, orderDetail);
@@ -3834,14 +3850,14 @@ public class OrderDetailSQL {
                 + " or discountType = "
                 + ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
                 + ") and orderId = ?";
-        String sumRealPrice = "0.00";
+        String sumRealPrice1 = "0.00";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,
                     new String[]{order.getId() + ""});
             if (cursor.moveToFirst()) {
-                sumRealPrice = cursor.getString(0) == null ? "0.00" : cursor.getString(0);
+                sumRealPrice1 = cursor.getString(0) == null ? "0.00" : cursor.getString(0);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -3851,7 +3867,30 @@ public class OrderDetailSQL {
                 cursor.close();
             }
         }
-        return sumRealPrice;
+
+        sql = "select SUM(subTotal) from "
+                + TableNames.OrderSplit + " where (orderStatus = "
+                + ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED
+                + ") and orderId = ?";
+        String sumRealPrice2 = "0.00";
+        cursor = null;
+        db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{order.getId() + ""});
+            if (cursor.moveToFirst()) {
+                sumRealPrice2 = cursor.getString(0) == null ? "0.00" : cursor.getString(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return String.valueOf(BH.add(new BigDecimal(sumRealPrice1), new BigDecimal(sumRealPrice2), false));
     }
 
     public static void deleteAllOrderDetail() {

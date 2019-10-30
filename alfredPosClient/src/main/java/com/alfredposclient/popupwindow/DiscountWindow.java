@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +29,6 @@ import com.alfredposclient.R;
 import com.alfredposclient.adapter.DiscountAdapter;
 import com.alfredposclient.view.DiscountMoneyKeyboard;
 import com.alfredposclient.view.DiscountMoneyKeyboard.KeyBoardClickListener;
-import com.google.gson.Gson;
 
 public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_1 = 300;
@@ -67,7 +65,8 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		this.parentView = parentView;
 	}
 
-	private void init() {
+	private void init()
+	{
 		contentView = LayoutInflater.from(parent).inflate(
 				R.layout.popup_discount, null);
 
@@ -87,32 +86,41 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 
 
 		inputView = tv_discount_percent;
-		if (order != null) {
+		if (order != null)
+		{
 			contentView.findViewById(R.id.ll_discount_layout).setVisibility(View.VISIBLE);
 			discountAdapter = new DiscountAdapter(parent, order);
 			discount_listview.setAdapter(discountAdapter);
-			if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY){
+			if(order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY)
+			{
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 						BH.getBD(order.getDiscountRate()),
 						BH.getBD(100), true)));
-				tv_discount_count.setText(BH.formatMoney("").toString());
+				tv_discount_count.setText(BH.formatMoney(""));
 				inputView = tv_discount_percent;
 				tv_count_sign.setBackgroundResource(R.color.white);
 				tv_percent_sign.setBackgroundResource(R.color.brown);
 				tv_percent_sign.setTextColor(parent.getResources().getColor(R.color.white));
-			}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY){
+			}
+			else if(order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
+			{
 				tv_discount_percent.setText(ParamConst.INT_ZERO);
-				tv_discount_count.setText(BH.formatMoney(order.getDiscountPrice()).toString());
+				tv_discount_count.setText(BH.formatMoney(order.getDiscountPrice()));
 				inputView = tv_discount_count;
 				tv_count_sign.setBackgroundResource(R.color.brown);
 				tv_count_sign.setTextColor(parent.getResources().getColor(R.color.white));
 				tv_percent_sign.setBackgroundResource(R.color.white);
-			}else {
+			}
+			else
+			{
 				sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
-				if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_NULL) {
+				if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_NULL)
+				{
 					tv_discount_percent.setText(ParamConst.INT_ZERO);
 					tv_discount_count.setText(BH.formatMoney("").toString());
-				} else if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER) {
+				}
+				else if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER)
+				{
 					tv_discount_percent
 							.setText(BH.intFormat.format(BH.mul(
 									BH.getBD(order.getDiscountRate()),
@@ -120,22 +128,28 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 
 					tv_discount_count.setText(BH.formatMoney(BH.mul(
 							BH.getBD(order.getDiscountRate()),
-							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString()).toString());
-				} else {
-					if (BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))) {
+							BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), true).toString()));
+				}
+				else
+				{
+					if (BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice)))
+					{
 						tv_discount_percent
 								.setText(BH.intFormat.format(BH.mul(
 										BH.div(BH.getBD(order.getDiscountPrice()), BH.sub(BH.getBD(order.getSubTotal()),
 												BH.getBD(sumRealPrice), false), false),
 										BH.getBD(100), true)));
-					} else {
+					}
+					else
+					{
 						tv_discount_percent.setText(ParamConst.INT_ZERO);
 					}
 					tv_discount_count.setText(BH.getBD(order.getDiscountPrice()).toString());
 				}
 			}
-		} else {
-
+		}
+		else
+		{
 			contentView.findViewById(R.id.ll_discount_layout).setVisibility(View.GONE);
 			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
@@ -145,13 +159,17 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 						BH.getBD(orderDetail.getRealPrice()),
 						BH.getBD(orderDetail.getDiscountRate()), true)
 						.toString());
-			} else if (orderDetail.getDiscountPrice() != null) {
+			}
+			else if (orderDetail.getDiscountPrice() != null)
+			{
 				tv_discount_percent.setText(BH.intFormat.format(BH.mul(
 						BH.div(BH.getBD(orderDetail.getDiscountPrice()),
 								BH.getBD(orderDetail.getRealPrice()), false),
 						BH.getBD(100), true)));
 				tv_discount_count.setText(BH.getBD(orderDetail.getDiscountPrice()).toString());
-			} else {
+			}
+			else
+			{
 				tv_discount_percent.setText(ParamConst.INT_ZERO);
 				tv_discount_count.setText(ParamConst.DOUBLE_ZERO);
 			}
@@ -305,11 +323,13 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		tv_percent_sign.setTextColor(parent.getResources().getColor(R.color.white));
 		if (order != null) {
 			if(TextUtils.isEmpty(discountByCategory))
-			tv_discount_count.setText(BH.mul(
-					BH.sub(BH.getBD(order.getSubTotal()),
-					BH.getBD(sumRealPrice), false),
-					BH.div(BH.getBD(percent), BH.getBD(100), false),
-					true).toString());
+			{
+				tv_discount_count.setText(BH.mul(
+						BH.sub(BH.getBD(order.getSubTotal()),
+								BH.getBD(sumRealPrice), false),
+						BH.div(BH.getBD(percent), BH.getBD(100), false),
+						true).toString());
+			}
 		} else {
 			tv_discount_count.setText(BH.mul(
 					BH.getBD(orderDetail.getRealPrice()),
@@ -327,22 +347,26 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				resultCall.call(null, null, "");
 		} else if ("Enter".equals(key)) {
 			dismiss();
-			if (resultCall != null) {
-				if (inputView == tv_discount_percent) {
-					if(order != null){
+			if (resultCall != null)
+			{
+				if (inputView == tv_discount_percent)
+				{
+					if(order != null)
+					{
 						discountByCategory = discountAdapter == null ? "" : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
 					}
 
-					resultCall.call(
-							BH.div(BH.getBD(tv_discount_percent.getText()
+					resultCall.call(BH.div(BH.getBD(tv_discount_percent.getText()
 									.toString()), BH.getBD(100), true)
 									.toString(), null, discountByCategory);
-				} else {
-					if(order != null) {
+				}
+				else
+				{
+					if(order != null)
+					{
 						discountByCategory = discountAdapter == null ? "" : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
 					}
-					resultCall.call(null, tv_discount_count.getText()
-							.toString(), discountByCategory);
+					resultCall.call(null, tv_discount_count.getText().toString(), discountByCategory);
 				}
 			}
 		} else if ("C".equals(key)) {
@@ -366,15 +390,19 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 					return;
 				tv_discount_percent.setText(percent + "");
 				keyBuffer.append(key);
-				if (order != null) {
+				if (order != null)
+				{
 					if(TextUtils.isEmpty(discountByCategory))
+					{
 					tv_discount_count.setText(BH.mul(
 							BH.sub(BH.getBD(order.getSubTotal()),
 							BH.getBD(sumRealPrice), false),
 							BH.div(BH.getBD(percent), BH.getBD(100), false),
 							true).toString());
-				} else {
-
+					}
+				}
+				else
+				{
 					tv_discount_count.setText(
 							BH.mul(BH.getBD(orderDetail.getRealPrice()),
                                     BH.div(BH.getBD(percent), BH.getBD(100),false),

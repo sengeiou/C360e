@@ -163,6 +163,10 @@ public class KotJob extends Job {
         data.put("action", action);
         data.put("toKotSummary", toKotSummary);
         data.put("fromKotSummary", fromKotSummary);
+
+        Order order = (Order) kotMap.get("fromOrder");
+        if (order != null)
+            data.put("order", order);
         this.kds = kds;
         this.kotMap = kotMap;
         apiName = APIName.TRANSFER_KOT;

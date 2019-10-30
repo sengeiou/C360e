@@ -526,6 +526,7 @@ public class ObjectFactory {
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
                 order.setPlaceId(placesId);
+                order.setTableName(tables.getName());
                 order.setTableId(posId);
                 long time = System.currentTimeMillis();
                 order.setCreateTime(time);
@@ -2191,7 +2192,6 @@ public class ObjectFactory {
                 kotSummary.setUniqueId(CommonSQL.getUniqueId());
                 kotSummary.setOrderId(order.getId());
                 kotSummary.setOrderNo(order.getOrderNo());//流水号
-
                 kotSummary.setRevenueCenterId(revenueCenter.getId());
                 kotSummary.setRevenueCenterName(revenueCenter.getRevName());
                 kotSummary.setCreateTime(time);

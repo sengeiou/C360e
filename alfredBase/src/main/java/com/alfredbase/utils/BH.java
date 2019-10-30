@@ -472,10 +472,22 @@ public class BH {
 
 
     public static BigDecimal getBD(Integer integer) {
-        if (CommonUtil.isNull(integer))
-            return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
-//        return new BigDecimal(format.format(new BigDecimal(integer)));
-        return new BigDecimal(format.format(new BigDecimal(integer)));
+        try
+        {
+            if (CommonUtil.isNull(integer))
+            {
+                return new BigDecimal(isDouble ? ParamConst.DOUBLE_ZERO : ParamConst.INT_ZERO);
+            }
+            else
+            {
+                return new BigDecimal(format.format(new BigDecimal(integer)));
+            }
+        }
+        catch(Exception e)
+        {
+            Log.e("Null Integer Error", String.valueOf(e));
+            return null;
+        }
     }
 
     /**

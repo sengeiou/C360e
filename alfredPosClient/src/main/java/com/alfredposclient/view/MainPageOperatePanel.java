@@ -5,14 +5,20 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.ParamHelper;
+import com.alfredbase.SureDialog;
 import com.alfredbase.global.BugseeHelper;
+import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
@@ -24,6 +30,7 @@ import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
@@ -45,6 +52,8 @@ public class MainPageOperatePanel extends LinearLayout implements
     private List<OrderDetail> orderDetails;
     private MainPage parent;
 //	private TableInfo tables;
+
+    private EditText et_bar_code;
 
     public MainPageOperatePanel(Context context) {
         super(context);
@@ -87,6 +96,48 @@ public class MainPageOperatePanel extends LinearLayout implements
         TextView tvTakeAway = (TextView) findViewById(R.id.tv_take_away);
         tvTakeAway.setText("Sales Type");
 
+        et_bar_code = (EditText) findViewById(R.id.et_bar_code);
+        et_bar_code.setFocusable(true);
+        et_bar_code.requestFocus();
+        et_bar_code.setOnKeyListener(new OnKeyListener()
+        {
+            @Override
+            public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
+                if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN) {
+                    String barCode = et_bar_code.getText().toString();
+                    if (TextUtils.isEmpty(barCode)) {
+                        UIHelp.showToast(parent, parent.getString(R.string.barcode_cannot_empty));
+                        return false;
+                    }
+                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(barCode);
+                    OrderDetail orderDetail = null;
+                    SureDialog sureDialog = new SureDialog(parent);
+                    et_bar_code.postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            et_bar_code.setText("");
+                            et_bar_code.requestFocus();
+                        }
+                    }, 500);
+                    if (itemDetail != null) {
+                        orderDetail = ObjectFactory.getInstance()
+                                .getOrderDetail(order, itemDetail, 0);
+                    }
+                    if (orderDetail == null) {
+                        sureDialog.show(false);
+                        return false;
+                    }
+                    Message msg = handler.obtainMessage();
+                    msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+                    msg.obj = orderDetail;
+                    handler.sendMessage(msg);
+                    sureDialog.show(true);
+                    return true;
+                }
+                return false;
+            }
+        });
         initTextTypeFace();
     }
 
@@ -189,14 +240,14 @@ public class MainPageOperatePanel extends LinearLayout implements
                     break;
                 }
                 case R.id.tv_discount: {
-                    if (orderDetails.isEmpty()) {
+                    if (orderDetails.isEmpty() || OrderSplitSQL.getFinishedOrderSplits(order.getId()).size() > 0) {
                         UIHelp.showToast(parent, parent.getResources().getString(R.string.order_first));
                         return;
                     }
                     boolean canDiscount = true;
                     for (OrderDetail orderDetail : orderDetails) {
-                        if (orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-                                && orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
+                        if (orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+                                && orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
                                 && orderDetail.getIsItemDiscount() == ParamConst.ITEM_DISCOUNT
                                 && orderDetail.getIsFree() == ParamConst.NOT_FREE) {
                             canDiscount = true;
