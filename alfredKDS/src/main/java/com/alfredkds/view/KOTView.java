@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -33,20 +32,16 @@ import android.widget.TextView;
 import com.alfredbase.BaseActivity;
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
-import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.KDSTracking;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummaryLog;
-import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.Printer;
 import com.alfredbase.javabean.model.MainPosInfo;
 import com.alfredbase.store.Store;
-import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
-import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.utils.AnimatorListenerImpl;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.IntegerUtils;
@@ -59,7 +54,6 @@ import com.alfredkds.global.App;
 import com.alfredkds.global.SyncCentre;
 import com.alfredkds.javabean.Kot;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -566,7 +560,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
         }
 
         if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_SUB ||
-                App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
+                App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL ||
+                App.instance.getSystemSettings().isAllowPartial()) {
             lv_dishes.setOnItemClickListener(new OnItemClickListener() {
 
                 @Override
@@ -629,7 +624,8 @@ public class KOTView extends LinearLayout implements AnimationListener,
                     return;
                 }
 
-                if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL) {
+                if (App.instance.getKdsDevice().getKdsType() == Printer.KDS_NORMAL ||
+                        App.instance.getSystemSettings().isAllowPartial()) {
                     List<KotItemDetail> kotItemDetails = getSelectedKotItemDetails();
 
                     if (kotItemDetails.size() <= 0) {
