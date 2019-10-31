@@ -269,7 +269,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
         {
             reportDaySales.setPromotionQty(0);
         }
-        this.addItem("Promotions", reportDaySales.getPromotionQty().toString(),  BH.formatThree(reportDaySales.getPromotionTotal()), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.promotion), reportDaySales.getPromotionQty().toString(),  BH.formatThree(reportDaySales.getPromotionTotal()), 1);
 
 
         double nSales = Double.parseDouble(reportDaySales.getItemSales()) + Double.parseDouble(reportDaySales.getTopUps()) - Double.parseDouble(reportDaySales.getFocItem()) - Double.parseDouble(reportDaySales.getFocBill()) - Double.parseDouble(reportDaySales.getItemVoid()) - Double.parseDouble(reportDaySales.getBillVoid()) - Double.parseDouble(reportDaySales.getBillRefund()) - Double.parseDouble(reportDaySales.getDiscount()) - Double.parseDouble(reportDaySales.getDiscountPer()) -Double.parseDouble(reportDaySales.getPromotionTotal());

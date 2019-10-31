@@ -53,6 +53,7 @@
     <string name="take_away_qty">จำนวนสินค้า Takeaway</string>
     <string name="total_tax">ภาษีพิเศษ</string>
     <string name="rounding">การล้อม</string>
+    <string name="promotion">โปรโมชั่น</string>
 
     <string name="gross_total">ยอดขายรวม</string>
 

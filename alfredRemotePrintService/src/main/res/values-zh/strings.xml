@@ -53,6 +53,7 @@
     <string name="take_away_qty">外卖商品数量</string>
     <string name="total_tax">独家税</string>
     <string name="rounding">四舍五入</string>
+    <string name="promotion">促销活动</string>
 
     <string name="gross_total">总销售总额</string>
 

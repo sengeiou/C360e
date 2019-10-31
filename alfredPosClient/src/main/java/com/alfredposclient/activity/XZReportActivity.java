@@ -3,6 +3,7 @@ package com.alfredposclient.activity;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -62,9 +63,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class XZReportActivity extends BaseActivity {
 
@@ -285,24 +288,53 @@ public class XZReportActivity extends BaseActivity {
         curStr = yearMonthDayFormater.format(date);
 //        session = App.instance.getSessionStatus();
         revenueCenter = App.instance.getRevenueCenter();
-        reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(businessDate);
-        reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(businessDate);
-        if (reportDaySales != null) {
 
-            if (reportDayPayments != null) {
-                BigDecimal totalCustomPayment = BH.getBD(ParamConst.DOUBLE_ZERO);
-                for (ReportDayPayment reportDayPayment : reportDayPayments) {
-                    totalCustomPayment = BH.add(totalCustomPayment, BH.getBD(reportDayPayment.getPaymentAmount()), false);
+        Calendar cal = Calendar.getInstance(Locale.US);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        int firstDay = cal.get(Calendar.DAY_OF_MONTH);
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        int lastDay = cal.get(Calendar.DAY_OF_MONTH)+1;
+//        ArrayList<String> grossTotals = new ArrayList<>();
+        Map<Date, String> grossTotals = new HashMap<>();
+        for(int i=firstDay; i<lastDay; i++)
+        {
+            cal.set(Calendar.DAY_OF_MONTH, i);
+            Calendar curDate = (Calendar)cal.clone();
+            curDate.set(Calendar.HOUR, 0);
+            curDate.set(Calendar.MINUTE, 0);
+            curDate.set(Calendar.SECOND, 0);
+            curDate.set(Calendar.MILLISECOND, 0);
+            curDate.set(Calendar.HOUR_OF_DAY, 0);
+            Date d = curDate.getTime();
+
+            reportDaySales = ReportObjectFactory.getInstance().loadShowReportDaySales(d.getTime());
+            reportDayPayments = ReportObjectFactory.getInstance().loadReportDayPayment(d.getTime());
+
+            if (reportDaySales != null)
+            {
+                if (reportDayPayments != null)
+                {
+                    BigDecimal totalCustomPayment = BH.getBD(ParamConst.DOUBLE_ZERO);
+                    for (ReportDayPayment reportDayPayment : reportDayPayments) {
+                        totalCustomPayment = BH.add(totalCustomPayment, BH.getBD(reportDayPayment.getPaymentAmount()), false);
+                    }
+                    BigDecimal totals = BH.add(totalCustomPayment, BH.getBD(reportDaySales.getNettSales()), false);
+                    //  String nettsSales = reportDaySales.getNettSales();
+                    calendarCard.setAmount(totals.toString());
+//                    grossTotals.add(totals.toString());
+                    grossTotals.put(d, totals.toString());
                 }
-                BigDecimal totals = BH.getBD(ParamConst.DOUBLE_ZERO);
-                totals = BH.add(totalCustomPayment, BH.getBD(reportDaySales.getNettSales()), false);
-                //  String nettsSales = reportDaySales.getNettSales();
-                calendarCard.setAmount(totals.toString());
-            } else {
-                String nettsSales = reportDaySales.getNettSales();
-                calendarCard.setAmount(nettsSales);
+                else
+                {
+                    String nettsSales = reportDaySales.getNettSales();
+                    calendarCard.setAmount(nettsSales);
+//                    grossTotals.add(nettsSales);
+                    Log.i("Checker", String.valueOf(nettsSales));
+                    grossTotals.put(d, nettsSales);
+                }
             }
         }
+        calendarCard.setGrossTotals(grossTotals);
         calendarCard.setDateDisplay(calendar);
         calendarCard.notifyChanges();
         calendarCard.setOnCellItemClick(onCellItemClick);

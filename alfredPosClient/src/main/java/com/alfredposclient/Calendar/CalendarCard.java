@@ -19,7 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class CalendarCard extends RelativeLayout {
 	
@@ -35,6 +38,7 @@ public class CalendarCard extends RelativeLayout {
 	private LinearLayout cardGrid;
 	private int pos = 1;
 	private String amount;
+	Map<Date, String> grossTotals = new HashMap<>();
 
 	public CalendarCard(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -57,6 +61,11 @@ public class CalendarCard extends RelativeLayout {
 
 	public void setAmount(String amount) {
 		this.amount = amount;
+	}
+
+	public void setGrossTotals(Map<Date, String> grossTotals)
+	{
+		this.grossTotals = grossTotals;
 	}
 
 	private void init(final Context ctx) {
@@ -118,7 +127,8 @@ public class CalendarCard extends RelativeLayout {
 		
 		mOnItemRenderDefault = new OnItemRender() {
 			@Override
-			public void onRender(CheckableLayout v, CardGridItem item) {
+			public void onRender(CheckableLayout v, CardGridItem item)
+			{
 				boolean boo = v.isEnabled();
 				((CheckedTextView)((RelativeLayout)v.getChildAt(0)).getChildAt(0)).setText(item.getDayOfMonth().toString());
 				Calendar cal = Calendar.getInstance(Locale.US);
@@ -129,19 +139,22 @@ public class CalendarCard extends RelativeLayout {
 				int mDay = cal.get(Calendar.DAY_OF_MONTH);
 				if (boo && mDay == item.getDayOfMonth() && mStr.equals(str)){
 					v.setChecked(true);
-					((TextView)((RelativeLayout)v.getChildAt(0)).getChildAt(1)).setVisibility(VISIBLE);
+					((RelativeLayout)v.getChildAt(0)).getChildAt(1).setVisibility(VISIBLE);
 					v.setBackgroundColor(Color.parseColor("#EEE685"));
-					if (!TextUtils.isEmpty(amount)) {
-
+					if (!TextUtils.isEmpty(amount))
+					{
 						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText(ctx.getString(R.string.gross_total_sales)+":" + "\n" + BH.formatMoney(amount));
-					}else {
+					}
+					else
+					{
 						((TextView) ((RelativeLayout) v.getChildAt(0)).getChildAt(1)).setText("");
 					}
-
-				}else {
+				}
+				else
+				{
 					v.setChecked(false);
 					v.setBackgroundResource(R.drawable.card_item_bg);
-					((TextView)((RelativeLayout)v.getChildAt(0)).getChildAt(1)).setVisibility(INVISIBLE);
+					((RelativeLayout)v.getChildAt(0)).getChildAt(1).setVisibility(INVISIBLE);
 				}
 //				((ScrollView)findViewById(R.id.sv_cardGrid)).arrowScroll(((ScrollView)findViewById(R.id.sv_cardGrid)).getMaxScrollAmount());
 			}
@@ -149,20 +162,23 @@ public class CalendarCard extends RelativeLayout {
 		updateCells();
 	}
 
-	OnClickListener onClickListener = new OnClickListener() {
+	OnClickListener onClickListener = new OnClickListener()
+	{
 		@Override
-		public void onClick(View v) {
+		public void onClick(View v)
+		{
 			Calendar calendar = Calendar.getInstance(Locale.US);
-			switch (v.getId()){
+			switch (v.getId())
+			{
 				case R.id.next:
-					calendar.add(calendar.MONTH, pos++);
+					calendar.add(Calendar.MONTH, pos++);
 					setDateDisplay(calendar);
-					notifyChanges();
+					updateCells();
 					break;
 				case R.id.previous:
-					calendar.add(calendar.MONTH, pos--);
+					calendar.add(Calendar.MONTH, pos--);
 					setDateDisplay(calendar);
-					notifyChanges();
+					updateCells();
 					break;
 			}
 		}
@@ -203,11 +219,13 @@ public class CalendarCard extends RelativeLayout {
 				prevMonth.add(Calendar.DAY_OF_MONTH, 1);
 			}
 		}
-		
+
+		cal.set(Calendar.DAY_OF_MONTH, 1);
 		int firstDay = cal.get(Calendar.DAY_OF_MONTH);
 		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 		int lastDay = cal.get(Calendar.DAY_OF_MONTH)+1;
-		for(int i=firstDay; i<lastDay; i++) {
+		for(int i=firstDay; i<lastDay; i++)
+		{
 			cal.set(Calendar.DAY_OF_MONTH, i-1);
 			Calendar date = (Calendar)cal.clone();
 			date.add(Calendar.DAY_OF_MONTH, 1);
@@ -217,6 +235,30 @@ public class CalendarCard extends RelativeLayout {
 			cell.setVisibility(View.VISIBLE);
 			(mOnItemRender == null ? mOnItemRenderDefault : mOnItemRender).onRender(cell, (CardGridItem)cell.getTag());
 			counter++;
+
+			Set set = grossTotals.entrySet();
+			for (Object o : set)
+			{
+				Map.Entry entry = (Map.Entry) o;
+				date.set(Calendar.HOUR, 0);
+				date.set(Calendar.MINUTE, 0);
+				date.set(Calendar.SECOND, 0);
+				date.set(Calendar.MILLISECOND, 0);
+				date.set(Calendar.HOUR_OF_DAY, 0);
+				Date curDate = date.getTime();
+				if(String.valueOf(curDate).equals(String.valueOf(entry.getKey())))
+				{
+					((RelativeLayout)cell.getChildAt(0)).getChildAt(1).setVisibility(VISIBLE);
+					((TextView) ((RelativeLayout) cell.getChildAt(0)).getChildAt(1)).setText(getContext().getString(R.string.gross_total_sales)+":" + "\n" + BH.formatMoney(String.valueOf(entry.getValue())));
+				}
+				else
+				{
+					if(!grossTotals.containsKey(curDate))
+					{
+						((TextView) ((RelativeLayout) cell.getChildAt(0)).getChildAt(1)).setText("");
+					}
+				}
+			}
 		}
 		
 		if (dateDisplay != null) 
@@ -255,26 +297,6 @@ public class CalendarCard extends RelativeLayout {
 				cell.getLayoutParams().height = size;
 			}
 		}
-	}
-
-	public int getItemLayout() {
-		return itemLayout;
-	}
-
-	public void setItemLayout(int itemLayout) {
-		this.itemLayout = itemLayout;
-	}
-
-	public OnItemRender getOnItemRender() {
-		return mOnItemRender;
-	}
-
-	public void setOnItemRender(OnItemRender mOnItemRender) {
-		this.mOnItemRender = mOnItemRender;
-	}
-
-	public Calendar getDateDisplay() {
-		return dateDisplay;
 	}
 
 	public void setDateDisplay(Calendar dateDisplay) {

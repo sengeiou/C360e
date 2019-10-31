@@ -53,6 +53,7 @@
     <string name="take_away_qty">Jumlah item yang di-ambil</string>
     <string name="total_tax">Pajak Eksklusif</string>
     <string name="rounding">Pembulatan</string>
+    <string name="promotion">Promosi</string>
 
     <string name="gross_total">Total Penjualan Kotor</string>
 
