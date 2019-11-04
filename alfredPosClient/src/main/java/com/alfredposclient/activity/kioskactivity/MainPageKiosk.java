@@ -1972,7 +1972,8 @@ public class MainPageKiosk extends BaseActivity {
                 .getItemModifiers(
                         CoreData.getInstance().getItemDetailById(
                                 orderDetail.getItemId(), orderDetail.getItemName()));
-
+        OrderDetailSQL.addOrderDetailETC(orderDetail);
+        setData();
 //        sendKOTTmpToKDS(orderDetail);
         if (itemModifiers.size() > 0) {
             for (ItemModifier itemModifier : itemModifiers) {
@@ -1988,8 +1989,7 @@ public class MainPageKiosk extends BaseActivity {
             mainPageMenuView.openModifiers(currentOrder, orderDetail, itemModifiers);
 
         }
-        OrderDetailSQL.addOrderDetailETC(orderDetail);
-        setData();
+
         Store.putBoolean(context, String.valueOf(currentOrder.getId()), true);
         new Thread(new Runnable() {
             @Override
