@@ -33,6 +33,7 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
+import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.UIHelp;
 
 import java.util.ArrayList;
@@ -73,6 +74,10 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 
 
     public void setParams(final Order order, final OrderDetail orderDetail, final ItemModifier itemModifier, final Handler mHandler, final int height) {
+        setParams(order,orderDetail,itemModifier,mHandler,height,false);
+    }
+
+    public void setParams(final Order order, final OrderDetail orderDetail, final ItemModifier itemModifier, final Handler mHandler, final int height, final boolean isKiosk) {
         num = 0;
 //		int count = (int)Math.floor(height-ScreenSizeUtil.dip2px(parent,70))/
 //				(ScreenSizeUtil.dip2px(parent,ModifierView.MARGIN_SIZE * 2)+(ScreenSizeUtil.dip2px(parent,ModifierView.ITEM_SIZE)));
@@ -236,54 +241,50 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 //						orderModifiers= OrderModifierSQL
 //								.getOrderModifiers(order, orderDetail);
 
-                        Message msg = handler.obtainMessage();
-                        msg.what = MainPage.VIEW_EVENT_SET_DATA;
-                        handler.sendMessage(msg);
+                        if (!isKiosk){
+                            Message msg = handler.obtainMessage();
+                            msg.what = MainPage.VIEW_EVENT_SET_DATA;
+                            handler.sendMessage(msg);
 
-                        boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
+                            boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
 
-                        if (!isOnProgress) {
-                            LogUtil.d("SAMDEBUG", "calculate modifier single");
-                            final OrderModifier orderModifierFinal = orderModifier;
-                            Store.putBoolean(context, String.valueOf(order.getId()), true);
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    LogUtil.e("SAMDEBUG","modif current Thread" + Thread.currentThread().getName());
-                                    OrderModifierSQL.updateOrderDetail(orderModifierFinal);
-                                    Store.putBoolean(context, String.valueOf(order.getId()), false);
-                                    Message msg = handler.obtainMessage();
-                                    msg.what = MainPage.VIEW_EVENT_SET_DATA;
-                                    handler.sendMessage(msg);
-                                }
-                            }).start();
-//                            new AsyncTask<Void, Void, Void>() {
-//
-//                                @Override
-//                                protected void onPreExecute() {
-//                                    super.onPreExecute();
-////                                    Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, true);
-//                                }
-//
-//                                @Override
-//                                protected Void doInBackground(Void... voids) {
-//                                    LogUtil.e("SAMDEBUG","current Thread" + Thread.currentThread().getName());
-//                                    OrderModifierSQL.updateOrderDetail(orderModifierFinal);
-//                                    return null;
-//                                }
-//
-//                                @Override
-//                                protected void onPostExecute(Void aVoid) {
-//                                    super.onPostExecute(aVoid);
-////                                    Store.putBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
-//                                    Message msg = handler.obtainMessage();
-//                                    msg.what = MainPage.VIEW_EVENT_SET_DATA;
-//                                    handler.sendMessage(msg);
-//                                }
-//
-//                            }.execute();
+                            if (!isOnProgress) {
+                                final OrderModifier orderModifierFinal = orderModifier;
+                                Store.putBoolean(context, String.valueOf(order.getId()), true);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        OrderModifierSQL.updateOrderDetail(orderModifierFinal);
+                                        Store.putBoolean(context, String.valueOf(order.getId()), false);
+                                        Message msg = handler.obtainMessage();
+                                        msg.what = MainPage.VIEW_EVENT_SET_DATA;
+                                        handler.sendMessage(msg);
+                                    }
+                                }).start();
+                            }
+                        }else{
+                            Message msg = handler.obtainMessage();
+                            msg.what = MainPageKiosk.VIEW_EVENT_SET_DATA;
+                            handler.sendMessage(msg);
 
+                            boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
+
+                            if (!isOnProgress) {
+                                final OrderModifier orderModifierFinal = orderModifier;
+                                Store.putBoolean(context, String.valueOf(order.getId()), true);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        OrderModifierSQL.updateOrderDetail(orderModifierFinal);
+                                        Store.putBoolean(context, String.valueOf(order.getId()), false);
+                                        Message msg = handler.obtainMessage();
+                                        msg.what = MainPageKiosk.VIEW_EVENT_SET_DATA;
+                                        handler.sendMessage(msg);
+                                    }
+                                }).start();
+                            }
                         }
+
 
 
                     }

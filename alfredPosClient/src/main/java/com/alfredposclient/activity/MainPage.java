@@ -140,8 +140,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -2493,7 +2491,6 @@ public class MainPage extends BaseActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                LogUtil.e("SAMDEBUG","current Thread" + Thread.currentThread().getName());
                 OrderDetailSQL.updateOrder(orderDetail);
                 Store.putBoolean(context, String.valueOf(currentOrder.getId()), false);
                 Message msg = handler.obtainMessage();
@@ -2501,44 +2498,7 @@ public class MainPage extends BaseActivity {
                 handler.sendMessage(msg);
             }
         }).start();
-//        Executor executor = Executors.newFixedThreadPool(5);
-//        addOrderAsync = new AddOrderAsync().executeOnExecutor(executor, orderDetail);
-    }
 
-    private class AddOrderAsync extends AsyncTask<OrderDetail, OrderDetail, OrderDetail[]> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Store.putBoolean(context, String.valueOf(currentOrder.getId()), true);
-            setData();
-        }
-
-        @Override
-        protected OrderDetail[] doInBackground(OrderDetail... orderDetails) {
-            LogUtil.e("SAMDEBUG", "current Thread" + Thread.currentThread().getName());
-            for (int i = 0; i < orderDetails.length; i++) {
-                OrderDetailSQL.updateOrder(orderDetails[i]);
-            }
-
-            LogUtil.log("calculate modifier bulk");
-            OrderModifierSQL.updateModifierByOrderDetail(orderDetails[0]);
-            LogUtil.e("SAMDEBUG", "OnBackground " + orderDetails[0].getItemName());
-            return orderDetails;
-        }
-
-        @Override
-        protected void onPostExecute(OrderDetail[] orderDetails) {
-            super.onPostExecute(orderDetails);
-//            if (addOrderAsync.getStatus() == AsyncTask.Status.RUNNING) {
-//                Store.putBoolean(context, String.valueOf(currentOrder.getId()), true);
-//            } else {
-                Store.putBoolean(context, String.valueOf(currentOrder.getId()), false);
-//            }
-            LogUtil.e("SAMDEBUG", "OnPost" + orderDetails[0].getItemName());
-            setData();
-
-        }
     }
 
 

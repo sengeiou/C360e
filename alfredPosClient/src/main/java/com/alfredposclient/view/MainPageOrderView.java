@@ -431,7 +431,6 @@ public class MainPageOrderView extends LinearLayout {
         boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
 
         if (isOnProgress) {
-            LogUtil.e("SAMDEBUG", String.valueOf(isOnProgress));
             tv_sub_total.setVisibility(GONE);
             tv_discount.setVisibility(GONE);
             tv_taxes.setVisibility(GONE);
@@ -443,7 +442,6 @@ public class MainPageOrderView extends LinearLayout {
             progress_grand_total.setVisibility(VISIBLE);
 
         } else {
-            LogUtil.e("SAMDEBUG", String.valueOf(isOnProgress));
 
             progress_subtotal.setVisibility(GONE);
             progres_discount.setVisibility(GONE);
