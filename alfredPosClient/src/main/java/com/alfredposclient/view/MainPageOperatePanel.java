@@ -96,6 +96,8 @@ public class MainPageOperatePanel extends LinearLayout implements
         findViewById(R.id.tv_split_by_pax).setOnClickListener(this);
         tv_order_no = (TextView) findViewById(R.id.tv_order_no);
         tv_pax = (TextView) findViewById(R.id.tv_pax);
+        TextView tvTakeAway = (TextView) findViewById(R.id.tv_take_away);
+        tvTakeAway.setText("Sales Type");
 
         et_bar_code = (EditText) findViewById(R.id.et_bar_code);
         et_bar_code.setFocusable(true);
@@ -259,7 +261,7 @@ public class MainPageOperatePanel extends LinearLayout implements
 
     @Override
     public void onClick(View v) {
-		if (ButtonClickTimer.canClick()) {
+        if (ButtonClickTimer.canClick()) {
             switch (v.getId()) {
                 case R.id.tv_close_bill: {
                     Message msg = handler.obtainMessage();
@@ -321,17 +323,18 @@ public class MainPageOperatePanel extends LinearLayout implements
                     }
                     break;
                 case R.id.tv_open_item:
-                case R.id.tv_open_item_waiting_list:
+                case R.id.tv_open_item_waiting_list: {
                     Message msg = handler.obtainMessage();
                     msg.what = MainPage.VIEW_EVENT_SHOW_OPEN_ITEM_WINDOW;
                     handler.sendMessage(msg);
                     break;
+                }
                 case R.id.tv_print_bill:
                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_OPERATEPANEL);
                     break;
                 case R.id.tv_transfer_table:
                     if (!IntegerUtils.isEmptyOrZero(order.getAppOrderId())) {
-					UIHelp.showShortToast(parent, parent.getString(R.string.order_from_dinner_app_cannot_transfrerred));
+                        UIHelp.showShortToast(parent, parent.getString(R.string.order_from_dinner_app_cannot_transfrerred));
                         return;
                     }
                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_TANSFER_TABLE);
@@ -344,27 +347,15 @@ public class MainPageOperatePanel extends LinearLayout implements
                     handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX, tv_pax.getText().toString()));
                     break;
                 case R.id.tv_take_away:
-                    if (order.getIsTakeAway() == ParamConst.TAKE_AWAY)
-                    {
-                        order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-                        for(OrderDetail orderDetail : orderDetails)
-                        {
-                            orderDetail.setSpecialInstractions("");
-                            orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-                            OrderDetailSQL.updateOrderDetail(orderDetail);
-                        }
-                    }
-                    else
-                    {
-                        order.setIsTakeAway(ParamConst.TAKE_AWAY);
-                        for(OrderDetail orderDetail : orderDetails)
-                        {
-                            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
-                            OrderDetailSQL.updateOrderDetail(orderDetail);
-                        }
-                    }
-                    OrderSQL.updateOrder(order);
-                    handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+                    handler.sendEmptyMessage(MainPage.VIEW_EVENT_SHOW_SALES_TYPE);
+
+//                    if (order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY) {
+//                        order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+//                    } else {
+//                        order.setIsTakeAway(ParamConst.TAKE_AWAY);
+//                    }
+//                    OrderSQL.updateOrder(order);
+//                    handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                     break;
                 case R.id.tv_fire: {
                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_FIRE);

@@ -32,6 +32,7 @@ import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.RoundAmount;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -101,6 +102,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
     private void init(Context context) {
 
         View.inflate(context, R.layout.operate_panel_kiosk, this);
+        TextView tv_take_away = (TextView) findViewById(R.id.tv_take_away);
 //		findViewById(R.id.tv_close_bill).setOnClickListener(this);
 //		findViewById(R.id.tv_tables).setOnClickListener(this);
         findViewById(R.id.tv_discount).setOnClickListener(this);
@@ -108,11 +110,11 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
         findViewById(R.id.tv_delete_order).setOnClickListener(this);
         findViewById(R.id.tv_print_bill_).setOnClickListener(this);
 //		findViewById(R.id.tv_transfer_table).setOnClickListener(this);
-        findViewById(R.id.tv_kick_cashdrawer).setOnClickListener(this);
-        findViewById(R.id.tv_take_away).setOnClickListener(this);
         findViewById(R.id.tv_hold_bill).setOnClickListener(this);
         findViewById(R.id.tv_table_name).setOnClickListener(this);
         findViewById(R.id.tv_cash_close).setOnClickListener(this);
+        tv_take_away.setOnClickListener(this);
+        tv_take_away.setText("Sales Type");
 //		findViewById(R.id.rl_pax).setOnClickListener(this);
         tv_order_no = (TextView) findViewById(R.id.tv_order_no);
 //		tv_pax = (TextView) findViewById(R.id.tv_pax);
@@ -263,13 +265,14 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_KICK_CASHDRAWER);
                     break;
                 case R.id.tv_take_away:
-                    if (order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY) {
-                        order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-                    } else {
-                        order.setIsTakeAway(ParamConst.TAKE_AWAY);
-                    }
-                    OrderSQL.updateOrder(order);
-                    handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
+                    handler.sendEmptyMessage(MainPageKiosk.VIEW_EVENT_SHOW_SALES_TYPE);
+//                    if (order.getIsTakeAway().intValue() == ParamConst.TAKE_AWAY) {
+//                        order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+//                    } else {
+//                        order.setIsTakeAway(ParamConst.TAKE_AWAY);
+//                    }
+//                    OrderSQL.updateOrder(order);
+//                    handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                     break;
                 case R.id.tv_hold_bill:
                     if (order.getOrderStatus().intValue() == ParamConst.ORDER_STATUS_FINISHED) {
@@ -352,6 +355,12 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                                                     order.getTableId()).getName(), order,
                                                             App.instance.getRevenueCenter(),
                                                             App.instance.getBusinessDate());
+
+                                            boolean isButtonQuickService = Store.getBoolean(getContext(), Store.BUTTON_QUICK_SERVICE, false);
+                                            if (isButtonQuickService) {
+                                                kotSummary.setTableName("");
+                                            }
+
                                             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                                             List<Integer> orderDetailIds = new ArrayList<Integer>();
                                             ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();

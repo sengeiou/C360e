@@ -61,6 +61,7 @@ public class ReportPluDayModifier implements Serializable{
 	private String realPrice;
 	private Integer realCount;
 	private int daySalesId;
+	private String salesTypeId;
 
 	public Integer getId() {
 		return id;
@@ -237,6 +238,14 @@ public class ReportPluDayModifier implements Serializable{
 
 	public void setDaySalesId(int daySalesId) {
 		this.daySalesId = daySalesId;
+	}
+
+	public String getSalesTypeId() {
+		return salesTypeId;
+	}
+
+	public void setSalesTypeId(String salesTypeId) {
+		this.salesTypeId = salesTypeId;
 	}
 
 	@Override

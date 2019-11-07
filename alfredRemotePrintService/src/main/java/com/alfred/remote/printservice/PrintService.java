@@ -206,6 +206,13 @@ public class PrintService extends Service {
         }
         return false;
     }
+    public boolean isT1miniG(String model) {
+        if (model != null && model.length() > 0) {
+            if (model.toLowerCase().contains("t1mini-g"))
+                return true;
+        }
+        return false;
+    }
 
     public String getDollarSignStr() {
         String sign = "$";

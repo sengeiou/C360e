@@ -281,6 +281,9 @@ public class OpenRestaruant extends BaseActivity implements OnTouchListener {
         filter.addAction(Intent.ACTION_TIME_TICK);
 //		App.instance.startPushServer("B." + App.instance.getRevenueCenter().getRestaurantId().intValue());
         setDateView();
+
+        Store.putBoolean(context, Store.BUTTON_QUICK_SERVICE, false);
+
         try {
             BuglyLog.d("OpenRestaruant", "RestaurantName" + CoreData.getInstance().getRestaurant().getRestaurantName());
         } catch (Exception e) {

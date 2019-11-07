@@ -323,7 +323,7 @@ public class SystemSettings {
         return cashClosePrint;
     }
 
-    public boolean isAutoRecevingOnlineOrder() {
+    public boolean  isAutoRecevingOnlineOrder() {
         Integer value = Store.getInt(context,
                 Store.AUTO_RECEIVE_ONLINE_ORDER);
         if (value != null && value != Store.DEFAULT_INT_TYPE) {

@@ -13,6 +13,7 @@ import com.alfredbase.javabean.HappyHour;
 import com.alfredbase.javabean.HappyHourWeek;
 import com.alfredbase.javabean.ItemCategory;
 import com.alfredbase.javabean.ItemDetail;
+import com.alfredbase.javabean.ItemDetailPrice;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.ItemMainCategory;
 import com.alfredbase.javabean.ItemModifier;
@@ -62,6 +63,7 @@ import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.HappyHourSQL;
 import com.alfredbase.store.sql.HappyHourWeekSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
+import com.alfredbase.store.sql.ItemDetailPriceSQL;
 import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.ItemHappyHourSQL;
 import com.alfredbase.store.sql.ItemMainCategorySQL;
@@ -112,6 +114,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class HttpAnalysis {
     public static final String TAG = HttpAnalysis.class.getSimpleName();
@@ -284,9 +287,47 @@ public class HttpAnalysis {
 //			RoundRuleSQL.deleteAllRoundRule();
 //			RoundRuleSQL.update(roundRule);
 
-            List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("configList"),
+            List<RestaurantConfig> restaurantConfigs = gson.fromJson(object.getString("glbConfigList"),
                     new TypeToken<ArrayList<RestaurantConfig>>() {
                     }.getType());
+            List<RestaurantConfig> restaurantConfigs2 = gson.fromJson(object.getString("configList"),
+                    new TypeToken<ArrayList<RestaurantConfig>>() {
+                    }.getType());
+            for (RestaurantConfig restC : restaurantConfigs2){
+                restaurantConfigs.add(restC);
+            }
+
+            //region dummy data
+//            List<String> salesTypeNameList = new ArrayList<>();
+//            salesTypeNameList.add("Dine In");
+//            salesTypeNameList.add("Take away");
+//            salesTypeNameList.add("Delivery");
+//            salesTypeNameList.add("Employee");
+//
+//            int i = 0;
+//            for (String name : salesTypeNameList) {
+//                RestaurantConfig rc = new RestaurantConfig();
+//                rc.setId(++i + new Random().nextInt(1000));
+//                rc.setParaType(ParamConst.SALES_TYPE);
+//                rc.setParaName("Sales Type");
+//                rc.setParaValue1(name);
+//
+//                String idValue = String.valueOf(ParamConst.DINE_IN);
+//                if (name.equalsIgnoreCase("Dine In"))
+//                    idValue = String.valueOf(ParamConst.DINE_IN);
+//                else if (name.equalsIgnoreCase("Take away"))
+//                    idValue = String.valueOf(ParamConst.TAKE_AWAY);
+//                else if (name.equalsIgnoreCase("Delivery"))
+//                    idValue = String.valueOf(ParamConst.APP_DELIVERY);
+//                else if (name.equalsIgnoreCase("Employee"))
+//                    idValue = String.valueOf(ParamConst.EMPLOYEE);
+//
+//                rc.setParaValue2(idValue);
+//
+//                restaurantConfigs.add(rc);
+//            }
+            //endregion
+
             CoreData.getInstance().setRestaurantConfigs(restaurantConfigs);
             RestaurantConfigSQL.deleteAllRestaurantConfig();
             RestaurantConfigSQL.addRestaurantConfigs(restaurantConfigs);
@@ -365,6 +406,26 @@ public class HttpAnalysis {
             ItemDetailSQL.addItemDetailList(itemDetailList);
             CoreData.getInstance().setItemDetails(
                     ItemDetailSQL.getAllItemDetail());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void getItemPrice(int statusCode, Header[] headers,
+                                    byte[] responseBody) {
+        try {
+            JSONObject object = new JSONObject(new String(responseBody));
+            List<ItemDetailPrice> itemPriceList = new Gson().fromJson(
+                    object.getString("dietaryPatternList"),
+                    new TypeToken<ArrayList<ItemDetailPrice>>() {
+                    }.getType());
+
+            ItemDetailPriceSQL.delete();
+
+            for (ItemDetailPrice itemDetailPrice : itemPriceList) {
+                ItemDetailPriceSQL.update(itemDetailPrice);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

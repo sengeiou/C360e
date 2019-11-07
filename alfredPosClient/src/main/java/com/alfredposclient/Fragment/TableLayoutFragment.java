@@ -43,11 +43,13 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.PlaceInfo;
 import com.alfredbase.javabean.PrinterTitle;
 import com.alfredbase.javabean.TableInfo;
+import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.utils.BitmapUtil;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.DialogFactory;
@@ -97,6 +99,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
     private TextView tv_table_edit;
     private TextView tv_cancel;
     private TextView tv_place;
+    private TextView tvQuickService;
     private TextView tv_summary;
     private List<TableInfo> newTables = new ArrayList<TableInfo>();
     private List<PlaceInfo> places = new ArrayList<PlaceInfo>();
@@ -135,6 +138,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         rl_create_table = (RelativeLayout) view.findViewById(R.id.rl_create_table);
         ll_table_left = (LinearLayout) view.findViewById(R.id.ll_table_left);
         ll_waiting_list = (LinearLayout) view.findViewById(R.id.ll_waiting_list);
+        tvQuickService = (TextView) view.findViewById(R.id.tv_quick_service);
 //        rl_table_area = (RelativeLayout) view.findViewById(R.id.rl_table_area);
 //        ViewTreeObserver vto = rl_table_area.getViewTreeObserver();
 //        width = (int) (ScreenSizeUtil.height - ScreenSizeUtil.dip2px(mainPage, 40.0f))*3/2;
@@ -173,6 +177,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             refreshView();
         }
 
+        Store.putBoolean(getContext(), Store.BUTTON_QUICK_SERVICE, false);
 
         tableAdapter = new TableAdapter();
         lv_table_list.setAdapter(tableAdapter);
@@ -197,6 +202,7 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
         iv_more_table.setOnClickListener(this);
         view.findViewById(R.id.ll_table_root).setOnClickListener(null);
         tv_place.setOnClickListener(this);
+        tvQuickService.setOnClickListener(this);
 
 
         tv_summary.setOnClickListener(this);
@@ -808,6 +814,12 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
             case R.id.btn_back: {
                 mainPage.onBackPressed();
             }
+            case R.id.tv_quick_service:
+                BugseeHelper.buttonClicked("Open quick service by shortcut");
+                App.instance.setAppOrderNum(AppOrderSQL.getNewAppOrderCountByTime(App.instance.getBusinessDate()), 2);
+                Store.putBoolean(getContext(), Store.BUTTON_QUICK_SERVICE, true);
+                UIHelp.startMainPageKiosk(getContext());
+                break;
         }
     }
 
@@ -1471,12 +1483,12 @@ public class TableLayoutFragment extends Fragment implements View.OnClickListene
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
 //            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
-            return "http://18.138.252.241/alfred-api/" + relativeUrl;
+            return "http://18.140.71.198/alfred-api/" + relativeUrl;
         } else if (BaseApplication.isOpenLog) {
             return "http://139.224.17.126/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {
-                return "http://18.138.252.241/" + relativeUrl;
+                return "http://18.140.71.198/" + relativeUrl;
             }
             else if (BaseApplication.isCuscapiMYDev)
             {

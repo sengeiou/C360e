@@ -195,6 +195,27 @@ public class HttpAssembling {
         return entity;
     }
 
+    public static StringEntity getItemPriceParam(RevenueCenter revenueCenter) throws UnsupportedEncodingException {
+        Map<String, Object> param = getDefaultParam();
+        param.put("revenueId", revenueCenter.getId());
+
+        return new StringEntity(new Gson().toJson(param), "UTF-8");
+    }
+
+    public static Map<String, Object> getDefaultParam() {
+        Map<String, Object> param = new HashMap<>();
+        param.put("userKey", CoreData.getInstance().getLoginResult().getUserKey());
+        param.put("restaurantKey", CoreData.getInstance().getLoginResult()
+                .getRestaurantKey());
+        param.put("version", App.instance.VERSION);
+        param.put("deviceId", CommonUtil.getLocalMacAddress(App.instance));
+        if (App.instance.isSUNMIShow() || MachineUtil.isHisense()) {
+            param.put("snCode", Build.SERIAL);
+        }
+
+        return param;
+    }
+
     public static StringEntity getItemParam(RevenueCenter revenueCenter) throws UnsupportedEncodingException {
         return getPlaceParam(revenueCenter);
     }

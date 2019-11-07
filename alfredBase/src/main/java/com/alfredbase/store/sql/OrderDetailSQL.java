@@ -386,8 +386,12 @@ public class OrderDetailSQL {
         orderDetail.setModifierPrice(OrderHelper.getOrderDetailModifierPrice(
                 order, orderDetail).toString());
 
+        //TODO: price by sales type
         orderDetail.setRealPrice(OrderHelper.getOrderDetailRealPrice(order,
                 orderDetail).toString());
+
+        BigDecimal itemPrice = OrderHelper.getItemPriceBySalesType(orderDetail.getItemId(), order.getIsTakeAway(), BH.getBD(orderDetail.getItemPrice()));
+        orderDetail.setItemPrice(itemPrice.toString());
     }
 
 
@@ -477,7 +481,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 35,
                         orderDetail.getBarCode());
-                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 36, orderDetail.getOrderDetailRound());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -573,7 +577,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 34,
                         orderDetail.getBarCode());
-                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 36, orderDetail.getOrderDetailRound());
 
                 sqLiteStatement.executeInsert();
             }

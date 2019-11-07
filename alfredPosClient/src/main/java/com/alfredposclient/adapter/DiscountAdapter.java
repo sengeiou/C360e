@@ -48,7 +48,7 @@ public class DiscountAdapter extends BaseAdapter {
             for (int i = 0; i < orderDetails.size(); i++) {
                 OrderDetail detail = orderDetails.get(i);
 
-                ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(detail.getItemId(), detail.getItemName());
+                ItemDetail itemDetail = ItemDetailSQL.getItemDetailById(detail.getItemId());
                 if(itemDetail != null)
                 {
                     if (!ids.contains(itemDetail.getItemMainCategoryId())){

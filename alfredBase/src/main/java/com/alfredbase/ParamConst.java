@@ -151,7 +151,8 @@ public class ParamConst {
     public static final int DINE_IN = 0;
     public static final int TAKE_AWAY = 1;
     public static final int APP_DELIVERY = 2;
-    public static final int NOT_TAKE_AWAY=DINE_IN;
+    public static final int EMPLOYEE = 3;
+    public static final int NOT_TAKE_AWAY = DINE_IN;
 
     // 0:没有发送，1：发送中，2：发送成功, 3没有成功
     public static final int SYNC_MSG_UN_SEND = 0; // initial state create a new
@@ -213,8 +214,6 @@ public class ParamConst {
     public static final int SETTLEMENT_TYPE_IPAY88_CIMB = 20346;
     public static final int SETTLEMENT_TYPE_IPAY88_GRABPAY = 20347;
     public static final int SETTLEMENT_TYPE_IPAY88_NETS = 20348;
-
-
 
 
     /**
@@ -440,6 +439,11 @@ public class ParamConst {
     public final static int SALE_SESSION_TYPE = 100400;
 
     /**
+     * Sales type
+     */
+    public final static int SALES_TYPE = 1002000;
+
+    /**
      * #####################   默认打折比例   ########################
      */
     public final static int SEND_FOOD_CARD_NUM = 1001900;
@@ -533,46 +537,37 @@ public class ParamConst {
 //     233 Alipay,  339 Union Pay, dan 347 GrabPay
 
 
-    public static String getQRPaymentName(int paymentTypeId){
+    public static String getQRPaymentName(int paymentTypeId) {
         String type = "";
-        if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_ALIPAY){
+        if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_ALIPAY) {
             type = "Alipay";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_BOOST){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_BOOST) {
             type = "Boost";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_TOUCHNGO){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_TOUCHNGO) {
             type = "Touch N Go";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_MCASH){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_MCASH) {
             type = "Mcash";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_UNIONPAY){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_UNIONPAY) {
             type = "UnionPay";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_NETS){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_NETS) {
             type = "NetsPay";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_CIMB){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_CIMB) {
             type = "Cimb Pay";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_MBB){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_MBB) {
             type = "Maybank QRPay";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_GRABPAY){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_GRABPAY) {
             type = "GrabPay";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_IPAY88_WEPAY){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_IPAY88_WEPAY) {
             type = "WePay";
-        }
-        else if(paymentTypeId == SETTLEMENT_TYPE_PAYHALAL){
+        } else if (paymentTypeId == SETTLEMENT_TYPE_PAYHALAL) {
             type = "PayHalal";
         }
         return type;
     }
-    public static final int ENABLE_POS_TRAINING  = 1;
-    public static final int DISABLE_POS_TRAINING = 0;
 
+    public static final int ENABLE_POS_TRAINING = 1;
+    public static final int DISABLE_POS_TRAINING = 0;
+    public static final int ORDER_FORM_DINER_APP = 1;
 
 
 }
