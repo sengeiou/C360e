@@ -3244,14 +3244,15 @@ public class MainPage extends BaseActivity {
     }
 
     private void transferOrder(TableInfo table, int transferType) {
-        //msg.what
+        if (currentOrder == null) return;
+
         boolean fromThisRVC = checkIfTableFromThisRVC(table);
         if (fromThisRVC) {
             transferOrder(currentOrder, table.getPosId());
         } else {
             for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
                 if (table.getRevenueId().equals(otherPlace.getRevenueId())) {
-                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), transferType, currentOrder, table.getPosId(), handler);
+                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), transferType, currentOrder, table.getPosId(), oldTable, handler);
                     break;
                 }
             }
@@ -3339,7 +3340,7 @@ public class MainPage extends BaseActivity {
         } else {
             for (final MultiRVCPlacesDao.Places otherPlace : App.instance.getOtherRVCPlaces()) {
                 if (currentTable.getRevenueId().equals(otherPlace.getRevenueId())) {
-                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), ACTION_MERGE_TABLE, oldOrder, currentTable.getPosId(), handler);
+                    SyncCentre.getInstance().sendOrderToOtherRVC(context, otherPlace.getIp(), ACTION_MERGE_TABLE, oldOrder, currentTable.getPosId(), oldTable, handler);
                     break;
                 }
             }
