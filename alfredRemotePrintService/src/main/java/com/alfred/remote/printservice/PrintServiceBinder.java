@@ -84,7 +84,9 @@ import com.google.gson.reflect.TypeToken;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -1037,28 +1039,57 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         for (int index = 0; index < printOrderItemList.size(); index++) {
                             boolean canMerge = true;
                             PrintOrderItem item = printOrderItemList.get(index).clone();
-                            if (orderModifiers != null) {
+                            if (orderModifiers != null)
+                            {
                                 for (int m = 0; m < orderModifiers.size(); m++) {
                                     PrintOrderModifier om = orderModifiers.get(m);
-                                    if (om.getOrderDetailId() == item.getOrderDetailId()) {
+                                    if (om.getOrderDetailId() == item.getOrderDetailId())
+                                    {
                                         canMerge = false;
                                         break;
                                     }
                                 }
-                            } else {
+                            }
+                            else
+                            {
                                 canMerge = true;
                             }
+
+                            if(item.getWeight() != null && canMerge)
+                            {
+                                for (int index2 = 0; index2 < printOrderItemList.size(); index2++)
+                                {
+                                    PrintOrderItem item2 = printOrderItemList.get(index2).clone();
+                                    if(item2.getWeight() != null)
+                                    {
+                                        if(item2.getItemDetailId().equals(item.getItemDetailId()))
+                                        {
+                                            if(!item2.getWeight().equals(item.getWeight()))
+                                            {
+                                                canMerge = false;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                canMerge = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             if (canMerge) {
-                                if (map.containsKey(item.getItemDetailId().intValue() + "")) {
-                                    PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
+                                if (map.containsKey(item.getItemDetailId() + "")) {
+                                    PrintOrderItem printOrderItem = map.get(item.getItemDetailId() + "");
                                     printOrderItem.setQty((Integer.parseInt(printOrderItem.getQty()) + Integer.parseInt(item.getQty())) + "");
                                     printOrderItem.setAmount(BH.add(BH.getBD(printOrderItem.getAmount()), BH.getBD(item.getAmount()), false).toString());
-                                    map.put(printOrderItem.getItemDetailId().intValue() + "", printOrderItem);
+                                    map.put(printOrderItem.getItemDetailId() + "", printOrderItem);
                                 } else {
-                                    map.put(item.getItemDetailId().intValue() + "", item);
+                                    map.put(item.getItemDetailId() + "", item);
                                 }
                             } else {
-                                map.put(item.getItemDetailId().intValue() + "_" + item.getOrderDetailId(), item);
+                                map.put(item.getItemDetailId() + "_" + item.getOrderDetailId(), item);
                             }
                         }
 
@@ -1228,6 +1259,31 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     } else {
                                         canMerge = true;
                                     }
+
+                                    if(item.getWeight() != null && canMerge)
+                                    {
+                                        for (int index2 = 0; index2 < printOrderItemList.size(); index2++)
+                                        {
+                                            PrintOrderItem item2 = printOrderItemList.get(index2).clone();
+                                            if(item2.getWeight() != null)
+                                            {
+                                                if(item2.getItemDetailId().equals(item.getItemDetailId()))
+                                                {
+                                                    if(!item2.getWeight().equals(item.getWeight()))
+                                                    {
+                                                        canMerge = false;
+                                                        break;
+                                                    }
+                                                    else
+                                                    {
+                                                        canMerge = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     if (canMerge) {
                                         if (map.containsKey(item.getItemDetailId().intValue() + "")) {
                                             PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
@@ -2457,6 +2513,31 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             } else {
                                 canMerge = true;
                             }
+
+                            if(item.getWeight() != null && canMerge)
+                            {
+                                for (int index2 = 0; index2 < printOrderItemList.size(); index2++)
+                                {
+                                    PrintOrderItem item2 = printOrderItemList.get(index2).clone();
+                                    if(item2.getWeight() != null)
+                                    {
+                                        if(item2.getItemDetailId().equals(item.getItemDetailId()))
+                                        {
+                                            if(!item2.getWeight().equals(item.getWeight()))
+                                            {
+                                                canMerge = false;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                canMerge = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             if (canMerge) {
                                 if (map.containsKey(item.getItemDetailId().intValue() + "")) {
                                     PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
@@ -2611,6 +2692,31 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 } else {
                                     canMerge = true;
                                 }
+
+                                if(item.getWeight() != null && canMerge)
+                                {
+                                    for (int index2 = 0; index2 < printOrderItemList.size(); index2++)
+                                    {
+                                        PrintOrderItem item2 = printOrderItemList.get(index2).clone();
+                                        if(item2.getWeight() != null)
+                                        {
+                                            if(item2.getItemDetailId().equals(item.getItemDetailId()))
+                                            {
+                                                if(!item2.getWeight().equals(item.getWeight()))
+                                                {
+                                                    canMerge = false;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    canMerge = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                                 if (canMerge) {
                                     if (map.containsKey(item.getItemDetailId().intValue() + "")) {
                                         PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
@@ -2975,6 +3081,31 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             } else {
                                 canMerge = true;
                             }
+
+                            if(item.getWeight() != null && canMerge)
+                            {
+                                for (int index2 = 0; index2 < printOrderItemList.size(); index2++)
+                                {
+                                    PrintOrderItem item2 = printOrderItemList.get(index2).clone();
+                                    if(item2.getWeight() != null)
+                                    {
+                                        if(item2.getItemDetailId().equals(item.getItemDetailId()))
+                                        {
+                                            if(!item2.getWeight().equals(item.getWeight()))
+                                            {
+                                                canMerge = false;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                canMerge = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             if (canMerge) {
                                 if (map.containsKey(item.getItemDetailId().intValue() + "")) {
                                     PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");
@@ -3125,6 +3256,31 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             } else {
                                 canMerge = true;
                             }
+
+                            if(item.getWeight() != null && canMerge)
+                            {
+                                for (int index2 = 0; index2 < printOrderItemList.size(); index2++)
+                                {
+                                    PrintOrderItem item2 = printOrderItemList.get(index2).clone();
+                                    if(item2.getWeight() != null)
+                                    {
+                                        if(item2.getItemDetailId().equals(item.getItemDetailId()))
+                                        {
+                                            if(!item2.getWeight().equals(item.getWeight()))
+                                            {
+                                                canMerge = false;
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                canMerge = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             if (canMerge) {
                                 if (map.containsKey(item.getItemDetailId().intValue() + "")) {
                                     PrintOrderItem printOrderItem = map.get(item.getItemDetailId().intValue() + "");

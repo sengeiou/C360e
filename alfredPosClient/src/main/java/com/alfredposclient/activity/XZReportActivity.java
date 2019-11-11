@@ -329,7 +329,6 @@ public class XZReportActivity extends BaseActivity {
                     String nettsSales = reportDaySales.getNettSales();
                     calendarCard.setAmount(nettsSales);
 //                    grossTotals.add(nettsSales);
-                    Log.i("Checker", String.valueOf(nettsSales));
                     grossTotals.put(d, nettsSales);
                 }
             }

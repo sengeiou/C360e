@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -98,6 +99,20 @@ public class MainPageOperatePanel extends LinearLayout implements
         tv_pax = (TextView) findViewById(R.id.tv_pax);
         TextView tvTakeAway = (TextView) findViewById(R.id.tv_take_away);
         tvTakeAway.setText("Sales Type");
+    }
+
+    private void initOrder() {
+        findViewById(R.id.tv_bill_content).setVisibility(View.VISIBLE);
+        findViewById(R.id.rl_print_colse_bill).setVisibility(View.VISIBLE);
+        findViewById(R.id.tv_misc).setVisibility(View.VISIBLE);
+        findViewById(R.id.rl_misc).setVisibility(View.VISIBLE);
+        findViewById(R.id.rl_split_fire).setVisibility(View.VISIBLE);
+        findViewById(R.id.tv_open_item_waiting_list).setVisibility(View.GONE);
+        findViewById(R.id.tv_order_id).setVisibility(View.VISIBLE);
+        TextView cancel = (TextView) findViewById(R.id.tv_cancel_waiting_list);
+        cancel.setVisibility(View.GONE);
+        ((TextView) findViewById(R.id.tv_transfer_table)).setText(this.getContext().getString(R.string.transfer_table));
+        tv_order_no.setText(ParamHelper.getPrintOrderNO(order.getOrderNo()));
 
         et_bar_code = (EditText) findViewById(R.id.et_bar_code);
         et_bar_code.setFocusable(true);
@@ -108,24 +123,42 @@ public class MainPageOperatePanel extends LinearLayout implements
             public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
                 if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN)
                 {
+                    SureDialog sureDialog = new SureDialog(parent);
                     String barCode = et_bar_code.getText().toString();
+                    barCode = barCode.replaceAll("\\s+","");
                     String itemBarCode = barCode;
                     String priceBarCode = barCode;
                     BigDecimal itemPrice = new BigDecimal(0);
                     BigDecimal calculatedWeight;
                     Boolean weightCalculator = false;
+                    int barCodeLength = 0;
+                    int currentBarcodeLength = barCode.length();
                     for(BarcodeDetail barCodeDetail: UserCustomSQL.getAllBarCodeProperties())
                     {
-                        switch(barCodeDetail.getBarCodeName())
+                        weightCalculator = true;
+                        try
                         {
-                            case "item_detail_id":
-                                itemBarCode = itemBarCode.substring(0, barCodeDetail.getBarCodeLength());
-                                weightCalculator = true;
-                            case "item_price":
-                                priceBarCode = priceBarCode.substring(priceBarCode.length() - barCodeDetail.getBarCodeLength());
-                                String frontPrice = priceBarCode.substring(0, barCodeDetail.getBarCodePriceFront());
-                                String backPrice = priceBarCode.substring(priceBarCode.length() - (priceBarCode.length() - frontPrice.length()));
-                                itemPrice = new BigDecimal(frontPrice + "." + backPrice).setScale(2, BigDecimal.ROUND_FLOOR);
+                            switch(barCodeDetail.getBarCodeName())
+                            {
+                                case "item_detail_id":
+                                    itemBarCode = itemBarCode.substring(0, barCodeDetail.getBarCodeLength());
+                                case "item_price":
+                                    priceBarCode = priceBarCode.substring(priceBarCode.length() - barCodeDetail.getBarCodeLength());
+                                    String frontPrice = priceBarCode.substring(0, barCodeDetail.getBarCodePriceFront());
+                                    String backPrice = priceBarCode.substring(priceBarCode.length() - (priceBarCode.length() - frontPrice.length()));
+                                    String ignoreLastDigit = backPrice.substring(0, backPrice.length() - 1);
+                                    itemPrice = new BigDecimal(frontPrice + "." + ignoreLastDigit);
+                            }
+                            barCodeLength = barCodeLength + barCodeDetail.getBarCodeLength();
+                            if(barCodeLength != currentBarcodeLength)
+                            {
+                                weightCalculator = false;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            weightCalculator = false;
+                            sureDialog.show(false);
                         }
                     }
 
@@ -135,7 +168,6 @@ public class MainPageOperatePanel extends LinearLayout implements
                     }
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(itemBarCode);
                     OrderDetail orderDetail = null;
-                    SureDialog sureDialog = new SureDialog(parent);
                     et_bar_code.postDelayed(new Runnable()
                     {
                         @Override
@@ -151,7 +183,7 @@ public class MainPageOperatePanel extends LinearLayout implements
                         {
                             try
                             {
-                                calculatedWeight = itemPrice.divide(new BigDecimal(orderDetail.getItemPrice()), 3, RoundingMode.HALF_UP);
+                                calculatedWeight = itemPrice.divide(new BigDecimal(orderDetail.getItemPrice()), 4, RoundingMode.HALF_UP);
                                 orderDetail.setWeight(String.valueOf(calculatedWeight));
                             }
                             catch (Exception e)
@@ -175,20 +207,6 @@ public class MainPageOperatePanel extends LinearLayout implements
             }
         });
         initTextTypeFace();
-    }
-
-    private void initOrder() {
-        findViewById(R.id.tv_bill_content).setVisibility(View.VISIBLE);
-        findViewById(R.id.rl_print_colse_bill).setVisibility(View.VISIBLE);
-        findViewById(R.id.tv_misc).setVisibility(View.VISIBLE);
-        findViewById(R.id.rl_misc).setVisibility(View.VISIBLE);
-        findViewById(R.id.rl_split_fire).setVisibility(View.VISIBLE);
-        findViewById(R.id.tv_open_item_waiting_list).setVisibility(View.GONE);
-        findViewById(R.id.tv_order_id).setVisibility(View.VISIBLE);
-        TextView cancel = (TextView) findViewById(R.id.tv_cancel_waiting_list);
-        cancel.setVisibility(View.GONE);
-        ((TextView) findViewById(R.id.tv_transfer_table)).setText(this.getContext().getString(R.string.transfer_table));
-        tv_order_no.setText(ParamHelper.getPrintOrderNO(order.getOrderNo()));
     }
 
     private void initWaitingList() {
