@@ -53,16 +53,12 @@ public class KotHistory extends BaseActivity {
         setContentView(R.layout.activity_kot_history);
         loadingDialog = new LoadingDialog(context);
         loadingDialog.setTitle(context.getResources().getString(R.string.undoing));
-
         for (MainPosInfo mainPos : App.instance.getCurrentConnectedMainPosList()) {
-            if (mainPos == null) continue;
             if (mainPos.getIsKiosk() != ParamConst.MAINPOSINFO_IS_KIOSK) {
                 isKiosk = false;
             }
         }
-
         TextView tv_order_n = (TextView) findViewById(R.id.tv_order_n);
-        tv_table_name = (TextView) findViewById(R.id.tv_table_name);
         if (isKiosk) {
             tv_table_name.setVisibility(View.GONE);
             tv_order_n.setText(getResources().getString(R.string.order_no));
@@ -129,11 +125,9 @@ public class KotHistory extends BaseActivity {
     };
 
     public void refresh() {
-        if (loadingDialog != null && adapter != null) {
-            loadingDialog.dismiss();
-            adapter.setKotHistory(App.instance.getKotHistoryData());
-            adapter.notifyDataSetChanged();
-        }
+        loadingDialog.dismiss();
+        adapter.setKotHistory(App.instance.getKotHistoryData());
+        adapter.notifyDataSetChanged();
     }
 
     public void httpRequestAction(int action, Object obj) {

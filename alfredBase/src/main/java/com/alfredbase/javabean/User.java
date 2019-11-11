@@ -40,15 +40,13 @@ public class User implements Serializable{
 
 	private Long updateTime;
 
-	private String budget;
-
 	public User() {
 	}
 
 	public User(Integer id, Integer empId, Integer type, Integer status,
 			String accountName, String userName, String password,
 			String firstName, String lastName, String nickName,
-			Integer companyId, Long createTime, Long updateTime, double budget) {
+			Integer companyId, Long createTime, Long updateTime) {
 		super();
 		this.id = id;
 		this.empId = empId;
@@ -203,17 +201,6 @@ public class User implements Serializable{
 				+ ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", nickName=" + nickName + ", companyId=" + companyId
 				+ ", createTime=" + createTime + ", updateTime=" + updateTime
-				+ ", budget=" + budget
 				+ "]";
-	}
-
-	public void setBudget(String budget) {
-		this.budget = budget;
-	}
-
-	public String getBudget() {
-		if (CommonUtil.isNull(budget))
-			return "";
-		return budget;
 	}
 }

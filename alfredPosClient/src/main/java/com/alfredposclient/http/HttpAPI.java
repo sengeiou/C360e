@@ -28,7 +28,6 @@ import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
-import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PushMessage;
@@ -441,62 +440,6 @@ public class HttpAPI {
                                     public void run() {
                                         HttpAnalysis.getItemDetail(statusCode,
                                                 headers, responseBody);
-                                        if (mode == SyncCentre.MODE_FIRST_SYNC) {
-                                            handler.sendMessage(handler
-                                                    .obtainMessage(
-                                                            SyncData.SYNC_DATA_TAG,
-                                                            SyncData.SYNC_SUCCEED));
-                                        } else {
-                                            handler.sendEmptyMessage(ResultCode.SUCCESS);
-                                        }
-                                    }
-                                }).start();
-                            } else {
-                                if (mode == SyncCentre.MODE_FIRST_SYNC) {
-                                    handler.sendMessage(handler.obtainMessage(
-                                            SyncData.SYNC_DATA_TAG,
-                                            SyncData.SYNC_FAILURE));
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers,
-                                              byte[] responseBody, Throwable error) {
-                            if (mode == SyncCentre.MODE_FIRST_SYNC) {
-                                handler.sendMessage(handler.obtainMessage(
-                                        SyncData.SYNC_DATA_TAG,
-                                        SyncData.SYNC_FAILURE));
-                            } else {
-                                handler.sendMessage(handler.obtainMessage(
-                                        ResultCode.CONNECTION_FAILED, error));
-                            }
-                            super.onFailure(statusCode, headers, responseBody,
-                                    error);
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void getItemPrice(Context context, String url,
-                               AsyncHttpClient httpClient, final Handler handler, final int mode) {
-        try {
-            StringEntity entity = HttpAssembling.getItemPriceParam(App.instance.getRevenueCenter());
-            httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE,
-                    new AsyncHttpResponseHandlerEx() {
-                        @Override
-                        public void onSuccess(final int statusCode,
-                                              final Header[] headers,
-                                              final byte[] responseBody) {
-                            super.onSuccess(statusCode, headers, responseBody);
-                            if (resultCode == ResultCode.SUCCESS) {
-                                new Thread(new Runnable() {
-                                    public void run() {
-
-                                        HttpAnalysis.getItemPrice(statusCode, headers, responseBody);
-
                                         if (mode == SyncCentre.MODE_FIRST_SYNC) {
                                             handler.sendMessage(handler
                                                     .obtainMessage(
@@ -3128,14 +3071,13 @@ public class HttpAPI {
     }
 
     public static void sendOrderToOtherRVC(Context context,
-                                           final String url, int transferType, Order currentOrder, int tableId, TableInfo oldTable,
+                                           final String url, int transferType, Order currentOrder, int tableId,
                                            AsyncHttpClient httpClient, final Handler handler) {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("appVersion", App.instance.VERSION);
         parameters.put("order", new Gson().toJson(currentOrder));
         parameters.put("transferType", transferType);
-        parameters.put("oldTable", oldTable);
 
         List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
         parameters.put("orderDetail", new Gson().toJson(orderDetails));

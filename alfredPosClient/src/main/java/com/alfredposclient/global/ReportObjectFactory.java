@@ -1,6 +1,7 @@
 package com.alfredposclient.global;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.global.CoreData;
@@ -12,6 +13,7 @@ import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderPromotion;
+import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.PaymentMethod;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.Promotion;
@@ -176,11 +178,11 @@ public class ReportObjectFactory {
         String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
         String ezPayQty = ezPayMap.get("count");
 
-        Map<String, String> payhalalMap = PaymentSettlementSQL
-                .getPaymentSettlementSumPaidAndCount(
-                        ParamConst.SETTLEMENT_TYPE_PAYHALAL, businessDate);
-        String payhalalPay = BH.getBD(payhalalMap.get("sumAmount")).toString();
-        String payhalalPayQty = payhalalMap.get("count");
+		Map<String, String> payhalalMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_PAYHALAL, businessDate);
+		String payhalalPay = BH.getBD(payhalalMap.get("sumAmount")).toString();
+		String payhalalPayQty = payhalalMap.get("count");
 
 
         Map<String, String> ipay88AlipayMap = PaymentSettlementSQL
@@ -243,6 +245,7 @@ public class ReportObjectFactory {
                         ParamConst.SETTLEMENT_TYPE_IPAY88_WEPAY, businessDate);
         String ipay88WePay = BH.getBD(ipay88Wepay.get("sumAmount")).toString();
         String ipay88WePayQty = ipay88Wepay.get("count");
+
 
 
         Map<String, String> paypalpayMap = PaymentSettlementSQL
@@ -351,10 +354,6 @@ public class ReportObjectFactory {
                 .get("sumAmount")).toString();
         String voucherQty = voucherMap.get("count");
 
-        Map<String, String> promotionMap = PromotionDataSQL.getPromotionTotalAndQty(businessDate);
-        String promotionTotal = BH.getBD(promotionMap.get("promotionTotal")).toString();
-        String proQty = promotionMap.get("qty");
-
         orderList = OrderSQL.getAllOrderByTime(businessDate);
         int orderQty = 0;
         int billNoQty = 0;
@@ -365,11 +364,9 @@ public class ReportObjectFactory {
         BigDecimal inclusiveTaxAmt = BH.getBD(ParamConst.DOUBLE_ZERO);
         BigDecimal takeawaySales = BH.getBD(ParamConst.DOUBLE_ZERO);
         BigDecimal takeawayTax = BH.getBD(ParamConst.DOUBLE_ZERO);
-        BigDecimal daySalesRound = BH.getBD(ParamConst.DOUBLE_ZERO);
         int takeawayQty = 0;
         for (int orderIndex = 0; orderIndex < orderList.size(); orderIndex++) {
             Order order = orderList.get(orderIndex);
-            daySalesRound = BH.add(daySalesRound, BH.getBD(order.getOrderRound()), true);
             // itemSalesDicimal = BH.add(itemSalesDicimal,
             // BH.getBD(order.getSubTotal()), true);
             orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(order);
@@ -664,10 +661,6 @@ public class ReportObjectFactory {
             reportNoStr = RevenueCenterSQL.getReportNoFromRevenueCenter(revenueCenter.getId());
         }
         reportDaySales.setReportNoStr(reportNoStr);
-
-        reportDaySales.setPromotionTotal(promotionTotal);
-        reportDaySales.setPromotionQty(Integer.parseInt(proQty));
-        reportDaySales.setDaySalesRound(daySalesRound.toString());
 
         reportDaySales.setPayHalal(BH.getBD(payhalalPay).toString());
         reportDaySales.setPayHalalQty(Integer.parseInt(payhalalPayQty));
@@ -1660,10 +1653,10 @@ public class ReportObjectFactory {
         long nowTime = System.currentTimeMillis();
         for (long i = businessDate; i < nowTime; i = TimeUtil
                 .getCalendarNextPoint(i)) {
-            // Calendar hourCal = Calendar.getInstance(Locale.US);
+			// Calendar hourCal = Calendar.getInstance(Locale.US);
             // hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
             // hourCal.set(Calendar.HOUR_OF_DAY, i);
-            // Calendar netHourCal = Calendar.getInstance(Locale.US);
+			// Calendar netHourCal = Calendar.getInstance(Locale.US);
             // netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
             // netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
             Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
@@ -1803,19 +1796,19 @@ public class ReportObjectFactory {
 //		return reportHourlys;
     }
 
-    public ArrayList<OrderPromotion> loadReportItemPromotions(long businessDate) {
-        ArrayList<OrderPromotion> itemPromotions = new ArrayList<OrderPromotion>();
+	public ArrayList<OrderPromotion> loadReportItemPromotions(long businessDate) {
+		ArrayList<OrderPromotion> itemPromotions = new ArrayList<OrderPromotion>();
         itemPromotions = PromotionDataSQL.getItemPromotionData(businessDate, ParamConst.ITEM_PROMOTION);
 
         return itemPromotions;
 
     }
 
-    public ArrayList<ReportDayPromotion> loadReportPromotions(long businessDate) {
-        ArrayList<ReportDayPromotion> reportDayPromotions = new ArrayList<ReportDayPromotion>();
-        reportDayPromotions = ReportPromotionSQL.getReportPromotionByTime(businessDate);
+	public ArrayList<ReportDayPromotion> loadReportPromotions(long businessDate) {
+		ArrayList<ReportDayPromotion> reportDayPromotions = new ArrayList<ReportDayPromotion>();
+		reportDayPromotions = ReportPromotionSQL.getReportPromotionByTime(businessDate);
 
-        return reportDayPromotions;
+		return reportDayPromotions;
 
     }
 
@@ -1833,14 +1826,14 @@ public class ReportObjectFactory {
         ArrayList<UserTimeSheet> userTimeSheets = new ArrayList<UserTimeSheet>();
         ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = new ArrayList<ReportPluDayComboModifier>();
         ArrayList<CashInOut> cashInOuts = CashInOutSQL.getAllCashInOut(businessDate);
-        //		// reportDaySales = loadReportDaySales(businessDate);
+		//		// reportDaySales = loadReportDaySales(businessDate);
         // reportDayTaxs = loadReportDayTax(reportDaySales, businessDate);
         // reportPluDayItems = loadReportPluDayItem(businessDate);
         // reportPluDayModifiers = loadReportPluDayModifier(businessDate);
         // reportHourlys = loadReportHourlys(businessDate);
         userTimeSheets = UserTimeSheetSQL
                 .getUserTimeSheetsByBusinessDate(businessDate);
-        ArrayList<ReportDayPromotion> reportDayPromotions = ReportPromotionSQL.getReportPromotionByTime(businessDate);
+		ArrayList<ReportDayPromotion> reportDayPromotions = ReportPromotionSQL.getReportPromotionByTime(businessDate);
 //		reportPluDayComboModifiers = ReportObjectFactory
 //				.getInstance().loadReportPluDayComboModifier(businessDate);
         map.put("reportDaySales", reportDaySales);
@@ -1851,7 +1844,7 @@ public class ReportObjectFactory {
         map.put("userTimeSheets", userTimeSheets);
         map.put("cashInOuts", cashInOuts);
         map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
-        map.put("reportDayPromotions", reportDayPromotions);
+		map.put("reportDayPromotions", reportDayPromotions);
         return map;
     }
 
@@ -2165,12 +2158,12 @@ public class ReportObjectFactory {
         String ezPay = BH.getBD(ezPayMap.get("sumAmount")).toString();
         String ezPayQty = ezPayMap.get("count");
 
-        Map<String, String> payhalalMap = PaymentSettlementSQL
-                .getPaymentSettlementSumPaidAndCount(
-                        ParamConst.SETTLEMENT_TYPE_PAYHALAL, businessDate,
-                        sessionStatus);
-        String payhalalPay = BH.getBD(payhalalMap.get("sumAmount")).toString();
-        String payhalalPayQty = payhalalMap.get("count");
+		Map<String, String> payhalalMap = PaymentSettlementSQL
+				.getPaymentSettlementSumPaidAndCount(
+						ParamConst.SETTLEMENT_TYPE_PAYHALAL, businessDate,
+						sessionStatus);
+		String payhalalPay = BH.getBD(payhalalMap.get("sumAmount")).toString();
+		String payhalalPayQty = payhalalMap.get("count");
 
         Map<String, String> ipay88AlipayMap = PaymentSettlementSQL
                 .getPaymentSettlementSumPaidAndCount(
@@ -2232,6 +2225,8 @@ public class ReportObjectFactory {
                         ParamConst.SETTLEMENT_TYPE_IPAY88_WEPAY, businessDate, sessionStatus);
         String ipay88WePay = BH.getBD(ipay88Wepay.get("sumAmount")).toString();
         String ipay88WePayQty = ipay88Wepay.get("count");
+
+
 
 
         Map<String, String> paypalpayMap = PaymentSettlementSQL
@@ -2360,18 +2355,20 @@ public class ReportObjectFactory {
         BigDecimal inclusiveTaxAmt = BH.getBD(ParamConst.DOUBLE_ZERO);
         BigDecimal takeawaySales = BH.getBD(ParamConst.DOUBLE_ZERO);
         BigDecimal takeawayTax = BH.getBD(ParamConst.DOUBLE_ZERO);
-        BigDecimal daySalesRound = BH.getBD(ParamConst.DOUBLE_ZERO);
+		BigDecimal daySalesRound = BH.getBD(ParamConst.DOUBLE_ZERO);
         int takeawayQty = 0;
         for (int orderIndex = 0; orderIndex < orderList.size(); orderIndex++) {
             Order order = orderList.get(orderIndex);
-            daySalesRound = BH.add(daySalesRound, BH.getBD(order.getOrderRound()), true);
+			daySalesRound=BH.add(daySalesRound,BH.getBD(order.getOrderRound()),true);
             // itemSalesDicimal = BH.add(itemSalesDicimal,
             // BH.getBD(order.getSubTotal()), true);
             orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(order);
             switch (order.getDiscountType()) {
                 case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER:
-                case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY: {
-                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++) {
+                case ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY:
+                {
+                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++)
+                    {
                         OrderDetail orderDetail = orderDetailList.get(orderDetailIndex);
                         itemSalesQty += orderDetail.getItemNum();
                         itemSalesDicimal = BH.add(itemSalesDicimal, BH.getBD(orderDetail.getRealPrice()), true);
@@ -2391,7 +2388,8 @@ public class ReportObjectFactory {
                                         true);
                             }
                         }
-                        if (!IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())) {
+                        if (!IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway()))
+                        {
                             takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()), false);
                             takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
                             takeawayQty += orderDetail.getItemNum();
@@ -2401,25 +2399,33 @@ public class ReportObjectFactory {
                 }
                 break;
                 case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER:
-                case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY: {
-                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++) {
+                case ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY:
+                {
+                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++)
+                    {
                         OrderDetail orderDetail = orderDetailList.get(orderDetailIndex);
                         itemSalesQty += orderDetail.getItemNum();
                         itemSalesDicimal = BH.add(itemSalesDicimal,
                                 BH.getBD(orderDetail.getRealPrice()), true);
-                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL) {
-                            if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL)
+                        {
+                            if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB)
+                            {
                                 discount = BH.add(discount,
                                         BH.getBD(orderDetail.getDiscountPrice()),
                                         true);
                                 discountQty++;
-                            } else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
+                            }
+                            else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE)
+                            {
                                 discountPer = BH.add(discountPer, BH.mul(
                                         BH.getBD(orderDetail.getRealPrice()),
                                         BH.getBD(orderDetail.getDiscountRate()), false),
                                         true);
                                 discountPerQty++;
-                            } else {
+                            }
+                            else
+                            {
                                 discount = BH.add(discount, BH.getBD(orderDetail.getDiscountPrice()), true);
                                 discountQty++;
                             }
@@ -2436,12 +2442,15 @@ public class ReportObjectFactory {
                 }
                 break;
                 case ParamConst.ORDER_DISCOUNT_TYPE_NULL:
-                case ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL: {
-                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++) {
+                case ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL:
+                {
+                    for (int orderDetailIndex = 0; orderDetailIndex < orderDetailList.size(); orderDetailIndex++)
+                    {
                         OrderDetail orderDetail = orderDetailList.get(orderDetailIndex);
                         itemSalesQty += orderDetail.getItemNum();
                         itemSalesDicimal = BH.add(itemSalesDicimal, BH.getBD(orderDetail.getRealPrice()), true);
-                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL) {
+                        if (orderDetail.getOrderDetailType() == ParamConst.ORDERDETAIL_TYPE_GENERAL)
+                        {
                             if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE) {
                                 discountPer = BH
                                         .add(discountPer,
@@ -2458,7 +2467,8 @@ public class ReportObjectFactory {
                                 discountQty++;
                             }
                         }
-                        if (!IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway())) {
+                        if (!IntegerUtils.isEmptyOrZero(orderDetail.getIsTakeAway()))
+                        {
                             takeawaySales = BH.add(takeawaySales, BH.getBD(orderDetail.getRealPrice()), false);
                             takeawayTax = BH.add(takeawayTax, BH.getBD(orderDetail.getTaxPrice()), false);
                             takeawayQty += orderDetail.getItemNum();
@@ -2555,10 +2565,10 @@ public class ReportObjectFactory {
 
         BigDecimal difference = BH.sub(BH.getBD(actualAmount), expected, false);
         String reportNoStr = ReportDaySalesSQL.getReportNoStrByBusiness(businessDate);
-        //String promotionTotal= PromotionDataSQL.getPromotionDataXSum(businessDate,sessionStatus,nowTime);
-        Map<String, String> promotionMap = PromotionDataSQL.getPromotionTotalAndQty(businessDate, sessionStatus, nowTime);
-        String promotionTotal = BH.getBD(promotionMap.get("promotionTotal")).toString();
-        String proQty = promotionMap.get("qty");
+		//String promotionTotal= PromotionDataSQL.getPromotionDataXSum(businessDate,sessionStatus,nowTime);
+		Map<String, String> promotionMap = PromotionDataSQL.getPromotionTotalAndQty(businessDate,sessionStatus,nowTime);
+		String promotionTotal = BH.getBD(promotionMap.get("promotionTotal")).toString();
+		String proQty = promotionMap.get("qty");
 
         reportDaySales.setRestaurantId(restaurant.getId());
         reportDaySales.setRestaurantName(restaurant.getRestaurantName());
@@ -2666,6 +2676,8 @@ public class ReportObjectFactory {
 
         reportDaySales.setPromotionQty(Integer.parseInt(proQty));
         reportDaySales.setDaySalesRound(daySalesRound.toString());
+
+        ReportDaySalesSQL.addReportDaySales(reportDaySales);
 
         reportDaySales.setPayHalal(BH.getBD(payhalalPay).toString());
         reportDaySales.setPayHalalQty(Integer.parseInt(payhalalPayQty));
@@ -3337,10 +3349,10 @@ public class ReportObjectFactory {
         long nowTime = System.currentTimeMillis();
         for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
                 .getCalendarNextPoint(i)) {
-            // Calendar hourCal = Calendar.getInstance(Locale.US);
+			// Calendar hourCal = Calendar.getInstance(Locale.US);
             // hourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
             // hourCal.set(Calendar.HOUR_OF_DAY, i);
-            // Calendar netHourCal = Calendar.getInstance(Locale.US);
+			// Calendar netHourCal = Calendar.getInstance(Locale.US);
             // netHourCal.setTimeInMillis(zeroPoint.getTimeInMillis());
             // netHourCal.set(Calendar.HOUR_OF_DAY, i + 1);
             Map<String, String> amountMap = PaymentSQL.getAllPaymentSumByTime(
@@ -3366,47 +3378,48 @@ public class ReportObjectFactory {
         return reportHourlys;
     }
 
-    public ArrayList<ReportDayPromotion> loadXReportPromotions(long businessDate,
-                                                               SessionStatus sessionStatus) {
-        ArrayList<ReportDayPromotion> reportDayPromotions = new ArrayList<ReportDayPromotion>();
-        // if (App.instance.getBusinessDate() != businessDate) {
-        // reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
-        // return reportHourlys;
-        // }
-        // ReportHourlySQL.deleteReportHourlyByBusinessDate(businessDate);
-        // Calendar nextPoint = TimeUtil.getCalendarNextPoint();
-        // Calendar zeroPoint = TimeUtil.getCalendarByZero(0);
-        long nowTime = System.currentTimeMillis();
-        ArrayList<OrderPromotion> promotionDatas = PromotionDataSQL.getOrderPromotionData(businessDate, sessionStatus, nowTime, ParamConst.ORDER_PROMOTION);
-        ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
-        for (int i = 0; i < promotions.size(); i++) {
-            int id = promotions.get(i).getId();
-            int qty = 0;
-            String promotionName = promotions.get(i).getPromotionName();
-            BigDecimal amount = BH.getBD(ParamConst.DOUBLE_ZERO);
-            for (int j = 0; j < promotionDatas.size(); j++) {
-                OrderPromotion promotionData = promotionDatas.get(j);
-                int promotionId = promotionData.getPromotionId();
+	public ArrayList<ReportDayPromotion> loadXReportPromotions(long businessDate,
+															   SessionStatus sessionStatus) {
+		ArrayList<ReportDayPromotion> reportDayPromotions = new ArrayList<ReportDayPromotion>();
+		// if (App.instance.getBusinessDate() != businessDate) {
+		// reportHourlys = ReportHourlySQL.getReportHourlysByTime(businessDate);
+		// return reportHourlys;
+		// }
+		// ReportHourlySQL.deleteReportHourlyByBusinessDate(businessDate);
+		// Calendar nextPoint = TimeUtil.getCalendarNextPoint();
+		// Calendar zeroPoint = TimeUtil.getCalendarByZero(0);
+		long nowTime = System.currentTimeMillis();
+		ArrayList<OrderPromotion>	promotionDatas =	PromotionDataSQL.getOrderPromotionData(businessDate,sessionStatus,nowTime,ParamConst.ORDER_PROMOTION);
+		ArrayList<Promotion> promotions = PromotionSQL.getAllPromotion();
+		for (int i = 0; i <promotions.size() ; i++) {
+			int id=promotions.get(i).getId();
+			int qty = 0;
+			String   promotionName=promotions.get(i).getPromotionName();
+			BigDecimal amount = BH.getBD(ParamConst.DOUBLE_ZERO);
+			for(int j = 0;j <promotionDatas.size();j++){
+				OrderPromotion promotionData=promotionDatas.get(j);
+				int promotionId=promotionData.getPromotionId();
 
-                if (id == promotionId) {
-                    amount = BH.add(amount, BH.getBD(promotionData.getPromotionAmount()), false);
-                    qty = qty + 1;
-                }
+				if(id==promotionId)
+				{
+					amount=BH.add(amount,BH.getBD(promotionData.getPromotionAmount()),false);
+					qty=qty+1;
+				}
 
-            }
-            if (qty > 0) {
-                ReportDayPromotion reportDayPromotion = new ReportDayPromotion();
-                reportDayPromotion.setRestaurantId(restaurant.getId());
-                reportDayPromotion.setRevenueId(revenueCenter.getId());
-                reportDayPromotion.setRevenueName(revenueCenter.getRevName());
-                reportDayPromotion.setBusinessDate(businessDate);
-                reportDayPromotion.setPromotionAmount(amount.toString());
-                reportDayPromotion.setPromotionName(promotionName);
-                reportDayPromotion.setPromotionQty(qty);
-                reportDayPromotion.setPromotionId(id);
-                reportDayPromotion.setCreateTime(nowTime);
-                reportDayPromotion.setUpdateTime(nowTime);
-                reportDayPromotions.add(reportDayPromotion);
+	}
+			if(qty>0){
+				ReportDayPromotion reportDayPromotion = new ReportDayPromotion();
+				reportDayPromotion.setRestaurantId(restaurant.getId());
+				reportDayPromotion.setRevenueId(revenueCenter.getId());
+				reportDayPromotion.setRevenueName(revenueCenter.getRevName());
+				reportDayPromotion.setBusinessDate(businessDate);
+				reportDayPromotion.setPromotionAmount(amount.toString());
+				reportDayPromotion.setPromotionName(promotionName);
+				reportDayPromotion.setPromotionQty(qty);
+				reportDayPromotion.setPromotionId(id);
+				reportDayPromotion.setCreateTime(nowTime);
+				reportDayPromotion.setUpdateTime(nowTime);
+				reportDayPromotions.add(reportDayPromotion);
             }
         }
         ReportPromotionSQL.addReportPromotion(reportDayPromotions);
@@ -3424,7 +3437,7 @@ public class ReportObjectFactory {
         // Calendar nextPoint = TimeUtil.getCalendarNextPoint();
         // Calendar zeroPoint = TimeUtil.getCalendarByZero(0);
         long nowTime = System.currentTimeMillis();
-        reportPromotions = PromotionDataSQL.getItemPromotionData(businessDate, sessionStatus, nowTime);
+        reportPromotions=	PromotionDataSQL.getItemPromotionData(businessDate,sessionStatus,nowTime);
 //		for (long i = sessionStatus.getTime(); i < nowTime; i = TimeUtil
 //				.getCalendarNextPoint(i)) {
 //			// Calendar hourCal = Calendar.getInstance();
@@ -3471,8 +3484,8 @@ public class ReportObjectFactory {
         ArrayList<ReportPluDayComboModifier> reportPluDayComboModifiers = (ArrayList<ReportPluDayComboModifier>) modifierInfoMap.get("reportPluDayComboModifiers");
         // plu hourly payment report
         ArrayList<ReportHourly> reportHourlys = loadXReportHourlys(businessDate, sessionStatus);
-        ArrayList<ReportDayPromotion> reportDayPromotions = loadXReportPromotions(businessDate, sessionStatus);
-        //ArrayList<OrderPromotion> reportItemPromotions = loadXReportItemPromotions(businessDate, sessionStatus);
+		ArrayList<ReportDayPromotion> reportDayPromotions = loadXReportPromotions(businessDate, sessionStatus);
+		//ArrayList<OrderPromotion> reportItemPromotions = loadXReportItemPromotions(businessDate, sessionStatus);
         map.put("reportDaySales", reportDaySales);
         map.put("reportDayTaxs", reportDayTaxs);
         map.put("reportDayPayments", reportDayPayments);
@@ -3482,7 +3495,7 @@ public class ReportObjectFactory {
         map.put("reportPluDayComboModifiers", reportPluDayComboModifiers);
         map.put("sessionStatus", sessionStatus);
         map.put("userOpenDrawerRecords", userOpenDrawerRecords);
-        map.put("reportDayPromotions", reportDayPromotions);
+		map.put("reportDayPromotions", reportDayPromotions);
 
         return map;
     }
@@ -3774,7 +3787,7 @@ public class ReportObjectFactory {
     public Map<String, Object> loadDaySalesXZReport(long bizDateNow, SessionStatus sessionStatus) {
         long oldtime = bizDateNow;
 
-        Calendar c = Calendar.getInstance(Locale.US);
+		Calendar c = Calendar.getInstance(Locale.US);
         Date dt = new Date(bizDateNow);
         c.setTime(dt);
         c.add(Calendar.DATE, -29); // Adding 5 days

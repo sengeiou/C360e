@@ -1,7 +1,6 @@
 package com.alfredposclient.activity.kioskactivity;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -10,19 +9,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.ListView;
 
 import com.alfredbase.BaseActivity;
 import com.alfredbase.LoadingDialog;
@@ -46,7 +41,6 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderPromotion;
 import com.alfredbase.javabean.OrderSplit;
-import com.alfredbase.javabean.OrderUser;
 import com.alfredbase.javabean.Payment;
 import com.alfredbase.javabean.PaymentSettlement;
 import com.alfredbase.javabean.PlaceInfo;
@@ -58,7 +52,6 @@ import com.alfredbase.javabean.ReportHourly;
 import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
-import com.alfredbase.javabean.RestaurantConfig;
 import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.SubPosBean;
 import com.alfredbase.javabean.SyncMsg;
@@ -72,7 +65,6 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.javabean.temporaryforapp.TempModifierDetail;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
 import com.alfredbase.javabean.temporaryforapp.TempOrderDetail;
-import com.alfredbase.store.DataHelper;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.GeneralSQL;
 import com.alfredbase.store.sql.ItemCategorySQL;
@@ -87,15 +79,12 @@ import com.alfredbase.store.sql.OrderDetailTaxSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
-import com.alfredbase.store.sql.OrderUserSQL;
 import com.alfredbase.store.sql.PaymentSettlementSQL;
 import com.alfredbase.store.sql.PlaceInfoSQL;
 import com.alfredbase.store.sql.PromotionDataSQL;
-import com.alfredbase.store.sql.RestaurantConfigSQL;
 import com.alfredbase.store.sql.RoundAmountSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
 import com.alfredbase.store.sql.UserOpenDrawerRecordSQL;
-import com.alfredbase.store.sql.UserSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
 import com.alfredbase.store.sql.temporaryforapp.TempModifierDetailSQL;
@@ -112,13 +101,10 @@ import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TimeUtil;
-import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.activity.NetWorkOrderActivity;
 import com.alfredposclient.activity.StoredCardActivity;
-import com.alfredposclient.adapter.EmployeeAdapter;
-import com.alfredposclient.adapter.SalesTypeAdapter;
 import com.alfredposclient.global.App;
 import com.alfredposclient.global.JavaConnectJS;
 import com.alfredposclient.global.ReportObjectFactory;
@@ -226,7 +212,6 @@ public class MainPageKiosk extends BaseActivity {
     public static final int CHECK_TO_CLOSE_CUSTOM_NOTE_VIEW = 148;
     public static final int CONTROL_PAGE_ORDER_VIEW_MASK = 149;
     public static final int VIEW_EVENT_START_KIOSK_BOLD = 150;
-    public static final int VIEW_EVENT_SHOW_SALES_TYPE = 151;
 
 
     public static final String REFRESH_TABLES_BROADCAST = "REFRESH_TABLES_BROADCAST";
@@ -293,7 +278,6 @@ public class MainPageKiosk extends BaseActivity {
     //	private StoredCardActivity f_stored_card;
     private Observable<Integer> observable;
     private Observable<Object> observable1;
-    private AlertDialog emplyeeDialog, salesTypeDialog;
 
 
     private void initDrawerLayout() {
@@ -674,9 +658,6 @@ public class MainPageKiosk extends BaseActivity {
                 case VIEW_EVENT_SHOW_OPEN_ITEM_WINDOW:
                     showOpenItemWindow();
                     break;
-                case VIEW_EVENT_SHOW_SALES_TYPE:
-                    showSalesTypeWindow();
-                    break;
                 case VIEW_EVENT_DISMISS_OPEN_ITEM_WINDOW:
                     dismissOpenItemWindow();
                     break;
@@ -834,10 +815,7 @@ public class MainPageKiosk extends BaseActivity {
 //                            if (App.instance.isRevenueKiosk() && !App.instance.getSystemSettings().isPrintBill()) {
 //
 //                            } else {
-
-                            boolean isButtonQuickService = Store.getBoolean(context, Store.BUTTON_QUICK_SERVICE, false);
-
-                            if (!App.instance.isRevenueKiosk() && !isButtonQuickService) {
+                            if (!App.instance.isRevenueKiosk()) {
                                 App.instance.remoteBillPrint(printer, title, paidOrder,
                                             orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount,orderPromotions);
                             } else {
@@ -1860,7 +1838,7 @@ public class MainPageKiosk extends BaseActivity {
 
             List<OrderSplit> orderSplits = OrderSplitSQL.getOrderSplits(currentOrder);
             if (orderSplits.isEmpty()) {
-                closeOrderWindow.show(view_top_line, currentOrder, operatePanel.getWidth(), orderBill, orderDetails, true);
+                closeOrderWindow.show(view_top_line, currentOrder, operatePanel.getWidth(), orderBill, orderDetails);
             } else {
                 int count = OrderDetailSQL.getOrderDetailCountByGroupId(0, currentOrder.getId());
                 if (count == 0) {
@@ -2134,8 +2112,6 @@ public class MainPageKiosk extends BaseActivity {
         }
 //		App.instance.unBindPushWebSocketService();
         XMPP.getInstance().setCanCheckAppOrder(false);
-
-        Store.putBoolean(context, Store.BUTTON_QUICK_SERVICE, false);
         super.onDestroy();
     }
 
@@ -2519,103 +2495,6 @@ public class MainPageKiosk extends BaseActivity {
 
             }
         }).start();
-    }
-    private void showSalesTypeWindow() {
-        salesTypeDialog = new AlertDialog.Builder(this).create();
-        salesTypeDialog.setCancelable(true);
-        salesTypeDialog.setCanceledOnTouchOutside(false);
-
-        Window window = salesTypeDialog.getWindow();
-        if (window == null) return;
-
-        salesTypeDialog.show();
-        window.setContentView(R.layout.dialog_select_sales_type);
-        window.setBackgroundDrawableResource(android.R.color.transparent);
-
-        ListView listView = (ListView) salesTypeDialog.findViewById(R.id.lvSalesType);
-
-        List<RestaurantConfig> restaurantConfigList = RestaurantConfigSQL.getAllRestaurantConfigByParaType(ParamConst.SALES_TYPE);
-        SalesTypeAdapter adapter = new SalesTypeAdapter(this, restaurantConfigList);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                if (OrderDetailSQL.getOrderDetailPlaceOrderCountByOrder(currentOrder) > 0) {
-                    ToastUtils.showToast(MainPageKiosk.this, "Can't change sales type after place order");
-                    return;
-                }
-
-                List<OrderDetail> orderDetailList = OrderDetailSQL.getAllOrderDetailsByOrder(currentOrder);
-                if (orderDetailList.size() > 0) {
-                    OrderDetailSQL.deleteOrderDetailByOrder(currentOrder);
-                    OrderModifierSQL.deleteOrderModifierByOrder(currentOrder);
-                }
-
-                if (salesTypeDialog != null) {
-                    salesTypeDialog.dismiss();
-                }
-
-                SalesTypeAdapter salesTypeAdapter = (SalesTypeAdapter) adapterView.getAdapter();
-
-                if (salesTypeAdapter == null) return;
-
-                RestaurantConfig item = salesTypeAdapter.getItem(i);
-
-                int salesType = ParamConst.DINE_IN;
-
-                if (!TextUtils.isEmpty(item.getParaValue1()))
-                    salesType = Integer.parseInt(item.getParaValue1());
-
-                currentOrder.setIsTakeAway(salesType);
-                OrderSQL.updateOrder(currentOrder);
-                handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-                if (item.getParaValue1().equals(String.valueOf(ParamConst.EMPLOYEE))){
-                    showListEmployee();
-                }
-            }
-        });
-
-    }
-
-    private void showListEmployee() {
-        emplyeeDialog = new AlertDialog.Builder(this).create();
-        emplyeeDialog.setCancelable(true);
-        emplyeeDialog.setCanceledOnTouchOutside(false);
-
-        Window window = emplyeeDialog.getWindow();
-        if (window == null) return;
-
-        emplyeeDialog.show();
-        window.setContentView(R.layout.dialog_select_employee);
-        window.setBackgroundDrawableResource(android.R.color.transparent);
-
-        ListView listView = (ListView) emplyeeDialog.findViewById(R.id.lvEmployee);
-
-        ArrayList<User> userList = UserSQL.getAllUser();
-        EmployeeAdapter adapter = new EmployeeAdapter(this, userList);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                EmployeeAdapter employee = (EmployeeAdapter) adapterView.getAdapter();
-                if (employee == null) return;
-                User item = employee.getItem(i);
-                OrderUser orderUser = new OrderUser();
-                orderUser.setUserId(item.getId());
-                orderUser.setOrderId(currentOrder.getId());
-                long time = System.currentTimeMillis();
-                orderUser.setBusinessDate(time);
-                orderUser.setCreateTime(time);
-                orderUser.setUpdateTime(time);
-                OrderUserSQL.addOrder(orderUser);
-                if (emplyeeDialog != null) {
-                    emplyeeDialog.dismiss();
-                }
-            }
-        });
     }
 
     /**

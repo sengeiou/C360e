@@ -23,8 +23,8 @@ public class ReportPluDayItemSQL {
 					+ "(id, reportNo, restaurantId, restaurantName, revenueId, revenueName, businessDate, itemMainCategoryId, "
 					+ "itemMainCategoryName, itemCategoryId, itemCategoryName, itemDetailId, itemName, itemPrice, itemCount, "
 					+ "itemAmount, itemVoidQty, itemVoidPrice, itemHoldQty, itemHoldPrice, itemFocQty, itemFocPrice, billVoidQty, "
-					+ "billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId, salesTypeId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { reportPluDayItem.getId(),
@@ -54,9 +54,8 @@ public class ReportPluDayItemSQL {
 							reportPluDayItem.getBillFocQty() == null ? 0 : reportPluDayItem.getBillFocQty(),
 							reportPluDayItem.getBillFocPrice() == null ? "0.00" : reportPluDayItem.getBillVoidPrice(),
 							reportPluDayItem.getIsOpenItem(),
-							reportPluDayItem.getDaySalesId(),
-							reportPluDayItem.getSalesTypeId()
-
+							reportPluDayItem.getDaySalesId()
+									
 							});
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,8 +75,8 @@ public class ReportPluDayItemSQL {
 					+ "itemMainCategoryId, itemMainCategoryName, itemCategoryId, itemCategoryName, " 
 					+ "itemDetailId, itemName, itemPrice, itemCount, itemAmount, itemVoidQty, "
 					+ "itemVoidPrice, itemHoldQty, itemHoldPrice, itemFocQty, itemFocPrice," 
-					+ " billVoidQty, billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId, salesTypeId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " billVoidQty, billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportPluDayItem reportPluDayItem : reportPluDayItems) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportPluDayItem.getReportNo());
@@ -111,7 +110,6 @@ public class ReportPluDayItemSQL {
 				SQLiteStatementHelper.bindString(sqLiteStatement, 25, reportPluDayItem.getBillFocPrice());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 26, reportPluDayItem.getIsOpenItem());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 27, reportPluDayItem.getDaySalesId());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 28, reportPluDayItem.getSalesTypeId());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -136,8 +134,8 @@ public class ReportPluDayItemSQL {
 					+ "itemMainCategoryId, itemMainCategoryName, itemCategoryId, itemCategoryName, "
 					+ "itemDetailId, itemName, itemPrice, itemCount, itemAmount, itemVoidQty, "
 					+ "itemVoidPrice, itemHoldQty, itemHoldPrice, itemFocQty, itemFocPrice,"
-					+ " billVoidQty, billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId, salesTypeId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " billVoidQty, billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportPluDayItem reportPluDayItem : reportPluDayItems) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportPluDayItem.getReportNo());
@@ -167,7 +165,6 @@ public class ReportPluDayItemSQL {
 				SQLiteStatementHelper.bindString(sqLiteStatement, 25, reportPluDayItem.getBillFocPrice());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 26, reportPluDayItem.getIsOpenItem());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 27, reportPluDayItem.getDaySalesId());
-				SQLiteStatementHelper.bindString(sqLiteStatement, 28, reportPluDayItem.getSalesTypeId());
 				sqLiteStatement.executeInsert();
 			}
 			db.setTransactionSuccessful();
@@ -188,8 +185,8 @@ public class ReportPluDayItemSQL {
 					+ "itemMainCategoryId, itemMainCategoryName, itemCategoryId, itemCategoryName, "
 					+ "itemDetailId, itemName, itemPrice, itemCount, itemAmount, itemVoidQty, "
 					+ "itemVoidPrice, itemHoldQty, itemHoldPrice, itemFocQty, itemFocPrice,"
-					+ " billVoidQty, billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId, salesTypeId)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ " billVoidQty, billVoidPrice, billFocQty, billFocPrice, isOpenItem, daySalesId)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(sql);
 			for (ReportPluDayItem reportPluDayItem : reportPluDayItems) {
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 1, reportPluDayItem.getReportNo());
@@ -219,7 +216,6 @@ public class ReportPluDayItemSQL {
 				SQLiteStatementHelper.bindString(sqLiteStatement, 25, reportPluDayItem.getBillFocPrice());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 26, reportPluDayItem.getIsOpenItem());
 				SQLiteStatementHelper.bindLong(sqLiteStatement, 27, daySalesId);
-				SQLiteStatementHelper.bindString(sqLiteStatement, 28, reportPluDayItem.getSalesTypeId());
 				sqLiteStatement.executeInsert();
 			}
 		} catch (Exception e) {
@@ -267,7 +263,6 @@ public class ReportPluDayItemSQL {
 				reportPluDayItem.setBillFocPrice(cursor.getString(25));
 				reportPluDayItem.setIsOpenItem(cursor.getInt(26));
 				reportPluDayItem.setDaySalesId(cursor.getInt(27));
-				reportPluDayItem.setSalesTypeId(cursor.getString(28));
 				return reportPluDayItem;
 			}
 		} catch (Exception e) {
@@ -436,7 +431,6 @@ public class ReportPluDayItemSQL {
 				reportPluDayItem.setBillFocPrice(cursor.getString(25));
 				reportPluDayItem.setIsOpenItem(cursor.getInt(26));
 				reportPluDayItem.setDaySalesId(cursor.getInt(27));
-				reportPluDayItem.setSalesTypeId(cursor.getString(28));
 				result.add(reportPluDayItem);
 			}
 		} catch (Exception e) {
@@ -492,7 +486,6 @@ public class ReportPluDayItemSQL {
 				reportPluDayItem.setBillFocPrice(cursor.getString(25));
 				reportPluDayItem.setIsOpenItem(cursor.getInt(26));
 				reportPluDayItem.setDaySalesId(cursor.getInt(27));
-				reportPluDayItem.setSalesTypeId(cursor.getString(28));
 				result.add(reportPluDayItem);
 			}
 		} catch (Exception e) {
@@ -551,7 +544,6 @@ public class ReportPluDayItemSQL {
 				reportPluDayItem.setBillFocPrice(cursor.getString(25));
 				reportPluDayItem.setIsOpenItem(cursor.getInt(26));
 				reportPluDayItem.setDaySalesId(cursor.getInt(27));
-				reportPluDayItem.setSalesTypeId(cursor.getString(28));
 				result.add(reportPluDayItem);
 			}
 		} catch (Exception e) {

@@ -105,6 +105,7 @@ import com.alfredbase.javabean.temporaryforapp.ReportUserOpenDrawer;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.CardsSettlementSQL;
+import com.alfredbase.store.sql.ItemDetailSQL;
 import com.alfredbase.store.sql.KotItemDetailSQL;
 import com.alfredbase.store.sql.KotItemModifierSQL;
 import com.alfredbase.store.sql.KotSummarySQL;
@@ -1860,17 +1861,13 @@ public class App extends BaseApplication {
             printerDialog();
             return false;
         }
-
         try {
             Gson gson = new Gson();
             String printstr = gson.toJson(printer);
             String kotsumStr = gson.toJson(kotsummary);
             String kdlstr = gson.toJson(itemDetailsList);
             String modstr = gson.toJson(modifiersList);
-
-            boolean isButtonQuickService = Store.getBoolean(this, Store.BUTTON_QUICK_SERVICE, false);
-
-            if (isRevenueKiosk() || isButtonQuickService) {
+            if (isRevenueKiosk()) {
                 if (countryCode == ParamConst.CHINA)
                     mRemoteService.printKioskKOT(printstr, kotsumStr, kdlstr,
                             modstr, this.systemSettings.isKotPrintTogether(),
@@ -2315,10 +2312,7 @@ public class App extends BaseApplication {
                 String apporders = "";
                 String proStr = gson.toJson(orderPromotions);
                 // gson.toJson(roundingMap);
-
-                boolean isButtonQuickService = Store.getBoolean(this, Store.BUTTON_QUICK_SERVICE, false);
-
-                if (isRevenueKiosk() || isButtonQuickService) {
+                if (isRevenueKiosk()) {
                     if (countryCode == ParamConst.CHINA)
                         mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                                 details, mods, tax, payment,
@@ -2441,10 +2435,7 @@ public class App extends BaseApplication {
             String apporders = "";
             String proStr = gson.toJson(promotionData);
             // gson.toJson(roundingMap);
-
-            boolean isButtonQuickService = Store.getBoolean(this, Store.BUTTON_QUICK_SERVICE, false);
-
-            if (isRevenueKiosk() || isButtonQuickService) {
+            if (isRevenueKiosk()) {
                 if (countryCode == ParamConst.CHINA)
                     mRemoteService.printKioskBill(prtStr, prtTitle, orderStr,
                             details, mods, tax, payment,

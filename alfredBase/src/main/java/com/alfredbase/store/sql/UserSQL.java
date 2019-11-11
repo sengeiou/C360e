@@ -21,8 +21,8 @@ public class UserSQL {
 		try {
 			String sql = "replace into "
 					+ TableNames.User
-					+ "(id,empId,  type,  status, accountName,  userName,  password,firstName,  lastName,  nickName,companyId,  createTime,  updateTime, budget)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id,empId,  type,  status, accountName,  userName,  password,firstName,  lastName,  nickName,companyId,  createTime,  updateTime)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLExe.getDB().execSQL(
 					sql,
 					new Object[] { user.getId(), user.getEmpId(),
@@ -31,7 +31,7 @@ public class UserSQL {
 							user.getPassword(), user.getFirstName(),
 							user.getLastName(), user.getNickName(),
 							user.getCompanyId(), user.getCreateTime(),
-							user.getUpdateTime(), user.getBudget() });
+							user.getUpdateTime() });
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -46,8 +46,8 @@ public class UserSQL {
 			db.beginTransaction();
 			String sql = "replace into "
 					+ TableNames.User
-					+ "(id,empId,  type,  status, accountName,  userName,  password,firstName,  lastName,  nickName,companyId,  createTime,  updateTime, budget)"
-					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+					+ "(id,empId,  type,  status, accountName,  userName,  password,firstName,  lastName,  nickName,companyId,  createTime,  updateTime)"
+					+ " values (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			SQLiteStatement sqLiteStatement = db.compileStatement(
 					sql);
 				for (User user : users) {
@@ -77,8 +77,6 @@ public class UserSQL {
 							user.getCreateTime());
 					SQLiteStatementHelper.bindLong(sqLiteStatement, 13,
 							user.getUpdateTime());
-					SQLiteStatementHelper.bindString(sqLiteStatement, 14,
-							user.getBudget());
 
 					sqLiteStatement.executeInsert();
 				}
@@ -118,7 +116,6 @@ public class UserSQL {
 				user.setCompanyId(cursor.getInt(10));
 				user.setCreateTime(cursor.getLong(11));
 				user.setUpdateTime(cursor.getLong(12));
-				user.setBudget(cursor.getString(13));
 				result.add(user);
 			}
 		} catch (Exception e) {
@@ -158,7 +155,6 @@ public class UserSQL {
 				user.setCompanyId(cursor.getInt(10));
 				user.setCreateTime(cursor.getLong(11));
 				user.setUpdateTime(cursor.getLong(12));
-				user.setBudget(cursor.getString(13));
 				return user;
 			}
 		} catch (Exception e) {

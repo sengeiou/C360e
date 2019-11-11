@@ -253,12 +253,6 @@ public class MainPageOrderViewKiosk extends LinearLayout {
                                                     placedOrder.getTableId()).getName(), placedOrder,
                                             App.instance.getRevenueCenter(),
                                             App.instance.getBusinessDate());
-
-                            boolean isButtonQuickService = Store.getBoolean(context, Store.BUTTON_QUICK_SERVICE, false);
-                            if (isButtonQuickService) {
-                                kotSummary.setTableName("");
-                            }
-
                             ArrayList<KotItemDetail> kotItemDetails = new ArrayList<KotItemDetail>();
                             List<Integer> orderDetailIds = new ArrayList<Integer>();
                             ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<KotItemModifier>();
@@ -442,16 +436,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
 
         if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.takeaway) + ")";
-        } else if (order.getIsTakeAway() == ParamConst.APP_DELIVERY) {
-            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.delivery) + ")";
-        } else if (order.getIsTakeAway() == ParamConst.EMPLOYEE) {
-            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.employee) + ")";
-        }else if (order.getIsTakeAway() == ParamConst.DINE_IN) {
-            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.app_dine_in) + ")";
-        } else {
-            orderNoStr = orderNoStr + "(" + parent.getResources().getString(R.string.app_dine_in) + ")";
         }
-
         tv_table_name_ontop.setText(orderNoStr);
         if (!IntegerUtils.isEmptyOrZero(order.getPersons())) {
             tv_pax.setText(parent.getString(R.string.pax) + " " + order.getPersons().intValue());

@@ -218,6 +218,14 @@ public class KotItemModifierSQL {
             for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
                     .moveToNext()) {
                 kotItemModifier = new KotItemModifier();
+//                kotItemModifier.setId(cursor.getInt(0));
+//                kotItemModifier.setKotItemDetailId(cursor.getInt(1));
+//                kotItemModifier.setModifierId(cursor.getInt(2));
+//                kotItemModifier.setModifierName(cursor.getString(3));
+//                kotItemModifier.setModifierNum(cursor.getInt(4));
+//                kotItemModifier.setStatus(cursor.getInt(5));
+//                kotItemModifier.setPrinterId(cursor.getInt(6));
+//                kotItemModifier.setUniqueId(cursor.getString(7));
                 kotItemModifier.setId(cursor.getInt(0));
                 kotItemModifier.setUniqueId(cursor.getString(1));
                 kotItemModifier.setKotItemDetailId(cursor.getInt(2));
