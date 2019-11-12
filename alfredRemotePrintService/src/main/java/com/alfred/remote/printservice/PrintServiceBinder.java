@@ -1016,8 +1016,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
 
                         for (PrintOrderItem item : map.values()) {
-                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
-                                    item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight(), currencySymbol);
+                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()),
+                                    item.getQty(), BH.formatMoney(item.getAmount()), 1, item.getWeight(), currencySymbol, isInstructions);
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {
@@ -1219,8 +1219,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                 }
 
                                 for (PrintOrderItem item : map.values()) {
-                                    billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
-                                            item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight(), currencySymbol);
+                                    billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()),
+                                            item.getQty(), BH.formatMoney(item.getAmount()), 1, item.getWeight(), currencySymbol, isInstructions);
 
                                     //getModifiersByDetailId()
                                     ////
@@ -3168,8 +3168,8 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         }
 
                         for (PrintOrderItem item : map.values()) {
-                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()).toString(),
-                                    item.getQty(), BH.formatMoney(item.getAmount()).toString(), 1, item.getWeight(), currencySymbol);
+                            billPrint.AddOrderItem(item.getItemName(), BH.formatMoney(item.getPrice()),
+                                    item.getQty(), BH.formatMoney(item.getAmount()), 1, item.getWeight(), currencySymbol);
                             //getModifiersByDetailId()
                             ////
                             if (orderModifiers != null) {

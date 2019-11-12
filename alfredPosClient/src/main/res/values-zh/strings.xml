@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AlfredPosClient</string>
+    <string name="app_name">C360Engage POS Client</string>
     <!--translate-->
     <string name="open_rest_tips">在打开餐厅之前，请确保所有设备都已连接到此设备。</string>
     <string name="sync_tips">尚未使用Alfred Cloud的餐厅数据初始化此设备。请提供以下帐户信息以与Alfred Cloud同步</string>
@@ -319,7 +319,7 @@
 
     <string name="welcome_to">欢迎来到</string>
     <string name="please_clock_in">请钟入</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="printer_app_name">C360Engage Remote Print Service</string>
     <string name="ask_delete_place">你确定要删除这个地方吗？</string>
 
     <string name="days">天</string>

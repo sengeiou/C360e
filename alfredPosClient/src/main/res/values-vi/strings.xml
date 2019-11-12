@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AlfredPosClient</string>
+    <string name="app_name">C360Engage POS Client</string>
     <!--translate-->
     <string name="open_rest_tips">Trước khi mở nhà hàng, vui lòng đảm bảo tất cả các thiết bị được kết nối với thiết bị này.</string>
     <string name="sync_tips">Thiết bị này chưa được khởi tạo với dữ liệu nhà hàng của bạn tại Alfred Cloud. Vui lòng cung cấp thông tin tài khoản sau để đồng bộ hóa với Alfred Cloud</string>
@@ -319,7 +319,7 @@
 
     <string name="welcome_to">Chào mừng bạn đến</string>
     <string name="please_clock_in">Xin vui lòng đồng hồ trong</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="printer_app_name">C360Engage Remote Print Service</string>
     <string name="ask_delete_place">Bạn có chắc chắn để xóa nơi này?</string>
 
     <string name="days">Ngày</string>

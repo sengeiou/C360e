@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- com.alfredselfhelp.global -->
-    <string name="app_name">Self Help Kiosk</string>
+    <string name="app_name">C360Engage Self Help Kiosk</string>
     <string name="version">Bersyon:</string>
     <string name="exit_program">Mangyaring mag-click muli upang lumabas</string>
     <string name="revenue_center">Revenue Centre</string>

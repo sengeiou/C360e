@@ -2,7 +2,6 @@ package com.alfred.printer;
 
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 
 import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
@@ -18,7 +17,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.UnsupportedEncodingException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -715,7 +713,12 @@ public class BillPrint extends PrintJob {
         addHortionalLine(this.charSize);
     }
 
-    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight, String currencySymbol) {
+    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight, String currencySymbol)
+    {
+        AddOrderItem(itemName, price, qty, total, scale, weight, currencySymbol, true);
+    }
+
+    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight, String currencySymbol, Boolean isInstructions) {
         PrintData order = new PrintData();
         order.setDataFormat(PrintData.FORMAT_TXT);
         order.setFontsize(scale);
@@ -729,7 +732,10 @@ public class BillPrint extends PrintJob {
 
         order.setText(this.getFourColContent(itemName, price, qty, total, scale));
         this.data.add(order);
-        this.addWeight(weight);
+        if(isInstructions)
+        {
+            this.addWeight(weight);
+        }
     }
 
 

@@ -2,7 +2,7 @@
 <resources>
 
     <!-- com.alfredselfhelp.global -->
-    <string name="app_name">AlfredKDS</string>
+    <string name="app_name">C360Engage KDS</string>
     <string name="version">الإصدار:</string>
     <string name="exit_program">الرجاء النقر فوق "السابق" مرة أخرى للخروج</string>
     <string name="revenue_center">مركز الإيرادات</string>

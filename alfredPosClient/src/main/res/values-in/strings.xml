@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AlfredPosClient</string>
+    <string name="app_name">C360Engage POS Client</string>
     <!--translate-->
     <string name="open_rest_tips">Sebelum membuka restoran, pastikan semua perangkat terhubung ke perangkat ini.</string>
     <string name="sync_tips">Perangkat ini belum diinisialisasi dengan data restoran Anda di Alfred Cloud. Harap berikan informasi akun berikut untuk disinkronkan dengan Alfred Cloud</string>
@@ -319,7 +319,7 @@
 
     <string name="welcome_to">Selamat Datang di</string>
     <string name="please_clock_in">Mohon Masukan waktu</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="printer_app_name">C360Engage Remote Print Service</string>
     <string name="ask_delete_place">Anda yakin akan menghapus tempat ini?</string>
 
     <string name="days">Hari</string>
