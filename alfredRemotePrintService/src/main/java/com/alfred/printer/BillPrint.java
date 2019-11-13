@@ -738,8 +738,12 @@ public class BillPrint extends PrintJob {
         }
     }
 
+    public void addOrderModifier(String itemName, int scale, String price, String currencySymbol)
+    {
+        addOrderModifier(itemName, scale, price, currencySymbol, true);
+    }
 
-    public void addOrderModifier(String itemName, int scale, String price, String currencySymbol) {
+    public void addOrderModifier(String itemName, int scale, String price, String currencySymbol, Boolean isInstructions) {
         String bigDecimal = BH.formatMoney(price);
         PrintData orderMod = new PrintData();
         orderMod.setDataFormat(PrintData.FORMAT_TXT);
@@ -751,7 +755,10 @@ public class BillPrint extends PrintJob {
         }
         orderMod.setText(this.getFourColContent("  " + itemName + reNext, bigDecimal, "", "", scale));
         orderMod.setTextAlign(PrintData.ALIGN_LEFT);
-        this.data.add(orderMod);
+        if(isInstructions)
+        {
+            this.data.add(orderMod);
+        }
     }
 
     public void AddBillSummary(String subtotal, String discount,

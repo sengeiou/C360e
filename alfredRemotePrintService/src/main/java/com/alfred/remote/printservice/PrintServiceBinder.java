@@ -600,9 +600,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterQueueManager pqMgr = this.service.getPqMgr();
 
         String name = prtDevice.getName();
+        Log.i("Checker", String.valueOf(prtDevice));
         int copies = 1;
-        if (doublePrint == true)
+        if (doublePrint)
+        {
             copies = 2;
+        }
 
         for (int i = 0; i < copies; i++) {
             if (oneprint) {
@@ -611,13 +614,20 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
                     KOTPrint kot = new KOTPrint(uuid, kotsummary.getBusinessDate());
                     //set page size
-                    if (this.service.isTMU220(name)) {
+                    if (this.service.isTMU220(name))
+                    {
                         kot.setCharSize(33);
-                    } else if (this.service.isTM88(name)) {
+                    }
+                    else if (this.service.isTM88(name))
+                    {
                         kot.setCharSize(42);
-                    } else if (this.service.isV1sG(name)) {
+                    }
+                    else if (this.service.isV1sG(name))
+                    {
                         kot.setCharSize(32);
-                    } else {
+                    }
+                    else
+                    {
                         kot.setCharSize(48);
                     }
                     kot.addLineSpace(2);
@@ -627,7 +637,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     }
                     if (itemDetailsList.size() > 0) {
                         KotItemDetail kotitem = itemDetailsList.get(0);
-                        if (kotitem.getKotStatus().intValue() == ParamConst.KOT_STATUS_VOID) {
+                        if (kotitem.getKotStatus() == ParamConst.KOT_STATUS_VOID) {
                             kot.addCenterLabel(PrintService.instance.getResources().getString(R.string.void_), kotFontSize);
                         }
                     }
@@ -650,16 +660,16 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     boolean canPrint = false;
                     for (KotItemDetail item : itemDetailsList) {
                         kot.AddKotItem(item.getItemName(), item.getItemNum(), kotFontSize);
-                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId().intValue(), modifiersList);
+                        ArrayList<KotItemModifier> modList = getModifiersByDetailId(item.getId(), modifiersList);
                         int size = getModifierSizehavePrintId(modList);
                         if (size != 0) {
                             canPrint = false;
                             for (KotItemModifier kotItemModifier : modList) {
                                 if (IntegerUtils.isEmptyOrZero(kotItemModifier.getPrinterId())
-                                        || kotItemModifier.getPrinterId().intValue() == prtDevice.getDevice_id()) {
+                                        || kotItemModifier.getPrinterId() == prtDevice.getDevice_id()) {
                                     canPrint = true;
-                                    if (!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum().intValue() > 1) {
-                                        kot.AddModifierItem("-" + kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum().intValue(), 1);
+                                    if (!IntegerUtils.isEmptyOrZero(kotItemModifier.getModifierNum()) && kotItemModifier.getModifierNum() > 1) {
+                                        kot.AddModifierItem("-" + kotItemModifier.getModifierName() + "x" + kotItemModifier.getModifierNum(), 1);
                                     } else {
                                         kot.AddModifierItem("-" + kotItemModifier.getModifierName(), 1);
                                     }
@@ -1025,12 +1035,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                     PrintOrderModifier om = orderModifiers.get(m);
                                     if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                         if (om.getQty() > 1) {
-                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol);
+                                            billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol, isInstructions);
                                         } else {
                                             if (!isInstructions && om.getIsBill() == 1) {
 //                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
                                             } else {
-                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol);
+                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol, isInstructions);
                                             }
                                         }
                                     }
@@ -1229,12 +1239,12 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                                             PrintOrderModifier om = orderModifiers.get(m);
                                             if (om.getOrderDetailId() == item.getOrderDetailId()) {
                                                 if (om.getQty() > 1) {
-                                                    billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol);
+                                                    billPrint.addOrderModifier(om.getItemName() + "x" + om.getQty(), 1, om.getPrice(), currencySymbol, isInstructions);
                                                 } else {
                                                     if (!isInstructions && om.getIsBill() == 1) {
 //                                                billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice());
                                                     } else {
-                                                        billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol);
+                                                        billPrint.addOrderModifier(om.getItemName(), 1, om.getPrice(), currencySymbol, isInstructions);
                                                     }
                                                 }
                                             }

@@ -118,89 +118,90 @@ public class MainPageOperatePanel extends LinearLayout implements
         {
             @Override
             public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-                if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN)
+        if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN)
+        {
+            SureDialog sureDialog = new SureDialog(parent);
+            String barCode = et_bar_code.getText().toString();
+            barCode = barCode.replaceAll("\\s+","");
+            String itemBarCode = barCode;
+            String priceBarCode = barCode;
+            BigDecimal itemPrice = new BigDecimal(0);
+            BigDecimal calculatedWeight;
+            Boolean weightCalculator = false;
+            int barCodeLength = 0;
+            int currentBarcodeLength = barCode.length();
+            for(BarcodeDetail barCodeDetail: UserCustomSQL.getAllBarCodeProperties())
+            {
+                weightCalculator = true;
+                try
                 {
-                    SureDialog sureDialog = new SureDialog(parent);
-                    String barCode = et_bar_code.getText().toString();
-                    barCode = barCode.replaceAll("\\s+","");
-                    String itemBarCode = barCode;
-                    String priceBarCode = barCode;
-                    BigDecimal itemPrice = new BigDecimal(0);
-                    BigDecimal calculatedWeight;
-                    Boolean weightCalculator = false;
-                    int barCodeLength = 0;
-                    int currentBarcodeLength = barCode.length();
-                    for(BarcodeDetail barCodeDetail: UserCustomSQL.getAllBarCodeProperties())
+                    switch(barCodeDetail.getBarCodeName())
                     {
-                        weightCalculator = true;
+                        case "item_detail_id":
+                            itemBarCode = itemBarCode.substring(0, barCodeDetail.getBarCodeLength());
+                        case "item_price":
+                            priceBarCode = priceBarCode.substring(priceBarCode.length() - barCodeDetail.getBarCodeLength());
+                            String frontPrice = priceBarCode.substring(0, barCodeDetail.getBarCodePriceFront());
+                            String backPrice = priceBarCode.substring(priceBarCode.length() - (priceBarCode.length() - frontPrice.length()));
+                            String ignoreLastDigit = backPrice.substring(0, backPrice.length() - 1);
+                            itemPrice = new BigDecimal(frontPrice + "." + ignoreLastDigit);
+                    }
+                    barCodeLength = barCodeLength + barCodeDetail.getBarCodeLength();
+                    if(barCodeLength != currentBarcodeLength)
+                    {
+                        weightCalculator = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                        weightCalculator = false;
+                        sureDialog.show(false);
+                }
+            }
+
+                if (TextUtils.isEmpty(barCode))
+                {
+                    UIHelp.showToast(parent, parent.getString(R.string.barcode_cannot_empty));
+                    return false;
+                }
+                ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(itemBarCode);
+                OrderDetail orderDetail = null;
+                et_bar_code.postDelayed(new Runnable()
+                {
+                    @Override
+                    public void run() {
+                        et_bar_code.setText("");
+                        et_bar_code.requestFocus();
+                    }
+                }, 500);
+                if (itemDetail != null)
+                {
+                    orderDetail = ObjectFactory.getInstance().getOrderDetail(order, itemDetail, 0);
+                    if(weightCalculator)
+                    {
                         try
                         {
-                            switch(barCodeDetail.getBarCodeName())
-                            {
-                                case "item_detail_id":
-                                    itemBarCode = itemBarCode.substring(0, barCodeDetail.getBarCodeLength());
-                                case "item_price":
-                                    priceBarCode = priceBarCode.substring(priceBarCode.length() - barCodeDetail.getBarCodeLength());
-                                    String frontPrice = priceBarCode.substring(0, barCodeDetail.getBarCodePriceFront());
-                                    String backPrice = priceBarCode.substring(priceBarCode.length() - (priceBarCode.length() - frontPrice.length()));
-                                    String ignoreLastDigit = backPrice.substring(0, backPrice.length() - 1);
-                                    itemPrice = new BigDecimal(frontPrice + "." + ignoreLastDigit);
-                            }
-                            barCodeLength = barCodeLength + barCodeDetail.getBarCodeLength();
-                            if(barCodeLength != currentBarcodeLength)
-                            {
-                                weightCalculator = false;
-                            }
+                            calculatedWeight = itemPrice.divide(new BigDecimal(orderDetail.getItemPrice()), 4, RoundingMode.HALF_UP);
+                            orderDetail.setWeight(String.valueOf(calculatedWeight));
                         }
                         catch (Exception e)
                         {
-                            weightCalculator = false;
-                            sureDialog.show(false);
+                            UIHelp.showToast(parent, "Weight is not changed, barcode format is invalid!");
                         }
                     }
-
-                    if (TextUtils.isEmpty(barCode)) {
-                        UIHelp.showToast(parent, parent.getString(R.string.barcode_cannot_empty));
-                        return false;
-                    }
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(itemBarCode);
-                    OrderDetail orderDetail = null;
-                    et_bar_code.postDelayed(new Runnable()
-                    {
-                        @Override
-                        public void run() {
-                            et_bar_code.setText("");
-                            et_bar_code.requestFocus();
-                        }
-                    }, 500);
-                    if (itemDetail != null)
-                    {
-                        orderDetail = ObjectFactory.getInstance().getOrderDetail(order, itemDetail, 0);
-                        if(weightCalculator)
-                        {
-                            try
-                            {
-                                calculatedWeight = itemPrice.divide(new BigDecimal(orderDetail.getItemPrice()), 4, RoundingMode.HALF_UP);
-                                orderDetail.setWeight(String.valueOf(calculatedWeight));
-                            }
-                            catch (Exception e)
-                            {
-                                UIHelp.showToast(parent, "Weight is not changed, barcode format is invalid!");
-                            }
-                        }
-                    }
-                    if (orderDetail == null) {
-                        sureDialog.show(false);
-                        return false;
-                    }
-                    Message msg = handler.obtainMessage();
-                    msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
-                    msg.obj = orderDetail;
-                    handler.sendMessage(msg);
-                    sureDialog.show(true);
-                    return true;
                 }
-                return false;
+                if (orderDetail == null) {
+                    sureDialog.show(false);
+                    return false;
+                }
+                Message msg = handler.obtainMessage();
+                msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+                msg.obj = orderDetail;
+                handler.sendMessage(msg);
+                sureDialog.show(true);
+                return true;
+            }
+            return false;
             }
         });
         initTextTypeFace();
