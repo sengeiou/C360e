@@ -28,6 +28,7 @@ import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
+import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PushMessage;
@@ -1233,8 +1234,7 @@ public class HttpAPI {
                         @Override
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
-                            try
-                            {
+                            try {
                                 if (mode == SyncCentre.MODE_PUSH_SYNC) {
                                     handler.sendMessage(handler.obtainMessage(
                                             ResultCode.CONNECTION_FAILED, error));
@@ -1248,9 +1248,7 @@ public class HttpAPI {
                                 initBugseeModifier();
 //                                throw new RuntimeException(error);
 
-                            }
-                            catch(Exception e)
-                            {
+                            } catch (Exception e) {
                                 Log.e("Server Refuse", String.valueOf(e));
                             }
                         }
@@ -3074,13 +3072,14 @@ public class HttpAPI {
     }
 
     public static void sendOrderToOtherRVC(Context context,
-                                           final String url, int transferType, Order currentOrder, int tableId,
+                                           final String url, int transferType, Order currentOrder, int tableId, TableInfo oldTable,
                                            AsyncHttpClient httpClient, final Handler handler) {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("appVersion", App.instance.VERSION);
         parameters.put("order", new Gson().toJson(currentOrder));
         parameters.put("transferType", transferType);
+        parameters.put("oldTable", oldTable);
 
         List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
         parameters.put("orderDetail", new Gson().toJson(orderDetails));
@@ -3128,7 +3127,7 @@ public class HttpAPI {
                                 message.arg2 = -1;
                                 message.what = App.HANDLER_TRANSFER_TABLE_TO_OTHER_RVC;
                                 handler.sendMessage(message);
-                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+//                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
                             } else {
                                 String body = new String(responseBody);
                                 handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));
@@ -3168,25 +3167,28 @@ public class HttpAPI {
         parameters.put("tableId", tableId); //selected tableId
         parameters.put("pack", pack); //selected tableId
 
-        KotItemDetail kotItemDetail = null;
         ArrayList<KotItemModifier> kotModifiers = new ArrayList<>();
         ArrayList<OrderModifier> orderModifiers = OrderModifierSQL.getOrderModifiersByOrderDetailId(transfItemOrderDetail.getId());
         parameters.put("orderModifier", new Gson().toJson(orderModifiers));
 
-            OrderBill orderbill = OrderBillSQL.getOrderBillByOnlyOrder(oldOrder.getId());
-                parameters.put("orderBill", new Gson().toJson(orderbill));
+        OrderBill orderbill = OrderBillSQL.getOrderBillByOnlyOrder(oldOrder.getId());
+        parameters.put("orderBill", new Gson().toJson(orderbill));
 
-            KotSummary kot = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
-                parameters.put("kotSummary", new Gson().toJson(kot));
+        KotSummary kot = KotSummarySQL.getKotSummary(oldOrder.getId(), oldOrder.getNumTag());
 
-            kotItemDetail = KotItemDetailSQL.getKotItemDetailById(oldOrder.getId());
-            parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+        if (kot != null) {
+            parameters.put("kotSummary", new Gson().toJson(kot));
 
-        if (kotItemDetail !=  null){
-            kotModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+            KotItemDetail kotItemDetail = KotItemDetailSQL.getKotItemDetailByOrderDetailId(kot.getId(), transfItemOrderDetail.getId());
+            if (kotItemDetail != null)
+                parameters.put("kotItemDetail", new Gson().toJson(kotItemDetail));
+
+            if (kotItemDetail != null) {
+                kotModifiers = KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId());
+            }
         }
-        parameters.put("kotModifier", new Gson().toJson(kotModifiers));
 
+        parameters.put("kotModifier", new Gson().toJson(kotModifiers));
 
 
         Log.wtf("Test_transfer_item_params", "" + new Gson().toJson(parameters));
@@ -3206,7 +3208,7 @@ public class HttpAPI {
                                 message.arg2 = -1;
                                 message.what = App.HANDLER_TRANSFER_ITEM_TO_OTHER_RVC;
                                 handler.sendMessage(message);
-                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
+//                                handler.sendMessage(handler.obtainMessage(ResultCode.SUCCESS, null));
                             } else {
                                 String body = new String(responseBody);
                                 handler.sendMessage(handler.obtainMessage(ResultCode.UNKNOW_ERROR, body));

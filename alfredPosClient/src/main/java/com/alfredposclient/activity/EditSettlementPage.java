@@ -3,6 +3,7 @@ package com.alfredposclient.activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -302,15 +303,25 @@ public class EditSettlementPage extends BaseActivity {
                     RoundAmount roundAmount = RoundAmountSQL.getRoundAmountByOrderSplitAndBill(orderSplit, orderBill);
                     Order temporaryOrder = new Order();
 //                    if(orderSplit.)
+                    temporaryOrder.setId(orderSplit.getOrderId());
                     temporaryOrder.setPersons(orderSplit.getPersons());
                     temporaryOrder.setSubTotal(orderSplit.getSubTotal());
                     temporaryOrder.setDiscountAmount(orderSplit.getDiscountAmount());
                     temporaryOrder.setTotal(orderSplit.getTotal());
                     temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
+                    temporaryOrder.setTableId(orderSplit.getTableId());
                     temporaryOrder.setOrderNo(currentOrder.getOrderNo());
-                    if (orderItems.size() > 0 && printer != null) {
-                        App.instance.remoteBillRePrint(printer, title, temporaryOrder,
-                                orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
+                    if (orderItems.size() > 0 && printer != null)
+                    {
+                        try
+                        {
+                            App.instance.remoteBillRePrint(printer, title, temporaryOrder,
+                                    orderItems, orderModifiers, taxMap, paymentSettlements, roundAmount, App.instance.getSystemSettings().isCashClosePrint());
+                        }
+                        catch (Exception e)
+                        {
+                            Log.i("Error Check", String.valueOf(e));
+                        }
 
                     }
                     boolean isEdit = false;

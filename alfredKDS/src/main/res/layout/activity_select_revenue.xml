@@ -66,7 +66,7 @@
         <ListView
             android:id="@+id/lv_revenue_centre"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="20dp"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"

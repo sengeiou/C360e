@@ -27,12 +27,16 @@ import com.alfredbase.ParamConst;
 import com.alfredbase.PrinterLoadingDialog;
 import com.alfredbase.global.SharedPreferencesHelper;
 import com.alfredbase.http.ResultCode;
+import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.temporaryforapp.AppOrder;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetail;
 import com.alfredbase.javabean.temporaryforapp.AppOrderDetailTax;
 import com.alfredbase.javabean.temporaryforapp.AppOrderModifier;
 import com.alfredbase.javabean.temporaryforapp.TempOrder;
+import com.alfredbase.store.sql.KotSummarySQL;
+import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderDetailTaxSQL;
 import com.alfredbase.store.sql.temporaryforapp.AppOrderModifierSQL;
@@ -41,6 +45,7 @@ import com.alfredbase.store.sql.temporaryforapp.TempOrderSQL;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredbase.utils.TimeUtil;
+import com.alfredbase.utils.ToastUtils;
 import com.alfredposclient.Fragment.TableLayoutFragment;
 import com.alfredposclient.R;
 import com.alfredposclient.global.App;
@@ -441,31 +446,43 @@ public class NetWorkOrderActivity extends BaseActivity implements DeliveryDialog
                         showTables();
                     }
                 } else {
-                    appOrder
-                            .setOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED);
-                    AppOrderSQL.updateAppOrder(appOrder);
-                    PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
-                            context);
-                    printerLoadingDialog.setTitle(context.getResources().getString(
-                            R.string.receipt_printing));
-                    printerLoadingDialog.showByTime(3000);
-                    List<AppOrder> list = new ArrayList<>();
-                    App.instance.printerAppOrder(appOrder, "", list);
-                    CloudSyncJobManager cloudSync = App.instance.getSyncJob();
-                    if (cloudSync != null) {
-                        cloudSync.checkAppOrderStatus(
-                                App.instance.getRevenueCenter().getId().intValue(),
-                                appOrder.getId().intValue(),
-                                appOrder.getOrderStatus().intValue(), "",
-                                App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
-                    }
-                    handler.postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            refreshView();
+                    boolean flag = false;
+                    Order order = OrderSQL.getOrderByAppOrderId(appOrder.getId());
+                    KotSummary ks = KotSummarySQL.getKotSummary(order.getId(),order.getNumTag());
+                    if (ks == null)
+                        flag = true;
+                    if (ks.getStatus() == ParamConst.KOTS_STATUS_DONE)
+                        flag = true;
+                    if (flag) {
+                        appOrder
+                                .setOrderStatus(ParamConst.APP_ORDER_STATUS_COMPLETED);
+                        AppOrderSQL.updateAppOrder(appOrder);
+                        PrinterLoadingDialog printerLoadingDialog = new PrinterLoadingDialog(
+                                context);
+                        printerLoadingDialog.setTitle(context.getResources().getString(
+                                R.string.receipt_printing));
+                        printerLoadingDialog.showByTime(3000);
+                        List<AppOrder> list = new ArrayList<>();
+                        App.instance.printerAppOrder(appOrder, "", list);
+                        CloudSyncJobManager cloudSync = App.instance.getSyncJob();
+                        if (cloudSync != null) {
+                            cloudSync.checkAppOrderStatus(
+                                    App.instance.getRevenueCenter().getId().intValue(),
+                                    appOrder.getId().intValue(),
+                                    appOrder.getOrderStatus().intValue(), "",
+                                    App.instance.getBusinessDate().longValue(), appOrder.getOrderNo());
                         }
-                    }, 3000);
+                        handler.postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                refreshView();
+                            }
+                        }, 3000);
+
+                    } else {
+                    ToastUtils.showToast(context,"Please complete order on KDS first");
+                    }
                 }
 //			}else{
 //				showTables();

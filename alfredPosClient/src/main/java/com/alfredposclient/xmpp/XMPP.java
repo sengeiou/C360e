@@ -169,7 +169,11 @@ public class XMPP implements ConnectionListener, PingFailedListener{
             }else {
                 if(BaseApplication.isZeeposDev){
                     HOST = "www.servedbyalfred.org";  // 正式环境
-                }else {
+                }else if(BaseApplication.isCuscapiMYDev){
+                    HOST = "www.servedbyalfred.org";  // 正式环境
+                }
+                else
+                {
                     HOST = "www.servedbyalfred.org";  // 正式环境
                 }
             }

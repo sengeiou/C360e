@@ -10,7 +10,6 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
@@ -19,15 +18,12 @@ import com.alfredbase.javabean.model.SessionStatus;
 import com.alfredbase.store.SQLExe;
 import com.alfredbase.store.TableNames;
 import com.alfredbase.utils.BH;
-import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.SQLiteStatementHelper;
 
-import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +47,9 @@ public class OrderDetailSQL {
         if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
             return;
         }
+        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         add(orderDetail);
         OrderHelper.addDefaultModifiers(order, orderDetail);
@@ -58,7 +57,7 @@ public class OrderDetailSQL {
 //        OrderSQL.updateOrder(order);
     }
 
-    public static void updateOrder(OrderDetail orderDetail){
+    public static void updateOrder(OrderDetail orderDetail) {
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
         OrderSQL.updateOrder(order);
 
@@ -74,6 +73,9 @@ public class OrderDetailSQL {
         if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
             return;
         }
+        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         add(orderDetail);
         updateFreeOrderDetail(order, orderDetail);
@@ -85,6 +87,9 @@ public class OrderDetailSQL {
             return;
         }
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         updateOrderDetail(orderDetail);
         updateFreeOrderDetailForWaiter(order, orderDetail);
@@ -96,6 +101,9 @@ public class OrderDetailSQL {
             return;
         }
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
+            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+        }
         calculate(order, orderDetail);
         updateOrderDetail(orderDetail);
         OrderHelper.addDefaultModifiers(order, orderDetail);
@@ -162,7 +170,7 @@ public class OrderDetailSQL {
         }
     }
 
-    public static void updateOrderDetailAndOrder(OrderDetail orderDetail,Boolean isModifier) {
+    public static void updateOrderDetailAndOrder(OrderDetail orderDetail, Boolean isModifier) {
         if (orderDetail == null) {
             return;
         }
@@ -172,7 +180,7 @@ public class OrderDetailSQL {
         updateOrderDetail(orderDetail);
 
         updateFreeOrderDetail(order, orderDetail);
-        OrderSQL.updateOrder(order,isModifier);
+        OrderSQL.updateOrder(order, isModifier);
         if (orderDetail.getGroupId().intValue() > 0) {
             OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
             if (orderSplit != null) {
@@ -494,7 +502,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 35,
                         orderDetail.getBarCode());
-                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 36, orderDetail.getOrderDetailRound());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -590,7 +598,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 34,
                         orderDetail.getBarCode());
-                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 36, orderDetail.getOrderDetailRound());
 
                 sqLiteStatement.executeInsert();
             }
@@ -3863,14 +3871,14 @@ public class OrderDetailSQL {
                 + " or discountType = "
                 + ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
                 + ") and orderId = ?";
-        String sumRealPrice = "0.00";
+        String sumRealPrice1 = "0.00";
         Cursor cursor = null;
         SQLiteDatabase db = SQLExe.getDB();
         try {
             cursor = db.rawQuery(sql,
                     new String[]{order.getId() + ""});
             if (cursor.moveToFirst()) {
-                sumRealPrice = cursor.getString(0) == null ? "0.00" : cursor.getString(0);
+                sumRealPrice1 = cursor.getString(0) == null ? "0.00" : cursor.getString(0);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -3880,7 +3888,30 @@ public class OrderDetailSQL {
                 cursor.close();
             }
         }
-        return sumRealPrice;
+
+        sql = "select SUM(subTotal) from "
+                + TableNames.OrderSplit + " where (orderStatus = "
+                + ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED
+                + ") and orderId = ?";
+        String sumRealPrice2 = "0.00";
+        cursor = null;
+        db = SQLExe.getDB();
+        try {
+            cursor = db.rawQuery(sql,
+                    new String[]{order.getId() + ""});
+            if (cursor.moveToFirst()) {
+                sumRealPrice2 = cursor.getString(0) == null ? "0.00" : cursor.getString(0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return String.valueOf(BH.add(new BigDecimal(sumRealPrice1), new BigDecimal(sumRealPrice2), false));
     }
 
     public static void deleteAllOrderDetail() {

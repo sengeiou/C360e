@@ -726,6 +726,7 @@ public class BillPrint extends PrintJob {
             price = NumberFormat.getNumberInstance(Locale.US).format(new Double(price.replace(",", "")).intValue());
             total = NumberFormat.getNumberInstance(Locale.US).format(new Double(total.replace(",", "")).intValue());
         }
+
         order.setText(this.getFourColContent(itemName, price, qty, total, scale));
         this.data.add(order);
         this.addWeight(weight);

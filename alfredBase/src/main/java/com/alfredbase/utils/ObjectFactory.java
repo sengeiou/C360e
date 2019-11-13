@@ -119,7 +119,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 
 public class ObjectFactory {
     private static ObjectFactory instance;
@@ -2191,7 +2190,6 @@ public class ObjectFactory {
                 kotSummary.setUniqueId(CommonSQL.getUniqueId());
                 kotSummary.setOrderId(order.getId());
                 kotSummary.setOrderNo(order.getOrderNo());//流水号
-
                 kotSummary.setRevenueCenterId(revenueCenter.getId());
                 kotSummary.setRevenueCenterName(revenueCenter.getRevName());
                 kotSummary.setCreateTime(time);

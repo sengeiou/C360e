@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alfredbase.ParamConst;
 import com.alfredbase.javabean.Order;
@@ -222,7 +223,6 @@ public class OrderSQL {
 	}
 
 	public static void calculate(Order order) {
-
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
 		OrderHelper.setOrderSubTotal(order, orderDetails);
 		updateOrderDetail(order);
@@ -285,35 +285,119 @@ public class OrderSQL {
 	 *
 	 * @param order
 	 */
-	private static void updateOrderDetail(Order order) {
+	private static void updateOrderDetail(Order order)
+	{
 		List<OrderDetail> orderDetails = OrderDetailSQL.getGeneralOrderDetails(order.getId());
-		if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER) {
-			for (OrderDetail orderDetail : orderDetails) {
-				// 本身是送的，不参与打折
-				if (orderDetail.getIsFree() == ParamConst.FREE) {
-					continue;
+		if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_ORDER)
+		{
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				Boolean completedOrder = false;
+				for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+				{
+					if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+					{
+						if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+						{
+							completedOrder = true;
+						}
+					}
 				}
-				if(orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT){
-					continue;
-				}
-				if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
-					continue;
-				}
-				if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-						&& orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
-					orderDetail.setDiscountRate(order.getDiscountRate());
-					orderDetail
-							.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE);
-					orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
-					OrderDetailSQL.updateOrderDetail(orderDetail);
+				if(!completedOrder)
+				{
+					// 本身是送的，不参与打折
+					if (orderDetail.getIsFree() == ParamConst.FREE)
+					{
+						continue;
+					}
+					if (orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT)
+					{
+						continue;
+					}
+					if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId()))
+					{
+						continue;
+					}
+					if (orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE && orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+						orderDetail.setDiscountRate(order.getDiscountRate());
+						orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE);
+						orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
+						OrderDetailSQL.updateOrderDetail(orderDetail);
+					}
 				}
 			}
-		} else if (order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER) {
+		}
+		else if (order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_ORDER)
+		{
 			String sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
 			if(BH.compare(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice))){
 				String discount_rate = BH.div(BH.getBD(order.getDiscountPrice()),
 						BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), false).toString();
-				for (OrderDetail orderDetail : orderDetails) {
+				for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+				{
+					if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+					{
+						order.setDiscountPrice(String.valueOf(BH.sub(BH.getBD(order.getDiscountPrice()), BH.getBD(finishedOrder.getDiscountAmount()), false)));
+						sumRealPrice = OrderDetailSQL.getOrderDetailRealPriceWhenDiscountBySelf(order);
+						discount_rate = BH.div(BH.getBD(order.getDiscountPrice()), BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), false).toString();
+					}
+				}
+				for (OrderDetail orderDetail : orderDetails)
+				{
+					Boolean completedOrder = false;
+					for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+					{
+						if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+						{
+							if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+							{
+								completedOrder = true;
+							}
+						}
+					}
+					if(!completedOrder)
+					{
+						// 本身是送的，不参与打折
+						if (orderDetail.getIsFree() == ParamConst.FREE)
+						{
+							continue;
+						}
+						if (orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT)
+						{
+							continue;
+						}
+						if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId()))
+						{
+							continue;
+						}
+						if (orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE && orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB) {
+							orderDetail.setDiscountRate(discount_rate);
+							orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB);
+							orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(discount_rate), BH.getBD(orderDetail.getRealPrice()), false).toString());
+							OrderDetailSQL.updateOrderDetail(orderDetail);
+						}
+					}
+				}
+			}
+		}
+		else if(order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY)
+		{
+			List<String> categoryId = Arrays.asList(order.getDiscountCategoryId().split(","));
+			for (OrderDetail orderDetail : orderDetails)
+			{
+				Boolean completedOrder = false;
+				for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+				{
+					if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+					{
+						if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+						{
+							completedOrder = true;
+						}
+					}
+				}
+				if(!completedOrder)
+				{
 					// 本身是送的，不参与打折
 					if (orderDetail.getIsFree() == ParamConst.FREE) {
 						continue;
@@ -324,51 +408,33 @@ public class OrderSQL {
 					if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
 						continue;
 					}
-					if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-							&& orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
-						orderDetail.setDiscountRate(discount_rate);
-						orderDetail
-								.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB);
-						orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(discount_rate), BH.getBD(orderDetail.getRealPrice()), false).toString());
-						OrderDetailSQL.updateOrderDetail(orderDetail);
-					}
-				}
-			}
-		}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_RATE_BY_CATEGORY){
-			List<String> categoryId = Arrays.asList(order.getDiscountCategoryId().split(","));
-			for (OrderDetail orderDetail : orderDetails) {
-				// 本身是送的，不参与打折
-				if (orderDetail.getIsFree() == ParamConst.FREE) {
-					continue;
-				}
-				if(orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT){
-					continue;
-				}
-				if(!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())){
-					continue;
-				}
-				if(categoryId != null && categoryId.size() > 0) {
-					if(categoryId.contains(orderDetail.getMainCategoryId()+"")){
-						if (orderDetail.getMainCategoryId() != 0
-								&& categoryId.contains(orderDetail.getMainCategoryId()+"")
-								&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
-								|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
-							orderDetail.setDiscountRate(order.getDiscountRate());
-							orderDetail
-									.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
-							orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
+					if(categoryId.size() > 0)
+					{
+						if(categoryId.contains(orderDetail.getMainCategoryId()+"")){
+							if (orderDetail.getMainCategoryId() != 0
+									&& categoryId.contains(orderDetail.getMainCategoryId()+"")
+									&& (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE
+									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL))
+							{
+								orderDetail.setDiscountRate(order.getDiscountRate());
+								orderDetail
+										.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
+								orderDetail.setDiscountPrice(BH.mul(BH.getBDNoFormat(order.getDiscountRate()), BH.getBD(orderDetail.getRealPrice()), false).toString());
+								OrderDetailSQL.updateOrderDetail(orderDetail);
+							}
+						}else if(orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE && orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB)
+						{
+							orderDetail.setDiscountRate("");
+							orderDetail.setDiscountPrice("0.00");
+							orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
 							OrderDetailSQL.updateOrderDetail(orderDetail);
 						}
-					}else if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-							&& orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
-						orderDetail.setDiscountRate("");
-						orderDetail.setDiscountPrice("0.00");
-						orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
-						OrderDetailSQL.updateOrderDetail(orderDetail);
 					}
 				}
 			}
-		}else if(order.getDiscountType().intValue() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY){
+		}
+		else if(order.getDiscountType() == ParamConst.ORDER_DISCOUNT_TYPE_SUB_BY_CATEGORY)
+		{
 			List<String> categoryId = Arrays.asList(order.getDiscountCategoryId().split(","));
 			BigDecimal sumRatePrice = BH.getBD(ParamConst.DOUBLE_ZERO);
 
@@ -376,58 +442,97 @@ public class OrderSQL {
 //						BH.sub(BH.getBD(order.getSubTotal()), BH.getBD(sumRealPrice), false), false).toString();
 //				BigDecimal discount_rate = BH.getBD(ParamConst.DOUBLE_ZERO);
 //				BigDecimal
-				for (OrderDetail orderDetail : orderDetails) {
-					// 本身是送的，不参与打折
-					if (orderDetail.getIsFree() == ParamConst.FREE) {
-						continue;
+				for (OrderDetail orderDetail : orderDetails)
+				{
+					Boolean completedOrder = false;
+					for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+					{
+						if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+						{
+							if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+							{
+								completedOrder = true;
+							}
+						}
 					}
-					if (orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT) {
-						continue;
-					}
-					if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
-						continue;
-					}
-					if(categoryId != null && categoryId.size() > 0) {
-						if (orderDetail.getMainCategoryId() != 0
-								&& categoryId.contains(orderDetail.getMainCategoryId()+"")
-								&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
-								|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
-							sumRatePrice = BH.add(sumRatePrice, BH.getBD(orderDetail.getRealPrice()), false);
+					if(!completedOrder)
+					{
+						// 本身是送的，不参与打折
+						if (orderDetail.getIsFree() == ParamConst.FREE)
+						{
+							continue;
+						}
+						if (orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT)
+						{
+							continue;
+						}
+						if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId()))
+						{
+							continue;
+						}
+						if(categoryId.size() > 0)
+						{
+							if (orderDetail.getMainCategoryId() != 0
+									&& categoryId.contains(orderDetail.getMainCategoryId()+"")
+									&& (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
+									|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
+								sumRatePrice = BH.add(sumRatePrice, BH.getBD(orderDetail.getRealPrice()), false);
+							}
 						}
 					}
 				}
 
-			if(sumRatePrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) == 1){
+			if(sumRatePrice.compareTo(BH.getBD(ParamConst.DOUBLE_ZERO)) == 1)
+			{
 				BigDecimal discount_rate = BH.div(BH.getBD(order.getDiscountPrice()),
 						sumRatePrice, false);
-				for (OrderDetail orderDetail : orderDetails) {
-					// 本身是送的，不参与打折
-					if (orderDetail.getIsFree() == ParamConst.FREE) {
-						continue;
+				for (OrderDetail orderDetail : orderDetails)
+				{
+					Boolean completedOrder = false;
+					for(OrderSplit finishedOrder : OrderSplitSQL.getFinishedOrderSplits(order.getId()))
+					{
+						if(orderDetail.getOrderSplitId().equals(finishedOrder.getId()))
+						{
+							if(finishedOrder.getOrderStatus() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED)
+							{
+								completedOrder = true;
+							}
+						}
 					}
-					if (orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT) {
-						continue;
-					}
-					if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId())) {
-						continue;
-					}
-					if(categoryId != null && categoryId.size() > 0) {
-						if(categoryId.contains(orderDetail.getMainCategoryId() + "")) {
-							if (orderDetail.getMainCategoryId() != 0
-									&& (orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
-									|| orderDetail.getDiscountType().intValue() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
-								orderDetail.setDiscountRate(discount_rate.toString());
-								orderDetail
-										.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
-								orderDetail.setDiscountPrice(BH.mul(discount_rate, BH.getBD(orderDetail.getRealPrice()), false).toString());
+					if(!completedOrder)
+					{
+						// 本身是送的，不参与打折
+						if (orderDetail.getIsFree() == ParamConst.FREE)
+						{
+							continue;
+						}
+						if (orderDetail.getIsItemDiscount() == ParamConst.ITEM_NO_DISCOUNT)
+						{
+							continue;
+						}
+						if (!IntegerUtils.isEmptyOrZero(orderDetail.getAppOrderDetailId()))
+						{
+							continue;
+						}
+						if(categoryId.size() > 0)
+						{
+							if(categoryId.contains(orderDetail.getMainCategoryId() + "")) {
+								if (orderDetail.getMainCategoryId() != 0
+										&& (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB
+										|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL)) {
+									orderDetail.setDiscountRate(discount_rate.toString());
+									orderDetail
+											.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
+									orderDetail.setDiscountPrice(BH.mul(discount_rate, BH.getBD(orderDetail.getRealPrice()), false).toString());
+									OrderDetailSQL.updateOrderDetail(orderDetail);
+								}
+							}else if(orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+									&& orderDetail.getDiscountType() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
+								orderDetail.setDiscountRate("");
+								orderDetail.setDiscountPrice("0.00");
+								orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
 								OrderDetailSQL.updateOrderDetail(orderDetail);
 							}
-						}else if(orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
-								&& orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB){
-							orderDetail.setDiscountRate("");
-							orderDetail.setDiscountPrice("0.00");
-							orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
-							OrderDetailSQL.updateOrderDetail(orderDetail);
 						}
 					}
 				}

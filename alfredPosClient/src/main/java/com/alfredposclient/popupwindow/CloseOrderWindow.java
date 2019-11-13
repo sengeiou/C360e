@@ -10,7 +10,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -108,13 +107,9 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener, MediaDialog.PaymentClickListener, SettlementAdapter.ClickListener, Ipay88SettlementAdapter.ClickListener {
@@ -164,7 +159,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     private TextView tv_discount_num;
     private TextView tv_taxes_num;
     private TextView tv_total_bill_num;
-    private TextView tv_rounding_num, tv_cards_rounding_num, tv_nets_rounding_num;
+    private TextView tv_rounding_num, tv_cards_rounding_num, tv_nets_rounding_num, tv_sub_total_rounding_num;
     //	private TextView tv_grand_total_bill_num;
     private TextView tv_amount_due_num;
 
@@ -292,6 +287,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         tv_nets_rounding_num = (TextView) contentView.findViewById(R.id.tv_nets_rounding_num);
 //		tv_grand_total_bill_num = (TextView) contentView.findViewById(R.id.tv_grand_total_bill_num);
 //		tv_settled_num = (TextView) contentView.findViewById(R.id.tv_settled_num);
+        tv_sub_total_rounding_num = (TextView) contentView.findViewById(R.id.tv_sub_total_rounding_num);
 
 
         tv_special_settlement_title = (TextView) contentView
@@ -466,6 +462,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 .findViewById(R.id.tv_residue_total));
         textTypeFace.setTrajanProBlod((TextView) view
                 .findViewById(R.id.tv_residue_total_num));
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_sub_total_rounding_num));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_item_name));
         textTypeFace.setTrajanProRegular((TextView) view
@@ -504,7 +502,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         textTypeFace.setTrajanProBlod((TextView) view
                 .findViewById(R.id.tv_change));
         textTypeFace.setTrajanProBlod(tv_change_num);
-        tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(0).toString()).toString());
+        tv_change_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(0).toString()));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_item_count));
         TextView tv_discount = (TextView) view
@@ -703,10 +701,17 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         BH.getBD(sumPaidamount), true);
             }
         }
+
+        BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+        BigDecimal rounding = BH.sub(remainTotalAfterRound, remainTotal, true);
+        String symbol = "";
+        if (rounding.compareTo(BH.getBD("0.00")) == -1) {
+            symbol = "-";
+        }
+        tv_sub_total_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()));
+
         ((TextView) contentView.findViewById(R.id.tv_residue_total_num))
-                .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotal.toString()).toString());
-
-
+                .setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(remainTotalAfterRound.toString()).toString());
 //		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
 //		tv_item_count_num.setText(getItemNumSum() + "");
         tv_sub_total_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
