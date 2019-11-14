@@ -10,7 +10,6 @@ import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.ItemHappyHour;
 import com.alfredbase.javabean.KotSummary;
 import com.alfredbase.javabean.Order;
-import com.alfredbase.javabean.OrderBill;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.Payment;
@@ -48,15 +47,20 @@ public class OrderDetailSQL {
         if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
             return;
         }
-        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
-        {
+        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
         }
         calculate(order, orderDetail);
         add(orderDetail);
         OrderHelper.addDefaultModifiers(order, orderDetail);
-        updateFreeOrderDetail(order, orderDetail);
+//        updateFreeOrderDetail(order, orderDetail);
+//        OrderSQL.updateOrder(order);
+    }
+
+    public static void updateOrder(OrderDetail orderDetail) {
+        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
         OrderSQL.updateOrder(order);
+
     }
 
     public static void addOrderDetailETCFromWaiter(OrderDetail orderDetail) {
@@ -69,8 +73,7 @@ public class OrderDetailSQL {
         if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED) {
             return;
         }
-        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
-        {
+        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
         }
         calculate(order, orderDetail);
@@ -84,8 +87,7 @@ public class OrderDetailSQL {
             return;
         }
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
-        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
-        {
+        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
         }
         calculate(order, orderDetail);
@@ -99,8 +101,7 @@ public class OrderDetailSQL {
             return;
         }
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
-        if(order.getIsTakeAway() ==  ParamConst.TAKE_AWAY)
-        {
+        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
             orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
         }
         calculate(order, orderDetail);
@@ -111,7 +112,7 @@ public class OrderDetailSQL {
     }
 
     /**
-     * 修改OrderDetail的Discount信息时调用
+     * Called when modifying the OrderDetail's Discount information
      *
      * @param orderDetail
      */
@@ -136,7 +137,7 @@ public class OrderDetailSQL {
     }
 
     /**
-     * 修改OrderDetail的非Discount信息时调用
+     * Called when modifying the non-Discount information of OrderDetail
      *
      * @param orderDetail
      */
@@ -147,13 +148,39 @@ public class OrderDetailSQL {
 //		orderDetail.setDiscountPrice(ParamConst.DOUBLE_ZERO);
 //		orderDetail.setDiscountRate(ParamConst.DOUBLE_ZERO);
 //		orderDetail.setDiscountType(ParamConst.ORDERDETAIL_DISCOUNT_TYPE_NULL);
+
+
+        Order order = OrderSQL.getOrder(orderDetail.getOrderId());
+        calculate(order, orderDetail);
+
+        updateOrderDetail(orderDetail);
+
+        updateFreeOrderDetail(order, orderDetail);
+
+
+//		order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL);
+        OrderSQL.updateOrder(order);
+
+
+        if (orderDetail.getGroupId().intValue() > 0) {
+            OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
+            if (orderSplit != null) {
+                OrderSplitSQL.updateOrderSplitByOrder(order, orderSplit);
+            }
+        }
+    }
+
+    public static void updateOrderDetailAndOrder(OrderDetail orderDetail, Boolean isModifier) {
+        if (orderDetail == null) {
+            return;
+        }
+
         Order order = OrderSQL.getOrder(orderDetail.getOrderId());
         calculate(order, orderDetail);
         updateOrderDetail(orderDetail);
 
         updateFreeOrderDetail(order, orderDetail);
-//		order.setDiscountType(ParamConst.ORDER_DISCOUNT_TYPE_BY_ORDERDETAIL);
-        OrderSQL.updateOrder(order);
+        OrderSQL.updateOrder(order, isModifier);
         if (orderDetail.getGroupId().intValue() > 0) {
             OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
             if (orderSplit != null) {
@@ -383,11 +410,9 @@ public class OrderDetailSQL {
     }
 
     private static void calculate(Order order, OrderDetail orderDetail) {
-        orderDetail.setModifierPrice(OrderHelper.getOrderDetailModifierPrice(
-                order, orderDetail).toString());
+        orderDetail.setModifierPrice(OrderHelper.getOrderDetailModifierPrice(order, orderDetail).toString());
 
-        orderDetail.setRealPrice(OrderHelper.getOrderDetailRealPrice(order,
-                orderDetail).toString());
+        orderDetail.setRealPrice(OrderHelper.getOrderDetailRealPrice(order, orderDetail).toString());
     }
 
 
@@ -477,7 +502,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 35,
                         orderDetail.getBarCode());
-                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 36, orderDetail.getOrderDetailRound());
                 sqLiteStatement.executeInsert();
             }
             db.setTransactionSuccessful();
@@ -573,7 +598,7 @@ public class OrderDetailSQL {
                         orderDetail.getItemUrl());
                 SQLiteStatementHelper.bindString(sqLiteStatement, 34,
                         orderDetail.getBarCode());
-                SQLiteStatementHelper.bindString(sqLiteStatement,36,orderDetail.getOrderDetailRound());
+                SQLiteStatementHelper.bindString(sqLiteStatement, 36, orderDetail.getOrderDetailRound());
 
                 sqLiteStatement.executeInsert();
             }

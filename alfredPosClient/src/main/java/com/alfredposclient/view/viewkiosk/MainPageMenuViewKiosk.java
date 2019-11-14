@@ -911,7 +911,7 @@ public class MainPageMenuViewKiosk extends LinearLayout {
 //                modifierCheck =ObjectFactory.getInstance().getModifierCheck(order, orderDetail, modifier_type,itemModifier);
 //                ModifierCheckSql.addModifierCheck(modifierCheck);
             //  }
-            modifierView.setParams(order, orderDetail, itemModifier, handler, height);
+            modifierView.setParams(order, orderDetail, itemModifier, handler, height,true);
             ll_item_detail.addView(modifierView);
         }
     }

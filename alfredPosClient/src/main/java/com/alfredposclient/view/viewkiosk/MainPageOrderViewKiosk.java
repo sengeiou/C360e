@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.SlideExpandable.AbstractSlideExpandableListAdapter;
@@ -56,6 +57,7 @@ import com.alfredbase.utils.ColorUtils;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
+import com.alfredbase.utils.LogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
@@ -99,6 +101,8 @@ public class MainPageOrderViewKiosk extends LinearLayout {
     private String kotCommitStatus;
     private TextTypeFace textTypeFace;
     private TextView tv_page_order_mask;
+    private ProgressBar progress_subtotal, progres_discount, progress_tax, progress_grand_total;
+
 //	final CloudSyncJobManager cloudSync = App.instance.getSyncJob();
 
     public MainPageOrderViewKiosk(Context context) {
@@ -123,6 +127,11 @@ public class MainPageOrderViewKiosk extends LinearLayout {
         lv_order.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         lv_order.setAdapter(orderAdapter);
 
+        progress_subtotal = (ProgressBar) findViewById(R.id.progress_subtotal);
+        progres_discount = (ProgressBar) findViewById(R.id.progres_discount);
+        progress_tax = (ProgressBar) findViewById(R.id.progress_tax);
+        progress_grand_total = (ProgressBar) findViewById(R.id.progress_grand_total);
+
         tv_table_name_ontop = (TextView) findViewById(R.id.tv_table_name_ontop);
         tv_pax = (TextView) findViewById(R.id.tv_pax);
         tv_item_count = (TextView) findViewById(R.id.tv_item_count);
@@ -145,7 +154,7 @@ public class MainPageOrderViewKiosk extends LinearLayout {
         tv_pax.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX, (String) tv_pax.getText().toString()));
+                handler.sendMessage(handler.obtainMessage(MainPage.VIEW_EVENT_TANSFER_PAX, tv_pax.getText().toString()));
             }
         });
         btn_place_order.setOnClickListener(new OnClickListener() {
@@ -422,6 +431,32 @@ public class MainPageOrderViewKiosk extends LinearLayout {
             // KotSummarySQL.update(kotSummary);
             // }
         }
+
+        boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
+
+        if (isOnProgress) {
+            tv_sub_total.setVisibility(GONE);
+            tv_discount.setVisibility(GONE);
+            tv_taxes.setVisibility(GONE);
+            tv_grand_total.setVisibility(GONE);
+
+            progress_subtotal.setVisibility(VISIBLE);
+            progres_discount.setVisibility(VISIBLE);
+            progress_tax.setVisibility(VISIBLE);
+            progress_grand_total.setVisibility(VISIBLE);
+
+        } else {
+            progress_subtotal.setVisibility(GONE);
+            progres_discount.setVisibility(GONE);
+            progress_tax.setVisibility(GONE);
+            progress_grand_total.setVisibility(GONE);
+
+            tv_sub_total.setVisibility(VISIBLE);
+            tv_discount.setVisibility(VISIBLE);
+            tv_taxes.setVisibility(VISIBLE);
+            tv_grand_total.setVisibility(VISIBLE);
+        }
+
         String orderNoStr = "";
         if (!TextUtils.isEmpty(order.getTableName())) {
             orderNoStr = "TableName:" + order.getTableName();

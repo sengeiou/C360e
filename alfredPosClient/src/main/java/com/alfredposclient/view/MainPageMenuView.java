@@ -554,15 +554,14 @@ public class MainPageMenuView extends LinearLayout {
 
 
 
-	private void initMenuModifierDetail(Order order, OrderDetail orderDetail,
-										List<ItemModifier> itemModifiers) {
+	private void initMenuModifierDetail(Order order, OrderDetail orderDetail, List<ItemModifier> itemModifiers) {
 		ll_item_detail.removeAllViews();
 		for (ItemModifier itemModifier : itemModifiers) {
 			ModifierView modifierView = new ModifierView(parent);
 			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 			modifierView.setLayoutParams(params);
-			if (itemModifiers.indexOf(itemModifier) % 2 == 1) {//判断为奇数时，背景色改变
+			if (itemModifiers.indexOf(itemModifier) % 2 == 1) {//When the number is odd, the background color changes.
 				modifierView.setBackgroundResource(R.color.modifier_odd);
 			}
 			modifierView.setParams(order, orderDetail, itemModifier, handler,height);
@@ -614,8 +613,8 @@ public class MainPageMenuView extends LinearLayout {
 		isSelectSub = 0;
 	}
 	
-	public void openModifiers(Order order, OrderDetail orderDetail,
-			List<ItemModifier> itemModifiers) {
+	public void openModifiers(Order order, OrderDetail orderDetail, List<ItemModifier> itemModifiers) {
+
 		initMenuModifierDetail(order, orderDetail, itemModifiers);
 		if (AnimatorListenerImpl.isRunning) {
 			return;

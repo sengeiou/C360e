@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -247,6 +248,7 @@ public class MainPage extends BaseActivity {
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REFUND = "STORED_CARD_REFUND";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_LOSS = "STORED_CARD_LOSS";
     private static final String HANDLER_MSG_OBJECT_STORED_CARD_REPLACEMENT = "STORED_CARD_REPLACEMENT";
+    private static final int View_REFRESH_AFTERBACKGROUND = 402;
     public MainPageOrderView orderView;
     public String tableShowAction = SHOW_TABLES;
     public Order currentOrder;
@@ -298,6 +300,8 @@ public class MainPage extends BaseActivity {
     private View view_top_line;
     private OrderDetail transfItemOrderDetail;
     private OrderDetail oldTransItemOrderDetail;
+
+    public static AsyncTask addOrderAsync;
 
     //    private FragmentTransaction transaction;
 //    private FragmentManager fragmentManager;
@@ -788,6 +792,10 @@ public class MainPage extends BaseActivity {
                             mainPageMenuView.refreshAllMenu();
                         }
                     }
+                    break;
+                case View_REFRESH_AFTERBACKGROUND:
+                    setData();
+                    Store.putBoolean(context, String.valueOf(currentOrder.getId()), false);
                     break;
                 case VIEW_EVENT_SET_DATA_AND_CLOSE_MODIFIER:
                     if (currentTable.getPosId() < 0) {
@@ -2481,6 +2489,7 @@ public class MainPage extends BaseActivity {
             showTables();
             return;
         }
+
         orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
 //        List<OrderDetail> myorderDetails = OrderDetailSQL.getGeneralOrderDetails(currentOrder.getId());
 //
@@ -2492,6 +2501,7 @@ public class MainPage extends BaseActivity {
             TableInfoSQL.updateTables(currentTable);
         }
         mainPageMenuView.setParam(currentOrder, handler);
+
         orderView.setParam(this, currentOrder, orderDetails, handler);
 
 //        DiffData data = new DiffData(this);//实例化data类
@@ -2544,12 +2554,11 @@ public class MainPage extends BaseActivity {
         modifyQuantityWindow.show(quantity, dismissCall);
     }
 
-    private void addOrderDetail(OrderDetail orderDetail) {
-        List<ItemModifier> itemModifiers = CoreData.getInstance()
-                .getItemModifiers(
-                        CoreData.getInstance().getItemDetailById(
-                                orderDetail.getItemId(), orderDetail.getItemName()));
-        OrderDetailSQL.addOrderDetailETC(orderDetail);
+    private void addOrderDetail(final OrderDetail orderDetail) {
+        ItemDetail itemDetail = CoreData.getInstance().getItemDetailById(orderDetail.getItemId(), orderDetail.getItemName());
+        List<ItemModifier> itemModifiers = CoreData.getInstance().getItemModifiers(itemDetail);
+
+
         if (currentTable.getPosId() < 0) {
             setDataWaitingList();
         } else {
@@ -2559,19 +2568,33 @@ public class MainPage extends BaseActivity {
         if (itemModifiers.size() > 0) {
             for (ItemModifier itemModifier : itemModifiers) {
 
-                final Modifier modifier_type = CoreData.getInstance().getModifier(
-                        itemModifier);
+                final Modifier modifier_type = CoreData.getInstance().getModifier(itemModifier);
                 if (modifier_type.getMinNumber() > 0) {
-                    ModifierCheck modifierCheck = null;
-                    modifierCheck = ObjectFactory.getInstance().getModifierCheck(currentOrder, orderDetail, modifier_type, itemModifier);
+                    ModifierCheck modifierCheck = ObjectFactory.getInstance().getModifierCheck(currentOrder, orderDetail, modifier_type, itemModifier);
                     ModifierCheckSql.addModifierCheck(modifierCheck);
                 }
             }
 
-            mainPageMenuView.openModifiers(currentOrder, orderDetail,
-                    itemModifiers);
+            mainPageMenuView.openModifiers(currentOrder, orderDetail, itemModifiers);
+
+
         }
+        OrderDetailSQL.addOrderDetailETC(orderDetail);
+        setData();
+        Store.putBoolean(context, String.valueOf(currentOrder.getId()), true);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OrderDetailSQL.updateOrder(orderDetail);
+                Store.putBoolean(context, String.valueOf(currentOrder.getId()), false);
+                Message msg = handler.obtainMessage();
+                msg.what = MainPage.VIEW_EVENT_SET_DATA;
+                handler.sendMessage(msg);
+            }
+        }).start();
+
     }
+
 
     private void sendKOTTmpToKDS(final OrderDetail orderDetail) {
 //        sendKOTTmpToKDS(orderDetail, null, ParamConst.JOB_TMP_KOT);
