@@ -3677,7 +3677,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                 table = this.service.getString(R.string.table) + " : " + prtTitle.getTableName();
             }
             tableQRCodePrint.AddQRCode(table, qrCodeText);
-            tableQRCodePrint.AddFooter("Powered by Alfred");
+            tableQRCodePrint.AddFooter("Powered by C360Engage");
             tableQRCodePrint.setPrinterIp(prtDevice.getIP());
             pqMgr.queuePrint(tableQRCodePrint.getJobForQueue());
             printMgr.addJob(prtDevice.getIP(), tableQRCodePrint);
