@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">AlfredBase</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="printer_app_name">C360Engage Remote Print Service</string>
     <!--translate-->
     <string name="sign_in">Mag-sign in</string>
     <string name="sync">I-sync</string>
@@ -309,7 +309,7 @@
     <string name="select_printer">Piliin ang Printer</string>
     <string name="click_to_connect">I-click upang kumonekta</string>
     <string name="not_found">Hindi mahanap</string>
-    <string name="scan_qr_servedalfred_order_byself">Scan QR Code by ServedByAlfred to select and send order by yourself</string>
+    <string name="scan_qr_servedalfred_order_byself">Scan QR Code by C360Engage to select and send order by yourself</string>
     <string name="stored_card_balance_not_enough">Ang balanse ng card ay hindi sapat</string>
     <string name="stored_card_has_past_due">Ang card ay nakalipas dahil</string>
     <string name="restaurant_cannot_use_stored_card">Restaurant Hindi ka maaaring gumamit ng card</string>

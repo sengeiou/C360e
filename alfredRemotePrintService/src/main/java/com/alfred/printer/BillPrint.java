@@ -2,7 +2,6 @@ package com.alfred.printer;
 
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 
 import com.alfred.print.jobs.PrintJob;
 import com.alfred.print.jobs.Priority;
@@ -18,7 +17,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.UnsupportedEncodingException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -715,7 +713,12 @@ public class BillPrint extends PrintJob {
         addHortionalLine(this.charSize);
     }
 
-    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight, String currencySymbol) {
+    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight, String currencySymbol)
+    {
+        AddOrderItem(itemName, price, qty, total, scale, weight, currencySymbol, true);
+    }
+
+    public void AddOrderItem(String itemName, String price, String qty, String total, int scale, String weight, String currencySymbol, Boolean isInstructions) {
         PrintData order = new PrintData();
         order.setDataFormat(PrintData.FORMAT_TXT);
         order.setFontsize(scale);
@@ -729,11 +732,18 @@ public class BillPrint extends PrintJob {
 
         order.setText(this.getFourColContent(itemName, price, qty, total, scale));
         this.data.add(order);
-        this.addWeight(weight);
+        if(isInstructions)
+        {
+            this.addWeight(weight);
+        }
     }
 
+    public void addOrderModifier(String itemName, int scale, String price, String currencySymbol)
+    {
+        addOrderModifier(itemName, scale, price, currencySymbol, true);
+    }
 
-    public void addOrderModifier(String itemName, int scale, String price, String currencySymbol) {
+    public void addOrderModifier(String itemName, int scale, String price, String currencySymbol, Boolean isInstructions) {
         String bigDecimal = BH.formatMoney(price);
         PrintData orderMod = new PrintData();
         orderMod.setDataFormat(PrintData.FORMAT_TXT);
@@ -745,7 +755,10 @@ public class BillPrint extends PrintJob {
         }
         orderMod.setText(this.getFourColContent("  " + itemName + reNext, bigDecimal, "", "", scale));
         orderMod.setTextAlign(PrintData.ALIGN_LEFT);
-        this.data.add(orderMod);
+        if(isInstructions)
+        {
+            this.data.add(orderMod);
+        }
     }
 
     public void AddBillSummary(String subtotal, String discount,

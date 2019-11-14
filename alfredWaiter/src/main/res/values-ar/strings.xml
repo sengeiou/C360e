@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- com.alfredselfhelp.global -->
-    <string name="app_name">AlfredWaiter</string>
+    <string name="app_name">C360Engage Waiter</string>
     <string name="version">الإصدار:</string>
     <string name="exit_program">الرجاء النقر فوق "السابق" مرة أخرى للخروج</string>
     <string name="revenue_center">مركز الإيرادات</string>

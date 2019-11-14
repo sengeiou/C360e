@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">AlfredBase</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="printer_app_name">C360Engage Remote Print Service</string>
     <!--translate-->
     <string name="sign_in">Sign in</string>
     <string name="sync">Sync</string>
@@ -311,7 +311,7 @@
     <string name="select_printer">Select Printer</string>
     <string name="click_to_connect">Click to connect</string>
     <string name="not_found">Not found</string>
-    <string name="scan_qr_servedalfred_order_byself">Scan QR Code by ServedByAlfred to select and send order by yourself</string>
+    <string name="scan_qr_servedalfred_order_byself">Scan QR Code by C360Engage to select and send order by yourself</string>
     <string name="stored_card_balance_not_enough">The stored card balance is not enough</string>
     <string name="stored_card_has_past_due">The stored card has past due</string>
     <string name="restaurant_cannot_use_stored_card">Your restaurant cannot use stored card</string>

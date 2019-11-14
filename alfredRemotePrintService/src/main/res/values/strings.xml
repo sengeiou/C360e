@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">AlfredRemotePrintService</string>
+    <string name="app_name">C360Engage Remote Print Service</string>
 
     <!-- BillPrint -->
     <string name="bill_no_">Bill No.</string>
@@ -33,7 +33,7 @@
     <string name="card_no">CardNo</string>
     <string name="check_closed"> Check Closed </string>
     <string name="thank_you_and_see_you">Thank you and see you again!</string>
-    <string name="powered_by_alfred">#ServedByAlfred</string>
+    <string name="powered_by_alfred">#C360Engage</string>
     <string name="kg">KG</string>
     
     <!-- DaySalesReportPrint -->
@@ -53,6 +53,7 @@
     <string name="take_away_qty">Takeaway item qty</string>
     <string name="total_tax">Exclusive Tax</string>
     <string name="rounding">Rounding</string>
+    <string name="promotion">Promotions</string>
 
     <string name="gross_total">Gross Total Sales</string>
 

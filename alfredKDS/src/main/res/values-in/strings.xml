@@ -2,7 +2,7 @@
 <resources>
 
     <!-- com.alfredselfhelp.global -->
-    <string name="app_name">AlfredKDS</string>
+    <string name="app_name">C360Engage KDS</string>
     <string name="version">Versi:</string>
     <string name="exit_program">Silakan klik KEMBALI lagi untuk keluar</string>
     <string name="revenue_center">Pusat Penghasilan</string>

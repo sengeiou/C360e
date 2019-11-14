@@ -693,7 +693,7 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
 
             PrinterDevice printerDevice = App.instance.getLocalPrinterDevice();
             ArrayList<KotItemDetail> kotItemDetails = KotItemDetailSQL.getKotItemDetailByOrderId(kotsummary.getOrderId());
-            ArrayList<KotItemModifier> kotItemModifiers = new ArrayList<>();
+            ArrayList<KotItemModifier> kotItemModifiers = KotItemModifierSQL.getAllKotItemModifier();
             ArrayList<KotItemDetail> kotItemDetailsNonVoid = new ArrayList<>();
             ArrayList<KotItemDetail> printKOTItemDetails = new ArrayList<>();
 
@@ -721,10 +721,6 @@ public class OrderDetailsTotal extends BaseActivity implements KeyBoardClickList
                 } else {
                     printKOTItemDetails.addAll(kotItemDetailsNonVoid);
                 }
-            }
-
-            for (KotItemDetail kotItemDetail : printKOTItemDetails) {
-                kotItemModifiers.addAll(KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail));
             }
 
             App.instance.getNewOrderDetail().clear();

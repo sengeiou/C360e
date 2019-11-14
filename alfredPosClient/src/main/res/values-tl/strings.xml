@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AlfredPosClient</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="app_name">C360Engage POS Client</string>
+    <string name="printer_app_name">C360Engage Remote Print Service</string>
 
     <!--translate-->
     <string name="open_rest_tips">Bago buksan ang restaurant, pakitiyak na nakakonekta ang lahat ng device sa device na ito.</string>

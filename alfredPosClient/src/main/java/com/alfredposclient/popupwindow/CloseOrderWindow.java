@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -443,11 +444,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             cash_num = BH.getBD(ParamConst.DOUBLE_ZERO);
             change_num = BH.getBD(ParamConst.DOUBLE_ZERO);
         }
-        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
-        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
-        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
-        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
-        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
+        enableButtons();
         initBillSummary();
     }
 
@@ -737,19 +734,19 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 .getPaymentSettlementsBypaymentId(payment.getId());
         if (parent instanceof EditSettlementPage && paymentSettlements != null && paymentSettlements.size() > 0) {
             if (paymentSettlements.size() == 1
-                    && (paymentSettlements.get(0).getPaymentTypeId().intValue() == ParamConst.SETTLEMENT_TYPE_CASH
-                    || paymentSettlements.get(0).getPaymentTypeId().intValue() == ParamConst.SETTLEMENT_TYPE_AMEX
-                    || paymentSettlements.get(0).getPaymentTypeId().intValue() == ParamConst.SETTLEMENT_TYPE_MASTERCARD
-                    || paymentSettlements.get(0).getPaymentTypeId().intValue() == ParamConst.SETTLEMENT_TYPE_UNIPAY
-                    || paymentSettlements.get(0).getPaymentTypeId().intValue() == ParamConst.SETTLEMENT_TYPE_VISA
-                    || paymentSettlements.get(0).getPaymentTypeId().intValue() == ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL
-                    || paymentSettlements.get(0).getPaymentTypeId().intValue() == ParamConst.SETTLEMENT_TYPE_JCB)) {
+                    && (paymentSettlements.get(0).getPaymentTypeId() == ParamConst.SETTLEMENT_TYPE_CASH
+                    || paymentSettlements.get(0).getPaymentTypeId() == ParamConst.SETTLEMENT_TYPE_AMEX
+                    || paymentSettlements.get(0).getPaymentTypeId() == ParamConst.SETTLEMENT_TYPE_MASTERCARD
+                    || paymentSettlements.get(0).getPaymentTypeId() == ParamConst.SETTLEMENT_TYPE_UNIPAY
+                    || paymentSettlements.get(0).getPaymentTypeId() == ParamConst.SETTLEMENT_TYPE_VISA
+                    || paymentSettlements.get(0).getPaymentTypeId() == ParamConst.SETTLEMENT_TYPE_DINNER_INTERMATIONAL
+                    || paymentSettlements.get(0).getPaymentTypeId() == ParamConst.SETTLEMENT_TYPE_JCB)) {
                 orderDetailAdapter.setIsShowCheckBox(true);
                 btn_void_all_closed.setVisibility(View.VISIBLE);
             } else {
-                if (paymentSettlements.get(0).getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_VOID
-                        && paymentSettlements.get(0).getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_REFUND
-                        && paymentSettlements.get(0).getPaymentTypeId().intValue() != ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT) {
+                if (paymentSettlements.get(0).getPaymentTypeId() != ParamConst.SETTLEMENT_TYPE_VOID
+                        && paymentSettlements.get(0).getPaymentTypeId() != ParamConst.SETTLEMENT_TYPE_REFUND
+                        && paymentSettlements.get(0).getPaymentTypeId() != ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT) {
                     btn_void_all_closed.setVisibility(View.VISIBLE);
                 } else {
                     btn_void_all_closed.setVisibility(View.GONE);
@@ -1185,9 +1182,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         if (parent instanceof EditSettlementPage) {
             this.newPaymentMapList = new ArrayList<Map<String, Object>>();
             this.oldPaymentMapList = new ArrayList<Map<String, Object>>();
-        }
-        if (order == null) {
-            return;
         }
         this.orderDetails = orderDetailList;
         init();
@@ -1844,17 +1838,13 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 // show.append(0);
                 break;
             case ParamConst.SETTLEMENT_TYPE_ALIPAY:
-                initWeChatAlipaySettlement(payTypeId);
-                contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
-                        View.VISIBLE);
-                // show.append(0);
-                break;
             case ParamConst.SETTLEMENT_TYPE_EZLINK:
                 initWeChatAlipaySettlement(payTypeId);
                 contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
                         View.VISIBLE);
                 // show.append(0);
                 break;
+            // show.append(0);
             case ParamConst.SETTLEMENT_CUSTOM_PAYMENT:
                 initPayment();
                 break;
@@ -1910,17 +1900,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         View.INVISIBLE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
-                contentView.findViewById(R.id.ll_special_settlement).setVisibility(
-                        View.INVISIBLE);
-                break;
             case ParamConst.SETTLEMENT_TYPE_BILL_ON_HOLD:
-                contentView.findViewById(R.id.ll_special_settlement).setVisibility(
-                        View.INVISIBLE);
-                break;
             case ParamConst.SETTLEMENT_TYPE_VOID:
-                contentView.findViewById(R.id.ll_special_settlement).setVisibility(
-                        View.INVISIBLE);
-                break;
             case ParamConst.SETTLEMENT_TYPE_REFUND:
                 contentView.findViewById(R.id.ll_special_settlement).setVisibility(
                         View.INVISIBLE);
@@ -1930,9 +1911,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         View.INVISIBLE);
                 break;
             case ParamConst.SETTLEMENT_TYPE_ALIPAY:
-                contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
-                        View.INVISIBLE);
-                break;
             case ParamConst.SETTLEMENT_TYPE_EZLINK:
                 contentView.findViewById(R.id.ll_wechat_ali_settlement).setVisibility(
                         View.INVISIBLE);
@@ -2094,7 +2072,6 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             case ParamConst.SETTLEMENT_CUSTOM_PART:
                 //固定金额
             case ParamConst.SETTLEMENT_CUSTOM_PART_DEFAULT_VALUE: {
-
                 if (paymentMethod.getIsTax() == 0) {
                     //不计税
                     // deleteVoidOrEntTax();
@@ -2149,6 +2126,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 PaymentSettlementSQL.addPaymentSettlement(paymentSettlement);
 
                 order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
+                disableButtons();
                 OrderSQL.update(order);
                 if (newPaymentMapList != null) {
                     Map<String, Object> paymentMap = new HashMap<String, Object>();
@@ -2332,6 +2310,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
             }
             break;
             case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT: {
+                disableButtons();
                 deleteVoidOrEntTax();
                 PaymentSQL.addPayment(payment);
                 PaymentSettlement paymentSettlement = ObjectFactory.getInstance()
@@ -2654,12 +2633,22 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
         initBillSummary();
     }
 
-    private void disableButtons() {
+    private void disableButtons()
+    {
         moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(false);
         moneyKeyboard.findViewById(R.id.btn_10).setEnabled(false);
         moneyKeyboard.findViewById(R.id.btn_50).setEnabled(false);
         moneyKeyboard.findViewById(R.id.btn_100).setEnabled(false);
         moneyKeyboard.findViewById(R.id.btn_200).setEnabled(false);
+    }
+
+    private void enableButtons()
+    {
+        moneyKeyboard.findViewById(R.id.btn_Enter).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_10).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_50).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_100).setEnabled(true);
+        moneyKeyboard.findViewById(R.id.btn_200).setEnabled(true);
     }
 
     private void clickOtherAction(String key) {
@@ -2744,12 +2733,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 // }
             }
             break;
-            case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT: {
-            }
-            break;
-            case ParamConst.SETTLEMENT_TYPE_VOID: {
-
-            }
+            case ParamConst.SETTLEMENT_TYPE_ENTERTAINMENT:
+            case ParamConst.SETTLEMENT_TYPE_VOID:
             break;
             case ParamConst.SETTLEMENT_TYPE_NETS: {
                 if (selectView != null && selectView == tv_nets_amount_paid_num) {
@@ -3084,7 +3069,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 
         } else {
 
-            if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0) {
+            if (remainTotal.compareTo(BH.getBD(order.getTotal())) != 0)
+            {
                 return;
             }
             viewTag = ParamConst.SETTLEMENT_CUSTOM_ALL;
@@ -3548,13 +3534,11 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
     @Override
     public void settlementAdapteronClick(SettlementRestaurant settlementRestaurant) {
         switch (settlementRestaurant.getMediaId()) {
-            case ParamConst.SETTLEMENT_TYPE_VISA: {
+            case ParamConst.SETTLEMENT_TYPE_VISA:
                 openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_VISA);
                 break;
-            }
             case ParamConst.SETTLEMENT_TYPE_MASTERCARD:
-                openMoneyKeyboard(View.GONE,
-                        ParamConst.SETTLEMENT_TYPE_MASTERCARD);
+                openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_MASTERCARD);
                 break;
             case ParamConst.SETTLEMENT_TYPE_NETS:
                 openMoneyKeyboard(View.GONE, ParamConst.SETTLEMENT_TYPE_NETS);
@@ -3580,10 +3564,9 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 if (otherPaymentSettle != null && !otherPaymentSettle.isEmpty()) {
                     for (int x = 0; x < otherPaymentSettle.size(); x++) {
                         if (!TextUtils.isEmpty(otherPaymentSettle.get(x).getOtherPaymentId()) && otherPaymentSettle.get(x).getMediaId() != ParamConst.SETTLEMENT_TYPE_IPAY88) {
-                            String[] strarray = otherPaymentSettle.get(x).getOtherPaymentId().toString().split("[|]");
+                            String[] strarray = otherPaymentSettle.get(x).getOtherPaymentId().split("[|]");
                             for (int i = 0; i < strarray.length; i++) {
-                                PaymentMethod pa = new PaymentMethod();
-                                pa = CoreData.getInstance().getPaymentMethod(Integer.valueOf(strarray[i]).intValue());
+                                PaymentMethod pa = CoreData.getInstance().getPaymentMethod(Integer.valueOf(strarray[i]));
                                 if (pa == null) {
                                     return;
                                 } else {

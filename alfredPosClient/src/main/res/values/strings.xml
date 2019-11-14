@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AlfredPosClient</string>
+    <string name="app_name">C360Engage POS Client</string>
     <!--translate-->
     <string name="open_rest_tips">Before open restaurant,please make sure all devices are connected to this device.</string>
     <string name="sync_tips">This device is not yet initialized with your restaurant data at Alfred Cloud. Please provide the following account information to sync with Alfred Cloud</string>
@@ -320,7 +320,7 @@
     <string name="welcome_to">Welcome to </string>
     <string name="please_clock_in">Please Clock In</string>
     <string name="ask_delete_place">Are you sure to delete this place ?</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="printer_app_name">C360Engage Remote Print Service</string>
 
     <string name="days">Days</string>
     <string name="day">Day</string>

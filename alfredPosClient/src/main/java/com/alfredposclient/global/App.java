@@ -1857,6 +1857,10 @@ public class App extends BaseApplication {
         if (printer == null) {
             return false;
         }
+        if(App.instance.getSystemSettings().isOrderSummaryPrint())
+        {
+            return true;
+        }
         if (mRemoteService == null) {
             printerDialog();
             return false;

@@ -343,10 +343,12 @@ private ImageView homePageWelcomeImg;
 
 
     @Override
-    protected void onStop() {
+    protected void onStop()
+    {
         super.onStop();
-//        if(homePageImageView != null){
+        if(homePageImageView != null)
+        {
             homePageImageView.releasePlayer();
-//        }
+        }
     }
 }

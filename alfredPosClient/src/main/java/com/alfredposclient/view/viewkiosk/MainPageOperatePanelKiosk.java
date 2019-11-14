@@ -130,7 +130,6 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                         return false;
                     }
                     ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(barCode);
-                    Log.i("Checker", barCode);
                     OrderDetail orderDetail = null;
                     SureDialog sureDialog = new SureDialog(parent);
                     et_bar_code.postDelayed(new Runnable() {

@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">AlfredBase</string>
-    <string name="printer_app_name">AlfredRemotePrintService</string>
+    <string name="printer_app_name">C360Engage Remote Print Service</string>
     <!--translate-->
     <string name="sign_in">ลงชื่อเข้าใช้</string>
     <string name="sync">ซิงค์</string>

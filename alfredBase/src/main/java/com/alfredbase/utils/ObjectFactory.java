@@ -119,6 +119,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 public class ObjectFactory {
     private static ObjectFactory instance;
@@ -525,6 +526,7 @@ public class ObjectFactory {
                 order.setRestId(CoreData.getInstance().getRestaurant().getId());
                 order.setRevenueId(revenueCenter.getId());
                 order.setPlaceId(placesId);
+                order.setTableName(tables.getName());
                 order.setTableId(posId);
                 long time = System.currentTimeMillis();
                 order.setCreateTime(time);

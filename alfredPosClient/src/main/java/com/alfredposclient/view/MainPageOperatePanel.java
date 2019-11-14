@@ -18,6 +18,7 @@ import com.alfredbase.ParamHelper;
 import com.alfredbase.SureDialog;
 import com.alfredbase.global.BugseeHelper;
 import com.alfredbase.global.CoreData;
+import com.alfredbase.javabean.BarcodeDetail;
 import com.alfredbase.javabean.ItemDetail;
 import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
@@ -26,6 +27,7 @@ import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderSQL;
 import com.alfredbase.store.sql.OrderSplitSQL;
 import com.alfredbase.store.sql.TableInfoSQL;
+import com.alfredbase.store.sql.UserCustomSQL;
 import com.alfredbase.utils.ButtonClickTimer;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
@@ -37,6 +39,8 @@ import com.alfredposclient.activity.MainPage;
 import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,50 +97,6 @@ public class MainPageOperatePanel extends LinearLayout implements
         findViewById(R.id.tv_split_by_pax).setOnClickListener(this);
         tv_order_no = (TextView) findViewById(R.id.tv_order_no);
         tv_pax = (TextView) findViewById(R.id.tv_pax);
-
-        et_bar_code = (EditText) findViewById(R.id.et_bar_code);
-        et_bar_code.setFocusable(true);
-        et_bar_code.requestFocus();
-        et_bar_code.setOnKeyListener(new OnKeyListener()
-        {
-            @Override
-            public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-                if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN) {
-                    String barCode = et_bar_code.getText().toString();
-                    if (TextUtils.isEmpty(barCode)) {
-                        UIHelp.showToast(parent, parent.getString(R.string.barcode_cannot_empty));
-                        return false;
-                    }
-                    ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(barCode);
-                    OrderDetail orderDetail = null;
-                    SureDialog sureDialog = new SureDialog(parent);
-                    et_bar_code.postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            et_bar_code.setText("");
-                            et_bar_code.requestFocus();
-                        }
-                    }, 500);
-                    if (itemDetail != null) {
-                        orderDetail = ObjectFactory.getInstance()
-                                .getOrderDetail(order, itemDetail, 0);
-                    }
-                    if (orderDetail == null) {
-                        sureDialog.show(false);
-                        return false;
-                    }
-                    Message msg = handler.obtainMessage();
-                    msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
-                    msg.obj = orderDetail;
-                    handler.sendMessage(msg);
-                    sureDialog.show(true);
-                    return true;
-                }
-                return false;
-            }
-        });
-        initTextTypeFace();
     }
 
     private void initOrder() {
@@ -151,6 +111,100 @@ public class MainPageOperatePanel extends LinearLayout implements
         cancel.setVisibility(View.GONE);
         ((TextView) findViewById(R.id.tv_transfer_table)).setText(this.getContext().getString(R.string.transfer_table));
         tv_order_no.setText(ParamHelper.getPrintOrderNO(order.getOrderNo()));
+        et_bar_code = (EditText) findViewById(R.id.et_bar_code);
+        et_bar_code.setFocusable(true);
+        et_bar_code.requestFocus();
+        et_bar_code.setOnKeyListener(new OnKeyListener()
+        {
+            @Override
+            public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
+        if (KeyEvent.KEYCODE_ENTER == arg1 && arg2.getAction() == KeyEvent.ACTION_DOWN)
+        {
+            SureDialog sureDialog = new SureDialog(parent);
+            String barCode = et_bar_code.getText().toString();
+            barCode = barCode.replaceAll("\\s+","");
+            String itemBarCode = barCode;
+            String priceBarCode = barCode;
+            BigDecimal itemPrice = new BigDecimal(0);
+            BigDecimal calculatedWeight;
+            Boolean weightCalculator = false;
+            int barCodeLength = 0;
+            int currentBarcodeLength = barCode.length();
+            for(BarcodeDetail barCodeDetail: UserCustomSQL.getAllBarCodeProperties())
+            {
+                weightCalculator = true;
+                try
+                {
+                    switch(barCodeDetail.getBarCodeName())
+                    {
+                        case "item_detail_id":
+                            itemBarCode = itemBarCode.substring(0, barCodeDetail.getBarCodeLength());
+                        case "item_price":
+                            priceBarCode = priceBarCode.substring(priceBarCode.length() - barCodeDetail.getBarCodeLength());
+                            String frontPrice = priceBarCode.substring(0, barCodeDetail.getBarCodePriceFront());
+                            String backPrice = priceBarCode.substring(priceBarCode.length() - (priceBarCode.length() - frontPrice.length()));
+                            String ignoreLastDigit = backPrice.substring(0, backPrice.length() - 1);
+                            itemPrice = new BigDecimal(frontPrice + "." + ignoreLastDigit);
+                    }
+                    barCodeLength = barCodeLength + barCodeDetail.getBarCodeLength();
+                    if(barCodeLength != currentBarcodeLength)
+                    {
+                        weightCalculator = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                        weightCalculator = false;
+                        sureDialog.show(false);
+                }
+            }
+
+                if (TextUtils.isEmpty(barCode))
+                {
+                    UIHelp.showToast(parent, parent.getString(R.string.barcode_cannot_empty));
+                    return false;
+                }
+                ItemDetail itemDetail = CoreData.getInstance().getItemDetailByBarCode(itemBarCode);
+                OrderDetail orderDetail = null;
+                et_bar_code.postDelayed(new Runnable()
+                {
+                    @Override
+                    public void run() {
+                        et_bar_code.setText("");
+                        et_bar_code.requestFocus();
+                    }
+                }, 500);
+                if (itemDetail != null)
+                {
+                    orderDetail = ObjectFactory.getInstance().getOrderDetail(order, itemDetail, 0);
+                    if(weightCalculator)
+                    {
+                        try
+                        {
+                            calculatedWeight = itemPrice.divide(new BigDecimal(orderDetail.getItemPrice()), 4, RoundingMode.HALF_UP);
+                            orderDetail.setWeight(String.valueOf(calculatedWeight));
+                        }
+                        catch (Exception e)
+                        {
+                            UIHelp.showToast(parent, "Weight is not changed, barcode format is invalid!");
+                        }
+                    }
+                }
+                if (orderDetail == null) {
+                    sureDialog.show(false);
+                    return false;
+                }
+                Message msg = handler.obtainMessage();
+                msg.what = MainPage.VIEW_EVENT_ADD_ORDER_DETAIL;
+                msg.obj = orderDetail;
+                handler.sendMessage(msg);
+                sureDialog.show(true);
+                return true;
+            }
+            return false;
+            }
+        });
+        initTextTypeFace();
     }
 
     private void initWaitingList() {

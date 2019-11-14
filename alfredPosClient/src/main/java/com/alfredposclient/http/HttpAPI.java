@@ -28,7 +28,6 @@ import com.alfredbase.javabean.ReportDayTax;
 import com.alfredbase.javabean.Restaurant;
 import com.alfredbase.javabean.RevenueCenter;
 import com.alfredbase.javabean.SyncMsg;
-import com.alfredbase.javabean.TableInfo;
 import com.alfredbase.javabean.User;
 import com.alfredbase.javabean.UserTimeSheet;
 import com.alfredbase.javabean.model.PushMessage;
@@ -3072,14 +3071,13 @@ public class HttpAPI {
     }
 
     public static void sendOrderToOtherRVC(Context context,
-                                           final String url, int transferType, Order currentOrder, int tableId, TableInfo oldTable,
+                                           final String url, int transferType, Order currentOrder, int tableId,
                                            AsyncHttpClient httpClient, final Handler handler) {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("appVersion", App.instance.VERSION);
         parameters.put("order", new Gson().toJson(currentOrder));
         parameters.put("transferType", transferType);
-        parameters.put("oldTable", oldTable);
 
         List<OrderDetail> orderDetails = OrderDetailSQL.getOrderDetails(currentOrder.getId());
         parameters.put("orderDetail", new Gson().toJson(orderDetails));
