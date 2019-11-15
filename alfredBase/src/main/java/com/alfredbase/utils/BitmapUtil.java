@@ -123,7 +123,7 @@ public class BitmapUtil {
 
     public static void saveImageToGallery(String imageName, Context context, Bitmap bmp) {
         // 首先保存图片
-        File appDir = new File(Environment.getExternalStorageDirectory(), "Alfred");
+        File appDir = new File(Environment.getExternalStorageDirectory(), "C360Engage");
         if (!appDir.exists()) {
             appDir.mkdir();
         }
