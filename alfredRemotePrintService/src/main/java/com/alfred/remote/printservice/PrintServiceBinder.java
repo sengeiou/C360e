@@ -1046,7 +1046,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
 
 //                    String grandTotal = BH.sub(BH.getBD(theOrder.getTotal()),BH.getBD(theOrder.getPromotion()),false);
                     String promotionTotal = theOrder.getPromotion().toString();
-                    billPrint.AddBillSummary(subTotal, discount, taxes, grandTotal, total, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionDatas);
+                    billPrint.AddBillSummary(subTotal, discount, taxes, total,  grandTotal, rounding, currencySymbol, prtTitle.getSpliteByPax(), promotionDatas);
                     billPrint.addCustomizedFieldAtFooter(prtTitle.getFooterOptions());
                     billPrint.AddFooter(PrintService.instance.getResources().getString(R.string.powered_by_alfred), true);
                     pqMgr.queuePrint(billPrint.getJobForQueue());
@@ -2396,9 +2396,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
                     String total = theOrder.getTotal().toString();
-                    String grandTotal = theOrder.getTotal().toString();
+                    String grandTotal = "";
+                    if (theOrder.getGrandTotal() != null)
+                        grandTotal = theOrder.getGrandTotal();
+                    else
+                        grandTotal = theOrder.getTotal();
                     if (!TextUtils.isEmpty(theOrder.getGrandTotal())) {
-                        grandTotal = theOrder.getGrandTotal().toString();
+                        grandTotal = theOrder.getGrandTotal();
                     }
                     String promotionTotal = theOrder.getPromotion().toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, null);
@@ -2547,9 +2551,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                         String subTotal = theOrder.getSubTotal();
                         String discount = theOrder.getDiscountAmount();
                         String total = theOrder.getTotal().toString();
-                        String grandTotal = theOrder.getTotal().toString();
+                        String grandTotal = "";
+                        if (theOrder.getGrandTotal() != null)
+                            grandTotal = theOrder.getGrandTotal();
+                        else
+                            grandTotal = theOrder.getTotal();
                         if (!TextUtils.isEmpty(theOrder.getGrandTotal())) {
-                            grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                            grandTotal = theOrder.getGrandTotal();
                         }
                         String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
                         billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, null);
@@ -2904,9 +2912,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String subTotal = theOrder.getSubTotal();
                     String discount = theOrder.getDiscountAmount();
                     String total = theOrder.getTotal().toString();
-                    String grandTotal = theOrder.getTotal().toString();
+                    String grandTotal = "";
+                    if (theOrder.getGrandTotal() != null)
+                        grandTotal = theOrder.getGrandTotal();
+                    else
+                        grandTotal = theOrder.getTotal();
                     if (!TextUtils.isEmpty(theOrder.getGrandTotal())) {
-                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                        grandTotal = theOrder.getGrandTotal();
                     }
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, promotionDatas);
@@ -3049,9 +3061,13 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                     String subTotal = theOrder.getSubTotal().toString();
                     String discount = theOrder.getDiscountAmount().toString();
                     String total = theOrder.getTotal().toString();
-                    String grandTotal = theOrder.getTotal().toString();
+                    String grandTotal = "";
+                    if (theOrder.getGrandTotal() != null)
+                        grandTotal = theOrder.getGrandTotal();
+                    else
+                        grandTotal = theOrder.getTotal();
                     if (!TextUtils.isEmpty(theOrder.getGrandTotal())) {
-                        grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
+                        grandTotal = theOrder.getGrandTotal();
                     }
                     String promotionTotal = BH.getBD(theOrder.getPromotion()).toString();
                     billPrint.AddBillSummary(subTotal, discount, taxes, total, grandTotal, rounding, currencySymbol, promotionDatas);

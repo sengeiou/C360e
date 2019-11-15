@@ -2073,7 +2073,7 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                 if (showStrBigDecimal.compareTo(remainTotalAfterRound) > -1) {
                     RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
                     order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
-                    OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
+//                    OrderHelper.setOrderTotalAlfterRound(order, roundAmount);
                     disableButtons();
                     OrderSQL.update(order);
                     paymentSettlement.setCashChange(BH.sub(showStrBigDecimal,
