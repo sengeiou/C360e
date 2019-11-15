@@ -30,6 +30,7 @@ import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.OrderSplit;
 import com.alfredbase.javabean.PrinterTitle;
+import com.alfredbase.javabean.RoundAmount;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrinterDevice;
@@ -584,8 +585,10 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					temporaryOrder.setTotal(orderSplit.getTotal());
 					temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
 					temporaryOrder.setOrderNo(order.getOrderNo());
+					BigDecimal remainTotal = BH.getBD(orderSplit.getTotal());
+					RoundAmount roundAmount = ObjectFactory.getInstance().getRoundAmount(order, orderBill, remainTotal, App.instance.getLocalRestaurantConfig().getRoundType());
 					App.instance.remoteBillPrint(printer, title, temporaryOrder,
-							orderItems, orderModifiers, taxMap, null, null,null);
+							orderItems, orderModifiers, taxMap, null, roundAmount,null);
 				}
 //				OrderBill orderBill = OrderBillSQL
 //						.getOrderBillByOrder(order);
