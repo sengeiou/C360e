@@ -180,6 +180,7 @@ public class EditSettlementAdapter extends BaseAdapter {
 				List<Map<String, String>> taxMap = OrderDetailTaxSQL.getTaxPriceSUMForPrint(App.instance.getLocalRestaurantConfig().getIncludedTax().getTax(), order);
 				ArrayList<PrintOrderModifier> orderModifiers = ObjectFactory.getInstance().getItemModifierList(order, orderSplitDetails);
 				Order temporaryOrder = new Order();
+				temporaryOrder.setId(orderSplit.getOrderId());
 				temporaryOrder.setPersons(orderSplit.getPersons());
 				temporaryOrder.setSubTotal(orderSplit.getSubTotal());
 				temporaryOrder.setDiscountAmount(order.getDiscountAmount());
@@ -219,10 +220,10 @@ public class EditSettlementAdapter extends BaseAdapter {
 						.getInstance().getItemModifierListByOrderDetail(
 								orderDetails);
 				Order temporaryOrder = new Order();
+				temporaryOrder.setId(orderSplit.getOrderId());
 				temporaryOrder.setPersons(orderSplit.getPersons());
 				temporaryOrder.setSubTotal(orderSplit.getSubTotal());
-				temporaryOrder
-						.setDiscountAmount(orderSplit.getDiscountAmount());
+				temporaryOrder.setDiscountAmount(orderSplit.getDiscountAmount());
 				temporaryOrder.setTotal(orderSplit.getTotal());
 				temporaryOrder.setTaxAmount(orderSplit.getTaxAmount());
 				temporaryOrder.setOrderNo(order.getOrderNo());
