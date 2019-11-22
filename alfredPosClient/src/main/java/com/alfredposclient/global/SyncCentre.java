@@ -457,7 +457,7 @@ public class SyncCentre {
             }
             else if (BaseApplication.isCuscapiMYDev)
             {
-                return "http://18.138.252.241:180/alfred-api/" + relativeUrl;
+                return "http://52.221.95.33:180/alfred-api/" + relativeUrl;
             }
             else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
@@ -769,7 +769,7 @@ public class SyncCentre {
                 }
                 else if (BaseApplication.isCuscapiMYDev)
                 {
-                    return "http://18.138.252.241:180/alfred-api/" + APIName.REQUEST_ALIPAY;
+                    return "http://52.221.95.33:180/alfred-api/" + APIName.REQUEST_ALIPAY;
                 }
                 else {
                     url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;

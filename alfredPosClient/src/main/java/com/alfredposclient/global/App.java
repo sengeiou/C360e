@@ -2515,7 +2515,7 @@ public class App extends BaseApplication {
 
     public void remitePrintTableQRCode(PrinterDevice printer, PrinterTitle title, String tableId, String qrCodeText) {
         if (!TextUtils.isEmpty(tableId) && IntegerUtils.isInteger(tableId)) {
-            if (mRemoteService == null) {
+            if (mRemoteService == null || printer == null) {
                 printerDialog();
                 return;
             }
