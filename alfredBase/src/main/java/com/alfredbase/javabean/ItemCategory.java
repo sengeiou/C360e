@@ -39,6 +39,18 @@ public class ItemCategory implements Serializable{
 
 	private String imgUrl;
 
+	private int photo; // only for testing;
+
+	public ItemCategory(String name, int photo) {
+		this.itemCategoryName = name;
+		this.photo = photo;
+	}
+
+	public ItemCategory(){
+
+	}
+
+
 	public String getImgUrl() {
 		return imgUrl;
 	}
@@ -61,6 +73,10 @@ public class ItemCategory implements Serializable{
 		if (CommonUtil.isNull(itemCategoryName))
 			return "";
 		return itemCategoryName;
+	}
+
+	public int getPhoto() {// only for testing
+		return photo;
 	}
 
 	public void setItemCategoryName(String itemCategoryName) {

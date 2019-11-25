@@ -448,16 +448,16 @@ public class SyncCentre {
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
 //            return "http://172.16.3.168:8083/alfred-api/" + relativeUrl;
-            return "http://18.138.252.241/alfred-api/" + relativeUrl;
+            return "http://18.140.71.198//alfred-api/" + relativeUrl;
         } else if (BaseApplication.isOpenLog) {
             return "http://139.224.17.126/alfred-api/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {
-                return "http://18.138.252.241/alfred-api/" + relativeUrl;
+                return "http://18.140.71.198//alfred-api/" + relativeUrl;
             }
             else if (BaseApplication.isCuscapiMYDev)
             {
-                return "http://18.138.252.241:180/alfred-api/" + relativeUrl;
+                return "http://18.140.71.198/:180/alfred-api/" + relativeUrl;
             }
             else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
@@ -765,11 +765,11 @@ public class SyncCentre {
                 url = "http://121.40.168.178/alfred-api/" + APIName.REQUEST_ALIPAY;
             } else {
                 if (BaseApplication.isZeeposDev) {
-                    url = "http://18.138.252.241/alfred-api/" + APIName.REQUEST_ALIPAY;
+                    url = "http://18.140.71.198//alfred-api/" + APIName.REQUEST_ALIPAY;
                 }
                 else if (BaseApplication.isCuscapiMYDev)
                 {
-                    return "http://18.138.252.241:180/alfred-api/" + APIName.REQUEST_ALIPAY;
+                    return "http://18.140.71.198/:180/alfred-api/" + APIName.REQUEST_ALIPAY;
                 }
                 else {
                     url = "http://www.servedbyalfred.biz/alfred-api/" + APIName.REQUEST_ALIPAY;
