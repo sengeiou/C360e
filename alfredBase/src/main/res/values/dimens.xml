@@ -10,7 +10,9 @@
     <dimen name="text_size_s_small">12sp</dimen>
     <dimen name="sp11">11sp</dimen>
     <dimen name="sp10">10sp</dimen>
+    <dimen name="sp150">150sp</dimen>
     <dimen name="dp50">50dp</dimen>
+    <dimen name="dp5">5dp</dimen>
     <dimen name="dp60">60dp</dimen>
     <dimen name="dp70">70dp</dimen>
     <dimen name="dp80">80dp</dimen>

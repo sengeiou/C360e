@@ -116,11 +116,13 @@ public class Store {
     public static final String SUNMI_DATA = "SUNMI_DATA";
     public static final String SUNMI_WELCOME = "SUNMI_WELCOME";
 
-    public static final String TEXT_SIZE = "TEXT_SIZE";
-    public static final String T_TEXT_SIZE = "T_TEXT_SIZE";
-    public static final String COLOR_PICKER = "COLOR_PICKER";
-    public static final String T_COLOR_PICKER = "T_COLOR_PICKER";
-    public static final String SET_BACKGROUND = "SET_BACKGROUND";
+	public static final String TABLEID = "TABLEID";
+
+	public static final String TEXT_SIZE= "TEXT_SIZE";
+	public static final String T_TEXT_SIZE= "T_TEXT_SIZE";
+	public static final String COLOR_PICKER= "COLOR_PICKER";
+	public static final String T_COLOR_PICKER= "T_COLOR_PICKER";
+	public static final String SET_BACKGROUND = "SET_BACKGROUND";
 
     public static final String FORMAT_MONEY_TYPE = "FORMAT_MONEY_TYPE";
 
@@ -140,6 +142,10 @@ public class Store {
     public static final String RELOGIN_TIME = "RELOGIN_TIME";
     public static final String LOAD_CASH_DEFAULT = "LOAD_CASH_DEFAULT";
     public static final String PRINT_LABLE = "PRINT_LABLE";
+
+	public static final String PLACEORDER_SET_LOCK = "PLACEORDER_SET_LOCK";
+	public static final String PLACEORDER_SET_CLICK = "PLACEORDER_SET_CLICK";
+	public static final String ISCOMMITORDER = "ISCOMMITORDER";
 
     public static final String PRINT_LABLE_DIRECTION = "PRINT_LABLE_DIRECTION";
     public static final String CREDIT_CARD_ROUNDING = "CREDIT_CARD_ROUNDING";

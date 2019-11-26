@@ -39,6 +39,11 @@ public class ItemCategory implements Serializable{
 
 	private String imgUrl;
 
+	public ItemCategory(){
+
+	}
+
+
 	public String getImgUrl() {
 		return imgUrl;
 	}

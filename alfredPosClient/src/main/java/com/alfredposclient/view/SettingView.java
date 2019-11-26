@@ -446,16 +446,16 @@ public class SettingView extends LinearLayout implements OnClickListener, View.O
 //			return "http://172.16.0.190:8087/alfred-api/" + relativeUrl;
             //  return "http://192.168.104.10:8083/alfred-api/" + relativeUrl;
 //            return "http://192.168.20.100:8083/alfred-api/" + relativeUrl;
-            return "http://18.138.252.241/alfred-api/" + relativeUrl;
+            return "http://18.140.71.198//alfred-api/" + relativeUrl;
         } else if (BaseApplication.isOpenLog) {
             return "http://139.224.17.126/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {
-                return "http://18.138.252.241/" + relativeUrl;
+                return "http://18.140.71.198/" + relativeUrl;
             }
             else if (BaseApplication.isCuscapiMYDev)
             {
-                return "http://18.138.252.241:180/" + relativeUrl;
+                return "http://18.140.71.198/:180/" + relativeUrl;
             }
             else {
 //			return "http://54.169.45.214/alfred-api/" + relativeUrl;52.77.208.125
