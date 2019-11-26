@@ -1,6 +1,8 @@
 package com.alfredposclient.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -14,9 +16,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 
+import com.alfredbase.ParamConst;
 import com.alfredbase.store.Store;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredposclient.R;
@@ -47,6 +51,11 @@ public class HomePageImageView extends LinearLayout {
     private SurfaceHolder surfaceHolder;
     private int curPosition = 0;
     private boolean isSurfaceCreated = false; //surface是否已经创建好  
+    private Bitmap qrBitmap;
+    private String qrTitle;
+    private String qrTotal;
+    private TextView qrText;
+    private TextView qrPrice;
  //   private File file;
  private String  file;
     private SurfaceHolder holder;
@@ -67,6 +76,14 @@ public class HomePageImageView extends LinearLayout {
 
     public void refresh(List<String> list){
         this.list = list;
+        refreshUI();
+    }
+
+    public void setQrBitmap(Bitmap qrBitmap, String qrTitle, String qrTotal)
+    {
+        this.qrBitmap = qrBitmap;
+        this.qrTitle = qrTitle;
+        this.qrTotal = qrTotal;
         refreshUI();
     }
 
@@ -114,6 +131,8 @@ public class HomePageImageView extends LinearLayout {
         View view = inflate(context, R.layout.home_page_img, this);
         home_page_img = (ImageView) view.findViewById(R.id.home_page_img);
         home_page_sv = (RelativeLayout) view.findViewById(R.id.home_page_sv);
+        qrText = (TextView) view.findViewById(R.id.qrText);
+        qrPrice = (TextView) view.findViewById(R.id.qrPrice);
        sv = (SurfaceView) findViewById(R.id.sv);
         mediaPlayer = new MediaPlayer();
         mVideoView=(VideoView)view.findViewById(R.id.vvideo);
@@ -126,10 +145,29 @@ public class HomePageImageView extends LinearLayout {
         boolean flag = Store.getBoolean(context, Store.VIDEO_IMAGE, true);
         int style= Store.getInt(App.getTopActivity(), Store.SUNMI_STYLE);
 
-        if (style!=Store.SUNMI_VIDEO_TEXT&&style!=Store.SUNMI_VIDEO) {
-            home_page_img.setVisibility(VISIBLE);
+        if(qrBitmap != null)
+        {
             home_page_sv.setVisibility(GONE);
-            if (list != null && list.size() > 0) {
+            qrText.setVisibility(VISIBLE);
+            qrPrice.setVisibility(VISIBLE);
+            qrText.setText(qrTitle);
+            qrPrice.setText(qrTotal);
+            BitmapDrawable background = new BitmapDrawable(this.getResources(), qrBitmap);
+            home_page_img.setBackgroundColor(Color.WHITE);
+            home_page_img.getLayoutParams().height = 600;
+            home_page_img.getLayoutParams().width = 600;
+            home_page_img.setBackground(background);
+        }
+        else if (style!=Store.SUNMI_VIDEO_TEXT&&style!=Store.SUNMI_VIDEO)
+        {
+            home_page_img.setVisibility(VISIBLE);
+            home_page_img.getLayoutParams().height = LayoutParams.MATCH_PARENT;
+            home_page_img.getLayoutParams().width = LayoutParams.MATCH_PARENT;
+            qrText.setVisibility(GONE);
+            qrPrice.setVisibility(GONE);
+            home_page_sv.setVisibility(GONE);
+            if (list != null && list.size() > 0)
+            {
                 if (list.size() == 1) {
                    // ((BitmapDrawable)home_page_img.getDrawable()).getBitmap().recycle();
                     home_page_img.setImageURI(Uri.parse(list.get(0)));
@@ -137,9 +175,15 @@ public class HomePageImageView extends LinearLayout {
             } else {
                 home_page_img.setBackgroundResource(R.drawable.picture);
             }
-        }else
+        }
+        else
+        {
             home_page_img.setVisibility(GONE);
+            qrText.setVisibility(GONE);
+            qrPrice.setVisibility(GONE);
+            home_page_sv.setVisibility(GONE);
             home_page_sv.setVisibility(VISIBLE);
+        }
            //  setupVideo();
         if(list.size()!=0){
             if (!CommonUtil.isNull(list.get(0))){

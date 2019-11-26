@@ -1,8 +1,12 @@
 package com.alfredposclient.activity;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.Presentation;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -123,7 +127,9 @@ private ImageView homePageWelcomeImg;
                     if(type ==0){
                         refreshUI();
                         LogUtil.e(TAG, "刷新welcom");
-                    }else if(type == 1 && stringObjectMap.containsKey("orderModel")){
+                    }
+                    else if(type == 1 && stringObjectMap.containsKey("orderModel"))
+                    {
                         list = Store.getStrListValue(App.instance, Store.SUNMI_DATA);
 
                         text = Store.getInt(App.instance, Store.TEXTSIZE, 50);
@@ -135,9 +141,14 @@ private ImageView homePageWelcomeImg;
 
                         OrderModel orderModel = (OrderModel) stringObjectMap.get("orderModel");
                         LogUtil.d(TAG, orderModel.toString());
-                        if (orderModel != null) {
-                            homePageData.refreshUI(App.instance, orderModel);
-                        }
+                        homePageData.refreshUI(App.instance, orderModel);
+                    }
+                    else if(type == 2)
+                    {
+                        String title = (String) stringObjectMap.get("qrCodeText");
+                        String total = (String) stringObjectMap.get("qrCodePrice");
+                        Bitmap qrBitmap = (Bitmap) stringObjectMap.get("qrCodeImage");
+                        homePageImageView.setQrBitmap(qrBitmap, title, total);
                     }
                 }
             }
