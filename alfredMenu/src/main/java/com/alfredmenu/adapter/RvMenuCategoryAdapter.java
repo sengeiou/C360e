@@ -54,7 +54,6 @@ public class RvMenuCategoryAdapter extends RecyclerView.Adapter<RvMenuCategoryHo
     @Override
     public void onBindViewHolder(RvMenuCategoryHolders holder, int position) {
         holder.titleCategory.setText(itemList.get(position).getItemCategoryName());
-        holder.imgCategory.setImageResource(itemList.get(position).getPhoto());
         Drawable drawable = context.getResources().getDrawable(R.drawable.login_header);
 //        Drawable drawable = LoadImageFromWebOperations(itemList.get(position).getImgUrl());
         holder.imgCategory.setImageDrawable(drawable);

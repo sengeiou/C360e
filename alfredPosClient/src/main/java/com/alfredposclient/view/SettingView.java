@@ -451,7 +451,7 @@ public class SettingView extends LinearLayout implements OnClickListener, View.O
             return "http://139.224.17.126/" + relativeUrl;
         } else {
             if (BaseApplication.isZeeposDev) {
-                return "http://18.140.71.198//" + relativeUrl;
+                return "http://18.140.71.198/" + relativeUrl;
             }
             else if (BaseApplication.isCuscapiMYDev)
             {
