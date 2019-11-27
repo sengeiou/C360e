@@ -14,6 +14,7 @@
     <string name="open">افتح</string>
     <string name="open_restaurant">مطعم مفتوح</string>
     <string name="start_drawer">بدء الدرج</string>
+    <string name="actual_drawer">درج الفعلية</string>
     <string name="enter_amount_of_cash_in_drawer">أدخل مبلغ النقد في الدرج</string>
     <string name="settings">الإعدادات</string>
     <string name="setting">ضبط</string>

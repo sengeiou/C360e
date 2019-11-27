@@ -152,6 +152,7 @@ import com.alfredposclient.jobs.SubPosCloudSyncJobManager;
 import com.alfredposclient.utils.AlfredRootCmdUtil;
 import com.alfredposclient.utils.T1SecondScreen.DataModel;
 import com.alfredposclient.utils.T1SecondScreen.UPacketFactory;
+import com.alfredposclient.view.HomePageData;
 import com.alfredposclient.view.ReloginDialog;
 import com.alfredposclient.xmpp.XMPP;
 import com.alfredposclient.xmpp.XmppThread;
@@ -897,7 +898,7 @@ public class App extends BaseApplication {
                 orderModel.setGrandTotal(App.instance.getResources().getString(R.string.grand_total) + ":" + getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString());
                 orderModel.setGoodsModel(goodsModelTitle);
                 orderModel.setGoodsModelList(goodsModels);
-                Map<String, Object> map = new HashMap<String, Object>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("type", 1);
                 map.put("orderModel", orderModel);
                 RxBus.getInstance().post(RxBus.showOrder, map);
@@ -1299,7 +1300,8 @@ public class App extends BaseApplication {
         }
     }
 
-    public void showSunmiQrimg(Context context, String title, String content, Bitmap bitmap) {
+    public void showSunmiQrimg(Context context, String title, String content, Bitmap bitmap)
+    {
         String fileName = "ipay88.png";
 
         File lateDir = new File(Environment.getExternalStorageDirectory(), fileName);
@@ -1321,6 +1323,20 @@ public class App extends BaseApplication {
 
         showSunmiQrimg(context, title, content, file.getAbsolutePath());
 
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 2);
+        map.put("qrCodeImage", bitmap);
+        map.put("qrCodeText", title);
+        map.put("qrCodePrice", content);
+        RxBus.getInstance().post(RxBus.showOrder, map);
+        TcpUdpFactory.tcpSend(5, new Gson().toJson(map), new TcpSendCallBack() {
+            @Override
+            public void call(boolean isSucceed) {
+                if (!isSucceed) {
+                    LogUtil.d(TAG, "请确认 副屏已经连接上了");
+                }
+            }
+        });
     }
 
     public void showSunmiQrimg(final Context context, String title, String content, final String path) {

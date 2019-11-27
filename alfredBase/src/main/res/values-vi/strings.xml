@@ -14,6 +14,7 @@
     <string name="open">Mở</string>
     <string name="open_restaurant">Nhà hàng mở</string>
     <string name="start_drawer">Bắt đầu ngăn kéo</string>
+    <string name="actual_drawer">ngăn kéo thực tế</string>
     <string name="enter_amount_of_cash_in_drawer">Nhập số lượng tiền mặt trong ngăn kéo</string>
     <string name="settings">Cài đặt</string>
     <string name="setting">Cài đặt</string>

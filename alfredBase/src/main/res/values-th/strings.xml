@@ -14,6 +14,7 @@
     <string name="open">เปิด</string>
     <string name="open_restaurant">เปิดร้านอาหาร</string>
     <string name="start_drawer">เริ่มลิ้นชัก</string>
+    <string name="actual_drawer">ลิ้นชักจริง</string>
     <string name="enter_amount_of_cash_in_drawer">ใส่จำนวนเงินสดในลิ้นชัก</string>
     <string name="settings">การตั้งค่า</string>
     <string name="setting">การตั้งค่า</string>
