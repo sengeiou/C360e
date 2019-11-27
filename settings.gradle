@@ -4,6 +4,7 @@ include ':alfredPosClient'
 include ':alfredKDS'
 include ':alfredRemotePrintService'
 include ':alfredWaiter'
+include ':alfredMenu'
 
 println "In settings, gradle id is " + gradle.hashCode()
 println "Home Dir:" + gradle.gradleHomeDir
