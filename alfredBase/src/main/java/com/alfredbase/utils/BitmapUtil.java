@@ -1,5 +1,6 @@
 package com.alfredbase.utils;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -122,12 +123,12 @@ public class BitmapUtil {
     }
 
     public static void saveImageToGallery(String imageName, Context context, Bitmap bmp) {
-        // 首先保存图片
+        // 首先保存图片 - Saving Images
         File appDir = new File(Environment.getExternalStorageDirectory(), "C360Engage");
         if (!appDir.exists()) {
             appDir.mkdir();
         }
-        String fileName = imageName + ".jpg";
+        String fileName = imageName + System.currentTimeMillis() +".jpg";
         File file = new File(appDir, fileName);
         try {
             FileOutputStream fos = new FileOutputStream(file);
@@ -140,14 +141,30 @@ public class BitmapUtil {
             e.printStackTrace();
         }
 
-        // 其次把文件插入到系统图库
-        try {
-            MediaStore.Images.Media.insertImage(context.getContentResolver(),
-                    file.getAbsolutePath(), fileName, null);
-        } catch (FileNotFoundException e) {
+        // 其次把文件插入到系统图库 - Putting the image into gallery
+        try
+        {
+            String path = file.getAbsolutePath();
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, fileName);
+            values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis()); // DATE HERE
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+            values.put(MediaStore.Files.FileColumns.DATA, path);
+
+            context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        }
+        catch(Exception e)
+        {
             e.printStackTrace();
         }
-        // 最后通知图库更新
+
+//        MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), fileName, null);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        // 最后通知图库更新 - gallery notification
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(appDir)));
     }
 }

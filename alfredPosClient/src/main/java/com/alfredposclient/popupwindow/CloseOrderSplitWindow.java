@@ -204,7 +204,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 
     private TextView tv_part_amount_due_num;
     private TextView tv_part_total_amount_num;
-    private TextView tv_part_cur, tv_cards_rounding_num;
+    private TextView tv_part_cur, tv_cards_rounding_num, tv_sub_total_rounding_num;
 
     VerifyDialog verifyDialog;
 
@@ -306,6 +306,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
 //		tv_settlement_other_num = (TextView) contentView.findViewById(R.id.tv_settlement_other_num);
 
         tv_amount_due_num = (TextView) contentView.findViewById(R.id.tv_amount_due_num);
+        tv_sub_total_rounding_num = (TextView) contentView.findViewById(R.id.tv_sub_total_rounding_num);
 
         tv_special_settlement_amount_due_num = (TextView) contentView
                 .findViewById(R.id.tv_special_settlement_amount_due_num);
@@ -519,6 +520,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                 .findViewById(R.id.tv_rounding));
         textTypeFace.setTrajanProRegular((TextView) view
                 .findViewById(R.id.tv_rounding_num));
+        textTypeFace.setTrajanProBlod((TextView) view
+                .findViewById(R.id.tv_sub_total_rounding_num));
 //		textTypeFace.setTrajanProRegular((TextView) view
 //				.findViewById(R.id.tv_grand_total_bill));
 //		textTypeFace.setTrajanProRegular((TextView) view
@@ -754,6 +757,14 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
             }
 
         }
+        BigDecimal remainTotalAfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
+        BigDecimal rounding = BH.sub(remainTotalAfterRound, remainTotal, true);
+        String symbol = "";
+        if (rounding.compareTo(BH.getBD("0.00")) == -1) {
+            symbol = "-";
+        }
+        tv_sub_total_rounding_num.setText(symbol + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.abs(rounding, true).toString()));
+
         ((TextView) contentView.findViewById(R.id.tv_residue_total_num)).setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(BH.getBD(remainTotal).toString()).toString());
         //	tv_part_total_amount_num.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(remainTotal));
 //		RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
