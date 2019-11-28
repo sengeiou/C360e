@@ -14,6 +14,7 @@
     <string name="open">打开</string>
     <string name="open_restaurant">打开餐厅</string>
     <string name="start_drawer">启动抽屉</string>
+    <string name="actual_drawer">实际抽屉</string>
     <string name="enter_amount_of_cash_in_drawer">输入抽屉中的现金金额</string>
     <string name="settings">设置</string>
     <string name="setting">设置</string>

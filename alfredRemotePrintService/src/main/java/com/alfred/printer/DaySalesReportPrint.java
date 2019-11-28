@@ -506,7 +506,7 @@ public class DaySalesReportPrint extends ReportBasePrint {
         this.addItem(PrintService.instance.getResources().getString(R.string.cash_in),  BH.formatThree(reportDaySales.getCashInAmt()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.cash_out),  BH.formatThree(reportDaySales.getCashOutAmt()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.expected_in_drawer), "",  BH.formatThree(reportDaySales.getExpectedAmount()), 1);
-        this.addItem(PrintService.instance.getResources().getString(R.string.start_drawer), "",  BH.formatThree(reportDaySales.getWaiterAmount()), 1);
+        this.addItem(PrintService.instance.getResources().getString(R.string.actual_drawer), "",  BH.formatThree(reportDaySales.getWaiterAmount()), 1);
         this.addItem(PrintService.instance.getResources().getString(R.string.difference), "",  BH.formatThree(reportDaySales.getDifference()), 1);
 
         this.addBlankLine();
