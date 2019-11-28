@@ -1967,7 +1967,7 @@ public class MainPageKiosk extends BaseActivity {
         modifyQuantityWindow.show(quantity, dismissCall);
     }
 
-    private void addOrderDetail(final OrderDetail orderDetail) {
+    private void addOrderDetail(OrderDetail orderDetail) {
         List<ItemModifier> itemModifiers = CoreData.getInstance()
                 .getItemModifiers(
                         CoreData.getInstance().getItemDetailById(
@@ -1986,22 +1986,10 @@ public class MainPageKiosk extends BaseActivity {
                     ModifierCheckSql.addModifierCheck(modifierCheck);
                 }
             }
-            mainPageMenuView.openModifiers(currentOrder, orderDetail, itemModifiers);
+            mainPageMenuView.openModifiers(currentOrder, orderDetail,
+                    itemModifiers);
 
         }
-
-        Store.putBoolean(context, String.valueOf(currentOrder.getId()), true);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                OrderDetailSQL.updateOrder(orderDetail);
-                Store.putBoolean(context, String.valueOf(currentOrder.getId()), false);
-                Message msg = handler.obtainMessage();
-                msg.what = MainPageKiosk.VIEW_EVENT_SET_DATA;
-                handler.sendMessage(msg);
-            }
-        }).start();
-
     }
 
     private void sendKOTTmpToKDS(final OrderDetail orderDetail) {

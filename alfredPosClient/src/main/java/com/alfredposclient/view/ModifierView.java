@@ -22,7 +22,6 @@ import com.alfredbase.javabean.Order;
 import com.alfredbase.javabean.OrderDetail;
 import com.alfredbase.javabean.OrderModifier;
 import com.alfredbase.javabean.Printer;
-import com.alfredbase.store.Store;
 import com.alfredbase.store.sql.OrderDetailSQL;
 import com.alfredbase.store.sql.OrderModifierSQL;
 import com.alfredbase.store.sql.temporaryforapp.ModifierCheckSql;
@@ -33,7 +32,6 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.activity.MainPage;
-import com.alfredposclient.activity.kioskactivity.MainPageKiosk;
 import com.alfredposclient.global.UIHelp;
 
 import java.util.ArrayList;
@@ -46,7 +44,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
     private Context context;
     private BaseActivity parent;
     private LinearLayout ll_detail;
-    private TextView tv_type, tv_type_min;
+    private TextView tv_type,tv_type_min;
     private Handler handler;
     private TextTypeFace textTypeFace;
     private List<OrderModifier> orderModifiers;
@@ -68,33 +66,32 @@ public class ModifierView extends LinearLayout implements OnClickListener {
         View.inflate(context, R.layout.dish_supplement_view, this);
         ll_detail = (LinearLayout) findViewById(R.id.ll_detail);
         tv_type = (TextView) findViewById(R.id.tv_type);
-        tv_type_min = (TextView) findViewById(R.id.tv_type_min);
+        tv_type_min=(TextView)findViewById(R.id.tv_type_min) ;
         initTextTypeFace();
     }
 
 
-    public void setParams(final Order order, final OrderDetail orderDetail, final ItemModifier itemModifier, final Handler mHandler, final int height) {
-        setParams(order,orderDetail,itemModifier,mHandler,height,false);
-    }
-
-    public void setParams(final Order order, final OrderDetail orderDetail, final ItemModifier itemModifier, final Handler mHandler, final int height, final boolean isKiosk) {
+    public void setParams(final Order order, final OrderDetail orderDetail,
+                          final ItemModifier itemModifier, final Handler mHandler, final int height) {
         num = 0;
 //		int count = (int)Math.floor(height-ScreenSizeUtil.dip2px(parent,70))/
 //				(ScreenSizeUtil.dip2px(parent,ModifierView.MARGIN_SIZE * 2)+(ScreenSizeUtil.dip2px(parent,ModifierView.ITEM_SIZE)));
         int count = (int) Math.floor(height - ScreenSizeUtil.dip2px(parent, 120)) /
                 ((ScreenSizeUtil.dip2px(parent, 2 * MARGIN_SIZE)) + (ScreenSizeUtil.dip2px(parent, ModifierView.ITEM_SIZE)));
         this.handler = mHandler;
-        orderModifiers = OrderModifierSQL.getOrderModifiers(order, orderDetail);
+        orderModifiers = OrderModifierSQL
+                .getOrderModifiers(order, orderDetail);
         final Modifier modifier_type = CoreData.getInstance().getModifier(
                 itemModifier);
         tv_type.setText(modifier_type.getCategoryName());
-        if (modifier_type.getMinNumber() > 0) {
+        if(modifier_type.getMinNumber()>0)
+        {
             tv_type_min.setVisibility(VISIBLE);
-        } else {
+        }else {
             tv_type_min.setVisibility(GONE);
         }
 
-        tv_type_min.setText(context.getResources().getString(R.string.at_least) + " " + modifier_type.getMinNumber() + " " + context.getResources().getString(R.string.items));
+        tv_type_min.setText(context.getResources().getString(R.string.at_least)+" "+modifier_type.getMinNumber()+" "+context.getResources().getString(R.string.items));
         List<Modifier> modifiers = CoreData.getInstance().getModifiers(
                 modifier_type);
         int childCount = modifiers.size();
@@ -114,18 +111,18 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                     break;
                 final Modifier modifier = modifiers.get(i * count + j);
                 TextView textView = new TextView(context);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ScreenSizeUtil.dip2px(parent, ITEM_SIZE), ScreenSizeUtil.dip2px(parent, ITEM_SIZE));
-
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                        ScreenSizeUtil.dip2px(parent, ITEM_SIZE), ScreenSizeUtil.dip2px(parent, ITEM_SIZE));
                 param.bottomMargin = ScreenSizeUtil.dip2px(parent, MARGIN_SIZE);
                 param.topMargin = ScreenSizeUtil.dip2px(parent, MARGIN_SIZE);
                 param.leftMargin = ScreenSizeUtil.dip2px(parent, MARGIN_SIZE);
                 param.rightMargin = ScreenSizeUtil.dip2px(parent, MARGIN_SIZE);
-
                 textView.setLayoutParams(param);
                 textView.setGravity(Gravity.CENTER);
-                OrderModifier orderModifier = CoreData.getInstance().getOrderModifier(orderModifiers, modifier);
-
-                if (orderModifier != null && orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
+                OrderModifier orderModifier = CoreData.getInstance().getOrderModifier(orderModifiers,
+                        modifier);
+                if (orderModifier != null
+                        && orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
                     textView.setBackgroundResource(R.drawable.box_modifier_click);
                     textView.setTextColor(Color.WHITE);
                     num++;
@@ -146,48 +143,54 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                         }
                         int ods = orderDetail.getOrderDetailStatus();
 
-                        // prevents editing of modifiers that have been sent to the kitchen
+                        //: 零时阻止编辑已经发送到厨房的modifier
                         if (ods == ParamConst.ORDERDETAIL_STATUS_KOTPRINTERD) {
                             return;
                         }
 
-
+                        //
                         if (ods != ParamConst.ORDERDETAIL_STATUS_ADDED) {
                             orderDetail.setOrderDetailStatus(ParamConst.ORDERDETAIL_STATUS_ADDED);
                             OrderDetailSQL.updateOrderDetail(orderDetail);
                         }
                         Modifier tag = (Modifier) v.getTag();
-//
-                        OrderModifier orderModifier = CoreData.getInstance().getOrderModifier(orderModifiers, tag);
 
-                        //Start Setting data
+                        OrderModifier orderModifier = CoreData.getInstance().getOrderModifier(
+                                orderModifiers, tag);
                         if (orderModifier != null) {
                             if (orderModifier.getStatus().intValue() == ParamConst.ORDER_MODIFIER_STATUS_NORMAL) {
-                                orderModifier.setStatus(ParamConst.ORDER_MODIFIER_STATUS_DELETE);
-                                orderModifier.setUpdateTime(System.currentTimeMillis());
-
-                                OrderModifierSQL.updateOrderModifier(orderModifier);
+                                orderModifier
+                                        .setStatus(ParamConst.ORDER_MODIFIER_STATUS_DELETE);
+                                orderModifier.setUpdateTime(System
+                                        .currentTimeMillis());
+                                OrderModifierSQL
+                                        .updateOrderModifier(orderModifier);
                                 num--;
                             } else {
                                 System.out.println("===" + (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO));
                                 System.out.println("===" + (modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT));
                                 System.out.println("===" + (num >= modifier_type.getOptionQty()));
-
-                                if (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO && modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT && num >= modifier_type.getOptionQty()) {
+                                if (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO
+                                        && modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT
+                                        && num >= modifier_type.getOptionQty()) {
                                     UIHelp.showShortToast(parent, String.format(parent.getResources().getString(R.string.the_most_selections), modifier_type.getOptionQty()));
                                     return;
                                 }
-                                orderModifier.setUpdateTime(System.currentTimeMillis());
-                                orderModifier.setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
-
-                                OrderModifierSQL.updateOrderModifier(orderModifier);
+                                orderModifier.setUpdateTime(System
+                                        .currentTimeMillis());
+                                orderModifier
+                                        .setStatus(ParamConst.ORDER_MODIFIER_STATUS_NORMAL);
+                                OrderModifierSQL
+                                        .updateOrderModifier(orderModifier);
                                 num++;
                             }
                         } else {
-//                            System.out.println(orderDetail.getIsSet() == ParamConst.IS_SET_COMBO);
-//                            System.out.println(modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT);
-//                            System.out.println(num >= modifier_type.getOptionQty());
-                            if (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO && modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT && num >= modifier_type.getOptionQty()) {
+                            System.out.println(orderDetail.getIsSet() == ParamConst.IS_SET_COMBO);
+                            System.out.println(modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT);
+                            System.out.println(num >= modifier_type.getOptionQty());
+                            if (orderDetail.getIsSet() == ParamConst.IS_SET_COMBO
+                                    && modifier_type.getMustDefault() >= ParamConst.MODIFIER_MUST_DEFAULT_SELECT
+                                    && num >= modifier_type.getOptionQty()) {
                                 UIHelp.showShortToast(parent, String.format(parent.getResources().getString(R.string.the_most_selections), modifier_type.getOptionQty()));
                                 return;
                             }
@@ -208,19 +211,17 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                             int max = modifier_type.getMaxNumber();
                             orderModifier = ObjectFactory.getInstance().getOrderModifier(order, orderDetail, tag, printId);
                             if (max > 0 && num <= max - 1) {
-//                                ((MainPage)parent).AddModifier(orderModifier);
-                                OrderModifierSQL.addOrderModifier(orderModifier, true);
 
+                                OrderModifierSQL.addOrderModifier(orderModifier);
                                 num++;
                             } else if (max == 0) {
-//                                ((MainPage)parent).AddModifier(orderModifier);
 
-                                OrderModifierSQL.addOrderModifier(orderModifier, true);
+                                OrderModifierSQL.addOrderModifier(orderModifier);
                                 num++;
 
                             } else {
 
-                                UIHelp.showShortToast(parent, context.getString(R.string.at_only) + " " + max + " " + context.getString(R.string.items));
+                                UIHelp.showShortToast(parent, context.getString(R.string.at_only)+" " + max +" "+ context.getString(R.string.items));
                             }
 
 
@@ -230,7 +231,7 @@ public class ModifierView extends LinearLayout implements OnClickListener {
                         if (min > 0) {
                             int checkNim = 0;
                             checkNim = min - num;
-                            ModifierCheckSql.update(checkNim, tag.getCategoryId(), orderModifier.getOrderDetailId(), order.getId());
+                            ModifierCheckSql.update(checkNim, tag.getCategoryId(), orderModifier.getOrderDetailId(),order.getId());
                         }
 
                         //	LogUtil.e("ModifierView", "==å®½===" +num);
@@ -240,58 +241,13 @@ public class ModifierView extends LinearLayout implements OnClickListener {
 //						refreshView((TextView)v, orderModifier);
 //						orderModifiers= OrderModifierSQL
 //								.getOrderModifiers(order, orderDetail);
-
-                        if (!isKiosk){
-                            Message msg = handler.obtainMessage();
-                            msg.what = MainPage.VIEW_EVENT_SET_DATA;
-                            handler.sendMessage(msg);
-
-                            boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
-
-                            if (!isOnProgress) {
-                                final OrderModifier orderModifierFinal = orderModifier;
-                                Store.putBoolean(context, String.valueOf(order.getId()), true);
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        OrderModifierSQL.updateOrderDetail(orderModifierFinal);
-                                        Store.putBoolean(context, String.valueOf(order.getId()), false);
-                                        Message msg = handler.obtainMessage();
-                                        msg.what = MainPage.VIEW_EVENT_SET_DATA;
-                                        handler.sendMessage(msg);
-                                    }
-                                }).start();
-                            }
-                        }else{
-                            Message msg = handler.obtainMessage();
-                            msg.what = MainPageKiosk.VIEW_EVENT_SET_DATA;
-                            handler.sendMessage(msg);
-
-                            boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
-
-                            if (!isOnProgress) {
-                                final OrderModifier orderModifierFinal = orderModifier;
-                                Store.putBoolean(context, String.valueOf(order.getId()), true);
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        OrderModifierSQL.updateOrderDetail(orderModifierFinal);
-                                        Store.putBoolean(context, String.valueOf(order.getId()), false);
-                                        Message msg = handler.obtainMessage();
-                                        msg.what = MainPageKiosk.VIEW_EVENT_SET_DATA;
-                                        handler.sendMessage(msg);
-                                    }
-                                }).start();
-                            }
-                        }
-
-
-
+                        Message msg = handler.obtainMessage();
+                        msg.what = MainPage.VIEW_EVENT_SET_DATA;
+                        handler.sendMessage(msg);
                     }
 
 
                 });
-
                 layout.addView(textView);
                 addCount++;
             }
