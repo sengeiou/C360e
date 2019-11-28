@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.SlideExpandable.AbstractSlideExpandableListAdapter;
@@ -27,6 +27,7 @@ import com.alfredbase.javabean.ItemModifier;
 import com.alfredbase.javabean.KotItemDetail;
 import com.alfredbase.javabean.KotItemModifier;
 import com.alfredbase.javabean.KotSummary;
+import com.alfredbase.javabean.KotSummaryLog;
 import com.alfredbase.javabean.Modifier;
 import com.alfredbase.javabean.ModifierCheck;
 import com.alfredbase.javabean.Order;
@@ -58,7 +59,7 @@ import com.alfredbase.utils.ColorUtils;
 import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.DialogFactory;
 import com.alfredbase.utils.IntegerUtils;
-import com.alfredbase.utils.LogUtil;
+import com.alfredbase.utils.KDSLogUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
@@ -72,6 +73,9 @@ import com.alfredposclient.popupwindow.DiscountWindow.ResultCall;
 import com.alfredposclient.popupwindow.ModifyQuantityWindow.DismissCall;
 import com.alfredposclient.utils.AlertToDeviceSetting;
 import com.alfredposclient.utils.NetworkUtils;
+import com.google.gson.Gson;
+import com.path.android.jobqueue.network.NetworkUtil;
+import com.google.gson.Gson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -99,7 +103,6 @@ public class MainPageOrderView extends LinearLayout {
     private Button btn_place_order;
     private String kotCommitStatus;
     private TextTypeFace textTypeFace;
-    private ProgressBar progress_subtotal, progres_discount, progress_tax, progress_grand_total;
 
     public MainPageOrderView(Context context) {
         super(context);
@@ -130,13 +133,6 @@ public class MainPageOrderView extends LinearLayout {
         tv_taxes = (TextView) findViewById(R.id.tv_taxes);
         btn_place_order = (Button) findViewById(R.id.btn_place_order);
 
-
-        progress_subtotal = (ProgressBar) findViewById(R.id.progress_subtotal);
-        progres_discount = (ProgressBar) findViewById(R.id.progres_discount);
-        progress_tax = (ProgressBar) findViewById(R.id.progress_tax);
-        progress_grand_total = (ProgressBar) findViewById(R.id.progress_grand_total);
-
-
         if (App.countryCode == ParamConst.CHINA)
             btn_place_order.setBackgroundResource(R.drawable.box_place_order_selector_zh);
 
@@ -151,12 +147,6 @@ public class MainPageOrderView extends LinearLayout {
                     return;
                 }
 
-                boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
-
-                if (isOnProgress){
-                    UIHelp.showShortToast(parent, parent.getResources().getString(R.string.order_in_progress));
-                    return;
-                }
                 if (orderDetails.isEmpty()) {
                     UIHelp.showShortToast(parent, parent.getResources().getString(R.string.no_order_detail));
                     return;
@@ -241,10 +231,10 @@ public class MainPageOrderView extends LinearLayout {
                             List<OrderDetail> placedOrderDetails
                                     = OrderDetailSQL.getOrderDetailsForPrint(placedOrder.getId());
                             KotSummary kotSummary = ObjectFactory.getInstance().getKotSummaryForPlace(
-                                    TableInfoSQL.getTableById(
-                                            placedOrder.getTableId()).getName(), placedOrder,
-                                    App.instance.getRevenueCenter(),
-                                    App.instance.getBusinessDate());
+                                            TableInfoSQL.getTableById(
+                                                    placedOrder.getTableId()).getName(), placedOrder,
+                                            App.instance.getRevenueCenter(),
+                                            App.instance.getBusinessDate());
                             User user = App.instance.getUser();
                             if (user != null) {
 
@@ -363,7 +353,6 @@ public class MainPageOrderView extends LinearLayout {
                         }
                     }).start();
                 }
-                Store.remove(context, String.valueOf(order.getId()));
 
             }
         });
@@ -401,7 +390,8 @@ public class MainPageOrderView extends LinearLayout {
         textTypeFace.setTrajanProRegular(tv_taxes);
     }
 
-    public void setParam(MainPage parent, Order order, List<OrderDetail> orderDetails, Handler handler) {
+    public void setParam(MainPage parent, Order order,
+                         List<OrderDetail> orderDetails, Handler handler) {
         this.parent = parent;
         this.order = order;
         this.orderDetails = orderDetails;
@@ -427,31 +417,6 @@ public class MainPageOrderView extends LinearLayout {
             // kotSummary.setStatus(ParamConst.KOTS_STATUS_DONE);
             // KotSummarySQL.update(kotSummary);
             // }
-        }
-        boolean isOnProgress = Store.getBoolean(context, String.valueOf(order.getId()), false);
-
-        if (isOnProgress) {
-            tv_sub_total.setVisibility(GONE);
-            tv_discount.setVisibility(GONE);
-            tv_taxes.setVisibility(GONE);
-            tv_grand_total.setVisibility(GONE);
-
-            progress_subtotal.setVisibility(VISIBLE);
-            progres_discount.setVisibility(VISIBLE);
-            progress_tax.setVisibility(VISIBLE);
-            progress_grand_total.setVisibility(VISIBLE);
-
-        } else {
-
-            progress_subtotal.setVisibility(GONE);
-            progres_discount.setVisibility(GONE);
-            progress_tax.setVisibility(GONE);
-            progress_grand_total.setVisibility(GONE);
-
-            tv_sub_total.setVisibility(VISIBLE);
-            tv_discount.setVisibility(VISIBLE);
-            tv_taxes.setVisibility(VISIBLE);
-            tv_grand_total.setVisibility(VISIBLE);
         }
         String orderNoStr = context.getResources().getString(R.string.table)
                 + " - "
@@ -488,18 +453,18 @@ public class MainPageOrderView extends LinearLayout {
             taxAmount = BH.sub(BH.getBD(order.getTaxAmount()), taxAmount, true);
             discountAmount = BH.sub(BH.getBD(order.getDiscountAmount()), discountAmount, true);
             total = BH.sub(BH.getBD(order.getTotal()), total, true);
-            tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(subtotal.toString()));
-            tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(discountAmount.toString()));
-            tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(taxAmount.toString()));
+            tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(subtotal.toString()).toString());
+            tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(discountAmount.toString()).toString());
+            tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(taxAmount.toString()).toString());
             tv_grand_total.setText(context.getResources().getString(R.string.grand_total) + ": " +
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(total.toString()));
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(total.toString()).toString());
 
         } else {
-            tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()));
-            tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()));
-            tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()));
+            tv_sub_total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getSubTotal()).toString());
+            tv_discount.setText("-" + App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getDiscountAmount()).toString());
+            tv_taxes.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTaxAmount()).toString());
             tv_grand_total.setText(context.getResources().getString(R.string.grand_total) + ": " +
-                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()));
+                    App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(order.getTotal()).toString());
         }
     }
 
@@ -664,12 +629,6 @@ public class MainPageOrderView extends LinearLayout {
             holder.tv_qty.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
-
-                    boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
-
-                    if (isOnProgress){
-                        return;
-                    }
                     collapseLastOpen();
                     if (!ButtonClickTimer.canClick(arg0)) {
                         return;
@@ -892,10 +851,10 @@ public class MainPageOrderView extends LinearLayout {
             holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getRealPrice()));
 
             if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
-                holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(ParamConst.DOUBLE_ZERO));
-                holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(ParamConst.DOUBLE_ZERO));
+                holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(ParamConst.DOUBLE_ZERO).toString());
+                holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(ParamConst.DOUBLE_ZERO).toString());
             } else {
-                holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getDiscountPrice()));
+                holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.formatMoney(orderDetail.getDiscountPrice()).toString());
                 holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
                         + BH.formatMoney(BH.sub(BH.getBD(orderDetail.getRealPrice()),
                         BH.getBD(orderDetail.getDiscountPrice()), true).toString()));
@@ -907,11 +866,6 @@ public class MainPageOrderView extends LinearLayout {
 
                 @Override
                 public void onClick(View v) {
-                    boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
-
-                    if (isOnProgress){
-                        return;
-                    }
                     collapseLastOpen();
                     if (!ButtonClickTimer.canClick(v)) {
                         return;
@@ -1230,9 +1184,6 @@ public class MainPageOrderView extends LinearLayout {
                     }
                     break;
                     case R.id.ll_remove: {
-                        boolean isOnProgress = Store.getBoolean(context, Store.CALCULATE_ON_PROGRESS, false);
-                        if (isOnProgress)
-                            break;
                         final OrderDetail tag = (OrderDetail) view.getTag();
                         if (tag.getIsFree().intValue() == ParamConst.FREE) {
                             return;

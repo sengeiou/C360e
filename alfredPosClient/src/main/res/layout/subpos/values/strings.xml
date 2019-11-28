@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="crash_reporting">Crash Reporting</string>
-    <string name="order_in_progress">Order is being calculate, Please wait</string>
 </resources>

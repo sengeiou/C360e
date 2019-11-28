@@ -227,7 +227,8 @@ public class CoreData {
     }
 
 
-    public OrderModifier getOrderModifier(List<OrderModifier> orderModifiers, Modifier modifier) {
+    public OrderModifier getOrderModifier(List<OrderModifier> orderModifiers,
+                                          Modifier modifier) {
         for (OrderModifier orderModifier : orderModifiers) {
             if (modifier.getId().intValue() == orderModifier.getModifierId()
                     .intValue()) {
