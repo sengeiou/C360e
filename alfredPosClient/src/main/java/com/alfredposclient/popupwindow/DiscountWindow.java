@@ -27,8 +27,11 @@ import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.TextTypeFace;
 import com.alfredposclient.R;
 import com.alfredposclient.adapter.DiscountAdapter;
+import com.alfredposclient.global.App;
 import com.alfredposclient.view.DiscountMoneyKeyboard;
 import com.alfredposclient.view.DiscountMoneyKeyboard.KeyBoardClickListener;
+
+import java.math.BigDecimal;
 
 public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_1 = 300;
@@ -187,6 +190,12 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 				RelativeLayout.LayoutParams.MATCH_PARENT,
 				RelativeLayout.LayoutParams.MATCH_PARENT);
 
+		if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+		{
+			String textToSet = String.valueOf(new BigDecimal(String.valueOf(tv_discount_count.getText())).setScale(2, BigDecimal.ROUND_HALF_UP));
+			tv_discount_count.setText(textToSet);
+		}
+
 		popupWindow.setContentView(contentView);
 		popupWindow.setFocusable(true);
 	}
@@ -312,6 +321,11 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 			default:
 				break;
 			}
+			if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+			{
+				String textToSet = String.valueOf(new BigDecimal(String.valueOf(tv_discount_count.getText())).setScale(2, BigDecimal.ROUND_HALF_UP));
+				tv_discount_count.setText(textToSet);
+			}
 		}
 	}
 
@@ -335,6 +349,11 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 					BH.getBD(orderDetail.getRealPrice()),
 					BH.div(BH.getBD(percent), BH.getBD(100), false),
 					true).toString());
+		}
+		if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+		{
+			String textToSet = String.valueOf(new BigDecimal(String.valueOf(tv_discount_count.getText())).setScale(2, BigDecimal.ROUND_HALF_UP));
+			tv_discount_count.setText(textToSet);
 		}
 	}
 
@@ -440,6 +459,11 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 											true), BH.getBD(100), true)));
 				}
 			}
+		}
+		if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+		{
+			String textToSet = String.valueOf(new BigDecimal(String.valueOf(tv_discount_count.getText())).setScale(2, BigDecimal.ROUND_HALF_UP));
+			tv_discount_count.setText(textToSet);
 		}
 	}
 

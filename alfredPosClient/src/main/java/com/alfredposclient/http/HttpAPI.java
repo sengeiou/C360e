@@ -75,6 +75,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -2747,13 +2748,10 @@ public class HttpAPI {
                                    String custName,
                                    AsyncHttpClient httpClient, final Handler handler) {
         try {
-
-
             Map<String, Object> requestParams = new HashMap<>();
             requestParams.put("restaurantKey", restaurantKey);
             requestParams.put("userKey", userKey);
             requestParams.put("amount", amount);
-
 
             requestParams.put("paymentId", paymentTypeId);
             requestParams.put("currency", currency);
@@ -2764,6 +2762,7 @@ public class HttpAPI {
             requestParams.put("username", custName);
 
             StringEntity entity = new StringEntity(new Gson().toJson(requestParams), "UTF-8");
+            Log.wtf("Checkerentity1", String.valueOf(requestParams));
             httpClient.post(context, url, entity, HttpAssembling.CONTENT_TYPE_JSON,
                     new AsyncHttpResponseHandlerEx() {
                         @Override
@@ -2777,8 +2776,7 @@ public class HttpAPI {
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
                             handler.sendMessage(handler.obtainMessage(SyncData.HANDLER_QRCODE_PAY88, null));
-                            super.onFailure(statusCode, headers, responseBody,
-                                    error);
+                            super.onFailure(statusCode, headers, responseBody, error);
                         }
                     }
             );

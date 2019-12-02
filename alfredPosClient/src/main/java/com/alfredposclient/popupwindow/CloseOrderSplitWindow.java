@@ -2338,7 +2338,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                             .getRoundAmountByOrderSplit(
                                     orderSplit,
                                     orderBill,
-                                    remainTotal,
+                                    new BigDecimal(orderSplit.getTotal()),
                                     App.instance.getLocalRestaurantConfig()
                                             .getRoundType(),
                                     App.instance.getBusinessDate());
@@ -2499,6 +2499,8 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                             if (upDoneOrderSplitCount == 0) {
                                 OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_FINISHED, orderSplit.getOrderId());
                             }
+                            RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(orderSplit);
+                            RoundAmountSQL.deleteRoundAmount(roundAmount);
                         } else {
                             settlementNum = BH.getBD(PaymentSettlementSQL
                                     .getPaymentSettlementsSumBypaymentId(payment.getId()));
@@ -2506,7 +2508,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                         }
                     }
                 } else {
-                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), cardAmountPaidNum);
+                    paidBD = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), new BigDecimal(tv_cards_amount_paid_num.getText().toString()));
                     BigDecimal remainTotalAlfterRound = RoundUtil.getPriceAfterRound(App.instance.getLocalRestaurantConfig().getRoundType(), remainTotal);
                     if (BH.compare(paidBD, BH.getBD(ParamConst.DOUBLE_ZERO))) {
                         paymentSettlement = ObjectFactory
@@ -2519,7 +2521,7 @@ public class CloseOrderSplitWindow implements OnClickListener, KeyBoardClickList
                                     .getRoundAmountByOrderSplit(
                                             orderSplit,
                                             orderBill,
-                                            remainTotal,
+                                            new BigDecimal(orderSplit.getTotal()),
                                             App.instance.getLocalRestaurantConfig()
                                                     .getRoundType(),
                                             App.instance.getBusinessDate());

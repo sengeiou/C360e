@@ -154,8 +154,8 @@ public class HomePageImageView extends LinearLayout {
             qrPrice.setText(qrTotal);
             BitmapDrawable background = new BitmapDrawable(this.getResources(), qrBitmap);
             home_page_img.setBackgroundColor(Color.WHITE);
-            home_page_img.getLayoutParams().height = 600;
-            home_page_img.getLayoutParams().width = 600;
+            home_page_img.getLayoutParams().height = 400;
+            home_page_img.getLayoutParams().width = 400;
             home_page_img.setBackground(background);
         }
         else if (style!=Store.SUNMI_VIDEO_TEXT&&style!=Store.SUNMI_VIDEO)

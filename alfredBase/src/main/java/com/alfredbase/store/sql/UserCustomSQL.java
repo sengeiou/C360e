@@ -41,7 +41,7 @@ public class UserCustomSQL {
                     }
                     catch (JSONException e)
                     {
-                        Log.e("Checker", "Database issue: " + e);
+                        Log.e("Error Check", "Database issue: " + e);
                     }
                 }
             }
