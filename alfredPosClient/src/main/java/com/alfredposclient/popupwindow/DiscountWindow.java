@@ -32,6 +32,8 @@ import com.alfredposclient.view.DiscountMoneyKeyboard;
 import com.alfredposclient.view.DiscountMoneyKeyboard.KeyBoardClickListener;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	private static final int DURATION_1 = 300;
@@ -194,6 +196,11 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		{
 			String textToSet = String.valueOf(new BigDecimal(String.valueOf(tv_discount_count.getText())).setScale(2, BigDecimal.ROUND_HALF_UP));
 			tv_discount_count.setText(textToSet);
+		}
+		else
+		{
+			String convertedCount = String.valueOf(tv_discount_count.getText());
+			tv_discount_count.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(new Double(convertedCount.replace(",", "")).intValue())));
 		}
 
 		popupWindow.setContentView(contentView);
@@ -358,7 +365,8 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 	}
 
 	@Override
-	public void onKeyBoardClick(String key) {
+	public void onKeyBoardClick(String key)
+	{
 		BugseeHelper.buttonClicked(key);
 		if ("X".equals(key)) {
 			dismiss();
@@ -385,19 +393,30 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 					{
 						discountByCategory = discountAdapter == null ? "" : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB);
 					}
-					resultCall.call(null, tv_discount_count.getText().toString(), discountByCategory);
+					if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+					{
+						String convertedValue = tv_discount_count.getText().toString().replaceAll(",", "");
+						resultCall.call(null, convertedValue, discountByCategory);
+					}
+					else
+					{
+						resultCall.call(null, tv_discount_count.getText().toString(), discountByCategory);
+					}
 				}
 			}
 		} else if ("C".equals(key)) {
 			keyBuffer = new StringBuffer();
 			tv_discount_percent.setText("0");
 			tv_discount_count.setText("0.00");
+			if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+			{
+				tv_discount_count.setText("0");
+			}
 		} else if (key.endsWith("%")) {
 			String num = key.substring(0, key.length()-1);
 			tv_discount_percent.setText(num);
 			setDiscountKey(num);
 		} else {
-
 			if(order != null){
 				discountByCategory = discountAdapter == null ? "" : discountAdapter.getSelectedItem(ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE);
 			}
@@ -431,8 +450,11 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 
 				}
 			} else {
-				double count = BH.div(BH.getBD(keyBuffer.toString() + key),
-						BH.getBD(100), true).doubleValue();
+				double count = BH.div(BH.getBD(keyBuffer.toString() + key), BH.getBD(100), true).doubleValue();
+				if(App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+				{
+					count = count * 100;
+				}
 				if (order != null) {
 					if (count > Double.parseDouble(BH.sub(BH.getBD(order.getSubTotal()),
 							BH.getBD(sumRealPrice), false).toString()))
@@ -464,6 +486,11 @@ public class DiscountWindow implements OnClickListener, KeyBoardClickListener {
 		{
 			String textToSet = String.valueOf(new BigDecimal(String.valueOf(tv_discount_count.getText())).setScale(2, BigDecimal.ROUND_HALF_UP));
 			tv_discount_count.setText(textToSet);
+		}
+		else
+		{
+			String convertedCount = String.valueOf(tv_discount_count.getText());
+			tv_discount_count.setText(String.valueOf(NumberFormat.getNumberInstance(Locale.US).format(new Double(convertedCount.replace(",", "")).intValue())));
 		}
 	}
 

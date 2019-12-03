@@ -54,7 +54,7 @@ android {
             def flavor = variant.name
             def versionName = variant.versionName
             def date = new Date()
-            def formattedDate = date.format('yyyy-MM-dd_HH-mm-ss')
+            def formattedDate = date.format('yyyy-MM-dd')
             if(variant.buildType.name == "release")
             {
                 outputFileName = "C360EngageRemotePrintService.apk"
