@@ -971,7 +971,8 @@ public class MainPageOrderView extends LinearLayout {
                     }
                     if (arg2 == 0) {
                         if (adapter.getPageIndex() == 0) {
-                            if (orderDetail.getGroupId().intValue() > 0) {
+                            if (orderDetail.getGroupId() > 0 && OrderSplitSQL.getFinishedOrderSplits(order.getId()).size() < 1)
+                            {
                                 OrderSplit orderSplit = OrderSplitSQL.getOrderSplitByOrderAndGroupId(order, orderDetail.getGroupId());
                                 if (orderSplit != null && orderSplit.getOrderStatus().intValue() == ParamConst.ORDERSPLIT_ORDERSTATUS_FINISHED) {
                                     UIHelp.showToast(parent, parent.getResources().getString(R.string.order_split_) +
@@ -996,6 +997,7 @@ public class MainPageOrderView extends LinearLayout {
                                 OrderSQL.updateOrderStatus(ParamConst.ORDER_STATUS_OPEN_IN_POS, order.getId());
                                 handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
                             }
+                            UIHelp.showToast(parent, "Cannot unassign after first completed Order Split");
                             collapseLastOpen();
                         } else {
                             adapter.cutPageIndex();

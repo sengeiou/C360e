@@ -54,8 +54,10 @@ import com.alfredposclient.global.UIHelp;
 import com.alfredposclient.view.RingTextView;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class OrderSplitPrintWindow implements OnClickListener {
@@ -233,51 +235,114 @@ public class OrderSplitPrintWindow implements OnClickListener {
 					.setText(orderDetail.getSpecialInstractions());
 			holder.name.setText(itemDetail.getItemName());
 			holder.price.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getItemPrice()));
+			if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+			{
+				String textToSet = String.valueOf(BH.getBD(orderDetail.getItemPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+				holder.price.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+			}
 			holder.tv_qty.setText(orderDetail.getItemNum() + "");
 			holder.tv_qty.setBackgroundColor(context.getResources().getColor(
 					R.color.white));
 			holder.tv_qty.setTag(orderDetail);
 			holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()));
+			if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+			{
+				String textToSet = String.valueOf(BH.getBD(orderDetail.getRealPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+				holder.subtotal.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+			}
 
 			// 以下计算过程应该是不需要的，数据库的total数据是准确的，但是还没有时间测试
 			if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
 			    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_SUB
-				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB) {
-
-				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
+				|| orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_SUB)
+			{
+				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE)
+				{
 					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
 					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
-				} else {
-					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-							+ BH.getBD(orderDetail.getDiscountPrice()));
+					if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+					{
+						String textToSet = String.valueOf(BH.getBD(ParamConst.DOUBLE_ZERO).setScale(2, BigDecimal.ROUND_HALF_UP));
+						holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+						holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+					}
+				}
+				else
+				{
+					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getDiscountPrice()));
 					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
 							+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
 									BH.getBD(orderDetail.getDiscountPrice()),
 									true).toString());
+					if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+					{
+						String textToSet = String.valueOf(BH.getBD(orderDetail.getDiscountPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+						holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+						textToSet = String.valueOf(BH.sub(BH.getBD(orderDetail.getRealPrice()), BH.getBD(orderDetail.getDiscountPrice()),
+								true).setScale(2, BigDecimal.ROUND_HALF_UP));
+						holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+					}
 				}
-			} else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
+			}
+			else if (orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_TYPE_RATE
 			            || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYORDER_TYPE_RATE
-					    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE) {
+					    || orderDetail.getDiscountType() == ParamConst.ORDERDETAIL_DISCOUNT_BYCATEGORY_TYPE_RATE)
+			{
 				BigDecimal discount = BH.mul(
 						BH.getBD(orderDetail.getRealPrice()),
 						BH.getBDNoFormat(orderDetail.getDiscountRate()), true);
 
-				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
+				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE)
+				{
 					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
 					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
-				} else {
+					if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+					{
+						String textToSet = String.valueOf(BH.getBD(ParamConst.DOUBLE_ZERO).setScale(2, BigDecimal.ROUND_HALF_UP));
+						holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+						holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+					}
+				}
+				else
+				{
 					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(discount).toString());
 					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
 							+ BH.sub(BH.getBD(orderDetail.getRealPrice()),
 									discount, true));
+					if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+					{
+						String textToSet = String.valueOf(BH.getBD(discount).setScale(2, BigDecimal.ROUND_HALF_UP));
+						holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+						textToSet = String.valueOf(BH.sub(BH.getBD(orderDetail.getRealPrice()),
+								discount, true).setScale(2, BigDecimal.ROUND_HALF_UP));
+						holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+					}
 				}
-			} else {
+			}
+			else
+			{
 				holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
-				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE) {
+				if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE)
+				{
 					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(ParamConst.DOUBLE_ZERO).toString());
-				} else {
-					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol()
-							+ BH.getBD(orderDetail.getRealPrice()).toString());
+				}
+				else
+				{
+					holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + BH.getBD(orderDetail.getRealPrice()).toString());
+				}
+				if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+				{
+					String textToSet = String.valueOf(BH.getBD(ParamConst.DOUBLE_ZERO).setScale(2, BigDecimal.ROUND_HALF_UP));
+					holder.discount.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+					if (orderDetail.getOrderDetailType().intValue() == ParamConst.ORDERDETAIL_TYPE_FREE)
+					{
+						holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+					}
+					else
+					{
+						textToSet = String.valueOf(BH.getBD(orderDetail.getRealPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+						holder.total.setText(App.instance.getLocalRestaurantConfig().getCurrencySymbol() + textToSet);
+					}
 				}
 			}
 			if (orderDetail.getGroupId().intValue() > 0) {

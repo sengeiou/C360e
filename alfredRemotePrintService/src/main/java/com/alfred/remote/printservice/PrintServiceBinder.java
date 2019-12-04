@@ -51,6 +51,7 @@ import com.alfredbase.javabean.ReportPluDayComboModifier;
 import com.alfredbase.javabean.ReportPluDayItem;
 import com.alfredbase.javabean.ReportPluDayModifier;
 import com.alfredbase.javabean.Restaurant;
+import com.alfredbase.javabean.model.LocalRestaurantConfig;
 import com.alfredbase.javabean.model.PrintOrderItem;
 import com.alfredbase.javabean.model.PrintOrderModifier;
 import com.alfredbase.javabean.model.PrintReceiptInfo;
@@ -67,6 +68,7 @@ import com.alfredbase.utils.CommonUtil;
 import com.alfredbase.utils.IntegerUtils;
 import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
+import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.TimeUtil;
 import com.birbit.android.jobqueue.JobManager;
 import com.epson.epos2.discovery.DeviceInfo;
@@ -81,6 +83,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -600,7 +603,6 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
         PrinterQueueManager pqMgr = this.service.getPqMgr();
 
         String name = prtDevice.getName();
-        Log.i("Checker", String.valueOf(prtDevice));
         int copies = 1;
         if (doublePrint)
         {
@@ -1276,7 +1278,7 @@ public class PrintServiceBinder extends IAlfredRemotePrintService.Stub {
                             String subTotal = theOrder.getSubTotal();
                             String discount = theOrder.getDiscountAmount();
                             String total = theOrder.getTotal();
-                            String grandTotal = theOrder.getTotal().toString();
+                            String grandTotal = theOrder.getTotal();
                             if (!TextUtils.isEmpty(theOrder.getGrandTotal())) {
                                 grandTotal = BH.getBD(theOrder.getGrandTotal()).toString();
                             }

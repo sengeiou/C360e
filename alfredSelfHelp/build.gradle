@@ -65,13 +65,23 @@ android {
 
 //    as3.0以上
     applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            // each 改为 all
-            def fileName = "selfHelp.apk"
-            def outFile = output.outputFile
-            if (outFile != null && outFile.name.endsWith('.apk')) {
-                outputFileName = fileName
-                // output.outputFile 改为 outputFileName
+        variant.outputs.all {
+            def flavor = variant.name
+            def versionName = variant.versionName
+            def date = new Date()
+            def formattedDate = date.format('yyyy-MM-dd')
+            if(variant.buildType.name == "release")
+            {
+                outputFileName = "C360EngageSelfHelp.apk"
+                flavor = versionName
+            }
+            else if(variant.buildType.name == "debug")
+            {
+                outputFileName = "selfHelp_${flavor}_${versionName}_${formattedDate}.apk"
+                flavor = flavor + "_" + formattedDate
+            }
+            variant.outputs.each { output ->
+                output.versionNameOverride = flavor
             }
         }
     }

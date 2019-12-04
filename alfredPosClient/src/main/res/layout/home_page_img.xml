@@ -6,27 +6,27 @@
     android:gravity="center"
     android:background="#ffffffff">
 
-    <EditText
+    <TextView
         android:id="@+id/qrText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:ems="10"
         android:gravity="center"
-        android:inputType="textPersonName"
         android:text="Please Scan the QR Code"
         android:textColor="#000000"
-        android:textSize="36sp" />
+        android:textSize="24sp" />
 
-    <EditText
+    <TextView
         android:id="@+id/qrPrice"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:ems="10"
         android:gravity="center"
-        android:inputType="textPersonName"
         android:text="Price: "
         android:textColor="#000000"
-        android:textSize="36sp" />
+        android:textSize="24sp" />
 
     <ImageView
         android:id="@+id/home_page_img"
@@ -41,8 +41,7 @@
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:visibility="visible" />
-wmic wwwwwm
-    w
+
     <RelativeLayout
         android:id="@+id/home_page_sv"
         android:layout_width="match_parent"

@@ -93,7 +93,6 @@ import com.alfredbase.utils.MachineUtil;
 import com.alfredbase.utils.ObjectFactory;
 import com.alfredbase.utils.OrderHelper;
 import com.alfredbase.utils.RemainingStockHelper;
-import com.alfredbase.utils.RoundUtil;
 import com.alfredbase.utils.RxBus;
 import com.alfredbase.utils.ScreenSizeUtil;
 import com.alfredbase.utils.StockCallBack;
@@ -1722,7 +1721,7 @@ public class MainPage extends BaseActivity {
                         orderMap.put("orderDetailIds", orderDetailIds);
                         App.instance.getKdsJobManager().tearDownKot(
                                 kotSummary, kotItemDetails,
-                                new ArrayList<KotItemModifier>(),
+                                KotItemModifierSQL.getKotItemModifiersByKotItemDetail(kotItemDetail.getId()),
                                 kotCommitStatus, orderMap);
                     }
                 }
@@ -2497,8 +2496,7 @@ public class MainPage extends BaseActivity {
 //        DiffData data = new DiffData(this);//实例化data类
 //        data.updateData(orderDetails);//启动发送
         //  DifferentDislay.setParam(orderDetails,currentOrder);
-        operatePanel.setParams(this, currentOrder, orderDetails,
-                handler);
+        operatePanel.setParams(this, currentOrder, orderDetails, handler);
         loadingDialog.dismiss();
         if (printerLoadingDialog != null && printerLoadingDialog.isShowing()) {
             printerLoadingDialog.dismiss();
