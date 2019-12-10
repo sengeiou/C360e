@@ -2035,6 +2035,10 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
 //		if (show.length() <= 0) {
 //			return;
 //		}
+        if(!App.instance.getLocalRestaurantConfig().getCurrencySymbol().equals("Rp"))
+        {
+            remainTotal = remainTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
         switch (viewTag) {
             case ParamConst.SETTLEMENT_TYPE_CASH: {
                 String showStr = tv_total_amount_num.getText().toString();
@@ -2464,6 +2468,8 @@ public class CloseOrderWindow implements OnClickListener, KeyBoardClickListener,
                         if (paidBD.compareTo(remainTotal) > -1) {
                             order.setOrderStatus(ParamConst.ORDER_STATUS_FINISHED);
                             OrderSQL.update(order);
+                            RoundAmount roundAmount = RoundAmountSQL.getRoundAmount(order);
+                            RoundAmountSQL.deleteRoundAmount(roundAmount);
                         } else {
                             settlementNum = BH.getBD(PaymentSettlementSQL
                                     .getPaymentSettlementsSumBypaymentId(payment.getId()));

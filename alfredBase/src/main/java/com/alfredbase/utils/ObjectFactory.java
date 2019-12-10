@@ -922,6 +922,7 @@ public class ObjectFactory {
         orderDetail.setIsItemDiscount(oldOrderDetail.getIsItemDiscount());
         orderDetail.setAppOrderDetailId(oldOrderDetail.getAppOrderDetailId());
         orderDetail.setMainCategoryId(oldOrderDetail.getMainCategoryId());
+        orderDetail.setWeight(oldOrderDetail.getWeight());
 
         return orderDetail;
     }

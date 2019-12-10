@@ -263,14 +263,25 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_KICK_CASHDRAWER);
                     break;
                 case R.id.tv_take_away:
-                    if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
-                        order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-                    } else {
-                        order.setIsTakeAway(ParamConst.TAKE_AWAY);
-                    }
-                    OrderSQL.updateOrder(order);
-                    handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
-                    break;
+                        if (order.getIsTakeAway() == ParamConst.TAKE_AWAY)
+                        {
+                            order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                            for(OrderDetail orderDetail : orderDetails)
+                            {
+                                orderDetail.setSpecialInstractions("");
+                                orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                                OrderDetailSQL.updateOrderDetail(orderDetail);
+                            }
+                        }
+                        else
+                        {
+                            order.setIsTakeAway(ParamConst.TAKE_AWAY);
+                            for(OrderDetail orderDetail : orderDetails)
+                            {
+                                orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+                                OrderDetailSQL.updateOrderDetail(orderDetail);
+                            }
+                        }
                 case R.id.tv_hold_bill:
                     if (order.getOrderStatus() == ParamConst.ORDER_STATUS_FINISHED)
                     {
