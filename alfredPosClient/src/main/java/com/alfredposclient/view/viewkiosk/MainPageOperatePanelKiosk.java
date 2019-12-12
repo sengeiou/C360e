@@ -211,8 +211,7 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                                 && orderDetail.getDiscountType().intValue() != ParamConst.ORDERDETAIL_DISCOUNT_TYPE_SUB
                                 && orderDetail.getIsItemDiscount() == ParamConst.ITEM_DISCOUNT
                                 && orderDetail.getIsFree() == ParamConst.NOT_FREE) {
-                            canDiscount = true;
-                            break;
+                            canDiscount = true;                            break;
                         } else {
                             canDiscount = false;
                         }
@@ -263,10 +262,24 @@ public class MainPageOperatePanelKiosk extends LinearLayout implements
                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_KICK_CASHDRAWER);
                     break;
                 case R.id.tv_take_away:
-                    if (order.getIsTakeAway() == ParamConst.TAKE_AWAY) {
+                    if (order.getIsTakeAway() == ParamConst.TAKE_AWAY)
+                    {
                         order.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
-                    } else {
+                        for(OrderDetail orderDetail : orderDetails)
+                        {
+                            orderDetail.setSpecialInstractions("");
+                            orderDetail.setIsTakeAway(ParamConst.NOT_TAKE_AWAY);
+                            OrderDetailSQL.updateOrderDetail(orderDetail);
+                        }
+                    }
+                    else
+                    {
                         order.setIsTakeAway(ParamConst.TAKE_AWAY);
+                        for(OrderDetail orderDetail : orderDetails)
+                        {
+                            orderDetail.setIsTakeAway(ParamConst.TAKE_AWAY);
+                            OrderDetailSQL.updateOrderDetail(orderDetail);
+                        }
                     }
                     OrderSQL.updateOrder(order);
                     handler.sendEmptyMessage(MainPage.VIEW_EVENT_SET_DATA);
